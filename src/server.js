@@ -1,6 +1,7 @@
 const fs = require('fs');
 const express = require('express');
 const { Parser, GameEngine, INPUT_BUTTON, EmptyGameEngineHandler } = require('puzzlescript');
+const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -232,11 +233,50 @@ class Session {
         }
         return displayLegend;
     }
+
+    renderJSON() {
+        let cells = null;
+        try {
+            cells = this.engine.getCurrentLevelCells();
+        } catch (e) {
+            return [];
+        }
+
+        if (!cells || cells.length === 0) return [];
+
+        const height = cells.length;
+        const width = cells[0].length;
+        const result = [];
+
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const cell = cells[y][x];
+                const cellSprites = cell.getSprites();
+                const content = cellSprites.map(s => s.getName());
+                result.push({ x, y, content });
+            }
+        }
+        return result;
+    }
 }
 
 app.post('/init', (req, res) => {
     try {
-        const { gameSource } = req.body;
+        let { gameSource, gameName } = req.body;
+
+        if (gameName) {
+            const gamePath = path.join(__dirname, '../games', gameName.endsWith('.txt') ? gameName : `${gameName}.txt`);
+            if (fs.existsSync(gamePath)) {
+                gameSource = fs.readFileSync(gamePath, 'utf8');
+            } else {
+                return res.status(404).json({ error: `Game "${gameName}" not found.` });
+            }
+        }
+
+        if (!gameSource) {
+            return res.status(400).json({ error: "No gameSource or gameName provided." });
+        }
+
         // Normalize line endings to LF to satisfy strict parser
         const normalizedSource = gameSource.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         const { data } = Parser.parse(normalizedSource);
@@ -247,6 +287,7 @@ app.post('/init', (req, res) => {
 
         // Pre-render to board so we can log it
         const boardRender = session.render();
+        const boardJSON = session.renderJSON();
 
         // Log Init
         logHistory(sessionId, session.engine.currentLevelNum + 1, "INIT", boardRender);
@@ -254,6 +295,7 @@ app.post('/init', (req, res) => {
         res.json({
             sessionId,
             board: boardRender,
+            boardJSON,
             level: 1,
             legend: session.getDisplayLegend(),
             totalLevels: data.levels.length
@@ -338,6 +380,7 @@ app.post('/action', async (req, res) => {
 
         res.json({
             board: boardRender,
+            boardJSON: session.renderJSON(),
             level: currentLevelInfo,
             message,
             status
@@ -357,6 +400,7 @@ app.get('/observe', (req, res) => {
 
         res.json({
             board: session.render(),
+            boardJSON: session.renderJSON(),
             level: session.engine.currentLevelNum + 1,
             legend: session.getDisplayLegend()
         });
