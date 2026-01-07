@@ -56,31 +56,18 @@ class Session {
             }
         }
 
-        // Sort priority: AND > Simple > OR
-        // Also respect Z-order? To render the "topmost" matching thing?
-        // GameLegendTile doesn't easily expose "primary sprite".
-        // Let's stick to type priority for now.
         list.sort((a, b) => {
             const aIsOr = a.tile.isOr();
             const bIsOr = b.tile.isOr();
-            // We can check if it's an AND tile by checking class name or behavior, 
-            // but isOr() returns false for both Simple and And.
-            // We can check equality.
-
-            // Heuristic: specific matches (AND / Simple) should come before broad (OR)
             if (aIsOr && !bIsOr) return 1;
             if (!aIsOr && bIsOr) return -1;
 
             return 0; // maintain relative order
         });
-
-        // Further refinement: If both are Simple/And, maybe prioritize those covering Top layers?
-        // We'll leave that for now.
         return list;
     }
 
     render() {
-        // The engine might be in a message state or simple level state
         const cells = this.engine.getCurrentLevelCells();
         if (!cells || cells.length === 0) return "Message/Empty Level";
 
@@ -89,32 +76,13 @@ class Session {
 
         let output = '';
 
-        // Flatten logic matching the render list
-        // Note: engine.getCurrentLevelCells() returns Cell[][]
-
         for (let y = 0; y < height; y++) {
             let line = '';
             for (let x = 0; x < width; x++) {
                 const cell = cells[y][x];
-                let bestChar = '.'; // default background (or space?)
+                let bestChar = '.';
 
-                // Try to find a match in renderList
-                // But we want the match that corresponds to the "highest" layer content?
-                // Or just the first match in our priority list?
-
-                // Let's trying matching.
-                // Problem: 'Background' is in every cell usually. '.' matches Background.
-                // If we have Player on Background, both '.' and 'P' match.
-                // We want 'P'.
-                // So we really want the match that involves the HIGHEST Z-index sprite.
-
-                // Let's search for the highest Z-index sprite in the cell that has a mapping?
-
-                const cellSprites = cell.getSprites(); // Reversed (Front to Back likely)
-                // Actually let's verify Z ordering.
-                // In engine.js: return sprites.reverse(); // reversed so we render sprites properly
-                // This implies Index 0 is the one to draw (Top).
-
+                const cellSprites = cell.getSprites();
                 let found = false;
 
                 // Strategy: Loop through sprites in the cell (Top to Bottom).
@@ -128,19 +96,9 @@ class Session {
                 const matchingLegends = this.renderList.filter(item => item.tile.matchesCell(cell));
 
                 if (matchingLegends.length > 0) {
-                    // Sort matches by the max collision layer of their constituent sprites?
-                    // GameLegendTile.getCollisionLayer() exists but might be unreliable for mixed.
-                    // Let's look at the sprites in the match.
-
-                    // We want the legend that represents the visible top-most thing.
-                    // cellSprites[0] is the top-most sprite.
-
-                    // Find a legend that includes cellSprites[0]
                     const topSprite = cellSprites[0];
                     if (topSprite) {
                         const directMatch = matchingLegends.find(item => {
-                            // Does this legend tile include this sprite?
-                            // item.tile.getSprites() returns list of sprites in the legend
                             return item.tile.getSprites().includes(topSprite);
                         });
                         if (directMatch) {
@@ -150,13 +108,7 @@ class Session {
                     }
 
                     if (!found) {
-                        // Fallback: just pick the first one (maybe an OR covering something else)
-                        // Or maybe the one with highest declared order?
                         bestChar = matchingLegends[0].key;
-
-                        // Special case: Background usually '.'
-                        // If we have something else, show it.
-                        // If matchingLegends has non-background, pick it.
                         const nonBg = matchingLegends.find(m => m.key !== '.');
                         if (nonBg) bestChar = nonBg.key;
                     }
@@ -284,4 +236,4 @@ app.get('/observe', (req, res) => {
     }
 });
 
-app.listen(port, () => console.log(`PuzzleEngine (Official) running on ${port}`));
+app.listen(port, () => console.log(`PuzzleEngine running on ${port}`));
