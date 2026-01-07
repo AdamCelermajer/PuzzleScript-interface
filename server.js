@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const { Parser, GameEngine, INPUT_BUTTON, EmptyGameEngineHandler } = require('puzzlescript');
 
@@ -13,12 +14,29 @@ app.use((req, res, next) => {
 
 const gameSessions = new Map();
 
+// Logging Helper
+function logHistory(sessionId, level, action, board) {
+    try {
+        const entry = JSON.stringify({
+            timestamp: new Date().toISOString(),
+            sessionId,
+            level,
+            action,
+            board
+        });
+        fs.appendFileSync('game_history.jsonl', entry + '\n');
+    } catch (e) {
+        console.error("Logging failed:", e.message);
+    }
+}
+
 class SessionHandler extends EmptyGameEngineHandler {
     constructor() {
         super();
         this.messages = [];
         this.won = false;
         this.currentLevel = 0;
+        this.currentMessage = null; // Store active level message
     }
 
     onMessage(msg) {
@@ -34,6 +52,16 @@ class SessionHandler extends EmptyGameEngineHandler {
     onLevelLoad(num, size) {
         this.currentLevel = num;
         // console.log("Level loaded:", num);
+        this.currentMessage = null; // Clear message on load
+    }
+
+    onLevelChange(num, cells, message) {
+        this.currentLevel = num;
+        if (message) {
+            this.currentMessage = message; // Set message if present
+        } else {
+            this.currentMessage = null;
+        }
     }
 }
 
@@ -91,7 +119,17 @@ class Session {
 
     render() {
         // The engine might be in a message state or simple level state
-        const cells = this.engine.getCurrentLevelCells();
+        let cells = null;
+        try {
+            cells = this.engine.getCurrentLevelCells();
+        } catch (e) {
+            // Check if we have a pending message
+            if (this.handler.currentMessage) {
+                return `MESSAGE:\n\n   ${this.handler.currentMessage}\n\n(Press ACTION to continue)`;
+            }
+            return "Loading... (or Error: " + e.message + ")";
+        }
+
         if (!cells || cells.length === 0) return "Message/Empty Level";
 
         const height = cells.length;
@@ -99,93 +137,69 @@ class Session {
 
         let output = '';
 
-        // Flatten logic matching the render list
-        // Note: engine.getCurrentLevelCells() returns Cell[][]
-
         for (let y = 0; y < height; y++) {
             let line = '';
             for (let x = 0; x < width; x++) {
                 const cell = cells[y][x];
-                let bestChar = '.'; // default background (or space?)
+                let bestChar = '.'; // default
 
-                // Try to find a match in renderList
-                // But we want the match that corresponds to the "highest" layer content?
-                // Or just the first match in our priority list?
+                // Stack scanning approach:
+                // Look at sprites from Top (0) to Bottom.
+                // The first one that has a Legend mapping wins.
+                // If a Top-level object has NO mapping, we should probably show it as '?'
+                // so it doesn't become invisible (like FogOfWar).
 
-                // Let's trying matching.
-                // Problem: 'Background' is in every cell usually. '.' matches Background.
-                // If we have Player on Background, both '.' and 'P' match.
-                // We want 'P'.
-                // So we really want the match that involves the HIGHEST Z-index sprite.
-
-                // Let's search for the highest Z-index sprite in the cell that has a mapping?
-
-                const cellSprites = cell.getSprites(); // Reversed (Front to Back likely)
-                // Actually let's verify Z ordering.
-                // In engine.js: return sprites.reverse(); // reversed so we render sprites properly
-                // This implies Index 0 is the one to draw (Top).
+                const cellSprites = cell.getSprites(); // [Top, ..., Bottom]
 
                 let found = false;
+                for (const sprite of cellSprites) {
+                    // Find a legend definition that:
+                    // 1. Includes this sprite (so it represents this layer)
+                    // 2. actually matches the current cell state (respects AND/OR rules)
 
-                // Strategy: Loop through sprites in the cell (Top to Bottom).
-                // For each sprite, see if there is a Legend Char that maps preferentially to it?
-                // This is hard because Legends are tiles (sets).
+                    const match = this.renderList.find(entry => {
+                        // Optimization: Check inclusion first
+                        const s = entry.tile.getSprites();
+                        if (!s.includes(sprite)) return false;
 
-                // Alternative Strategy:
-                // Check all matching legends.
-                // Pick the one that "contains" the highest z-index sprite present in the cell?
+                        // Validation: Check full match logic
+                        // We avoid calling matchesCell directly because of "Unreachable code" bug in lib
+                        // if (entry.tile.matchesCell) { return entry.tile.matchesCell(cell); } 
 
-                const matchingLegends = this.renderList.filter(item => {
-                    try {
-                        return item.tile.matchesCell(cell);
-                    } catch (e) {
-                        // Workaround for Unreachable code bug in GameLegendTileAnd
-                        const expected = item.tile.getSprites();
+                        const isOr = entry.tile.isOr ? entry.tile.isOr() : false;
                         const present = cell.getSprites();
-                        const isOr = item.tile.isOr ? item.tile.isOr() : false;
 
                         if (isOr) {
-                            return expected.some(es => present.includes(es));
+                            return s.some(es => present.includes(es));
                         } else {
-                            // AND logic (default for others)
-                            return expected.every(es => present.includes(es));
+                            return s.every(es => present.includes(es));
                         }
-                    }
-                });
+                    });
 
-                if (matchingLegends.length > 0) {
-                    // Sort matches by the max collision layer of their constituent sprites?
-                    // GameLegendTile.getCollisionLayer() exists but might be unreliable for mixed.
-                    // Let's look at the sprites in the match.
+                    if (match) {
+                        bestChar = match.key;
+                        found = true;
+                        break;
+                    } else {
+                        // Fallback logic
+                        if (sprite === cellSprites[0] && sprite.getName().toLowerCase() !== 'background') {
+                            const name = sprite.getName().toLowerCase();
+                            // Heuristic: If it has no legend, but it's a "spawn" marker, keep it invisible.
+                            if (name.includes('spawn')) {
+                                break; // Transparent
+                            }
 
-                    // We want the legend that represents the visible top-most thing.
-                    // cellSprites[0] is the top-most sprite.
-
-                    // Find a legend that includes cellSprites[0]
-                    const topSprite = cellSprites[0];
-                    if (topSprite) {
-                        const directMatch = matchingLegends.find(item => {
-                            // Does this legend tile include this sprite?
-                            // item.tile.getSprites() returns list of sprites in the legend
-                            return item.tile.getSprites().includes(topSprite);
-                        });
-                        if (directMatch) {
-                            bestChar = directMatch.key;
+                            // Otherwise, show it as its first letter (e.g. Crate1 -> C)
+                            bestChar = sprite.getName().charAt(0).toUpperCase();
                             found = true;
+                            break;
                         }
                     }
+                }
 
-                    if (!found) {
-                        // Fallback: just pick the first one (maybe an OR covering something else)
-                        // Or maybe the one with highest declared order?
-                        bestChar = matchingLegends[0].key;
-
-                        // Special case: Background usually '.'
-                        // If we have something else, show it.
-                        // If matchingLegends has non-background, pick it.
-                        const nonBg = matchingLegends.find(m => m.key !== '.');
-                        if (nonBg) bestChar = nonBg.key;
-                    }
+                if (!found) {
+                    // Fallback check: maybe an OR mapping matches the combination?
+                    // (Leaving as '.' for now as simple fallback)
                 }
 
                 line += bestChar;
@@ -231,13 +245,15 @@ app.post('/init', (req, res) => {
         const session = new Session(sessionId, data);
         gameSessions.set(sessionId, session);
 
-        // Construct display legend for client
-        // Delegated to session helper
+        // Pre-render to board so we can log it
+        const boardRender = session.render();
 
+        // Log Init
+        logHistory(sessionId, session.engine.currentLevelNum + 1, "INIT", boardRender);
 
         res.json({
             sessionId,
-            board: session.render(),
+            board: boardRender,
             level: 1,
             legend: session.getDisplayLegend(),
             totalLevels: data.levels.length
@@ -272,29 +288,37 @@ app.post('/action', async (req, res) => {
         let message = '';
 
         if (dir) {
-            session.engine.press(dir);
-            // Tick loop to handle animations/AGAIN
-            let ticks = 0;
-            const maxTicks = 50; // Safety break
+            if (dir === INPUT_BUTTON.RESTART) {
+                // Workaround: The built-in RESTART input sometimes crashes with "Unreachable code" in doRestart.
+                // We perform a "Hard Restart" by reloading the current level.
+                // Note: This wipes the undo stack, but ensures stability.
+                session.engine.setLevel(session.engine.currentLevelNum);
+            } else {
+                session.engine.press(dir);
+                // Tick loop to handle animations/AGAIN
+                let ticks = 0;
+                const maxTicks = 50; // Safety break
 
-            do {
-                const tickResult = await session.engine.tick();
+                do {
+                    const tickResult = await session.engine.tick();
 
-                // Check result
-                if (tickResult.didWinGame) {
-                    status = 'game_complete';
-                    message = "YOU WIN!";
-                    break;
-                }
-                // didLevelChange is true if advanced level
-                if (tickResult.didLevelChange && !tickResult.didWinGame) {
-                    // Level advanced
-                    message = "Level Complete";
-                    // If message level, it might have already advanced in tick?
-                }
+                    // Check result
+                    if (tickResult.didWinGame) {
+                        status = 'game_complete';
+                        message = "YOU WIN!";
+                        break;
+                    }
+                    // didLevelChange is true if advanced level
+                    if (tickResult.didLevelChange && !tickResult.didWinGame) {
+                        // Level advanced
+                        message = "Level Complete";
+                        // If message level, it might have already advanced in tick?
+                        break; // Stop animating; return the new level (or message) state immediately
+                    }
 
-                ticks++;
-            } while (session.engine.hasAgain() && ticks < maxTicks);
+                    ticks++;
+                } while (session.engine.hasAgain() && ticks < maxTicks);
+            }
         }
 
         if (session.handler.messages.length > 0) {
@@ -306,9 +330,15 @@ app.post('/action', async (req, res) => {
             message = "YOU WIN THE GAME!";
         }
 
+        const boardRender = session.render();
+        const currentLevelInfo = session.engine.currentLevelNum + 1;
+
+        // Log Action
+        logHistory(sessionId, currentLevelInfo, action, boardRender);
+
         res.json({
-            board: session.render(),
-            level: session.engine.currentLevelNum + 1,
+            board: boardRender,
+            level: currentLevelInfo,
             message,
             status
         });

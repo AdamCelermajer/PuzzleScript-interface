@@ -36,20 +36,36 @@ class PuzzleScriptClient {
         return response.data;
     }
 
-    displayBoard(result, legend = null) {
-        console.clear();
+    displayBoard(result, legend = null, actionName = null) {
+        // console.clear(); // Removed per request to show history
+
         if (legend) {
             this.displayLegend(legend);
         }
-        console.log('\n' + '='.repeat(60));
-        console.log(`📍 Level ${result.level}`);
+
+        // Print Action taken if known
+        if (actionName) {
+            console.log(`Action: ${actionName}`);
+        }
+
+        // Show Level banner only if level changed (or message implies change)
+        if (this.lastLevel !== result.level) {
+            console.log('\n' + '='.repeat(60));
+            console.log(`📍 Level ${result.level}`);
+            console.log('='.repeat(60));
+            this.lastLevel = result.level;
+        }
+
         if (result.message) {
             console.log(`📣 ${result.message}`);
         }
-        console.log('='.repeat(60));
-        console.log('\n' + result.board + '\n');
+
+        // Always print the board
+        console.log(result.board);
         console.log('='.repeat(60) + '\n');
-        console.log('Controls: WASD to move, R to reset, O to observe, Q to quit');
+
+        // Don't reprint controls every time to reduce clutter, or keep it minimal?
+        // console.log('Controls: WASD, R, Z, O, Q');
     }
 
     displayLegend(legend) {
@@ -64,7 +80,6 @@ class PuzzleScriptClient {
 
 async function main() {
     const client = new PuzzleScriptClient();
-
     try {
         console.log('Reading sokoban-basic.txt...');
         const gameSource = fs.readFileSync(path.join(__dirname, 'sokoban-basic.txt'), 'utf8');
@@ -73,8 +88,11 @@ async function main() {
         const initResult = await client.init(gameSource);
         let currentLegend = initResult.legend; // Store legend
 
-        client.displayBoard(initResult);
-        client.displayLegend(currentLegend);
+        // displayBoard automatically handles "New Level" banner logic if we reset lastLevel
+        client.lastLevel = -1;
+
+        // Show initial state
+        client.displayBoard(initResult, currentLegend);
 
         const rl = readline.createInterface({
             input: process.stdin,
@@ -82,7 +100,7 @@ async function main() {
         });
 
         const loop = () => {
-            rl.question('Action (WASD, O to observe): ', async (ans) => {
+            rl.question('> ', async (ans) => { // Simpler prompt
                 const cmd = ans.trim().toLowerCase();
                 if (cmd === 'q' || cmd === 'quit') {
                     console.log('Bye!');
@@ -94,14 +112,14 @@ async function main() {
                     try {
                         const result = await client.observe();
                         // "first the legend then the board"
-                        client.displayBoard(result, result.legend);
+                        client.displayBoard(result, result.legend, "Observe");
                     } catch (err) {
                         console.error('Observe failed:', err.message);
                     }
                 } else if (['w', 'a', 's', 'd', 'r', 'reset', 'z', 'undo', 'x', ' '].includes(cmd)) {
                     try {
                         const result = await client.action(cmd);
-                        client.displayBoard(result);
+                        client.displayBoard(result, null, cmd); // Pass command name for history logic
                         // client.displayLegend(currentLegend); // Removed per request
 
                         if (result.status === 'game_complete') {

@@ -1,0 +1,310 @@
+title The observer's paradox
+author Sevan
+homepage https://sevansevan.itch.io/
+run_rules_on_level_start
+
+========
+OBJECTS
+========
+
+Background (special, automatically placed in its own layer)
+#95C275 darkgreen #666666 darkbrown
+00000
+00000
+00000
+00000
+00000
+
+Wall
+#999999 darkbrown
+00010
+11111
+01000
+11111
+00010
+
+Player
+brown white black #444444 grey lightgray
+..0..
+01110
+01110
+02220
+.2.2.
+
+Crate1
+darkgray transparent red
+..0..
+02220
+02220
+01110
+.1.1.
+
+S1
+red
+.....
+.....
+.....
+..0..
+.000.
+
+Target1
+red #95C275
+11111
+11011
+10001
+10001
+10101
+
+Crate2
+lightgray transparent #2C9CFF
+..0..
+02220
+02220
+01110
+.1.1.
+
+S2
+#2C9CFF
+.....
+.....
+.....
+..0..
+.000.
+
+Target2
+#2C9CFF #95C275
+11111
+11011
+10001
+10001
+10101
+
+HVISION
+transparent
+
+VVISION
+transparent
+
+Vision
+transparent
+
+FogOfWar
+black black (2nd for debug)
+00000
+00000
+00100
+00000
+00000
+
+Vision2
+transparent
+
+Rock1
+darkgreen
+.....
+.0...
+.....
+.....
+.....
+
+Rock2
+#666666
+.....
+.....
+...0.
+.....
+.....
+
+Rock3
+#777777
+.....
+.....
+.....
+.0...
+.....
+
+Rock4
+transparent
+
+RockToken
+transparent
+
+=======
+LEGEND
+=======
+Crate = Crate1 or Crate2
+. = Background and RockToken
+# = Wall
+P = Player
+1 = Crate1 and S1
+2 = Crate2 and S2
+A = Target1
+B = Target2
+Target = Target1 or Target2
+Deco = Rock1 or Rock2 or Rock3 or Rock4
+=======
+SOUNDS
+=======
+
+Crate move 36772507
+sfx1 91422903
+endlevel 16762309
+
+================
+COLLISIONLAYERS
+================
+
+RockToken
+Background
+Rock4
+Rock1
+Rock2
+Rock3
+Target
+S2, S1
+Player, Wall, Crate
+HVISION, VVISION
+FogOfWar
+Vision
+Vision2
+
+======
+RULES
+======
+
+[ > Player | Crate ] -> [ > Player | > Crate ] 
+
+(background procgen)
+[ RockToken ] -> [ RockToken Random Deco ]
++ [ RockToken ] -> [ random Deco ]
+
+(fog of war)
+[ ] -> [FogOfWar]
+[VISION] -> []
+[Vision2] -> []
+[VVISION] -> []
+[HVISION] -> []
+
+late horizontal [ Player | ] -> [ Player | VVISION Vision ]
+late vertical [ Player | ] -> [ Player | HVISION Vision ]
+late horizontal [ HVISION | ] -> [ HVISION | Vision ]
+late vertical [ VVISION | ] -> [ VVISION | Vision ]
+
+late [ Player ] -> [ Player Vision ]
+late [ Vision | ] -> [ Vision | Vision2 ]
+
+late [ Vision FogOfWar ] -> [ Vision ]
+late [ Vision2 FogOfWar ] -> [ Vision2 ]
+
+(warping)
+late [ Crate1 FogOfWar ][S1 FogOfWar no Crate] -> [ FogOfWar ] [S1 FogOfWar Crate1] sfx1
+late [ Crate2 FogOfWar ][S2 FogOfWar no Crate] -> [ FogOfWar ] [S2 FogOfWar Crate2] sfx1
+
+==============
+WINCONDITIONS
+==============
+
+all Target1 on Crate1
+all Target2 on Crate2
+
+=======
+LEVELS
+=======
+
+#############
+#############
+###....######
+###........##
+###........##
+###.####.####
+###...#..#.##
+###...#.1#.##
+##....#..#.##
+##...#####.##
+##...#....P##
+##.........##
+##...#...A.##
+######.....##
+#############
+#############
+
+##############
+###...##....##
+###....#.AP.##
+####........##
+####.#.#.#.###
+####.#.#...###
+####.#.#######
+####........##
+####.....1..##
+######...#####
+##############
+##############
+
+message It is said that quantum objects are only defined when observed
+
+############
+############
+#####A######
+#####.######
+#####.######
+##P..1...###
+#####.######
+#####...####
+############
+############
+
+message But what about me? Am I defined, or am I observed?
+
+#############
+##...#P#...##
+##..1#.#2#.##
+##...#.#.#.##
+###..#.#...##
+##A........##
+##B........##
+#############
+#############
+
+(
+(harder alt)
+#############
+##...#P#...##
+##..1#.#2#.##
+##...#.#.#.##
+###..#.#.#.##
+##A........##
+##B........##
+#############
+#############
+)
+
+message Because when I look at myself, I only see uncertainty
+
+###########
+####.....##
+####.....##
+#####1#2###
+###A....###
+###B.P..###
+###########
+###########
+
+message I guess we are all a bit quantic, after all.
+
+message Thank you for playing!
+
+message Bonus level
+
+##############
+##############
+#######A######
+#####...######
+#####.#.######
+####...12..###
+#######.#.####
+#######..P####
+#######B######
+##############
+
+message Congratulations, you're the true quantum master! :-)
