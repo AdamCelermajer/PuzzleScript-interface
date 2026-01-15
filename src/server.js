@@ -292,6 +292,13 @@ app.post('/init', (req, res) => {
         // Log Init
         logHistory(sessionId, session.engine.currentLevelNum + 1, "INIT", boardRender);
 
+        // --- SERVER SIDE RENDERING ---
+        console.clear();
+        console.log(`Game Initialized: ${gameName || 'unknown'}`);
+        console.log(boardRender);
+        console.log('='.repeat(40));
+        // -----------------------------
+
         res.json({
             sessionId,
             board: boardRender,
@@ -377,6 +384,15 @@ app.post('/action', async (req, res) => {
 
         // Log Action
         logHistory(sessionId, currentLevelInfo, action, boardRender);
+
+        // --- SERVER SIDE RENDERING ---
+        console.clear();
+        console.log(`Action: ${action.toUpperCase()}`);
+        if (message) console.log(`📢 ${message}`);
+        console.log(`Level ${currentLevelInfo}`);
+        console.log(boardRender);
+        console.log('='.repeat(40));
+        // -----------------------------
 
         res.json({
             board: boardRender,
