@@ -2,145 +2,184 @@ import os
 import requests
 import json
 import time
+import argparse
+from typing import List, Dict, Any, Optional
+from dataclasses import dataclass
 from dotenv import load_dotenv
-from openai import OpenAI
+from google import genai
 
-# Load environment variables
+# --- Configuration & Setup ---
 load_dotenv()
 
-SERVER_URL = "http://localhost:3000"
-API_KEY = os.getenv("OPENAI_API_KEY")
-MODEL_NAME = "gpt-5-mini-2025-08-07"
+@dataclass
+class Config:
+    server_url: str = "http://localhost:3000"
+    api_key: str = os.getenv("GOOGLE_API_KEY")
+    model_name: str = "gemini-2.0-flash-lite-preview-02-05"
+    game_name: str = "sokoban-basic"
+    mode: str = "win" # 'win' or 'learn'
+    learning_games_limit: int = 5
+    learning_steps_limit: int = 10
 
-if not API_KEY:
-    print("❌ Error: OPENAI_API_KEY not found in .env file.")
-    exit(1)
+    def __post_init__(self):
+        if not self.api_key:
+            raise ValueError("❌ Error: GOOGLE_API_KEY not found in .env file.")
 
-client = OpenAI(api_key=API_KEY)
+# --- API Interaction ---
+class GameServer:
+    def __init__(self, url: str):
+        self.url = url
 
-def init_game(game_name="sokoban-basic"):
-    try:
-        response = requests.post(f"{SERVER_URL}/init", json={"gameName": game_name})
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Failed to connect to server: {e}")
-        return None
+    def init_game(self, game_name: str) -> Optional[Dict[str, Any]]:
+        try:
+            res = requests.post(f"{self.url}/init", json={"gameName": game_name})
+            res.raise_for_status()
+            return res.json()
+        except Exception as e:
+            print(f"❌ Connection Error: {e}")
+            return None
 
-def send_action(session_id, action):
-    try:
-        response = requests.post(f"{SERVER_URL}/action", json={
-            "sessionId": session_id,
-            "action": action
-        })
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Failed to send action: {e}")
-        return None
+    def send_action(self, session_id: str, action: str) -> Optional[Dict[str, Any]]:
+        try:
+            res = requests.post(f"{self.url}/action", json={"sessionId": session_id, "action": action})
+            res.raise_for_status()
+            return res.json()
+        except Exception as e:
+            print(f"❌ Action Error: {e}")
+            return None
 
-def get_llm_action(board_str, level, legend, history):
-    print(board_str)
-    
-    history_str = ""
-    if history:
-        history_str = "**Game History (Past Moves):**\n"
-        for i, (b, a) in enumerate(history):
-            history_str += f"--- Step {i+1} ---\nBoard:\n{b}\nAction Taken: {a}\n\n"
-    else:
-        history_str = "**Game History:** None (Start of Game)\n"
+# --- LLM Agent ---
+class LLMAgent:
+    def __init__(self, config: Config):
+        self.client = genai.Client(api_key=config.api_key)
+        self.model = config.model_name
+        self.history: List[tuple] = [] # Stores (board_state, action_taken)
 
-    prompt = f"""
-You are an AI agent playing a PuzzleScript game.
-Your goal is to solve the level by choosing the right set of action.
+    def _call_llm(self, prompt: str, instructions: str) -> str:
+        try:
+            print(f"⏳ Calling {self.model}...")
+            start = time.time()
+            
+            # Combine instructions and prompt since generate_content suggests a single 'contents' or separate system instruction if supported
+            # The snippet provided uses 'contents'. We can prepend instructions to content or check SDK for system_instruction.
+            # Assuming simple content usage for now based on snippet "contents=".
+            
+            full_prompt = f"{instructions}\n\n{prompt}"
+            
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=full_prompt,
+            )
+            
+            print(f"✅ Response in {time.time() - start:.2f}s")
+            return response.text.strip() if response.text else ""
+        except Exception as e:
+            print(f"❌ LLM Error: {e}")
+            return "wait"
 
-**Level {level}**
-**Legend:**
-{json.dumps(legend, indent=2)}
-
-{history_str}
-**Current Board:**
-{board_str}
-
-**Controls:**
-- W / UP
-- A / LEFT
-- S / DOWN
-- D / RIGHT
-- X / ACTION
-- Z / UNDO
-- R / RESTART
-
-Output ONLY the command button (e.g., "W", "A", "S", "D", "X"). Do not output any other text.
-"""
-    try:
-        print(f"⏳ Sending request to OpenAI model: {MODEL_NAME}...")
-        start_time = time.time()
+    def get_action(self, board: str, level: int, legend: Dict, game_history: List) -> str:
+        history_str = "\n".join([f"Step {i+1}: Action {a}\n{b}" for i, (b, a) in enumerate(game_history[-5:])]) # Keep context short?
         
-        response = client.responses.create(
-            model=MODEL_NAME,
-            reasoning={"effort": "low"},
-            instructions="You are a PuzzleScript expert player. Output only valid single-key commands.",
-            input=prompt
-        )
+        prompt = f"""
+            **Level {level}**
+            **Legend**: {json.dumps(legend, indent=2)}
+            **History (Last 5 moves)**:
+            {history_str}
+
+            **Current Board**:
+            {board}
+
+            **Controls**: W/A/S/D (Move), X (Action), Z (Undo), R (Restart)
+            Output ONLY the single-letter command.
+            """
+        return self._call_llm(prompt, "You are a PuzzleScript expert. Solve the level.")
+
+    def induce_rules(self) -> str:
+        print("🧠 Inducing rules from observed gameplay...")
+        # Compile all history into a summary (sampling to avoid context limit if needed)
+        combined_history = ""
+        for i, (board, action) in enumerate(self.history[:50]): # First 50 steps as sample
+            combined_history += f"State {i}:\n{board}\nAction: {action}\n\n"
         
-        print(f"✅ OpenAI response received in {time.time() - start_time:.2f}s")
-        return response.output_text.strip()
-    except Exception as e:
-        print(f"❌ LLM Error: {e}")
-        return "wait"
+        prompt = f"""
+            Below is a log of gameplay from a 2D grid puzzle game.
+            Based ONLY on these observations, deduce the mechanics and rules of the game.
+            - How do objects move?
+            - What happens when objects collide?
+            - What is the win condition?
 
-def main():
-    game_name = "sokoban-basic" # Could make this an arg
-    print(f"🚀 Starting LLM Client for {game_name} using {MODEL_NAME}...")
+            Gameplay Log:
+            {combined_history}
+            """
+        return self._call_llm(prompt, "You are a game mechanics researcher. specific rules.")
+
+# --- Game Loops ---
+def run_game_loop(config: Config, server: GameServer, agent: LLMAgent):
+    data = server.init_game(config.game_name)
+    if not data: return
     
-    data = init_game(game_name)
-    if not data:
-        return
-
     session_id = data['sessionId']
-    current_board = data['board']
-    current_legend = data['legend']
-    current_level = data['level']
+    board = data['board']
+    level = data['level']
+    legend = data['legend']
     
-    # History list to store (board, action) tuples
-    history = []
+    games_played = 0
+    total_steps = 0
+    local_history = [] 
 
-    print(f"✅ Session {session_id} started.")
-    print(" Check server console for visuals.")
+    print(f"🚀 Started Session: {session_id} | Mode: {config.mode.upper()}")
 
     while True:
-        # Get Move from LLM
-        print("🤖 Thinking...")
-        
-        action = get_llm_action(current_board, current_level, current_legend, history)
-        print(f"💡 LLM Action: {action}")
-        
+        # Check termination for learning mode
+        if config.mode == 'learn' and total_steps >= config.learning_steps_limit:
+            print("🛑 Step limit reached.")
+            rules = agent.induce_rules()
+            print("\n📜 **INDUCED RULES:**")
+            print(rules)
+            break
+
+        action = agent.get_action(board, level, legend, local_history)
+        print(f"💡 Action: {action}")
+
         if action.lower() == "wait":
             time.sleep(2)
             continue
 
-        # Send Action
-        result = send_action(session_id, action)
-        if not result:
-            break
-        
-        # Add to history BEFORE updating current_board to new state
-        history.append((current_board, action))
-        
-        # Update State
-        current_board = result['board']
-        current_level = result['level'] # Might change if level up
-        
-        if result.get('message'):
-            print(f"📣 Server: {result['message']}")
-            
-        if result.get('status') == 'game_complete':
-            print("🎉 Game Complete!")
-            break
+        res = server.send_action(session_id, action)
+        if not res: break
 
-        # Safety sleep to not spam server/api
+        # Record Global History for Learning
+        agent.history.append((board, action))
+        local_history.append((board, action))
+        
+        total_steps += 1
+
+        # Update State
+        board = res['board']
+        level_new = res['level']
+        
+        if res.get('status') == 'game_complete' or level_new != level:
+            print("🎉 Level Complete / Game Over")
+            games_played += 1
+            local_history = [] # Reset local history for new level
+            level = level_new
+            if config.mode == 'win' and res.get('status') == 'game_complete':
+                print("🏆 Victory!")
+                break
+        
         time.sleep(1)
+
+# --- Entry Point ---
+def main():
+    parser = argparse.ArgumentParser(description="PuzzleScript LLM Client")
+    parser.add_argument("--mode", choices=['win', 'learn'], default='win', help="Mode: 'win' to play, 'learn' to induce rules")
+    args = parser.parse_args()
+
+    config = Config(mode=args.mode)
+    server = GameServer(config.server_url)
+    agent = LLMAgent(config)
+    
+    run_game_loop(config, server, agent)
 
 if __name__ == "__main__":
     main()
