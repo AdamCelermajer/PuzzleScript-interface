@@ -36,7 +36,7 @@ class Server:
             r.raise_for_status()
             return r.json()
         except Exception as e:
-            print(f"❌ {e}")
+            print(f"Error: {e}")
             return None
 
     def init(self, game: str) -> Optional[dict]:
@@ -67,10 +67,10 @@ class Agent:
                 model=self.cfg.model,
                 contents=f"{system}\n\n{prompt}"
             )
-            print(f"⏱️  {time.time()-t:.1f}s")
+            print(f"Response time: {time.time()-t:.1f}s")
             return r.text.strip() if r.text else "wait"
         except Exception as e:
-            print(f"❌ {e}")
+            print(f"Error: {e}")
             return "wait"
 
     def plan_subgoal(self, board: str, level: int, history: list) -> str:
@@ -90,7 +90,7 @@ class Agent:
             leg = ""
 
         goal_section = f"SUBGOAL: {subgoal}\n\n" if subgoal else ""
-        feedback = "⚠️ Last action FAILED!\n" if not board_changed else ""
+        feedback = "WARNING: Last action did not change the board state!\n" if not board_changed else ""
         
         prompt = f"{leg}{goal_section}{feedback}Board:\n{board}\n\nPick ONE: W/A/S/D/X/Z/R"
         response = self._call(sys, prompt)
@@ -120,24 +120,24 @@ def run(cfg: Config):
         'local': []
     }
     
-    print(f"🚀 {state['id']} | {cfg.mode.upper()}")
+    print(f"Started session {state['id']} in {cfg.mode.upper()} mode")
     
     subgoal = ""
     board_changed = True
     
     while True:
         if cfg.mode == 'learn' and state['steps'] >= cfg.max_steps:
-            print(f"\n� FINAL RULES:\n{agent.learn()}")
+            print(f"\n Final rules:\n{agent.learn()}")
             break
         
         # Plan subgoal every 5 moves
         if state['steps'] % 5 == 0 and state['steps'] > 0:
-            print("🎯 Planning subgoal...")
+            print("Planning next subgoal...")
             subgoal = agent.plan_subgoal(state['board'], state['level'], state['local'])
-            print(f"💭 {subgoal}\n")
+            print(f"Subgoal: {subgoal}\n")
         
         action = agent.act(state['board'], state['level'], state['legend'], state['local'], subgoal, board_changed)
-        print(f"💡 {action}")
+        print(f"Action: {action}")
         
         if action.lower() == "wait":
             time.sleep(2)
@@ -156,16 +156,16 @@ def run(cfg: Config):
         # Track if board changed
         board_changed = (prev_board != state['board'])
         if not board_changed:
-            print("⚠️  Board unchanged!")
+            print("Warning: Board state unchanged")
         
         if res.get('status') == 'game_complete' or res['level'] != state['level']:
-            print("🎉 Level complete!")
+            print("Level complete!")
             state['local'] = []
             state['level'] = res['level']
             board_changed = True
             subgoal = ""  # Reset subgoal for new level
             if cfg.mode == 'win' and res.get('status') == 'game_complete':
-                print("🏆 Win!")
+                print("Game completed successfully!")
                 break
         
         time.sleep(1)
