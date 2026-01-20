@@ -1,185 +1,182 @@
 import os
-import requests
-import json
 import time
-import argparse
-from typing import List, Dict, Any, Optional
-from dataclasses import dataclass
+from argparse import ArgumentParser
+from dataclasses import dataclass, field
+from typing import Any, Optional
+
+import requests
 from dotenv import load_dotenv
 from google import genai
 
-# --- Configuration & Setup ---
 load_dotenv()
+
 
 @dataclass
 class Config:
     server_url: str = "http://localhost:3000"
-    api_key: str = os.getenv("GOOGLE_API_KEY")
-    model_name: str = "gemini-2.0-flash-lite-preview-02-05"
-    game_name: str = "sokoban-basic"
-    mode: str = "win" # 'win' or 'learn'
-    learning_games_limit: int = 5
-    learning_steps_limit: int = 10
+    model: str = "gemini-2.0-flash-lite-preview-02-05"
+    game: str = "sokoban-basic"
+    mode: str = "learn"
+    max_steps: int = 50
+    show_legend: bool = False
+    api_key: str = field(default_factory=lambda: os.getenv("GOOGLE_API_KEY", ""))
 
     def __post_init__(self):
         if not self.api_key:
-            raise ValueError("❌ Error: GOOGLE_API_KEY not found in .env file.")
+            raise ValueError("GOOGLE_API_KEY not found")
 
-# --- API Interaction ---
-class GameServer:
+
+class Server:
     def __init__(self, url: str):
         self.url = url
 
-    def init_game(self, game_name: str) -> Optional[Dict[str, Any]]:
+    def _post(self, endpoint: str, data: dict) -> Optional[dict]:
         try:
-            res = requests.post(f"{self.url}/init", json={"gameName": game_name})
-            res.raise_for_status()
-            return res.json()
+            r = requests.post(f"{self.url}/{endpoint}", json=data, timeout=10)
+            r.raise_for_status()
+            return r.json()
         except Exception as e:
-            print(f"❌ Connection Error: {e}")
+            print(f"❌ {e}")
             return None
 
-    def send_action(self, session_id: str, action: str) -> Optional[Dict[str, Any]]:
-        try:
-            res = requests.post(f"{self.url}/action", json={"sessionId": session_id, "action": action})
-            res.raise_for_status()
-            return res.json()
-        except Exception as e:
-            print(f"❌ Action Error: {e}")
-            return None
+    def init(self, game: str) -> Optional[dict]:
+        return self._post("init", {"gameName": game})
 
-# --- LLM Agent ---
-class LLMAgent:
+    def action(self, session: str, action: str) -> Optional[dict]:
+        return self._post("action", {"sessionId": session, "action": action})
+
+
+class Agent:
     def __init__(self, config: Config):
-        self.client = genai.Client(api_key=config.api_key)
-        self.model = config.model_name
-        self.history: List[tuple] = [] # Stores (board_state, action_taken)
+        self.cfg = config
+        self.llm = genai.Client(api_key=config.api_key)
+        self.history: list[tuple[str, str]] = []
 
-    def _call_llm(self, prompt: str, instructions: str) -> str:
+    def _parse_action(self, text: str) -> str:
+        """Extract first valid action letter from LLM output."""
+        valid = {'W', 'A', 'S', 'D', 'X', 'Z', 'R', 'w', 'a', 's', 'd', 'x', 'z', 'r'}
+        for char in text:
+            if char in valid:
+                return char.upper()
+        return "wait"
+
+    def _call(self, system: str, prompt: str) -> str:
         try:
-            print(f"⏳ Calling {self.model}...")
-            start = time.time()
-            
-            # Combine instructions and prompt since generate_content suggests a single 'contents' or separate system instruction if supported
-            # The snippet provided uses 'contents'. We can prepend instructions to content or check SDK for system_instruction.
-            # Assuming simple content usage for now based on snippet "contents=".
-            
-            full_prompt = f"{instructions}\n\n{prompt}"
-            
-            response = self.client.models.generate_content(
-                model=self.model,
-                contents=full_prompt,
+            t = time.time()
+            r = self.llm.models.generate_content(
+                model=self.cfg.model,
+                contents=f"{system}\n\n{prompt}"
             )
-            
-            print(f"✅ Response in {time.time() - start:.2f}s")
-            return response.text.strip() if response.text else ""
+            print(f"⏱️  {time.time()-t:.1f}s")
+            return r.text.strip() if r.text else "wait"
         except Exception as e:
-            print(f"❌ LLM Error: {e}")
+            print(f"❌ {e}")
             return "wait"
 
-    def get_action(self, board: str, level: int, legend: Dict, game_history: List) -> str:
-        history_str = "\n".join([f"Step {i+1}: Action {a}\n{b}" for i, (b, a) in enumerate(game_history[-5:])]) # Keep context short?
+    def plan_subgoal(self, board: str, level: int, history: list) -> str:
+        recent = "\n".join(f"{i+1}. {a}" for i, (b, a) in enumerate(history[-5:]))
+        sys = "You are planning the next subgoal in a puzzle game."
+        prompt = f"Board:\n{board}\n\nRecent actions:\n{recent}\n\nWhat should be your NEXT immediate subgoal? (1 sentence)"
+        return self._call(sys, prompt)
+
+    def act(self, board: str, level: int, legend: dict, local: list, subgoal: str = "", board_changed: bool = True) -> str:
+        hist = "\n".join(f"{i+1}. {a}\n{b}" for i, (b, a) in enumerate(local[-3:]))
         
-        prompt = f"""
-            **Level {level}**
-            **Legend**: {json.dumps(legend, indent=2)}
-            **History (Last 5 moves)**:
-            {history_str}
+        if self.cfg.show_legend:
+            sys = "Output ONLY a single letter. No explanations. No reasoning. Just the letter."
+            leg = f"Legend: {legend}\n"
+        else:
+            sys = "Output ONLY a single letter. No explanations. No reasoning. Just the letter."
+            leg = ""
 
-            **Current Board**:
-            {board}
-
-            **Controls**: W/A/S/D (Move), X (Action), Z (Undo), R (Restart)
-            Output ONLY the single-letter command.
-            """
-        return self._call_llm(prompt, "You are a PuzzleScript expert. Solve the level.")
-
-    def induce_rules(self) -> str:
-        print("🧠 Inducing rules from observed gameplay...")
-        # Compile all history into a summary (sampling to avoid context limit if needed)
-        combined_history = ""
-        for i, (board, action) in enumerate(self.history[:50]): # First 50 steps as sample
-            combined_history += f"State {i}:\n{board}\nAction: {action}\n\n"
+        goal_section = f"SUBGOAL: {subgoal}\n\n" if subgoal else ""
+        feedback = "⚠️ Last action FAILED!\n" if not board_changed else ""
         
-        prompt = f"""
-            Below is a log of gameplay from a 2D grid puzzle game.
-            Based ONLY on these observations, deduce the mechanics and rules of the game.
-            - How do objects move?
-            - What happens when objects collide?
-            - What is the win condition?
+        prompt = f"{leg}{goal_section}{feedback}Board:\n{board}\n\nPick ONE: W/A/S/D/X/Z/R"
+        response = self._call(sys, prompt)
+        return self._parse_action(response)
 
-            Gameplay Log:
-            {combined_history}
-            """
-        return self._call_llm(prompt, "You are a game mechanics researcher. specific rules.")
+    def learn(self) -> str:
+        log = "\n\n".join(f"{i}. {b}\nAction: {a}" for i, (b, a) in enumerate(self.history[:50]))
+        sys = "Analyze this puzzle game log and deduce the rules."
+        prompt = f"Gameplay:\n{log}\n\nDeduce:\n- Movement rules\n- Collision behavior\n- Win condition"
+        return self._call(sys, prompt)
 
-# --- Game Loops ---
-def run_game_loop(config: Config, server: GameServer, agent: LLMAgent):
-    data = server.init_game(config.game_name)
-    if not data: return
+
+def run(cfg: Config):
+    srv = Server(cfg.server_url)
+    agent = Agent(cfg)
     
-    session_id = data['sessionId']
-    board = data['board']
-    level = data['level']
-    legend = data['legend']
+    data = srv.init(cfg.game)
+    if not data:
+        return
     
-    games_played = 0
-    total_steps = 0
-    local_history = [] 
-
-    print(f"🚀 Started Session: {session_id} | Mode: {config.mode.upper()}")
-
+    state = {
+        'id': data['sessionId'],
+        'board': data['board'],
+        'level': data['level'],
+        'legend': data['legend'],
+        'steps': 0,
+        'local': []
+    }
+    
+    print(f"🚀 {state['id']} | {cfg.mode.upper()}")
+    
+    subgoal = ""
+    board_changed = True
+    
     while True:
-        # Check termination for learning mode
-        if config.mode == 'learn' and total_steps >= config.learning_steps_limit:
-            print("🛑 Step limit reached.")
-            rules = agent.induce_rules()
-            print("\n📜 **INDUCED RULES:**")
-            print(rules)
+        if cfg.mode == 'learn' and state['steps'] >= cfg.max_steps:
+            print(f"\n� FINAL RULES:\n{agent.learn()}")
             break
-
-        action = agent.get_action(board, level, legend, local_history)
-        print(f"💡 Action: {action}")
-
+        
+        # Plan subgoal every 5 moves
+        if state['steps'] % 5 == 0 and state['steps'] > 0:
+            print("🎯 Planning subgoal...")
+            subgoal = agent.plan_subgoal(state['board'], state['level'], state['local'])
+            print(f"💭 {subgoal}\n")
+        
+        action = agent.act(state['board'], state['level'], state['legend'], state['local'], subgoal, board_changed)
+        print(f"💡 {action}")
+        
         if action.lower() == "wait":
             time.sleep(2)
             continue
-
-        res = server.send_action(session_id, action)
-        if not res: break
-
-        # Record Global History for Learning
-        agent.history.append((board, action))
-        local_history.append((board, action))
         
-        total_steps += 1
-
-        # Update State
-        board = res['board']
-        level_new = res['level']
+        prev_board = state['board']
+        res = srv.action(state['id'], action)
+        if not res:
+            break
         
-        if res.get('status') == 'game_complete' or level_new != level:
-            print("🎉 Level Complete / Game Over")
-            games_played += 1
-            local_history = [] # Reset local history for new level
-            level = level_new
-            if config.mode == 'win' and res.get('status') == 'game_complete':
-                print("🏆 Victory!")
+        agent.history.append((state['board'], action))
+        state['local'].append((state['board'], action))
+        state['steps'] += 1
+        state['board'] = res['board']
+        
+        # Track if board changed
+        board_changed = (prev_board != state['board'])
+        if not board_changed:
+            print("⚠️  Board unchanged!")
+        
+        if res.get('status') == 'game_complete' or res['level'] != state['level']:
+            print("🎉 Level complete!")
+            state['local'] = []
+            state['level'] = res['level']
+            board_changed = True
+            subgoal = ""  # Reset subgoal for new level
+            if cfg.mode == 'win' and res.get('status') == 'game_complete':
+                print("🏆 Win!")
                 break
         
         time.sleep(1)
 
-# --- Entry Point ---
-def main():
-    parser = argparse.ArgumentParser(description="PuzzleScript LLM Client")
-    parser.add_argument("--mode", choices=['win', 'learn'], default='win', help="Mode: 'win' to play, 'learn' to induce rules")
-    args = parser.parse_args()
 
-    config = Config(mode=args.mode)
-    server = GameServer(config.server_url)
-    agent = LLMAgent(config)
-    
-    run_game_loop(config, server, agent)
+def main():
+    p = ArgumentParser()
+    p.add_argument("--mode", choices=['win', 'learn'], default='learn')
+    cfg = Config(mode=p.parse_args().mode)
+    run(cfg)
+
 
 if __name__ == "__main__":
     main()

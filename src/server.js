@@ -16,14 +16,15 @@ app.use((req, res, next) => {
 const gameSessions = new Map();
 
 // Logging Helper
-function logHistory(sessionId, level, action, board) {
+function logHistory(sessionId, level, action, board, boardJSON) {
     try {
         const entry = JSON.stringify({
             timestamp: new Date().toISOString(),
             sessionId,
             level,
             action,
-            board
+            board,
+            boardJSON
         });
         fs.appendFileSync('game_history.jsonl', entry + '\n');
     } catch (e) {
@@ -290,7 +291,7 @@ app.post('/init', (req, res) => {
         const boardJSON = session.renderJSON();
 
         // Log Init
-        logHistory(sessionId, session.engine.currentLevelNum + 1, "INIT", boardRender);
+        logHistory(sessionId, session.engine.currentLevelNum + 1, "INIT", boardRender, boardJSON);
 
         // --- SERVER SIDE RENDERING ---
         console.clear();
@@ -383,7 +384,7 @@ app.post('/action', async (req, res) => {
         const currentLevelInfo = session.engine.currentLevelNum + 1;
 
         // Log Action
-        logHistory(sessionId, currentLevelInfo, action, boardRender);
+        logHistory(sessionId, currentLevelInfo, action, boardRender, session.renderJSON());
 
         // --- SERVER SIDE RENDERING ---
         console.clear();

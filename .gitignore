@@ -122,3 +122,4 @@ debug_*.js
 game_history.jsonl
 project.md
 
+__pycache__
