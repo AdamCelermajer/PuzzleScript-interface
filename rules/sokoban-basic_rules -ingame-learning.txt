@@ -1,0 +1,22 @@
+IF action 'S' changed the board, and the player was at '*' on the previous board, and the player is at '.' on the current board, THEN the player has moved.
+IF action 'S' did not change the board, then the player has not moved.
+IF action 'X' did not change the board, then the player has not moved.
+IF action 'D' did not change the board, then the player has not moved.
+IF action 'D' changed the board, and the player was at '.' on the previous board, and the player is '.' on the current board, THEN the player has not moved.
+IF action 'D' changed the board, and the player was at 'P' on the previous board, and the player is at 'P' on the current board, THEN the player has not moved.
+IF the player is at 'P' on the previous board, and the player is at 'P' on the current board, then the player has not moved.
+IF the action is 'S' and the player is at 'P' and there is a '#' below the player, then the player has not moved.
+IF the action is 'S' and the player is at 'P' and there is a '*' below the player, then the player has not moved.
+IF the action is 'S' and the player is at 'P' and the board did not change, then the player has not moved.
+IF action 'A' did not change the board, then the player has not moved.
+IF action 'A' changed the board, and the player was at 'P' on the previous board, and the player is at 'P' on the current board, THEN the player has not moved.
+IF the action is 'A' and the player is at 'P' and the board did not change, then the player has not moved.
+IF action 'D' and the player is at 'P' and the board did not change, then the player has not moved.
+IF action 'X' and the player is at 'P' and the board did not change, then the player has not moved.
+IF action 'D' changed the board, and the player was at 'P' on the previous board, and the player is '.' on the current board, THEN the player has moved.
+IF action 'D' changed the board, and the player was at '.' on the previous board, and the player is 'P' on the current board, THEN the player has moved.
+IF action 'D' changed the board, and the player was at 'P' on the previous board, and the player is at '*' on the current board, THEN the player has moved.
+IF action 'D' changed the board, and the player was at '*' on the previous board, and the player is at 'P' on the current board, THEN the player has moved.
+IF action 'A' changed the board, and the player was at 'P' on the previous board, and the player is at '*' on the current board, THEN the player has moved.
+IF action 'A' changed the board, and the player was at '*' on the previous board, and the player is at 'P' on the current board, THEN the player has moved.
+IF action 'D' changed the board, and the player was at '*' on the previous board, and the player is '.' on the current board, THEN the player has not moved.

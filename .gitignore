@@ -120,6 +120,5 @@ debug_*.js
 # game history
 
 game_history.jsonl
-project.md
 
 __pycache__

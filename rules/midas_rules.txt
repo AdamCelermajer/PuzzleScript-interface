@@ -1,0 +1,15 @@
+D moves the player 'P' one step to the right.
+A moves the player 'P' one step to the left.
+S moves the player 'P' one step down.
+'#' is an impassable object.
+'G' is a passable object.
+W moves the player 'P' one step up.
+'T' is a passable object.
+L is a passable object.
+The player 'P' can occupy a cell containing 'G'.
+The player 'P' does not move when attempting to move into a cell that does not exist.
+The player 'P' does not move when attempting to move into a cell containing '#'.
+The player 'P' can occupy a cell containing 'T'.
+The player 'P' can occupy a cell containing 'L'.
+The player 'P' can occupy a cell containing 'W'.
+C is an object that blocks movement.

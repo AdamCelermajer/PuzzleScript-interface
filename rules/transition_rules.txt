@@ -1,0 +1,15 @@
+D moves the player right.
+A moves the player left.
+S moves the player down.
+W moves the player up.
+'.' is a passable object.
+'#' is an impassable object.
+'O' is a passable object.
+'g' is a passable object.
+'*' is a passable object.
+'%' is a passable object.
+'z' is a passable object.
+The player can move to the location of 'g'.
+The player can move to the location of '*'.
+The player can move to the location of '%'.
+The player can move to the location of 'z'.
