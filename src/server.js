@@ -32,9 +32,18 @@ function logHistory(sessionId, level, action, board, boardJSON) {
     }
 }
 
-function formatIntGrid(grid) {
-    if (!grid || grid.length === 0) return "[]";
-    return grid.map(row => "  " + JSON.stringify(row)).join('\n');
+function formatSideBySide(asciiStr, intGrid) {
+    if (!intGrid || intGrid.length === 0) return asciiStr;
+    const asciiLines = asciiStr.trim().split('\n');
+    const maxLen = Math.max(...asciiLines.map(l => l.length));
+    
+    let out = [];
+    for (let i = 0; i < Math.max(asciiLines.length, intGrid.length); i++) {
+        let left = asciiLines[i] || "";
+        let right = intGrid[i] ? JSON.stringify(intGrid[i]) : "";
+        out.push(left.padEnd(maxLen + 4, ' ') + right);
+    }
+    return out.join('\n');
 }
 
 class SessionHandler extends EmptyGameEngineHandler {
@@ -380,7 +389,7 @@ app.post('/init', (req, res) => {
         // --- SERVER SIDE RENDERING ---
         console.clear();
         console.log(`Game Initialized: ${gameName || 'unknown'}`);
-        console.log(formatIntGrid(session.renderIntGrid()));
+        console.log(formatSideBySide(boardRender, session.renderIntGrid()));
         console.log('='.repeat(40));
         // -----------------------------
 
@@ -481,7 +490,7 @@ app.post('/action', async (req, res) => {
         console.log(`Action: ${action.toUpperCase()}`);
         if (message) console.log(`📢 ${message}`);
         console.log(`Level ${currentLevelInfo}`);
-        console.log(formatIntGrid(session.renderIntGrid()));
+        console.log(formatSideBySide(boardRender, session.renderIntGrid()));
         console.log('='.repeat(40));
         // -----------------------------
 

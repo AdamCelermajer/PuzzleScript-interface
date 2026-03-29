@@ -1,19 +1,18 @@
 import json
 import os
 import time
-from argparse import ArgumentParser
-from dataclasses import dataclass, field
-from datetime import UTC, datetime
 from typing import Optional
+from dataclasses import dataclass, field
 
-from llm_client import Config, LlmClient
-from env_adapter import PuzzleScriptEnv, GameAction, GameState, FrameData
-import prompts
-from utils import format_frames, extract_json
+from .llm_client import Config, LlmClient
+from .types import GameAction, GameState, FrameData
+from . import prompts
+from .utils import format_frames, extract_json
+from envs.base_env import BaseEnv
 
 
 class Agent:
-    """LLM-driven learner that infers rules from board transitions."""
+    """LLM-driven agent capable of both learning rules and solving environments."""
 
     def __init__(self, config: Config, llm_client: LlmClient) -> None:
         """Initialize learner state, rule storage, and inference memory."""
@@ -29,7 +28,6 @@ class Agent:
         self._load_state_from_file()
 
     def _unique_rules(self, rules: list[str]) -> list[str]:
-        """Return rules with duplicates removed while preserving order."""
         seen: set[str] = set()
         unique: list[str] = []
         for rule in rules:
@@ -40,7 +38,6 @@ class Agent:
         return unique
 
     def _get_known_rules_text(self, prefix: str = "KNOWN RULES:") -> str:
-        """Format the grouped rules into a string block."""
         if not self.known_rules:
             return ""
         text = f"{prefix}\n"
@@ -52,7 +49,6 @@ class Agent:
         return text.strip()
 
     def infer_legend(self, history: list[tuple[FrameData, GameAction, FrameData]]) -> None:
-        """Infer symbol roles from observed before/after transitions."""
         history_log = "\n\n".join(
             (
                 f"Step {i + 1}:\nAction: {action.name}\nBefore:\n{format_frames(prev_frame.frame)}\n"
@@ -72,7 +68,6 @@ class Agent:
             print(f"Could not parse inferred legend: {response} ERROR: {e}")
 
     def _load_state_from_file(self) -> None:
-        """Load previously deduced rules from disk if available."""
         if not os.path.exists(self.rules_file):
             return
 
@@ -102,9 +97,7 @@ class Agent:
                 self.known_rules[category] = rules
 
     def _save_rules(self, rules: dict[str, list[str]]) -> None:
-        """Persist the current rule set with metadata header."""
         legend_str = json.dumps(self.inferred_legend, indent=2) if self.inferred_legend else "{}"
-        
         with open(self.rules_file, "w", encoding="utf-8") as file:
             file.write("legendes:\n")
             file.write(f"{legend_str}\n\n")
@@ -129,7 +122,6 @@ class Agent:
         history: list[tuple[FrameData, GameAction, FrameData]],
         rule_focus: Optional[str] = None,
     ) -> bool:
-        """Deduce new rules from recent transition events."""
         events = ""
         for i, (prev_frame, action, next_frame) in enumerate(history):
             events += (
@@ -183,26 +175,21 @@ class Agent:
                         
                     exists = any(cleaned_rule in cat_rules for cat_rules in self.known_rules.values())
                     if not exists:
-                        if not added_any_rule:
-                            print("--- New Rules Deduced ---")
+                        if not added_any_rule: print("--- New Rules Deduced ---")
                         print(f'- [{category}] {cleaned_rule}')
                         self.known_rules[category].append(cleaned_rule)
                         added_any_rule = True
 
             if added_any_rule or state_changed:
                 self._save_rules(self.known_rules)
-                if added_any_rule:
-                    print("------------------------")
+                if added_any_rule: print("------------------------")
             return added_any_rule
         except json.JSONDecodeError:
             print(f"Could not parse rules from response: {response}")
             return False
 
     def compress_rules(self) -> bool:
-        """Compress known rules into a smaller equivalent set."""
-        if not self.known_rules:
-            return False
-
+        if not self.known_rules: return False
         known_rules_text = self._get_known_rules_text("KNOWN RULES:")
         sys_prompt, user_prompt = prompts.get_compress_rules_prompt(known_rules_text)
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro")
@@ -210,18 +197,13 @@ class Agent:
         try:
             data = json.loads(extract_json(response))
             compressed_dict = data.get("compressed_rules", {})
-            if not isinstance(compressed_dict, dict):
-                print(f"Invalid compression payload: {response}")
-                return False
+            if not isinstance(compressed_dict, dict): return False
 
             cleaned_compressed = {}
             for category, rules in compressed_dict.items():
                 if isinstance(rules, list):
-                    unique_rules = self._unique_rules(
-                        [r.strip() for r in rules if isinstance(r, str) and r.strip()]
-                    )
-                    if unique_rules:
-                        cleaned_compressed[category] = unique_rules
+                    unique_rules = self._unique_rules([r.strip() for r in rules if isinstance(r, str) and r.strip()])
+                    if unique_rules: cleaned_compressed[category] = unique_rules
 
             if cleaned_compressed and cleaned_compressed != self.known_rules:
                 print("Applied compressed rule set.")
@@ -230,11 +212,9 @@ class Agent:
                 return True
             return False
         except json.JSONDecodeError:
-            print(f"Could not parse compressed rules response: {response}")
             return False
 
     def refine_and_complete_rules_and_legend(self) -> None:
-        """Run final consolidation and infer a legend hypothesis."""
         history_log = "\n\n".join(
             (
                 f"Step {i + 1}:\nAction: {action.name}\nBoard state before action:\n{format_frames(prev_frame.frame)}\n"
@@ -243,7 +223,6 @@ class Agent:
             for i, (prev_frame, action, next_frame) in enumerate(self.history)
         )
         known_rules_text = self._get_known_rules_text("Rules deduced so far:")
-
         sys_prompt, user_prompt = prompts.get_refine_rules_prompt(known_rules_text, history_log, game_name=self.cfg.game)
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro")
 
@@ -259,21 +238,17 @@ class Agent:
             if final_rules and isinstance(final_rules, dict):
                 print("\n--- Final Rules and Legend ---")
                 print("Legend:", self.inferred_legend)
-                if self.inferred_final_goal:
-                    print("Final Goal:", self.inferred_final_goal)
+                if self.inferred_final_goal: print("Final Goal:", self.inferred_final_goal)
                 
                 self.known_rules = {}
                 for category, rules in final_rules.items():
                     if isinstance(rules, list):
                         valid_rules = [r for r in rules if isinstance(r, str) and r.strip()]
-                        if valid_rules:
-                            self.known_rules[category] = valid_rules
+                        if valid_rules: self.known_rules[category] = valid_rules
                 
-                print("Rules:")
                 for category, rules in self.known_rules.items():
                     print(f'"{category}":')
-                    for r in rules:
-                        print(f"  {r}")
+                    for r in rules: print(f"  {r}")
                         
                 self._save_rules(self.known_rules)
                 print("-----------------------------")
@@ -283,19 +258,16 @@ class Agent:
             print(f"Could not parse final deduction response: {response}")
 
     def _parse_action(self, text: str) -> GameAction:
-        """Extract the action from LLM output (e.g. ACTION1)."""
         text = text.strip().upper()
-        # Ensure it maps to the correct enum, or fallback
         if "ACTION1" in text or "W" in text: return GameAction.ACTION1
         if "ACTION2" in text or "S" in text: return GameAction.ACTION2
         if "ACTION3" in text or "A" in text: return GameAction.ACTION3
         if "ACTION4" in text or "D" in text: return GameAction.ACTION4
         if "ACTION5" in text or "X" in text: return GameAction.ACTION5
         if "RESET" in text or "R" in text: return GameAction.RESET
-        return GameAction.ACTION5 # default/wait fallback
+        return GameAction.ACTION5
 
     def _clean_subgoal(self, text: str) -> str:
-        """Normalize LLM subgoal output into one plain sentence line."""
         source = text.strip()
         lower_source = source.lower()
         markers = ["**subgoal:**", "subgoal:"]
@@ -308,26 +280,19 @@ class Agent:
                 start_index = idx
                 marker_length = len(marker)
 
-        if start_index != -1:
-            source = source[start_index + marker_length :]
-
-        for symbol in ("*", "#", "_"):
-            source = source.replace(symbol, "")
+        if start_index != -1: source = source[start_index + marker_length :]
+        for symbol in ("*", "#", "_"): source = source.replace(symbol, "")
 
         for line in source.splitlines():
             cleaned = line.strip()
-            if cleaned:
-                return cleaned
-
+            if cleaned: return cleaned
         fallback = source.strip()
         return fallback if fallback else "Explore a new interaction."
 
     def plan_subgoal(self, frame_data: FrameData, history: list[tuple[FrameData, GameAction, FrameData]]) -> str:
-        """Plan the next exploratory subgoal from current context."""
         recent = "\n".join(f"{i + 1}. {action.name}" for i, (_, action, _) in enumerate(history[-5:]))
         flat_rules = []
-        for cat_rules in self.known_rules.values():
-            flat_rules.extend(cat_rules)
+        for cat_rules in self.known_rules.values(): flat_rules.extend(cat_rules)
 
         sys_prompt, user_prompt = prompts.get_plan_subgoal_prompt(
             format_frames(frame_data.frame),
@@ -338,8 +303,7 @@ class Agent:
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
         return self._clean_subgoal(response)
 
-    def act(self, frame_data: FrameData, local: list[tuple[FrameData, GameAction, FrameData]], subgoal: str = "") -> GameAction:
-        """Choose one action for learning without receiving any legend input."""
+    def act_learn(self, frame_data: FrameData, local: list[tuple[FrameData, GameAction, FrameData]], subgoal: str = "") -> GameAction:
         hist = "\n".join(
             f"- {action.name} (Board unchanged: {prev_frame.frame == next_frame.frame})"
             for prev_frame, action, next_frame in local[-5:]
@@ -355,8 +319,17 @@ class Agent:
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
         return self._parse_action(response)
 
+    def act_solve(self, frame_data: FrameData, legend: dict, local: list) -> GameAction:
+        sys_prompt, user_prompt = prompts.get_solving_act_prompt(
+            format_frames(frame_data.frame), 
+            legend, 
+            [], 
+            self.cfg.show_legend
+        )
+        response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
+        return self._parse_action(response)
+
     def run_periodic_analysis(self, frame_data: FrameData) -> str:
-        """Run deduction, compression, and subgoal planning every analysis cycle."""
         history_window = self.history[-5:]
         if history_window and any(prev.frame != next_f.frame for prev, _, next_f in history_window):
             print("Deducing rules from history...")
@@ -375,18 +348,12 @@ class Agent:
 
 @dataclass
 class RunState:
-    """Mutable runtime state for a learning session."""
     frame_data: FrameData
     steps: int = 0
     local: list[tuple[FrameData, GameAction, FrameData]] = field(default_factory=list)
 
 
-def run_learning_mode(cfg: Config) -> None:
-    """Run the interactive learn loop until completion or max steps."""
-    env = PuzzleScriptEnv(cfg.game, cfg.server_url)
-    llm_client = LlmClient(cfg)
-    agent = Agent(cfg, llm_client)
-
+def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
     try:
         frame_data = env.reset()
     except Exception as e:
@@ -394,8 +361,8 @@ def run_learning_mode(cfg: Config) -> None:
         return
 
     state = RunState(frame_data=frame_data)
-    print(f"Started session {env.session_id} in LEARN mode")
-    print(f"Legend mapping from server: {frame_data.legend}")
+    print(f"Started session {getattr(env, 'session_id', 'unknown')} in LEARN mode")
+    print(f"Legend mapping from env: {frame_data.legend}")
 
     subgoal = ""
     consecutive_unchanged = 0
@@ -405,7 +372,6 @@ def run_learning_mode(cfg: Config) -> None:
     while True:
         if state.steps >= cfg.max_steps:
             print("\nMax steps reached. Performing final analysis...")
-            print("Running final rule consolidation pass...")
             agent.refine_and_complete_rules_and_legend()
             break
 
@@ -413,26 +379,22 @@ def run_learning_mode(cfg: Config) -> None:
             subgoal = agent.run_periodic_analysis(state.frame_data)
             last_periodic_step = state.steps
 
-        action = agent.act(state.frame_data, state.local, subgoal)
+        action = agent.act_learn(state.frame_data, state.local, subgoal)
         print(f"Action: {action.name}")
 
         prev_frame = state.frame_data
-        
-        # Step the environment! This mimics ARC-Engine!
         next_frame = env.step(action)
 
         agent.history.append((prev_frame, action, next_frame))
         state.local.append((prev_frame, action, next_frame))
         state.frame_data = next_frame
 
-        board_changed = prev_frame.frame != next_frame.frame
-        if not board_changed:
+        if prev_frame.frame == next_frame.frame:
             print("Warning: Board state unchanged")
             consecutive_unchanged += 1
             if consecutive_unchanged >= 3:
                 print("Stuck — forcing reset")
-                reset_frame = env.step(GameAction.RESET)
-                state.frame_data = reset_frame
+                state.frame_data = env.step(GameAction.RESET)
                 state.local = []
                 subgoal = ""
                 consecutive_unchanged = 0
@@ -454,8 +416,6 @@ def run_learning_mode(cfg: Config) -> None:
             if cfg.mode == "win" and next_frame.state == GameState.WIN:
                 print("World completed successfully!")
                 break
-            
-            # Auto-reset if GAME_OVER ? PuzzleScript usually stops sending useful boards
             if next_frame.state == GameState.GAME_OVER:
                 print("Game Over... Resetting")
                 state.frame_data = env.step(GameAction.RESET)
@@ -463,11 +423,26 @@ def run_learning_mode(cfg: Config) -> None:
         time.sleep(1)
 
 
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    parser.add_argument("--game", type=str, default="sokoban-basic")
-    parser.add_argument("--max_steps", type=int, default=50)
-    arguments = parser.parse_args()
-
-    config = Config(game=arguments.game, max_steps=arguments.max_steps, mode="learn")
-    run_learning_mode(config)
+def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
+    frame_data = env.reset()
+    state = RunState(frame_data=frame_data)
+    
+    print(f"Started session {getattr(env, 'session_id', 'unknown')} in SOLVE mode")
+    
+    while True:
+        action = agent.act_solve(state.frame_data, state.frame_data.legend, state.local)
+        print(f"Action: {action.name}")
+        
+        next_frame = env.step(action)
+        state.local.append((state.frame_data, action, next_frame))
+        state.steps += 1
+        state.frame_data = next_frame
+        
+        if next_frame.state == GameState.WIN or next_frame.levels_completed != frame_data.levels_completed:
+            print("Level complete!")
+            state.local = []
+            if next_frame.state == GameState.WIN:
+                print("Game completed successfully!")
+                break
+        
+        time.sleep(1)
