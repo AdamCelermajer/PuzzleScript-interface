@@ -32,6 +32,11 @@ function logHistory(sessionId, level, action, board, boardJSON) {
     }
 }
 
+function formatIntGrid(grid) {
+    if (!grid || grid.length === 0) return "[]";
+    return grid.map(row => "  " + JSON.stringify(row)).join('\n');
+}
+
 class SessionHandler extends EmptyGameEngineHandler {
     constructor() {
         super();
@@ -74,6 +79,7 @@ class Session {
         this.handler = new SessionHandler();
         this.engine = new GameEngine(gameData, this.handler);
         this.renderList = this.buildRenderList(gameData);
+        this.buildIntMapping();
         // Start directly
         this.engine.setLevel(0);
     }
@@ -235,6 +241,84 @@ class Session {
         return displayLegend;
     }
 
+
+    buildIntMapping() {
+        const displayLegend = this.getDisplayLegend();
+        const mapping = {};
+        const intToName = {};
+        let currentInt = 0;
+        
+        if (displayLegend['.']) {
+            mapping['.'] = 0; intToName[0] = displayLegend['.']; currentInt = 1;
+        }
+        for (const [key, name] of Object.entries(displayLegend)) {
+            if (key !== '.' && mapping[key] === undefined) {
+                mapping[key] = currentInt; intToName[currentInt] = name; currentInt++;
+            }
+        }
+        if (mapping[' '] === undefined) { mapping[' '] = currentInt; intToName[currentInt] = "Empty"; currentInt++; }
+        if (mapping['?'] === undefined) { mapping['?'] = currentInt; intToName[currentInt] = "Unknown"; currentInt++; }
+
+        this.charToInt = mapping;
+        this.intToName = intToName;
+    }
+
+    getCellChar(cell) {
+        let bestChar = '.';
+        const cellSprites = cell.getSprites();
+        let found = false;
+        for (const sprite of cellSprites) {
+            const match = this.renderList.find(entry => {
+                const s = entry.tile.getSprites();
+                if (!s.includes(sprite)) return false;
+                const isOr = entry.tile.isOr ? entry.tile.isOr() : false;
+                const present = cell.getSprites();
+                if (isOr) { return s.some(es => present.includes(es)); }
+                else { return s.every(es => present.includes(es)); }
+            });
+            if (match) { bestChar = match.key; found = true; break; }
+            else {
+                if (sprite === cellSprites[0] && sprite.getName().toLowerCase() !== 'background') {
+                    const name = sprite.getName().toLowerCase();
+                    if (name.includes('spawn')) break;
+                    bestChar = sprite.getName().charAt(0).toUpperCase();
+                    found = true;
+                    break;
+                }
+            }
+        }
+        return bestChar;
+    }
+
+    renderRawGrid() {
+        let cells = null;
+        try { cells = this.engine.getCurrentLevelCells(); } catch(e) { return null; }
+        if (!cells || cells.length === 0) return null;
+        const height = cells.length;
+        const width = cells[0].length;
+        const grid = [];
+        for (let y = 0; y < height; y++) {
+            const row = [];
+            for (let x = 0; x < width; x++) {
+                row.push(this.getCellChar(cells[y][x]));
+            }
+            grid.push(row);
+        }
+        return grid;
+    }
+
+    renderIntGrid() {
+        const grid = this.renderRawGrid();
+        if (!grid) return []; // Fallback empty
+        return grid.map(row => row.map(char => {
+            if (this.charToInt[char] === undefined) {
+               this.charToInt[char] = Object.keys(this.charToInt).length;
+               this.intToName[this.charToInt[char]] = char;
+            }
+            return this.charToInt[char];
+        }));
+    }
+
     renderJSON() {
         let cells = null;
         try {
@@ -296,17 +380,18 @@ app.post('/init', (req, res) => {
         // --- SERVER SIDE RENDERING ---
         console.clear();
         console.log(`Game Initialized: ${gameName || 'unknown'}`);
-        console.log(boardRender);
+        console.log(formatIntGrid(session.renderIntGrid()));
         console.log('='.repeat(40));
         // -----------------------------
 
         res.json({
             sessionId,
-            board: boardRender,
-            boardJSON,
-            level: 1,
-            legend: session.getDisplayLegend(),
-            totalLevels: data.levels.length
+            frame: [session.renderIntGrid()],
+            state: "PLAYING",
+            levels_completed: 0,
+            win_levels: data.levels.length,
+            legend: session.intToName,
+            available_actions: ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"]
         });
 
     } catch (e) {
@@ -324,18 +409,21 @@ app.post('/action', async (req, res) => {
         // Map input
         let dir = null;
         const a = action.toLowerCase();
-        if (a === 'up' || a === 'w') dir = INPUT_BUTTON.UP;
-        else if (a === 'down' || a === 's') dir = INPUT_BUTTON.DOWN;
-        else if (a === 'left' || a === 'a') dir = INPUT_BUTTON.LEFT;
-        else if (a === 'right' || a === 'd') dir = INPUT_BUTTON.RIGHT;
-        else if (a === 'r' || a === 'reset') dir = INPUT_BUTTON.RESTART;
+        if (a === 'action1' || a === 'up' || a === 'w') dir = INPUT_BUTTON.UP;
+        else if (a === 'action2' || a === 'down' || a === 's') dir = INPUT_BUTTON.DOWN;
+        else if (a === 'action3' || a === 'left' || a === 'a') dir = INPUT_BUTTON.LEFT;
+        else if (a === 'action4' || a === 'right' || a === 'd') dir = INPUT_BUTTON.RIGHT;
+        else if (a === 'action5' || a === ' ' || a === 'action' || a === 'x') dir = INPUT_BUTTON.ACTION;
+        else if (a === 'reset' || a === 'r') dir = INPUT_BUTTON.RESTART;
         else if (a === 'z' || a === 'undo') dir = INPUT_BUTTON.UNDO;
-        else if (a === ' ' || a === 'action' || a === 'x') dir = INPUT_BUTTON.ACTION;
 
         session.handler.messages = []; // Clear old messages
 
         let status = 'playing';
         let message = '';
+        let framesList = [];
+        let arcState = 'PLAYING';
+        framesList.push(session.renderIntGrid()); // Capture pre-action frame? Actually, let's just capture post-action frames.
 
         if (dir) {
             if (dir === INPUT_BUTTON.RESTART) {
@@ -351,19 +439,20 @@ app.post('/action', async (req, res) => {
 
                 do {
                     const tickResult = await session.engine.tick();
+                    
+                    // Collect intermediate frame
+                    framesList.push(session.renderIntGrid());
 
                     // Check result
                     if (tickResult.didWinGame) {
-                        status = 'game_complete';
+                        status = 'GAME_OVER'; // Actually ARC-AGI uses WIN
                         message = "YOU WIN!";
+                        arcState = "WIN";
                         break;
                     }
-                    // didLevelChange is true if advanced level
                     if (tickResult.didLevelChange && !tickResult.didWinGame) {
-                        // Level advanced
                         message = "Level Complete";
-                        // If message level, it might have already advanced in tick?
-                        break; // Stop animating; return the new level (or message) state immediately
+                        break;
                     }
 
                     ticks++;
@@ -378,6 +467,7 @@ app.post('/action', async (req, res) => {
         if (session.handler.won) {
             status = 'game_complete';
             message = "YOU WIN THE GAME!";
+            arcState = "WIN";
         }
 
         const boardRender = session.render();
@@ -391,16 +481,15 @@ app.post('/action', async (req, res) => {
         console.log(`Action: ${action.toUpperCase()}`);
         if (message) console.log(`📢 ${message}`);
         console.log(`Level ${currentLevelInfo}`);
-        console.log(boardRender);
+        console.log(formatIntGrid(session.renderIntGrid()));
         console.log('='.repeat(40));
         // -----------------------------
 
         res.json({
-            board: boardRender,
-            boardJSON: session.renderJSON(),
-            level: currentLevelInfo,
-            message,
-            status
+            frame: framesList,
+            state: arcState,
+            levels_completed: currentLevelInfo - 1,
+            available_actions: ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"]
         });
 
     } catch (e) {
@@ -416,10 +505,11 @@ app.get('/observe', (req, res) => {
         if (!session) return res.status(404).json({ error: "Session not found" });
 
         res.json({
-            board: session.render(),
-            boardJSON: session.renderJSON(),
-            level: session.engine.currentLevelNum + 1,
-            legend: session.getDisplayLegend()
+            frame: [session.renderIntGrid()],
+            state: session.handler.won ? "WIN" : "PLAYING",
+            levels_completed: session.engine.currentLevelNum,
+            legend: session.intToName,
+            available_actions: ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"]
         });
     } catch (e) {
         res.status(500).json({ error: e.message });

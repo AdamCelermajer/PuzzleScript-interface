@@ -2,4 +2,4 @@ requests
 openai
 python-dotenv
 
-google-genai
+litellm

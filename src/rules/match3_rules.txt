@@ -1,0 +1,4 @@
+# Game: match3 | Rules: 3 | Updated: 2026-03-11T12:21:58.679513Z
+IF the player moves right into '.', THEN the player moves right.
+IF the player moves right into 'O', THEN the player moves right and the 'O' disappears.
+IF the player moves up into '*', THEN the player does not move.

@@ -1,0 +1,19 @@
+// This file defines the main orchestration loop for the PuzzleScript learning agent.
+// It references the individual prompt definitions located in context.acdl.
+
+MainLoop[@T]: {
+    N: {
+        // Final pass: consolidate and refine all known rules and legend
+        If @T == env.max_steps {
+            prompt.RefineRules[@T]
+        }
+        
+        // Every 5th step, deduce rules from recent history and plan a new subgoal
+        If @T > 0 & @T % 5 == 0 {
+            prompt.DeduceRules[@T]
+            prompt.PlanSubgoal[@T]
+        }
+        
+        prompt.LearningAct[@T]
+    }
+}
