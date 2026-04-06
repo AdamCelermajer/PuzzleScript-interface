@@ -3,3 +3,5 @@ openai
 python-dotenv
 
 litellm
+fastapi
+uvicorn
