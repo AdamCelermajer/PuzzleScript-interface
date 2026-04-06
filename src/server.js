@@ -14,6 +14,7 @@ app.use((req, res, next) => {
 });
 
 const gameSessions = new Map();
+const AVAILABLE_ACTIONS = ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"];
 
 // Logging Helper
 function logHistory(sessionId, level, action, board, boardJSON) {
@@ -354,44 +355,120 @@ class Session {
     }
 }
 
+function newId(prefix) {
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function loadGameSourceByName(gameName) {
+    const gamePath = path.join(__dirname, '../games', gameName.endsWith('.txt') ? gameName : `${gameName}.txt`);
+    if (!fs.existsSync(gamePath)) {
+        return null;
+    }
+    return fs.readFileSync(gamePath, 'utf8');
+}
+
+function createSessionFromSource(gameSource) {
+    const normalizedSource = gameSource.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    const { data } = Parser.parse(normalizedSource);
+    const sessionId = newId("ps");
+    const session = new Session(sessionId, data);
+    gameSessions.set(sessionId, session);
+    return { sessionId, session, data };
+}
+
+function mapActionToButton(action) {
+    const a = String(action || "").toLowerCase();
+    if (a === 'action1' || a === 'up' || a === 'w' || a === '1') return INPUT_BUTTON.UP;
+    if (a === 'action2' || a === 'down' || a === 's' || a === '2') return INPUT_BUTTON.DOWN;
+    if (a === 'action3' || a === 'left' || a === 'a' || a === '3') return INPUT_BUTTON.LEFT;
+    if (a === 'action4' || a === 'right' || a === 'd' || a === '4') return INPUT_BUTTON.RIGHT;
+    if (a === 'action5' || a === ' ' || a === 'action' || a === 'x' || a === '5') return INPUT_BUTTON.ACTION;
+    if (a === 'reset' || a === 'r' || a === '7') return INPUT_BUTTON.RESTART;
+    if (a === 'z' || a === 'undo') return INPUT_BUTTON.UNDO;
+    return null;
+}
+
+async function executeAction(session, action) {
+    const dir = mapActionToButton(action);
+    const framesList = [session.renderIntGrid()];
+    let message = "";
+    let arcState = "PLAYING";
+
+    if (dir) {
+        session.handler.messages = [];
+        if (dir === INPUT_BUTTON.RESTART) {
+            session.engine.setLevel(session.engine.currentLevelNum);
+        } else {
+            session.engine.press(dir);
+            let ticks = 0;
+            const maxTicks = 50;
+            do {
+                const tickResult = await session.engine.tick();
+                framesList.push(session.renderIntGrid());
+                if (tickResult.didWinGame) {
+                    message = "YOU WIN!";
+                    arcState = "WIN";
+                    break;
+                }
+                if (tickResult.didLevelChange && !tickResult.didWinGame) {
+                    message = "Level Complete";
+                    break;
+                }
+                ticks++;
+            } while (session.engine.hasAgain() && ticks < maxTicks);
+        }
+    }
+
+    if (session.handler.messages.length > 0) {
+        message = session.handler.messages.join(' | ');
+    }
+
+    if (session.handler.won) {
+        message = "YOU WIN THE GAME!";
+        arcState = "WIN";
+    }
+
+    const boardRender = session.render();
+    const currentLevelInfo = session.engine.currentLevelNum + 1;
+    logHistory(session.id, currentLevelInfo, String(action || ""), boardRender, session.renderJSON());
+
+    console.clear();
+    console.log(`Action: ${String(action || "").toUpperCase()}`);
+    if (message) console.log(`📢 ${message}`);
+    console.log(`Level ${currentLevelInfo}`);
+    console.log(formatSideBySide(boardRender, session.renderIntGrid()));
+    console.log('='.repeat(40));
+
+    return {
+        frame: framesList,
+        state: arcState,
+        levels_completed: currentLevelInfo - 1,
+        message
+    };
+}
+
 app.post('/init', (req, res) => {
     try {
         let { gameSource, gameName } = req.body;
-
         if (gameName) {
-            const gamePath = path.join(__dirname, '../games', gameName.endsWith('.txt') ? gameName : `${gameName}.txt`);
-            if (fs.existsSync(gamePath)) {
-                gameSource = fs.readFileSync(gamePath, 'utf8');
-            } else {
+            gameSource = loadGameSourceByName(gameName);
+            if (!gameSource) {
                 return res.status(404).json({ error: `Game "${gameName}" not found.` });
             }
         }
-
         if (!gameSource) {
             return res.status(400).json({ error: "No gameSource or gameName provided." });
         }
 
-        // Normalize line endings to LF to satisfy strict parser
-        const normalizedSource = gameSource.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-        const { data } = Parser.parse(normalizedSource);
-
-        const sessionId = Date.now().toString();
-        const session = new Session(sessionId, data);
-        gameSessions.set(sessionId, session);
-
-        // Pre-render to board so we can log it
+        const { sessionId, session, data } = createSessionFromSource(gameSource);
         const boardRender = session.render();
         const boardJSON = session.renderJSON();
-
-        // Log Init
         logHistory(sessionId, session.engine.currentLevelNum + 1, "INIT", boardRender, boardJSON);
 
-        // --- SERVER SIDE RENDERING ---
         console.clear();
-        console.log(`Game Initialized: ${gameName || 'unknown'}`);
+        console.log(`Game Initialized: ${gameName || 'custom-source'}`);
         console.log(formatSideBySide(boardRender, session.renderIntGrid()));
         console.log('='.repeat(40));
-        // -----------------------------
 
         res.json({
             sessionId,
@@ -400,9 +477,8 @@ app.post('/init', (req, res) => {
             levels_completed: 0,
             win_levels: data.levels.length,
             legend: session.intToName,
-            available_actions: ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"]
+            available_actions: AVAILABLE_ACTIONS
         });
-
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: e.message });
@@ -414,93 +490,13 @@ app.post('/action', async (req, res) => {
         const { sessionId, action } = req.body;
         const session = gameSessions.get(sessionId);
         if (!session) return res.status(404).json({ error: "Session not found" });
-
-        // Map input
-        let dir = null;
-        const a = action.toLowerCase();
-        if (a === 'action1' || a === 'up' || a === 'w') dir = INPUT_BUTTON.UP;
-        else if (a === 'action2' || a === 'down' || a === 's') dir = INPUT_BUTTON.DOWN;
-        else if (a === 'action3' || a === 'left' || a === 'a') dir = INPUT_BUTTON.LEFT;
-        else if (a === 'action4' || a === 'right' || a === 'd') dir = INPUT_BUTTON.RIGHT;
-        else if (a === 'action5' || a === ' ' || a === 'action' || a === 'x') dir = INPUT_BUTTON.ACTION;
-        else if (a === 'reset' || a === 'r') dir = INPUT_BUTTON.RESTART;
-        else if (a === 'z' || a === 'undo') dir = INPUT_BUTTON.UNDO;
-
-        session.handler.messages = []; // Clear old messages
-
-        let status = 'playing';
-        let message = '';
-        let framesList = [];
-        let arcState = 'PLAYING';
-        framesList.push(session.renderIntGrid()); // Capture pre-action frame? Actually, let's just capture post-action frames.
-
-        if (dir) {
-            if (dir === INPUT_BUTTON.RESTART) {
-                // Workaround: The built-in RESTART input sometimes crashes with "Unreachable code" in doRestart.
-                // We perform a "Hard Restart" by reloading the current level.
-                // Note: This wipes the undo stack, but ensures stability.
-                session.engine.setLevel(session.engine.currentLevelNum);
-            } else {
-                session.engine.press(dir);
-                // Tick loop to handle animations/AGAIN
-                let ticks = 0;
-                const maxTicks = 50; // Safety break
-
-                do {
-                    const tickResult = await session.engine.tick();
-                    
-                    // Collect intermediate frame
-                    framesList.push(session.renderIntGrid());
-
-                    // Check result
-                    if (tickResult.didWinGame) {
-                        status = 'GAME_OVER'; // Actually ARC-AGI uses WIN
-                        message = "YOU WIN!";
-                        arcState = "WIN";
-                        break;
-                    }
-                    if (tickResult.didLevelChange && !tickResult.didWinGame) {
-                        message = "Level Complete";
-                        break;
-                    }
-
-                    ticks++;
-                } while (session.engine.hasAgain() && ticks < maxTicks);
-            }
-        }
-
-        if (session.handler.messages.length > 0) {
-            message = session.handler.messages.join(' | ');
-        }
-
-        if (session.handler.won) {
-            status = 'game_complete';
-            message = "YOU WIN THE GAME!";
-            arcState = "WIN";
-        }
-
-        const boardRender = session.render();
-        const currentLevelInfo = session.engine.currentLevelNum + 1;
-
-        // Log Action
-        logHistory(sessionId, currentLevelInfo, action, boardRender, session.renderJSON());
-
-        // --- SERVER SIDE RENDERING ---
-        console.clear();
-        console.log(`Action: ${action.toUpperCase()}`);
-        if (message) console.log(`📢 ${message}`);
-        console.log(`Level ${currentLevelInfo}`);
-        console.log(formatSideBySide(boardRender, session.renderIntGrid()));
-        console.log('='.repeat(40));
-        // -----------------------------
-
+        const result = await executeAction(session, action);
         res.json({
-            frame: framesList,
-            state: arcState,
-            levels_completed: currentLevelInfo - 1,
-            available_actions: ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"]
+            frame: result.frame,
+            state: result.state,
+            levels_completed: result.levels_completed,
+            available_actions: AVAILABLE_ACTIONS
         });
-
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: e.message });
@@ -512,13 +508,12 @@ app.get('/observe', (req, res) => {
         const { sessionId } = req.query;
         const session = gameSessions.get(sessionId);
         if (!session) return res.status(404).json({ error: "Session not found" });
-
         res.json({
             frame: [session.renderIntGrid()],
             state: session.handler.won ? "WIN" : "PLAYING",
             levels_completed: session.engine.currentLevelNum,
             legend: session.intToName,
-            available_actions: ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"]
+            available_actions: AVAILABLE_ACTIONS
         });
     } catch (e) {
         res.status(500).json({ error: e.message });
