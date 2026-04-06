@@ -495,6 +495,9 @@ app.post('/action', async (req, res) => {
             frame: result.frame,
             state: result.state,
             levels_completed: result.levels_completed,
+            message: result.message,
+            legend: session.intToName,
+            win_levels: session.gameData.levels.length,
             available_actions: AVAILABLE_ACTIONS
         });
     } catch (e) {

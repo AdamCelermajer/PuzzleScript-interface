@@ -71,7 +71,7 @@ function startLoop(client) {
                     if (result.message) {
                         console.log(`📣 ${result.message}`);
                     }
-                    if (result.status === 'game_complete') {
+                    if (result.state === 'WIN') {
                         console.log('\n🎉 GAME COMPLETE! 🎉\n');
                         rl.close();
                         process.exit(0);

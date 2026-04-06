@@ -33,47 +33,63 @@ class Config:
 class LlmClient:
     """Wrapper around litellm with model-specific routing parameters."""
 
+    MAX_RETRIES = 5
+
     def __init__(self, config: Config) -> None:
         """Initialize provider credentials and runtime config."""
         self.cfg = config
+        self.consecutive_failures = 0
         os.environ["GEMINI_API_KEY"] = config.api_key
 
     def _call(self, system: str, prompt: str, model_type: str = "flash") -> str:
-        """Call the configured LLM and return plain text output."""
-        litellm_model = None
-        try:
-            start = time.time()
-            model_name = self.cfg.pro_model if model_type == "pro" else self.cfg.flash_model
-            litellm_model = f"gemini/{model_name}" if not model_name.startswith("gemini/") else model_name
+        """Call the configured LLM and return plain text output.
 
-            messages = [
-                {"role": "system", "content": system},
-                {"role": "user", "content": prompt},
-            ]
+        Retries up to MAX_RETRIES times with backoff. After MAX_RETRIES
+        consecutive failures, raises so the caller can skip the turn or abort.
+        """
+        model_name = self.cfg.pro_model if model_type == "pro" else self.cfg.flash_model
+        litellm_model = f"gemini/{model_name}" if not model_name.startswith("gemini/") else model_name
 
-            kwargs = {}
+        messages = [
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ]
 
-            # Gemini 2.5 Series (Uses thinking_budget)
-            if "2.5" in model_name:
-                if "flash" in model_name:
-                    # 0 budget disables the reasoning loop entirely for sub-second responses
-                    kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingBudget": 0}}}
+        kwargs = {}
+        # Gemini 2.5 Series (Uses thinking_budget)
+        if "2.5" in model_name:
+            if "flash" in model_name:
+                kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingBudget": 0}}}
+        # Gemini 3.0 Series (Uses thinking_level)
+        elif "3" in model_name:
+            if "flash" in model_name:
+                kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "low"}}}
+            elif "pro" in model_name:
+                kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "high"}}}
 
-            # Gemini 3.0 Series (Uses thinking_level)
-            elif "3" in model_name:
-                if "flash" in model_name:
-                    kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "low"}}}
-                elif "pro" in model_name:
-                    kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "high"}}}
+        last_error: Exception | None = None
+        for attempt in range(1, self.MAX_RETRIES + 1):
+            try:
+                start = time.time()
+                response = litellm.completion(
+                    model=litellm_model,
+                    messages=messages,
+                    **kwargs,
+                )
+                print(f"[{litellm_model}] Response time: {time.time() - start:.1f}s")
+                content = response.choices[0].message.content
+                if not content or not content.strip():
+                    raise ValueError("LLM returned empty content")
+                self.consecutive_failures = 0
+                return content.strip()
+            except Exception as e:
+                last_error = e
+                self.consecutive_failures += 1
+                print(f"[{litellm_model}] Attempt {attempt}/{self.MAX_RETRIES} failed: {e}")
+                if attempt < self.MAX_RETRIES:
+                    time.sleep(min(2 ** attempt, 16))
 
-            response = litellm.completion(
-                model=litellm_model,
-                messages=messages,
-                **kwargs,
-            )
-            print(f"[{litellm_model}] Response time: {time.time() - start:.1f}s")
-            content = response.choices[0].message.content
-            return content.strip() if content else "wait"
-        except Exception as e:
-            print(f"Error calling {litellm_model or 'model'}: {e}")
-            return "wait"
+        raise RuntimeError(
+            f"LLM call failed after {self.MAX_RETRIES} consecutive attempts. "
+            f"Last error: {last_error}"
+        )

@@ -8,6 +8,8 @@ import requests
 from engine.types import GameAction, GameState, ActionInput, FrameData
 from envs.base_env import BaseEnv
 
+REQUEST_TIMEOUT = 30  # seconds
+
 class PuzzleScriptEnv(BaseEnv):
     def __init__(self, game_name: str, server_url: str = "http://localhost:3000"):
         self.game_name = game_name
@@ -15,7 +17,13 @@ class PuzzleScriptEnv(BaseEnv):
         self.session_id = None
         self.win_levels = 1
         self.legend = {}
-        
+
+    def _post(self, path: str, payload: dict) -> dict:
+        """POST with timeout and status validation."""
+        resp = requests.post(f"{self.server_url}{path}", json=payload, timeout=REQUEST_TIMEOUT)
+        resp.raise_for_status()
+        return resp.json()
+
     def _parse_response(self, data: dict, action: GameAction, full_reset: bool = False) -> FrameData:
         self.legend = {int(k): v for k, v in data.get("legend", self.legend).items()}
         state_str = data.get("state", "PLAYING")
@@ -36,7 +44,7 @@ class PuzzleScriptEnv(BaseEnv):
         )
 
     def reset(self) -> FrameData:
-        resp = requests.post(f"{self.server_url}/init", json={"gameName": self.game_name}).json()
+        resp = self._post("/init", {"gameName": self.game_name})
         if "sessionId" not in resp:
             raise Exception(f"Failed to init game: {resp}")
         self.session_id = resp["sessionId"]
@@ -46,9 +54,9 @@ class PuzzleScriptEnv(BaseEnv):
         if not self.session_id:
             return self.reset()
         if action == GameAction.RESET:
-            resp = requests.post(f"{self.server_url}/action", json={"sessionId": self.session_id, "action": "RESET"}).json()
+            resp = self._post("/action", {"sessionId": self.session_id, "action": "RESET"})
             return self._parse_response(resp, action, full_reset=True)
             
         action_name = action.name
-        resp = requests.post(f"{self.server_url}/action", json={"sessionId": self.session_id, "action": action_name}).json()
+        resp = self._post("/action", {"sessionId": self.session_id, "action": action_name})
         return self._parse_response(resp, action, full_reset=False)

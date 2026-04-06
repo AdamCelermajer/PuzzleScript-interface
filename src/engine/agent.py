@@ -259,12 +259,21 @@ class Agent:
 
     def _parse_action(self, text: str) -> GameAction:
         text = text.strip().upper()
-        if "ACTION1" in text or "W" in text: return GameAction.ACTION1
-        if "ACTION2" in text or "S" in text: return GameAction.ACTION2
-        if "ACTION3" in text or "A" in text: return GameAction.ACTION3
-        if "ACTION4" in text or "D" in text: return GameAction.ACTION4
-        if "ACTION5" in text or "X" in text: return GameAction.ACTION5
-        if "RESET" in text or "R" in text: return GameAction.RESET
+
+        # Exact action name match (handles multi-word LLM output like "I choose ACTION1")
+        for action in GameAction:
+            if action.name in text:
+                return action
+
+        # Single-character shorthand — only if the entire response is one char
+        if len(text) == 1:
+            shorthand = {"W": GameAction.ACTION1, "S": GameAction.ACTION2,
+                         "A": GameAction.ACTION3, "D": GameAction.ACTION4,
+                         "X": GameAction.ACTION5, "R": GameAction.RESET}
+            if text in shorthand:
+                return shorthand[text]
+
+        print(f"Warning: could not parse action from '{text}', defaulting to ACTION5")
         return GameAction.ACTION5
 
     def _clean_subgoal(self, text: str) -> str:
@@ -376,10 +385,18 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
             break
 
         if state.steps > 0 and state.steps % 5 == 0 and state.steps != last_periodic_step:
-            subgoal = agent.run_periodic_analysis(state.frame_data)
+            try:
+                subgoal = agent.run_periodic_analysis(state.frame_data)
+            except RuntimeError as e:
+                print(f"LLM failure during analysis, skipping: {e}")
             last_periodic_step = state.steps
 
-        action = agent.act_learn(state.frame_data, state.local, subgoal)
+        try:
+            action = agent.act_learn(state.frame_data, state.local, subgoal)
+        except RuntimeError as e:
+            print(f"LLM failure, skipping turn: {e}")
+            time.sleep(2)
+            continue
         print(f"Action: {action.name}")
 
         prev_frame = state.frame_data
@@ -430,7 +447,13 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
     print(f"Started session {getattr(env, 'session_id', 'unknown')} in SOLVE mode")
     
     while True:
-        action = agent.act_solve(state.frame_data, state.frame_data.legend, state.local)
+        prev_frame = state.frame_data
+        try:
+            action = agent.act_solve(state.frame_data, state.frame_data.legend, state.local)
+        except RuntimeError as e:
+            print(f"LLM failure, skipping turn: {e}")
+            time.sleep(2)
+            continue
         print(f"Action: {action.name}")
         
         next_frame = env.step(action)
@@ -438,7 +461,7 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
         state.steps += 1
         state.frame_data = next_frame
         
-        if next_frame.state == GameState.WIN or next_frame.levels_completed != frame_data.levels_completed:
+        if next_frame.state == GameState.WIN or next_frame.levels_completed != prev_frame.levels_completed:
             print("Level complete!")
             state.local = []
             if next_frame.state == GameState.WIN:
