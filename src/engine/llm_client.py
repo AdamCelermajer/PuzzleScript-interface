@@ -1,5 +1,6 @@
 import os
 import time
+import re
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -34,19 +35,25 @@ class LlmClient:
     """Wrapper around litellm with model-specific routing parameters."""
 
     MAX_RETRIES = 5
+    CIRCUIT_BREAKER_COOLDOWN = 60
 
     def __init__(self, config: Config) -> None:
         """Initialize provider credentials and runtime config."""
         self.cfg = config
         self.consecutive_failures = 0
+        self.circuit_breaker_until = 0.0
         os.environ["GEMINI_API_KEY"] = config.api_key
 
-    def _call(self, system: str, prompt: str, model_type: str = "flash") -> str:
+    def _call(self, system: str, prompt: str, model_type: str = "flash", json_mode: bool = False) -> str:
         """Call the configured LLM and return plain text output.
 
         Retries up to MAX_RETRIES times with backoff. After MAX_RETRIES
         consecutive failures, raises so the caller can skip the turn or abort.
         """
+        if time.time() < self.circuit_breaker_until:
+            wait_time = self.circuit_breaker_until - time.time()
+            raise RuntimeError(f"Circuit breaker active. Skipping calls for {wait_time:.1f}s")
+            
         model_name = self.cfg.pro_model if model_type == "pro" else self.cfg.flash_model
         litellm_model = f"gemini/{model_name}" if not model_name.startswith("gemini/") else model_name
 
@@ -56,16 +63,21 @@ class LlmClient:
         ]
 
         kwargs = {}
-        # Gemini 2.5 Series (Uses thinking_budget)
-        if "2.5" in model_name:
+        # Gemini 2.5 Series
+        if re.search(r"2\.5", model_name):
             if "flash" in model_name:
                 kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingBudget": 0}}}
-        # Gemini 3.0 Series (Uses thinking_level)
-        elif "3" in model_name:
+        # Gemini 3.0/3.1 Series
+        elif re.search(r"(?<!\d)3(?:\.\d+)?(?!\d)", model_name):
             if "flash" in model_name:
                 kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "low"}}}
             elif "pro" in model_name:
                 kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "high"}}}
+
+        if json_mode:
+            kwargs["response_format"] = {"type": "json_object"}
+            
+        kwargs["timeout"] = 45  # Enforce a 45s hard timeout to prevent indefinite hangs
 
         last_error: Exception | None = None
         for attempt in range(1, self.MAX_RETRIES + 1):
@@ -86,10 +98,16 @@ class LlmClient:
                 last_error = e
                 self.consecutive_failures += 1
                 print(f"[{litellm_model}] Attempt {attempt}/{self.MAX_RETRIES} failed: {e}")
+                
+                if self.consecutive_failures >= 3:
+                    self.circuit_breaker_until = time.time() + self.CIRCUIT_BREAKER_COOLDOWN
+                    print(f"[{litellm_model}] Circuit breaker tripped! Cooling down for {self.CIRCUIT_BREAKER_COOLDOWN}s")
+                    break
+                    
                 if attempt < self.MAX_RETRIES:
-                    time.sleep(min(2 ** attempt, 16))
+                    time.sleep(min(2 ** attempt, 4)) # Cap backoff at 4 seconds
 
         raise RuntimeError(
-            f"LLM call failed after {self.MAX_RETRIES} consecutive attempts. "
+            f"LLM call failed after consecutive attempts. "
             f"Last error: {last_error}"
         )
