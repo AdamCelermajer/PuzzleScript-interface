@@ -31,8 +31,9 @@ def _color_bg(r, g, b):
 class ArcAgiEnv(BaseEnv):
     """Adapter for the official ARC-AGI-3 REST API (three.arcprize.org)."""
 
-    def __init__(self, task_name: str):
+    def __init__(self, task_name: str, render_visuals: bool = True):
         self.task_name = task_name
+        self.render_visuals = render_visuals
         self.session_id = f"arc_{task_name}"
         
         self.api_key = os.environ.get("ARC_API_KEY")
@@ -74,6 +75,9 @@ class ArcAgiEnv(BaseEnv):
     
     def render(self, frame_data: FrameData) -> None:
         """Visualizes the 2D grid using half-block chars (2 rows per terminal line)."""
+        if not self.render_visuals:
+            return
+            
         if not frame_data.frame or not frame_data.frame[0]:
             print("Empty ARC frame")
             return

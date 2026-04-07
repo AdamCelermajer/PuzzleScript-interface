@@ -25,7 +25,9 @@ class PuzzleScriptEnv(BaseEnv):
         return resp.json()
 
     def _parse_response(self, data: dict, action: GameAction, full_reset: bool = False) -> FrameData:
-        self.legend = {int(k): v for k, v in data.get("legend", self.legend).items()}
+        if "legend" in data and data["legend"]:
+            self.legend = {int(k): v for k, v in data["legend"].items()}
+            
         state_str = data.get("state", "PLAYING")
         state = GameState[state_str] if hasattr(GameState, state_str) else GameState.PLAYING
         self.win_levels = data.get("win_levels", self.win_levels)
