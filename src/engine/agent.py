@@ -58,7 +58,7 @@ class Agent:
         )
         current_legend_text = f"CURRENT KNOWN LEGEND:\n{json.dumps(self.inferred_legend)}" if self.inferred_legend else "CURRENT KNOWN LEGEND: none yet"
         sys_prompt, user_prompt = prompts.get_infer_legend_prompt(history_log, current_legend_text, game_name=self.cfg.game)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro")
+        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
 
         try:
             parsed = json.loads(extract_json(response))
@@ -134,7 +134,7 @@ class Agent:
         focus_prompt = f"Focus on deducing rules related to: {rule_focus}\n\n" if rule_focus else ""
 
         sys_prompt, user_prompt = prompts.get_deduce_rules_prompt(events, known_rules_text, focus_prompt, game_name=self.cfg.game)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro")
+        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
 
         try:
             data = json.loads(extract_json(response))
@@ -192,7 +192,7 @@ class Agent:
         if not self.known_rules: return False
         known_rules_text = self._get_known_rules_text("KNOWN RULES:")
         sys_prompt, user_prompt = prompts.get_compress_rules_prompt(known_rules_text)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro")
+        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
 
         try:
             data = json.loads(extract_json(response))
@@ -224,7 +224,7 @@ class Agent:
         )
         known_rules_text = self._get_known_rules_text("Rules deduced so far:")
         sys_prompt, user_prompt = prompts.get_refine_rules_prompt(known_rules_text, history_log, game_name=self.cfg.game)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro")
+        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
 
         try:
             data = json.loads(extract_json(response))
@@ -303,11 +303,15 @@ class Agent:
         flat_rules = []
         for cat_rules in self.known_rules.values(): flat_rules.extend(cat_rules)
 
+        merged_legend = frame_data.legend.copy()
+        if self.inferred_legend:
+            merged_legend.update(self.inferred_legend)
+
         sys_prompt, user_prompt = prompts.get_plan_subgoal_prompt(
             format_frames(frame_data.frame),
             recent,
             flat_rules,
-            self.inferred_legend if self.inferred_legend else frame_data.legend,
+            merged_legend,
         )
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
         return self._clean_subgoal(response)
@@ -329,10 +333,13 @@ class Agent:
         return self._parse_action(response)
 
     def act_solve(self, frame_data: FrameData, legend: dict, local: list) -> GameAction:
+        flat_rules = []
+        for cat_rules in self.known_rules.values(): flat_rules.extend(cat_rules)
+
         sys_prompt, user_prompt = prompts.get_solving_act_prompt(
             format_frames(frame_data.frame), 
             legend, 
-            [], 
+            flat_rules, 
             self.cfg.show_legend
         )
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
@@ -403,6 +410,9 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
         next_frame = env.step(action)
 
         agent.history.append((prev_frame, action, next_frame))
+        if len(agent.history) > 200:
+            agent.history = agent.history[-200:]
+            
         state.local.append((prev_frame, action, next_frame))
         state.frame_data = next_frame
 
@@ -445,8 +455,17 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
     state = RunState(frame_data=frame_data)
     
     print(f"Started session {getattr(env, 'session_id', 'unknown')} in SOLVE mode")
+    last_periodic_step = 0
     
     while True:
+        if state.steps > 0 and state.steps % 5 == 0 and state.steps != last_periodic_step:
+            try:
+                # Use analysis to update rules mid-solve, but discard returned subgoal
+                agent.run_periodic_analysis(state.frame_data)
+            except RuntimeError as e:
+                print(f"LLM failure during rules refinement, skipping: {e}")
+            last_periodic_step = state.steps
+
         prev_frame = state.frame_data
         try:
             action = agent.act_solve(state.frame_data, state.frame_data.legend, state.local)
@@ -457,6 +476,10 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
         print(f"Action: {action.name}")
         
         next_frame = env.step(action)
+        agent.history.append((state.frame_data, action, next_frame))
+        if len(agent.history) > 200:
+            agent.history = agent.history[-200:]
+            
         state.local.append((state.frame_data, action, next_frame))
         state.steps += 1
         state.frame_data = next_frame
