@@ -2,9 +2,15 @@ const fs = require('fs');
 const express = require('express');
 const { Parser, GameEngine, INPUT_BUTTON, EmptyGameEngineHandler } = require('puzzlescript');
 const path = require('path');
+const {
+    buildArcProjectionSpec,
+    projectRawGrid,
+    countPlayableLevels,
+    countCompletedPlayableLevels,
+} = require('./puzzlescript_arc_projection');
 
 const app = express();
-const port = 3000;
+const port = Number(process.env.PORT || 3000);
 
 app.use(express.json({ limit: '50mb' }));
 app.use((req, res, next) => {
@@ -14,7 +20,17 @@ app.use((req, res, next) => {
 });
 
 const gameSessions = new Map();
-const AVAILABLE_ACTIONS = ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5"];
+
+function getAvailableActions(gameData) {
+    const actions = ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4"];
+    if (!gameData?.metadata?.noAction) {
+        actions.push("ACTION5");
+    }
+    if (!gameData?.metadata?.noUndo) {
+        actions.push("ACTION7");
+    }
+    return actions;
+}
 
 // Logging Helper
 function logHistory(sessionId, level, action, board, boardJSON) {
@@ -89,6 +105,8 @@ class Session {
         this.handler = new SessionHandler();
         this.engine = new GameEngine(gameData, this.handler);
         this.renderList = this.buildRenderList(gameData);
+        this.winLevels = countPlayableLevels(gameData.levels || []);
+        this.availableActions = getAvailableActions(gameData);
         this.buildIntMapping();
         // Start directly
         this.engine.setLevel(0);
@@ -254,22 +272,13 @@ class Session {
 
     buildIntMapping() {
         const displayLegend = this.getDisplayLegend();
-        const mapping = {};
-        const intToName = {};
-        let currentInt = 0;
-        
-        if (displayLegend['.']) {
-            mapping['.'] = 0; intToName[0] = displayLegend['.']; currentInt = 1;
-        }
-        for (const [key, name] of Object.entries(displayLegend)) {
-            if (key !== '.' && mapping[key] === undefined) {
-                mapping[key] = currentInt; intToName[currentInt] = name; currentInt++;
-            }
-        }
-        if (mapping[' '] === undefined) { mapping[' '] = currentInt; intToName[currentInt] = "Empty"; currentInt++; }
-        if (mapping['?'] === undefined) { mapping['?'] = currentInt; intToName[currentInt] = "Unknown"; currentInt++; }
+        const projection = buildArcProjectionSpec(this.gameData);
 
-        this.charToInt = mapping;
+        this.charToInt = projection.charToInt;
+        const intToName = {};
+        for (const [char, value] of Object.entries(this.charToInt)) {
+            intToName[value] = displayLegend[char] || (char === '?' ? 'Unknown' : char);
+        }
         this.intToName = intToName;
     }
 
@@ -320,13 +329,7 @@ class Session {
     renderIntGrid() {
         const grid = this.renderRawGrid();
         if (!grid) return []; // Fallback empty
-        return grid.map(row => row.map(char => {
-            if (this.charToInt[char] === undefined) {
-               this.charToInt[char] = Object.keys(this.charToInt).length;
-               this.intToName[this.charToInt[char]] = char;
-            }
-            return this.charToInt[char];
-        }));
+        return projectRawGrid(grid, { charToInt: this.charToInt });
     }
 
     renderJSON() {
@@ -383,8 +386,8 @@ function mapActionToButton(action) {
     if (a === 'action3' || a === 'left' || a === 'a' || a === '3') return INPUT_BUTTON.LEFT;
     if (a === 'action4' || a === 'right' || a === 'd' || a === '4') return INPUT_BUTTON.RIGHT;
     if (a === 'action5' || a === ' ' || a === 'action' || a === 'x' || a === '5') return INPUT_BUTTON.ACTION;
-    if (a === 'reset' || a === 'r' || a === '7') return INPUT_BUTTON.RESTART;
-    if (a === 'z' || a === 'undo') return INPUT_BUTTON.UNDO;
+    if (a === 'reset' || a === 'r') return INPUT_BUTTON.RESTART;
+    if (a === 'z' || a === 'undo' || a === 'action7' || a === '7') return INPUT_BUTTON.UNDO;
     return null;
 }
 
@@ -430,6 +433,7 @@ async function executeAction(session, action) {
 
     const boardRender = session.render();
     const currentLevelInfo = session.engine.currentLevelNum + 1;
+    const levelsCompleted = countCompletedPlayableLevels(session.gameData.levels || [], session.engine.currentLevelNum);
     logHistory(session.id, currentLevelInfo, String(action || ""), boardRender, session.renderJSON());
 
     console.clear();
@@ -442,7 +446,7 @@ async function executeAction(session, action) {
     return {
         frame: framesList,
         state: arcState,
-        levels_completed: currentLevelInfo - 1,
+        levels_completed: levelsCompleted,
         message
     };
 }
@@ -475,9 +479,9 @@ app.post('/init', (req, res) => {
             frame: [session.renderIntGrid()],
             state: "PLAYING",
             levels_completed: 0,
-            win_levels: data.levels.length,
+            win_levels: session.winLevels,
             legend: session.intToName,
-            available_actions: AVAILABLE_ACTIONS
+            available_actions: session.availableActions
         });
     } catch (e) {
         console.error(e);
@@ -497,8 +501,8 @@ app.post('/action', async (req, res) => {
             levels_completed: result.levels_completed,
             message: result.message,
             legend: session.intToName,
-            win_levels: session.gameData.levels.length,
-            available_actions: AVAILABLE_ACTIONS
+            win_levels: session.winLevels,
+            available_actions: session.availableActions
         });
     } catch (e) {
         console.error(e);
@@ -514,9 +518,9 @@ app.get('/observe', (req, res) => {
         res.json({
             frame: [session.renderIntGrid()],
             state: session.handler.won ? "WIN" : "PLAYING",
-            levels_completed: session.engine.currentLevelNum,
+            levels_completed: countCompletedPlayableLevels(session.gameData.levels || [], session.engine.currentLevelNum),
             legend: session.intToName,
-            available_actions: AVAILABLE_ACTIONS
+            available_actions: session.availableActions
         });
     } catch (e) {
         res.status(500).json({ error: e.message });
