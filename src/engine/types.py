@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 
+
 class GameAction(Enum):
     RESET = 0
     ACTION1 = 1  # UP
@@ -9,6 +10,8 @@ class GameAction(Enum):
     ACTION4 = 4  # RIGHT
     ACTION5 = 5  # ACTION/SPACE
     ACTION6 = 6  # CLICK (unused)
+    ACTION7 = 7  # UNDO
+
 
 class GameState(Enum):
     NOT_PLAYED = "NOT_PLAYED"
@@ -16,10 +19,12 @@ class GameState(Enum):
     WIN = "WIN"
     GAME_OVER = "GAME_OVER"
 
+
 @dataclass
 class ActionInput:
     action: GameAction
     data: dict = field(default_factory=dict)
+
 
 @dataclass
 class FrameData:

@@ -8,7 +8,7 @@ from .llm_client import Config, LlmClient
 from .types import GameAction, GameState, FrameData
 from . import prompts
 from .utils import format_frames, extract_json
-from envs.base_env import BaseEnv
+from engine.base_env import BaseEnv
 
 
 class Agent:
@@ -48,7 +48,9 @@ class Agent:
             text = text.rstrip(",\n") + "\n}\n\n"
         return text.strip()
 
-    def infer_legend(self, history: list[tuple[FrameData, GameAction, FrameData]]) -> None:
+    def infer_legend(
+        self, history: list[tuple[FrameData, GameAction, FrameData]]
+    ) -> None:
         history_log = "\n\n".join(
             (
                 f"Step {i + 1}:\nAction: {action.name}\nBefore:\n{format_frames(prev_frame.frame)}\n"
@@ -56,13 +58,25 @@ class Agent:
             )
             for i, (prev_frame, action, next_frame) in enumerate(history)
         )
-        current_legend_text = f"CURRENT KNOWN LEGEND:\n{json.dumps(self.inferred_legend)}" if self.inferred_legend else "CURRENT KNOWN LEGEND: none yet"
-        sys_prompt, user_prompt = prompts.get_infer_legend_prompt(history_log, current_legend_text, game_name=self.cfg.game)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
+        current_legend_text = (
+            f"CURRENT KNOWN LEGEND:\n{json.dumps(self.inferred_legend)}"
+            if self.inferred_legend
+            else "CURRENT KNOWN LEGEND: none yet"
+        )
+        sys_prompt, user_prompt = prompts.get_infer_legend_prompt(
+            history_log, current_legend_text, game_name=self.cfg.game
+        )
+        response = self.llm_client._call(
+            sys_prompt, user_prompt, model_type="pro", json_mode=True
+        )
 
         try:
             parsed = json.loads(extract_json(response))
-            self.inferred_legend = {int(k): str(v) for k, v in parsed.items() if str(k).lstrip('-').isdigit()}
+            self.inferred_legend = {
+                int(k): str(v)
+                for k, v in parsed.items()
+                if str(k).lstrip("-").isdigit()
+            }
             print(f"Inferred Legend: {self.inferred_legend}")
         except Exception as e:
             print(f"Could not parse inferred legend: {response} ERROR: {e}")
@@ -75,13 +89,18 @@ class Agent:
             content = file.read()
 
         import re
+
         self.known_rules = {}
 
         legend_match = re.search(r"legendes:\n({.*?})", content, re.DOTALL)
         if legend_match:
             try:
                 parsed = json.loads(legend_match.group(1).strip())
-                self.inferred_legend = {int(k): str(v) for k, v in parsed.items() if str(k).lstrip('-').isdigit()}
+                self.inferred_legend = {
+                    int(k): str(v)
+                    for k, v in parsed.items()
+                    if str(k).lstrip("-").isdigit()
+                }
             except json.JSONDecodeError:
                 pass
 
@@ -92,20 +111,26 @@ class Agent:
         for match in re.finditer(r'"([^"]+)":\s*\{\s*(.*?)\s*\}', content, re.DOTALL):
             category = match.group(1)
             rules_text = match.group(2)
-            rules = [line.strip().rstrip(",") for line in rules_text.splitlines() if line.strip()]
+            rules = [
+                line.strip().rstrip(",")
+                for line in rules_text.splitlines()
+                if line.strip()
+            ]
             if rules:
                 self.known_rules[category] = rules
 
     def _save_rules(self, rules: dict[str, list[str]]) -> None:
-        legend_str = json.dumps(self.inferred_legend, indent=2) if self.inferred_legend else "{}"
+        legend_str = (
+            json.dumps(self.inferred_legend, indent=2) if self.inferred_legend else "{}"
+        )
         with open(self.rules_file, "w", encoding="utf-8") as file:
             file.write("legendes:\n")
             file.write(f"{legend_str}\n\n")
-            
+
             if self.inferred_final_goal:
                 file.write("final_goal:\n")
                 file.write(f"{self.inferred_final_goal}\n\n")
-            
+
             for category, cat_rules in rules.items():
                 if not cat_rules:
                     continue
@@ -114,7 +139,7 @@ class Agent:
                     comma = "," if i < len(cat_rules) - 1 else ""
                     file.write(f"{rule}{comma}\n")
                 file.write("}\n\n")
-                
+
         self.known_rules = rules
 
     def deduce_rules_from_history(
@@ -131,10 +156,18 @@ class Agent:
             )
 
         known_rules_text = self._get_known_rules_text("KNOWN RULES:")
-        focus_prompt = f"Focus on deducing rules related to: {rule_focus}\n\n" if rule_focus else ""
+        focus_prompt = (
+            f"Focus on deducing rules related to: {rule_focus}\n\n"
+            if rule_focus
+            else ""
+        )
 
-        sys_prompt, user_prompt = prompts.get_deduce_rules_prompt(events, known_rules_text, focus_prompt, game_name=self.cfg.game)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
+        sys_prompt, user_prompt = prompts.get_deduce_rules_prompt(
+            events, known_rules_text, focus_prompt, game_name=self.cfg.game
+        )
+        response = self.llm_client._call(
+            sys_prompt, user_prompt, model_type="pro", json_mode=True
+        )
 
         try:
             data = json.loads(extract_json(response))
@@ -148,15 +181,22 @@ class Agent:
 
             state_changed = False
 
-            if new_final_goal and isinstance(new_final_goal, str) and new_final_goal != self.inferred_final_goal:
+            if (
+                new_final_goal
+                and isinstance(new_final_goal, str)
+                and new_final_goal != self.inferred_final_goal
+            ):
                 self.inferred_final_goal = new_final_goal
                 state_changed = True
 
             if isinstance(new_legend, dict) and new_legend:
                 for sym_str, role in new_legend.items():
-                    if str(sym_str).lstrip('-').isdigit():
+                    if str(sym_str).lstrip("-").isdigit():
                         sym = int(sym_str)
-                        if sym not in self.inferred_legend or self.inferred_legend[sym] != role:
+                        if (
+                            sym not in self.inferred_legend
+                            or self.inferred_legend[sym] != role
+                        ):
                             self.inferred_legend[sym] = role
                             state_changed = True
 
@@ -172,38 +212,50 @@ class Agent:
                     cleaned_rule = rule.strip()
                     if not cleaned_rule:
                         continue
-                        
-                    exists = any(cleaned_rule in cat_rules for cat_rules in self.known_rules.values())
+
+                    exists = any(
+                        cleaned_rule in cat_rules
+                        for cat_rules in self.known_rules.values()
+                    )
                     if not exists:
-                        if not added_any_rule: print("--- New Rules Deduced ---")
-                        print(f'- [{category}] {cleaned_rule}')
+                        if not added_any_rule:
+                            print("--- New Rules Deduced ---")
+                        print(f"- [{category}] {cleaned_rule}")
                         self.known_rules[category].append(cleaned_rule)
                         added_any_rule = True
 
             if added_any_rule or state_changed:
                 self._save_rules(self.known_rules)
-                if added_any_rule: print("------------------------")
+                if added_any_rule:
+                    print("------------------------")
             return added_any_rule
         except json.JSONDecodeError:
             print(f"Could not parse rules from response: {response}")
             return False
 
     def compress_rules(self) -> bool:
-        if not self.known_rules: return False
+        if not self.known_rules:
+            return False
         known_rules_text = self._get_known_rules_text("KNOWN RULES:")
         sys_prompt, user_prompt = prompts.get_compress_rules_prompt(known_rules_text)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
+        response = self.llm_client._call(
+            sys_prompt, user_prompt, model_type="pro", json_mode=True
+        )
 
         try:
             data = json.loads(extract_json(response))
             compressed_dict = data.get("compressed_rules", {})
-            if not isinstance(compressed_dict, dict): return False
+            if not isinstance(compressed_dict, dict):
+                return False
 
             cleaned_compressed = {}
             for category, rules in compressed_dict.items():
                 if isinstance(rules, list):
-                    unique_rules = self._unique_rules([r.strip() for r in rules if isinstance(r, str) and r.strip()])
-                    if unique_rules: cleaned_compressed[category] = unique_rules
+                    unique_rules = self._unique_rules(
+                        [r.strip() for r in rules if isinstance(r, str) and r.strip()]
+                    )
+                    if unique_rules:
+                        cleaned_compressed[category] = unique_rules
 
             if cleaned_compressed and cleaned_compressed != self.known_rules:
                 print("Applied compressed rule set.")
@@ -223,8 +275,12 @@ class Agent:
             for i, (prev_frame, action, next_frame) in enumerate(self.history)
         )
         known_rules_text = self._get_known_rules_text("Rules deduced so far:")
-        sys_prompt, user_prompt = prompts.get_refine_rules_prompt(known_rules_text, history_log, game_name=self.cfg.game)
-        response = self.llm_client._call(sys_prompt, user_prompt, model_type="pro", json_mode=True)
+        sys_prompt, user_prompt = prompts.get_refine_rules_prompt(
+            known_rules_text, history_log, game_name=self.cfg.game
+        )
+        response = self.llm_client._call(
+            sys_prompt, user_prompt, model_type="pro", json_mode=True
+        )
 
         try:
             data = json.loads(extract_json(response))
@@ -233,23 +289,32 @@ class Agent:
             self.inferred_final_goal = data.get("final_goal", self.inferred_final_goal)
 
             if isinstance(new_legend, dict):
-                self.inferred_legend = {int(k): str(v) for k, v in new_legend.items() if str(k).lstrip('-').isdigit()}
+                self.inferred_legend = {
+                    int(k): str(v)
+                    for k, v in new_legend.items()
+                    if str(k).lstrip("-").isdigit()
+                }
 
             if final_rules and isinstance(final_rules, dict):
                 print("\n--- Final Rules and Legend ---")
                 print("Legend:", self.inferred_legend)
-                if self.inferred_final_goal: print("Final Goal:", self.inferred_final_goal)
-                
+                if self.inferred_final_goal:
+                    print("Final Goal:", self.inferred_final_goal)
+
                 self.known_rules = {}
                 for category, rules in final_rules.items():
                     if isinstance(rules, list):
-                        valid_rules = [r for r in rules if isinstance(r, str) and r.strip()]
-                        if valid_rules: self.known_rules[category] = valid_rules
-                
+                        valid_rules = [
+                            r for r in rules if isinstance(r, str) and r.strip()
+                        ]
+                        if valid_rules:
+                            self.known_rules[category] = valid_rules
+
                 for category, rules in self.known_rules.items():
                     print(f'"{category}":')
-                    for r in rules: print(f"  {r}")
-                        
+                    for r in rules:
+                        print(f"  {r}")
+
                 self._save_rules(self.known_rules)
                 print("-----------------------------")
             else:
@@ -267,9 +332,14 @@ class Agent:
 
         # Single-character shorthand — only if the entire response is one char
         if len(text) == 1:
-            shorthand = {"W": GameAction.ACTION1, "S": GameAction.ACTION2,
-                         "A": GameAction.ACTION3, "D": GameAction.ACTION4,
-                         "X": GameAction.ACTION5, "R": GameAction.RESET}
+            shorthand = {
+                "W": GameAction.ACTION1,
+                "S": GameAction.ACTION2,
+                "A": GameAction.ACTION3,
+                "D": GameAction.ACTION4,
+                "X": GameAction.ACTION5,
+                "R": GameAction.RESET,
+            }
             if text in shorthand:
                 return shorthand[text]
 
@@ -289,19 +359,29 @@ class Agent:
                 start_index = idx
                 marker_length = len(marker)
 
-        if start_index != -1: source = source[start_index + marker_length :]
-        for symbol in ("*", "#", "_"): source = source.replace(symbol, "")
+        if start_index != -1:
+            source = source[start_index + marker_length :]
+        for symbol in ("*", "#", "_"):
+            source = source.replace(symbol, "")
 
         for line in source.splitlines():
             cleaned = line.strip()
-            if cleaned: return cleaned
+            if cleaned:
+                return cleaned
         fallback = source.strip()
         return fallback if fallback else "Explore a new interaction."
 
-    def plan_subgoal(self, frame_data: FrameData, history: list[tuple[FrameData, GameAction, FrameData]]) -> str:
-        recent = "\n".join(f"{i + 1}. {action.name}" for i, (_, action, _) in enumerate(history[-5:]))
+    def plan_subgoal(
+        self,
+        frame_data: FrameData,
+        history: list[tuple[FrameData, GameAction, FrameData]],
+    ) -> str:
+        recent = "\n".join(
+            f"{i + 1}. {action.name}" for i, (_, action, _) in enumerate(history[-5:])
+        )
         flat_rules = []
-        for cat_rules in self.known_rules.values(): flat_rules.extend(cat_rules)
+        for cat_rules in self.known_rules.values():
+            flat_rules.extend(cat_rules)
 
         merged_legend = frame_data.legend.copy()
         if self.inferred_legend:
@@ -316,7 +396,12 @@ class Agent:
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
         return self._clean_subgoal(response)
 
-    def act_learn(self, frame_data: FrameData, local: list[tuple[FrameData, GameAction, FrameData]], subgoal: str = "") -> GameAction:
+    def act_learn(
+        self,
+        frame_data: FrameData,
+        local: list[tuple[FrameData, GameAction, FrameData]],
+        subgoal: str = "",
+    ) -> GameAction:
         hist = "\n".join(
             f"- {action.name} (Board unchanged: {prev_frame.frame == next_frame.frame})"
             for prev_frame, action, next_frame in local[-5:]
@@ -334,20 +419,20 @@ class Agent:
 
     def act_solve(self, frame_data: FrameData, legend: dict, local: list) -> GameAction:
         flat_rules = []
-        for cat_rules in self.known_rules.values(): flat_rules.extend(cat_rules)
+        for cat_rules in self.known_rules.values():
+            flat_rules.extend(cat_rules)
 
         sys_prompt, user_prompt = prompts.get_solving_act_prompt(
-            format_frames(frame_data.frame), 
-            legend, 
-            flat_rules, 
-            self.cfg.show_legend
+            format_frames(frame_data.frame), legend, flat_rules, self.cfg.show_legend
         )
         response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
         return self._parse_action(response)
 
     def run_periodic_analysis(self, frame_data: FrameData) -> str:
         history_window = self.history[-5:]
-        if history_window and any(prev.frame != next_f.frame for prev, _, next_f in history_window):
+        if history_window and any(
+            prev.frame != next_f.frame for prev, _, next_f in history_window
+        ):
             print("Deducing rules from history...")
             added_any = self.deduce_rules_from_history(history_window)
             if added_any:
@@ -391,7 +476,11 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
             agent.refine_and_complete_rules_and_legend()
             break
 
-        if state.steps > 0 and state.steps % 5 == 0 and state.steps != last_periodic_step:
+        if (
+            state.steps > 0
+            and state.steps % 5 == 0
+            and state.steps != last_periodic_step
+        ):
             try:
                 subgoal = agent.run_periodic_analysis(state.frame_data)
             except RuntimeError as e:
@@ -412,7 +501,7 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
         agent.history.append((prev_frame, action, next_frame))
         if len(agent.history) > 200:
             agent.history = agent.history[-200:]
-            
+
         state.local.append((prev_frame, action, next_frame))
         state.frame_data = next_frame
 
@@ -436,7 +525,10 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
             agent.infer_legend(agent.history[:10])
             legend_inferred = True
 
-        if next_frame.state in [GameState.WIN, GameState.GAME_OVER] or next_frame.levels_completed != prev_frame.levels_completed:
+        if (
+            next_frame.state in [GameState.WIN, GameState.GAME_OVER]
+            or next_frame.levels_completed != prev_frame.levels_completed
+        ):
             print("Level complete!")
             state.local = []
             subgoal = ""
@@ -453,12 +545,16 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
 def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
     frame_data = env.reset()
     state = RunState(frame_data=frame_data)
-    
+
     print(f"Started session {getattr(env, 'session_id', 'unknown')} in SOLVE mode")
     last_periodic_step = 0
-    
+
     while True:
-        if state.steps > 0 and state.steps % 5 == 0 and state.steps != last_periodic_step:
+        if (
+            state.steps > 0
+            and state.steps % 5 == 0
+            and state.steps != last_periodic_step
+        ):
             try:
                 # Use analysis to update rules mid-solve, but discard returned subgoal
                 agent.run_periodic_analysis(state.frame_data)
@@ -468,27 +564,32 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
 
         prev_frame = state.frame_data
         try:
-            action = agent.act_solve(state.frame_data, state.frame_data.legend, state.local)
+            action = agent.act_solve(
+                state.frame_data, state.frame_data.legend, state.local
+            )
         except RuntimeError as e:
             print(f"LLM failure, skipping turn: {e}")
             time.sleep(2)
             continue
         print(f"Action: {action.name}")
-        
+
         next_frame = env.step(action)
         agent.history.append((state.frame_data, action, next_frame))
         if len(agent.history) > 200:
             agent.history = agent.history[-200:]
-            
+
         state.local.append((state.frame_data, action, next_frame))
         state.steps += 1
         state.frame_data = next_frame
-        
-        if next_frame.state == GameState.WIN or next_frame.levels_completed != prev_frame.levels_completed:
+
+        if (
+            next_frame.state == GameState.WIN
+            or next_frame.levels_completed != prev_frame.levels_completed
+        ):
             print("Level complete!")
             state.local = []
             if next_frame.state == GameState.WIN:
                 print("Game completed successfully!")
                 break
-        
+
         time.sleep(1)
