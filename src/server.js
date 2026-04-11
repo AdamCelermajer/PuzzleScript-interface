@@ -85,6 +85,7 @@ class SessionHandler extends EmptyGameEngineHandler {
     onLevelLoad(num, size) {
         this.currentLevel = num;
         // console.log("Level loaded:", num);
+        this.won = false;
         this.currentMessage = null; // Clear message on load
     }
 
@@ -401,6 +402,7 @@ async function executeAction(session, action) {
         session.handler.messages = [];
         if (dir === INPUT_BUTTON.RESTART) {
             session.engine.setLevel(session.engine.currentLevelNum);
+            framesList.push(session.renderIntGrid());
         } else {
             session.engine.press(dir);
             let ticks = 0;

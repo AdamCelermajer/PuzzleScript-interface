@@ -16,18 +16,24 @@ class ArcadeEnv(BaseEnv):
         backend_url: str = "https://three.arcprize.org",
         api_key: str | None = None,
         render_mode: str | None = None,
+        renderer=None,
         arcade_factory=Arcade,
     ) -> None:
         self.game_id = game_id
         self.backend_url = backend_url
         self.api_key = api_key if api_key is not None else os.getenv("ARC_API_KEY", "")
         self.render_mode = render_mode
+        self.renderer = renderer
         self.arcade = arcade_factory(
             operation_mode=OperationMode.ONLINE,
             arc_base_url=self.backend_url,
             arc_api_key=self.api_key,
         )
-        self._env = self.arcade.make(self.game_id, render_mode=self.render_mode)
+        self._env = self.arcade.make(
+            self.game_id,
+            render_mode=self.render_mode,
+            renderer=self.renderer,
+        )
         if self._env is None:
             raise ValueError(f"Could not create ARC environment for {self.game_id}")
         self.session_id = self.game_id

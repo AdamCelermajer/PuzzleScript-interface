@@ -18,7 +18,7 @@
 # Effects:    "<A> moves <direction>", "<A> becomes <B>", "<A> and <B> both move <direction>"
 #
 # =============================================================================
- 
+
 RULE_FORMAT = """
 RULE FORMAT — every rule must follow this exact template:
   IF action is '<WASD>' AND <cell description> THEN <effect>
@@ -32,13 +32,16 @@ Effect vocabulary (use only these forms):
 Directions: W=up, A=left, S=down, D=right
 Positions:  'above P', 'below P', 'to the left of P', 'to the right of P'
 """.strip()
- 
- 
+
+
 # =============================================================================
 # 1. LEGEND INFERENCE
 # =============================================================================
- 
-def get_infer_legend_prompt(history_log: str, current_legend_text: str, game_name: str = "Unknown") -> tuple[str, str]:
+
+
+def get_infer_legend_prompt(
+    history_log: str, current_legend_text: str, game_name: str = "Unknown"
+) -> tuple[str, str]:
     sys = (
         "You are a symbol analyst for 2D grid worlds. "
         f"The environment you are analyzing is named '{game_name}'. Use this context sparingly to guide symbol naming. "
@@ -49,7 +52,7 @@ def get_infer_legend_prompt(history_log: str, current_legend_text: str, game_nam
         "- DO NOT hallucinate or infer symbols that never appear in the board state.\n"
         "- Support logical and literal descriptions rather than imaginative guesses.\n"
         "- Retain or update existing legend mappings if provided, and add any newly discovered symbols.\n"
-        "Output ONLY a JSON object: {\"<integer_id>\": \"<role name>\", ...}\n"
+        'Output ONLY a JSON object: {"<integer_id>": "<role name>", ...}\n'
     )
     prompt = (
         f"{current_legend_text}\n\n"
@@ -58,13 +61,16 @@ def get_infer_legend_prompt(history_log: str, current_legend_text: str, game_nam
         "Output only the JSON object."
     )
     return sys, prompt
- 
- 
+
+
 # =============================================================================
 # 2. RULE DEDUCTION (called every N steps on a short recent window)
 # =============================================================================
- 
-def get_deduce_rules_prompt(events: str, known_rules_text: str, focus_prompt: str, game_name: str = "Unknown") -> tuple[str, str]:
+
+
+def get_deduce_rules_prompt(
+    events: str, known_rules_text: str, focus_prompt: str, game_name: str = "Unknown"
+) -> tuple[str, str]:
     sys = (
         "You are a physics engine reverse-engineer. "
         f"You are observing a grid environment named '{game_name}'. "
@@ -84,8 +90,8 @@ def get_deduce_rules_prompt(events: str, known_rules_text: str, focus_prompt: st
         "8. UPDATE LEGEND: If you learn a new symbol's role, output it. If no new legend info is learned, output an empty object {}.\n"
         "9. CLASSIFY RULES: Group the inferred rules into categories you invent (e.g. 'Movement', 'Collision').\n"
         "10. INFER FINAL GOAL: Based on the events, infer what the overall goal of the environment is (e.g., 'Move all crates to the target'). If unknown, leave empty.\n\n"
-        "Output ONLY valid JSON: {\"legend\": {\"symbol\": \"role\"}, \"rules\": {\"Category Name\": [\"rule 1\", \"rule 2\"]}, \"final_goal\": \"goal description\"}\n"
-        "If no new rules can be confidently inferred, output: {\"legend\": {}, \"rules\": {}, \"final_goal\": \"\"}"
+        'Output ONLY valid JSON: {"legend": {"symbol": "role"}, "rules": {"Category Name": ["rule 1", "rule 2"]}, "final_goal": "goal description"}\n'
+        'If no new rules can be confidently inferred, output: {"legend": {}, "rules": {}, "final_goal": ""}'
     )
     prompt = (
         f"{known_rules_text}\n\n"
@@ -95,12 +101,13 @@ def get_deduce_rules_prompt(events: str, known_rules_text: str, focus_prompt: st
         "Follow the rule format exactly. Output only the JSON."
     )
     return sys, prompt
- 
- 
+
+
 # =============================================================================
 # 3. RULE COMPRESSION (new — collapses direction-specific rules into general ones)
 # =============================================================================
- 
+
+
 def get_compress_rules_prompt(known_rules_text: str) -> tuple[str, str]:
     sys = (
         "You are a rule abstraction specialist for 2D grid world physics. "
@@ -109,20 +116,23 @@ def get_compress_rules_prompt(known_rules_text: str) -> tuple[str, str]:
         "Only merge rules where the behaviour is genuinely identical across all directions. "
         "Remove semantic duplicates.\n\n"
         f"{RULE_FORMAT}\n\n"
-        "Output ONLY valid JSON: {\"compressed_rules\": {\"Category Name\": [\"rule 1\", \"rule 2\", ...]}}"
+        'Output ONLY valid JSON: {"compressed_rules": {"Category Name": ["rule 1", "rule 2", ...]}}'
     )
     prompt = (
         f"RULES TO COMPRESS:\n{known_rules_text}\n\n"
         "Compress this rule set while preserving behaviour. Output only the JSON."
     )
     return sys, prompt
- 
- 
+
+
 # =============================================================================
 # 4. RULE REFINEMENT (final consolidation pass — called at end of learning)
 # =============================================================================
- 
-def get_refine_rules_prompt(known_rules_text: str, history_log: str, game_name: str = "Unknown") -> tuple[str, str]:
+
+
+def get_refine_rules_prompt(
+    known_rules_text: str, history_log: str, game_name: str = "Unknown"
+) -> tuple[str, str]:
     sys = (
         "You are a quality auditor for world physics rules. "
         f"The environment is named '{game_name}'. Use this title for thematic context when naming symbols. "
@@ -141,7 +151,7 @@ def get_refine_rules_prompt(known_rules_text: str, history_log: str, game_name: 
         "6. INFER LEGEND: Based on observed behaviour, assign a role name to each symbol.\n"
         "7. FINAL GOAL: State the final goal of the environment based on the history.\n\n"
         "DO NOT add rules that are not evidenced by the history.\n\n"
-        "Output ONLY valid JSON: {\"final_rules\": {\"Category Name\": [\"rule 1\", \"rule 2\"]}, \"legend\": {\"symbol\": \"role\", ...}, \"final_goal\": \"goal description\"}"
+        'Output ONLY valid JSON: {"final_rules": {"Category Name": ["rule 1", "rule 2"]}, "legend": {"symbol": "role", ...}, "final_goal": "goal description"}'
     )
     prompt = (
         f"CANDIDATE RULES:\n{known_rules_text}\n\n"
@@ -149,12 +159,13 @@ def get_refine_rules_prompt(known_rules_text: str, history_log: str, game_name: 
         "Audit and clean the rules. Output only the JSON."
     )
     return sys, prompt
- 
- 
+
+
 # =============================================================================
 # 5. SUBGOAL PLANNING (drives exploration toward unseen interactions)
 # =============================================================================
- 
+
+
 def get_plan_subgoal_prompt(
     board: str,
     recent: str,
@@ -164,7 +175,8 @@ def get_plan_subgoal_prompt(
 
     known_rules_text = (
         "KNOWN RULES SO FAR:\n" + "\n".join(f"- {r}" for r in known_rules)
-        if known_rules else "KNOWN RULES SO FAR: none yet"
+        if known_rules
+        else "KNOWN RULES SO FAR: none yet"
     )
     legend_text = ""
     if inferred_legend:
@@ -172,7 +184,7 @@ def get_plan_subgoal_prompt(
             f"SYMBOL ROLES DEDUCED SO FAR: {inferred_legend}\n"
             "Use this to target the right objects in your subgoal.\n\n"
         )
- 
+
     sys = (
         "You are a systematic experiment designer for a 2D grid world. "
         "Your goal is to identify gaps in the current rule set and design one targeted action sequence "
@@ -190,13 +202,16 @@ def get_plan_subgoal_prompt(
         "Be specific about which object to interact with and in which direction."
     )
     return sys, prompt
- 
- 
+
+
 # =============================================================================
 # 6. LEARNING ACT (picks next move toward subgoal)
 # =============================================================================
- 
-def get_learning_act_prompt(subgoal: str, board: str, known_rules_text: str, hist: str) -> tuple[str, str]:
+
+
+def get_learning_act_prompt(
+    subgoal: str, board: str, known_rules_text: str, hist: str
+) -> tuple[str, str]:
     sys = (
         "You are an agent in a 2D grid world. "
         "You must select the single best next action to make progress toward your subgoal.\n\n"
@@ -205,7 +220,7 @@ def get_learning_act_prompt(subgoal: str, board: str, known_rules_text: str, his
     )
     prompt = (
         f"SUBGOAL: {subgoal}\n\n"
-        f"BOARD OVER TIME:\n{board}\n\n"
+        f"BOARD:\n{board}\n\n"
         f"{known_rules_text}\n\n"
         f"RECENT HISTORY:\n{hist}\n\n"
         "Select the action that best moves you toward the subgoal. "
@@ -214,19 +229,23 @@ def get_learning_act_prompt(subgoal: str, board: str, known_rules_text: str, his
         "Output one action name only: ACTION1, ACTION2, ACTION3, ACTION4, ACTION5, or RESET."
     )
     return sys, prompt
- 
- 
+
+
 # =============================================================================
 # 7. SOLVING ACT (used in solving mode — requires rules to be passed in)
 # =============================================================================
- 
-def get_solving_act_prompt(board: str, legend: dict, known_rules: list, show_legend: bool) -> tuple[str, str]:
+
+
+def get_solving_act_prompt(
+    board: str, legend: dict, known_rules: list, show_legend: bool
+) -> tuple[str, str]:
     rules_text = (
         "WORLD RULES:\n" + "\n".join(f"- {r}" for r in known_rules)
-        if known_rules else ""
+        if known_rules
+        else ""
     )
     legend_text = f"LEGEND: {legend}\n" if show_legend and legend else ""
- 
+
     sys = (
         "You are a puzzle solver in a 2D grid world. "
         "Use the world rules to reason about what will happen before you act. "
@@ -235,9 +254,8 @@ def get_solving_act_prompt(board: str, legend: dict, known_rules: list, show_leg
     prompt = (
         f"{legend_text}"
         f"{rules_text}\n\n"
-        f"BOARD OVER TIME:\n{board}\n\n"
+        f"BOARD:\n{board}\n\n"
         "Choose your next action: ACTION1 (up), ACTION2 (down), ACTION3 (left), ACTION4 (right), ACTION5, RESET\n"
         "Output action name only."
     )
     return sys, prompt
- 

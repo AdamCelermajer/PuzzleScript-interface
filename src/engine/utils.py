@@ -1,22 +1,40 @@
 """Utility helpers shared across learning and solving pipelines."""
-from typing import List
+
+from typing import Any, List
+
+
+def _normalize_grid(grid: Any) -> List[List[int]]:
+    if hasattr(grid, "tolist"):
+        grid = grid.tolist()
+    return [[int(value) for value in row] for row in grid]
+
+
+def last_grid(frames: List[Any]) -> List[List[int]]:
+    """Return the final settled grid from a frame stack."""
+    if not frames:
+        return []
+    return _normalize_grid(frames[-1])
+
 
 def format_grid(grid: List[List[int]]) -> str:
     """Format a 2D integer grid for LLM reading."""
     if not grid:
         return "[]"
-    
+
     # Format with brackets but nice spacing, preserving the [0, 8, ...] style
     lines = []
     for row in grid:
         lines.append("  " + str(row))
     return "\n".join(lines)
 
-def format_frames(frames: List[List[List[int]]]) -> str:
-    """Format a 3D sequence of grids (ticks)."""
-    if not frames:
+
+def format_frames(frames: List[Any]) -> str:
+    """Format only the final settled grid for LLM reading."""
+    grid = last_grid(frames)
+    if not grid:
         return "No frames"
-    return "\n\n".join(f"Grid {i}:\n{format_grid(g)}" for i, g in enumerate(frames))
+    return format_grid(grid)
+
 
 def extract_json(text: str) -> str:
     """Extract JSON content from markdown-fenced model responses."""

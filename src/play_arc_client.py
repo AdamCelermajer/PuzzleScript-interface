@@ -7,8 +7,11 @@ import sys
 from arc_agi import Arcade, OperationMode
 from arcengine import GameAction, GameState
 
+from terminal_dashboard import TerminalDashboard
+
 
 QUIT_COMMAND = "quit"
+CONTROLS_TEXT = "W/A/S/D move | R reset | Z undo | Q quit"
 
 
 def key_to_action(key: str) -> GameAction | str | None:
@@ -51,22 +54,21 @@ def read_key() -> str:
         termios.tcsetattr(fd, termios.TCSADRAIN, original)
 
 
-def print_help(game_id: str) -> None:
-    print(f"Game: {game_id}")
-    print("Controls: W/A/S/D move | R reset | Z undo | Q quit")
-
-
-def print_state(obs) -> None:
+def update_dashboard(dashboard: TerminalDashboard, obs) -> None:
     if obs is None:
-        print("No observation returned.")
+        dashboard.set_status("No observation returned.")
         return
-    print(
+    dashboard.set_status(
         f"State: {obs.state.name} | Levels completed: {obs.levels_completed}/{obs.win_levels}"
     )
     if obs.state == GameState.WIN:
-        print("You won. Press R to play again or Q to quit.")
+        dashboard.set_detail("You won. Press R to play again or Q to quit.")
     elif obs.state == GameState.GAME_OVER:
-        print("Game over. Press R to reset or Q to quit.")
+        dashboard.set_detail("Game over. Press R to reset or Q to quit.")
+    else:
+        dashboard.set_detail(
+            "Use W/A/S/D to move. Press R to reset, Z to undo, Q to quit."
+        )
 
 
 def main() -> int:
@@ -83,29 +85,43 @@ def main() -> int:
         arc_base_url=args.backend_url,
         arc_api_key=args.api_key,
     )
-    env = arcade.make(args.game_id, render_mode="terminal-fast")
-    if env is None:
-        print(f"Failed to create game environment for {args.game_id}", file=sys.stderr)
-        return 1
+    dashboard = TerminalDashboard(
+        game_id=args.game_id,
+        mode="PLAY",
+        controls=CONTROLS_TEXT,
+    )
 
-    print_help(args.game_id)
-    obs = env.reset()
-    print_state(obs)
+    try:
+        env = arcade.make(args.game_id, renderer=dashboard.render)
+        if env is None:
+            print(
+                f"Failed to create game environment for {args.game_id}", file=sys.stderr
+            )
+            return 1
 
-    while True:
-        key = read_key()
-        command = key_to_action(key)
-        if command is None:
-            continue
-        if command == QUIT_COMMAND:
-            print("Bye.")
-            return 0
+        dashboard.push_event(f"Loaded game {args.game_id}")
+        obs = env.reset()
+        update_dashboard(dashboard, obs)
 
-        if command == GameAction.RESET:
-            obs = env.reset()
-        else:
-            obs = env.step(command)
-        print_state(obs)
+        while True:
+            key = read_key()
+            command = key_to_action(key)
+            if command is None:
+                continue
+            if command == QUIT_COMMAND:
+                dashboard.close()
+                print("Bye.")
+                return 0
+
+            if command == GameAction.RESET:
+                dashboard.push_event("Requested reset")
+                obs = env.reset()
+            else:
+                dashboard.push_event(f"Input: {command.name}")
+                obs = env.step(command)
+            update_dashboard(dashboard, obs)
+    finally:
+        dashboard.close()
 
 
 if __name__ == "__main__":

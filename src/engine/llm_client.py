@@ -2,7 +2,7 @@ import os
 import time
 import re
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Callable, Optional
 
 import litellm
 from dotenv import load_dotenv
@@ -30,21 +30,37 @@ class Config:
             raise ValueError("GOOGLE_API_KEY not found")
 
 
-
 class LlmClient:
     """Wrapper around litellm with model-specific routing parameters."""
 
     MAX_RETRIES = 5
     CIRCUIT_BREAKER_COOLDOWN = 60
 
-    def __init__(self, config: Config) -> None:
+    def __init__(
+        self,
+        config: Config,
+        event_sink: Optional[Callable[[str], None]] = None,
+    ) -> None:
         """Initialize provider credentials and runtime config."""
         self.cfg = config
+        self.event_sink = event_sink
         self.consecutive_failures = 0
         self.circuit_breaker_until = 0.0
         os.environ["GEMINI_API_KEY"] = config.api_key
 
-    def _call(self, system: str, prompt: str, model_type: str = "flash", json_mode: bool = False) -> str:
+    def _log(self, message: str) -> None:
+        if self.event_sink is not None:
+            self.event_sink(message)
+            return
+        print(message)
+
+    def _call(
+        self,
+        system: str,
+        prompt: str,
+        model_type: str = "flash",
+        json_mode: bool = False,
+    ) -> str:
         """Call the configured LLM and return plain text output.
 
         Retries up to MAX_RETRIES times with backoff. After MAX_RETRIES
@@ -52,10 +68,16 @@ class LlmClient:
         """
         if time.time() < self.circuit_breaker_until:
             wait_time = self.circuit_breaker_until - time.time()
-            raise RuntimeError(f"Circuit breaker active. Skipping calls for {wait_time:.1f}s")
-            
+            raise RuntimeError(
+                f"Circuit breaker active. Skipping calls for {wait_time:.1f}s"
+            )
+
         model_name = self.cfg.pro_model if model_type == "pro" else self.cfg.flash_model
-        litellm_model = f"gemini/{model_name}" if not model_name.startswith("gemini/") else model_name
+        litellm_model = (
+            f"gemini/{model_name}"
+            if not model_name.startswith("gemini/")
+            else model_name
+        )
 
         messages = [
             {"role": "system", "content": system},
@@ -66,17 +88,23 @@ class LlmClient:
         # Gemini 2.5 Series
         if re.search(r"2\.5", model_name):
             if "flash" in model_name:
-                kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingBudget": 0}}}
+                kwargs["extra_body"] = {
+                    "generationConfig": {"thinkingConfig": {"thinkingBudget": 0}}
+                }
         # Gemini 3.0/3.1 Series
         elif re.search(r"(?<!\d)3(?:\.\d+)?(?!\d)", model_name):
             if "flash" in model_name:
-                kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "low"}}}
+                kwargs["extra_body"] = {
+                    "generationConfig": {"thinkingConfig": {"thinkingLevel": "low"}}
+                }
             elif "pro" in model_name:
-                kwargs["extra_body"] = {"generationConfig": {"thinkingConfig": {"thinkingLevel": "high"}}}
+                kwargs["extra_body"] = {
+                    "generationConfig": {"thinkingConfig": {"thinkingLevel": "high"}}
+                }
 
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
-            
+
         kwargs["timeout"] = 45  # Enforce a 45s hard timeout to prevent indefinite hangs
 
         last_error: Exception | None = None
@@ -88,7 +116,9 @@ class LlmClient:
                     messages=messages,
                     **kwargs,
                 )
-                print(f"[{litellm_model}] Response time: {time.time() - start:.1f}s")
+                self._log(
+                    f"[{litellm_model}] Response time: {time.time() - start:.1f}s"
+                )
                 content = response.choices[0].message.content
                 if not content or not content.strip():
                     raise ValueError("LLM returned empty content")
@@ -97,17 +127,22 @@ class LlmClient:
             except Exception as e:
                 last_error = e
                 self.consecutive_failures += 1
-                print(f"[{litellm_model}] Attempt {attempt}/{self.MAX_RETRIES} failed: {e}")
-                
+                self._log(
+                    f"[{litellm_model}] Attempt {attempt}/{self.MAX_RETRIES} failed: {e}"
+                )
+
                 if self.consecutive_failures >= 3:
-                    self.circuit_breaker_until = time.time() + self.CIRCUIT_BREAKER_COOLDOWN
-                    print(f"[{litellm_model}] Circuit breaker tripped! Cooling down for {self.CIRCUIT_BREAKER_COOLDOWN}s")
+                    self.circuit_breaker_until = (
+                        time.time() + self.CIRCUIT_BREAKER_COOLDOWN
+                    )
+                    self._log(
+                        f"[{litellm_model}] Circuit breaker tripped. Cooling down for {self.CIRCUIT_BREAKER_COOLDOWN}s"
+                    )
                     break
-                    
+
                 if attempt < self.MAX_RETRIES:
-                    time.sleep(min(2 ** attempt, 4)) # Cap backoff at 4 seconds
+                    time.sleep(min(2**attempt, 4))  # Cap backoff at 4 seconds
 
         raise RuntimeError(
-            f"LLM call failed after consecutive attempts. "
-            f"Last error: {last_error}"
+            f"LLM call failed after consecutive attempts. Last error: {last_error}"
         )

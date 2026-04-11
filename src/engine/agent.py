@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from typing import Optional
+from typing import Callable, Optional
 from dataclasses import dataclass, field
 
 from .llm_client import Config, LlmClient
@@ -14,10 +14,16 @@ from engine.base_env import BaseEnv
 class Agent:
     """LLM-driven agent capable of both learning rules and solving environments."""
 
-    def __init__(self, config: Config, llm_client: LlmClient) -> None:
+    def __init__(
+        self,
+        config: Config,
+        llm_client: LlmClient,
+        event_sink: Optional[Callable[[str], None]] = None,
+    ) -> None:
         """Initialize learner state, rule storage, and inference memory."""
         self.cfg = config
         self.llm_client = llm_client
+        self.event_sink = event_sink
         self.history: list[tuple[FrameData, GameAction, FrameData]] = []
         self.inferred_legend: dict[int, str] = {}
         self.inferred_final_goal: str = ""
@@ -26,6 +32,12 @@ class Agent:
         self.rules_file = os.path.join(self.cfg.rules_dir, f"{self.cfg.game}_rules.txt")
         self.known_rules: dict[str, list[str]] = {}
         self._load_state_from_file()
+
+    def _log(self, message: str) -> None:
+        if self.event_sink is not None:
+            self.event_sink(message)
+            return
+        print(message)
 
     def _unique_rules(self, rules: list[str]) -> list[str]:
         seen: set[str] = set()
@@ -77,9 +89,9 @@ class Agent:
                 for k, v in parsed.items()
                 if str(k).lstrip("-").isdigit()
             }
-            print(f"Inferred Legend: {self.inferred_legend}")
+            self._log(f"Inferred Legend: {self.inferred_legend}")
         except Exception as e:
-            print(f"Could not parse inferred legend: {response} ERROR: {e}")
+            self._log(f"Could not parse inferred legend: {response} ERROR: {e}")
 
     def _load_state_from_file(self) -> None:
         if not os.path.exists(self.rules_file):
@@ -176,7 +188,7 @@ class Agent:
             new_final_goal = data.get("final_goal", "")
 
             if not isinstance(new_rules_dict, dict):
-                print(f"Invalid rules payload: {response}")
+                self._log(f"Invalid rules payload: {response}")
                 return False
 
             state_changed = False
@@ -219,18 +231,18 @@ class Agent:
                     )
                     if not exists:
                         if not added_any_rule:
-                            print("--- New Rules Deduced ---")
-                        print(f"- [{category}] {cleaned_rule}")
+                            self._log("--- New Rules Deduced ---")
+                        self._log(f"- [{category}] {cleaned_rule}")
                         self.known_rules[category].append(cleaned_rule)
                         added_any_rule = True
 
             if added_any_rule or state_changed:
                 self._save_rules(self.known_rules)
                 if added_any_rule:
-                    print("------------------------")
+                    self._log("------------------------")
             return added_any_rule
         except json.JSONDecodeError:
-            print(f"Could not parse rules from response: {response}")
+            self._log(f"Could not parse rules from response: {response}")
             return False
 
     def compress_rules(self) -> bool:
@@ -258,7 +270,7 @@ class Agent:
                         cleaned_compressed[category] = unique_rules
 
             if cleaned_compressed and cleaned_compressed != self.known_rules:
-                print("Applied compressed rule set.")
+                self._log("Applied compressed rule set.")
                 self.known_rules = cleaned_compressed
                 self._save_rules(self.known_rules)
                 return True
@@ -343,7 +355,9 @@ class Agent:
             if text in shorthand:
                 return shorthand[text]
 
-        print(f"Warning: could not parse action from '{text}', defaulting to ACTION5")
+        self._log(
+            f"Warning: could not parse action from '{text}', defaulting to ACTION5"
+        )
         return GameAction.ACTION5
 
     def _clean_subgoal(self, text: str) -> str:
@@ -433,17 +447,17 @@ class Agent:
         if history_window and any(
             prev.frame != next_f.frame for prev, _, next_f in history_window
         ):
-            print("Deducing rules from history...")
+            self._log("Deducing rules from history...")
             added_any = self.deduce_rules_from_history(history_window)
             if added_any:
-                print("Compressing rules...")
+                self._log("Compressing rules...")
                 self.compress_rules()
         else:
-            print("All recent steps unchanged — skipping deduction")
+            self._log("All recent steps unchanged - skipping deduction")
 
-        print("Planning next subgoal...")
+        self._log("Planning next subgoal...")
         new_subgoal = self.plan_subgoal(frame_data, self.history)
-        print(f"New subgoal: {new_subgoal}")
+        self._log(f"New subgoal: {new_subgoal}")
         return new_subgoal
 
 
@@ -454,16 +468,35 @@ class RunState:
     local: list[tuple[FrameData, GameAction, FrameData]] = field(default_factory=list)
 
 
-def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
+def _emit(message: str, event_sink: Optional[Callable[[str], None]] = None) -> None:
+    if event_sink is not None:
+        event_sink(message)
+        return
+    print(message)
+
+
+def run_learning_loop(
+    cfg: Config,
+    env: BaseEnv,
+    agent: Agent,
+    dashboard=None,
+    event_sink: Optional[Callable[[str], None]] = None,
+) -> None:
     try:
         frame_data = env.reset()
     except Exception as e:
-        print(f"Failed to initialize environment: {e}")
+        _emit(f"Failed to initialize environment: {e}", event_sink)
         return
 
     state = RunState(frame_data=frame_data)
-    print(f"Started session {getattr(env, 'session_id', 'unknown')} in LEARN mode")
-    print(f"Legend mapping from env: {frame_data.legend}")
+    _emit(
+        f"Started session {getattr(env, 'session_id', 'unknown')} in LEARN mode",
+        event_sink,
+    )
+    _emit(f"Legend mapping from env: {frame_data.legend}", event_sink)
+    if dashboard is not None:
+        dashboard.set_status("Learning rules from live board transitions.")
+        dashboard.set_detail("Waiting for the next action.")
 
     subgoal = ""
     consecutive_unchanged = 0
@@ -472,7 +505,11 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
 
     while True:
         if state.steps >= cfg.max_steps:
-            print("\nMax steps reached. Performing final analysis...")
+            _emit("Max steps reached. Performing final analysis...", event_sink)
+            if dashboard is not None:
+                dashboard.close()
+                agent.event_sink = None
+                agent.llm_client.event_sink = None
             agent.refine_and_complete_rules_and_legend()
             break
 
@@ -483,17 +520,19 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
         ):
             try:
                 subgoal = agent.run_periodic_analysis(state.frame_data)
+                if dashboard is not None:
+                    dashboard.set_detail(f"Subgoal: {subgoal}")
             except RuntimeError as e:
-                print(f"LLM failure during analysis, skipping: {e}")
+                _emit(f"LLM failure during analysis, skipping: {e}", event_sink)
             last_periodic_step = state.steps
 
         try:
             action = agent.act_learn(state.frame_data, state.local, subgoal)
         except RuntimeError as e:
-            print(f"LLM failure, skipping turn: {e}")
+            _emit(f"LLM failure, skipping turn: {e}", event_sink)
             time.sleep(2)
             continue
-        print(f"Action: {action.name}")
+        _emit(f"Action: {action.name}", event_sink)
 
         prev_frame = state.frame_data
         next_frame = env.step(action)
@@ -506,14 +545,16 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
         state.frame_data = next_frame
 
         if prev_frame.frame == next_frame.frame:
-            print("Warning: Board state unchanged")
+            _emit("Warning: Board state unchanged", event_sink)
             consecutive_unchanged += 1
             if consecutive_unchanged >= 3:
-                print("Stuck — forcing reset")
-                state.frame_data = env.step(GameAction.RESET)
+                _emit("Stuck - forcing reset", event_sink)
+                state.frame_data = env.reset()
                 state.local = []
                 subgoal = ""
                 consecutive_unchanged = 0
+                if dashboard is not None:
+                    dashboard.set_detail("Board reset after repeated unchanged moves.")
             time.sleep(1)
             continue
 
@@ -521,7 +562,7 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
         state.steps += 1
 
         if not legend_inferred and state.steps >= 10 and len(agent.history) >= 10:
-            print("Inferring symbol roles from first 10 steps...")
+            _emit("Inferring symbol roles from first 10 steps...", event_sink)
             agent.infer_legend(agent.history[:10])
             legend_inferred = True
 
@@ -529,24 +570,38 @@ def run_learning_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
             next_frame.state in [GameState.WIN, GameState.GAME_OVER]
             or next_frame.levels_completed != prev_frame.levels_completed
         ):
-            print("Level complete!")
+            _emit("Level complete!", event_sink)
             state.local = []
             subgoal = ""
             if cfg.mode == "win" and next_frame.state == GameState.WIN:
-                print("World completed successfully!")
+                _emit("World completed successfully!", event_sink)
                 break
             if next_frame.state == GameState.GAME_OVER:
-                print("Game Over... Resetting")
-                state.frame_data = env.step(GameAction.RESET)
+                _emit("Game Over... Resetting", event_sink)
+                state.frame_data = env.reset()
+                if dashboard is not None:
+                    dashboard.set_detail("Board reset after GAME_OVER.")
 
         time.sleep(1)
 
 
-def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
+def run_solving_loop(
+    cfg: Config,
+    env: BaseEnv,
+    agent: Agent,
+    dashboard=None,
+    event_sink: Optional[Callable[[str], None]] = None,
+) -> None:
     frame_data = env.reset()
     state = RunState(frame_data=frame_data)
 
-    print(f"Started session {getattr(env, 'session_id', 'unknown')} in SOLVE mode")
+    _emit(
+        f"Started session {getattr(env, 'session_id', 'unknown')} in SOLVE mode",
+        event_sink,
+    )
+    if dashboard is not None:
+        dashboard.set_status("Solving with the current learned rule set.")
+        dashboard.set_detail("Watching the agent choose the next move.")
     last_periodic_step = 0
 
     while True:
@@ -559,7 +614,7 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
                 # Use analysis to update rules mid-solve, but discard returned subgoal
                 agent.run_periodic_analysis(state.frame_data)
             except RuntimeError as e:
-                print(f"LLM failure during rules refinement, skipping: {e}")
+                _emit(f"LLM failure during rules refinement, skipping: {e}", event_sink)
             last_periodic_step = state.steps
 
         prev_frame = state.frame_data
@@ -568,10 +623,10 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
                 state.frame_data, state.frame_data.legend, state.local
             )
         except RuntimeError as e:
-            print(f"LLM failure, skipping turn: {e}")
+            _emit(f"LLM failure, skipping turn: {e}", event_sink)
             time.sleep(2)
             continue
-        print(f"Action: {action.name}")
+        _emit(f"Action: {action.name}", event_sink)
 
         next_frame = env.step(action)
         agent.history.append((state.frame_data, action, next_frame))
@@ -586,10 +641,10 @@ def run_solving_loop(cfg: Config, env: BaseEnv, agent: Agent) -> None:
             next_frame.state == GameState.WIN
             or next_frame.levels_completed != prev_frame.levels_completed
         ):
-            print("Level complete!")
+            _emit("Level complete!", event_sink)
             state.local = []
             if next_frame.state == GameState.WIN:
-                print("Game completed successfully!")
+                _emit("Game completed successfully!", event_sink)
                 break
 
         time.sleep(1)

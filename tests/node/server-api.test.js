@@ -84,3 +84,42 @@ test('ACTION7 undoes the previous move', async () => {
         server.kill();
     }
 });
+
+test('RESET returns the updated board immediately', async () => {
+    const server = spawn('node', ['src/server.js'], {
+        cwd: path.join(__dirname, '..', '..'),
+        env: { ...process.env, PORT: String(SERVER_PORT) },
+        stdio: 'ignore',
+    });
+
+    try {
+        await waitForServer(`${SERVER_URL}/observe?sessionId=missing`);
+
+        const initResponse = await fetch(`${SERVER_URL}/init`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameName: 'sokoban-basic' }),
+        });
+        const initBody = await initResponse.json();
+
+        const movedResponse = await fetch(`${SERVER_URL}/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: initBody.sessionId, action: 'ACTION4' }),
+        });
+        const movedBody = await movedResponse.json();
+
+        const resetResponse = await fetch(`${SERVER_URL}/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: initBody.sessionId, action: 'RESET' }),
+        });
+        const resetBody = await resetResponse.json();
+
+        assert.notDeepEqual(movedBody.frame.at(-1), initBody.frame.at(-1));
+        assert.notDeepEqual(resetBody.frame.at(-1), movedBody.frame.at(-1));
+        assert.deepEqual(resetBody.frame.at(-1), initBody.frame.at(-1));
+    } finally {
+        server.kill();
+    }
+});

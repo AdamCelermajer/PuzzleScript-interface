@@ -114,6 +114,22 @@ class ArcadeEnvTests(unittest.TestCase):
         self.assertEqual(env._env.stepped_actions, [ArcGameAction.ACTION3])
         self.assertEqual(frame.action_input.action, GameAction.ACTION3)
 
+    def test_renderer_is_forwarded_to_arcade_make(self) -> None:
+        renderer = lambda steps, frame_data: None
+
+        env = ArcadeEnv(
+            game_id="sokoban-basic-v1",
+            backend_url="http://localhost:8000",
+            api_key="local-dev",
+            arcade_factory=FakeArcade,
+            renderer=renderer,
+        )
+
+        self.assertEqual(
+            env.arcade.make_calls[0],
+            ("sokoban-basic-v1", {"render_mode": None, "renderer": renderer}),
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
