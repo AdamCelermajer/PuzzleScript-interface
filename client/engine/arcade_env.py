@@ -59,10 +59,10 @@ class ArcadeEnv(BaseEnv):
         return GameAction(int(action_value))
 
     def _convert_frame(self, frame_data) -> FrameData:
-        frame_layers = []
-        for layer in getattr(frame_data, "frame", []):
-            frame_layers.append(layer.tolist() if hasattr(layer, "tolist") else layer)
-
+        frame_layers = [
+            layer.tolist() if hasattr(layer, "tolist") else layer
+            for layer in getattr(frame_data, "frame", [])
+        ]
         available_actions = []
         for action_id in getattr(frame_data, "available_actions", []):
             try:
@@ -71,12 +71,14 @@ class ArcadeEnv(BaseEnv):
                 continue
 
         action_input_data = getattr(frame_data, "action_input", None)
-        action_input = ActionInput(action=GameAction.RESET)
-        if action_input_data is not None:
-            action_input = ActionInput(
+        action_input = (
+            ActionInput(
                 action=self._convert_action(getattr(action_input_data, "id", 0)),
                 data=getattr(action_input_data, "data", {}) or {},
             )
+            if action_input_data is not None
+            else ActionInput(action=GameAction.RESET)
+        )
 
         return FrameData(
             frame=frame_layers,

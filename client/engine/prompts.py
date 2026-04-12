@@ -147,18 +147,6 @@ def get_plan_subgoal_prompt(
     known_rules: list,
     inferred_legend: dict | None = None,
 ) -> tuple[str, str]:
-    known_rules_text = (
-        "KNOWN RULES SO FAR:\n" + "\n".join(f"- {rule}" for rule in known_rules)
-        if known_rules
-        else "KNOWN RULES SO FAR: none yet"
-    )
-    legend_text = ""
-    if inferred_legend:
-        legend_text = (
-            f"SYMBOL ROLES DEDUCED SO FAR: {inferred_legend}\n"
-            "Use this to target the right objects in your subgoal.\n\n"
-        )
-
     sys = (
         "You are a systematic experiment designer for a 2D grid world. "
         "Your goal is to identify gaps in the current rule set and design one targeted action sequence "
@@ -168,8 +156,18 @@ def get_plan_subgoal_prompt(
     )
     prompt = (
         f"CURRENT BOARD:\n{board}\n\n"
-        f"{legend_text}"
-        f"{known_rules_text}\n\n"
+        + (
+            f"SYMBOL ROLES DEDUCED SO FAR: {inferred_legend}\n"
+            "Use this to target the right objects in your subgoal.\n\n"
+            if inferred_legend
+            else ""
+        )
+        + (
+            "KNOWN RULES SO FAR:\n" + "\n".join(f"- {rule}" for rule in known_rules)
+            if known_rules
+            else "KNOWN RULES SO FAR: none yet"
+        )
+        + "\n\n"
         f"RECENT ACTIONS:\n{recent}\n\n"
         "Identify the most important interaction that is not yet covered by the known rules. "
         "State a single, concrete subgoal in one sentence. "
