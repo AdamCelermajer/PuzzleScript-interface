@@ -286,48 +286,198 @@ class Agent:
             self._log(f"Could not parse compressed rules from response: {response}")
             return False
 
+    def refine_and_complete_rules_and_legend(self) -> None:
+        history_log = "\n\n".join(
+            (
+                f"Step {i + 1}:\nAction: {action.name}\nBoard state before action:\n{format_frames(prev_frame.frame)}\n"
+                f"Board state after action:\n{format_frames(next_frame.frame)}"
+            )
+            for i, (prev_frame, action, next_frame) in enumerate(self.history)
+        )
+        known_rules_text = self._get_known_rules_text("Rules deduced so far:")
+        sys_prompt, user_prompt = prompts.get_refine_rules_prompt(
+            known_rules_text, history_log, game_name=self.cfg.game
+        )
+        response = self.llm_client._call(
+            sys_prompt, user_prompt, model_type="pro", json_mode=True
+        )
+
+        try:
+            data = json.loads(extract_json(response))
+            final_rules = data.get("final_rules", {})
+            new_legend = data.get("legend", {})
+            self.inferred_final_goal = data.get("final_goal", self.inferred_final_goal)
+
+            if isinstance(new_legend, dict):
+                self.inferred_legend = {
+                    int(k): str(v)
+                    for k, v in new_legend.items()
+                    if str(k).lstrip("-").isdigit()
+                }
+
+            if final_rules and isinstance(final_rules, dict):
+                print("\n--- Final Rules and Legend ---")
+                print("Legend:", self.inferred_legend)
+                if self.inferred_final_goal:
+                    print("Final Goal:", self.inferred_final_goal)
+
+                self.known_rules = {}
+                for category, rules in final_rules.items():
+                    if isinstance(rules, list):
+                        valid_rules = [
+                            r for r in rules if isinstance(r, str) and r.strip()
+                        ]
+                        if valid_rules:
+                            self.known_rules[category] = valid_rules
+
+                for category, rules in self.known_rules.items():
+                    print(f'"{category}":')
+                    for rule in rules:
+                        print(f"  {rule}")
+
+                self._save_rules(self.known_rules)
+                print("-----------------------------")
+            else:
+                print("Could not deduce final rules.")
+        except json.JSONDecodeError:
+            print(f"Could not parse final deduction response: {response}")
+
+    def _parse_action(self, text: str) -> GameAction:
+        text = text.strip().upper()
+
+        for action in GameAction:
+            if action.name in text:
+                return action
+
+        if len(text) == 1:
+            shorthand = {
+                "W": GameAction.ACTION1,
+                "S": GameAction.ACTION2,
+                "A": GameAction.ACTION3,
+                "D": GameAction.ACTION4,
+                "X": GameAction.ACTION5,
+                "R": GameAction.RESET,
+            }
+            if text in shorthand:
+                return shorthand[text]
+
+        self._log(
+            f"Warning: could not parse action from '{text}', defaulting to ACTION5"
+        )
+        return GameAction.ACTION5
+
+    def _clean_subgoal(self, text: str) -> str:
+        source = text.strip()
+        lower_source = source.lower()
+        markers = ["**subgoal:**", "subgoal:"]
+
+        start_index = -1
+        marker_length = 0
+        for marker in markers:
+            idx = lower_source.rfind(marker)
+            if idx > start_index:
+                start_index = idx
+                marker_length = len(marker)
+
+        if start_index != -1:
+            source = source[start_index + marker_length :]
+        for symbol in ("*", "#", "_"):
+            source = source.replace(symbol, "")
+
+        for line in source.splitlines():
+            cleaned = line.strip()
+            if cleaned:
+                return cleaned
+        fallback = source.strip()
+        return fallback if fallback else "Explore a new interaction."
+
+    def plan_subgoal(
+        self,
+        frame_data: FrameData,
+        history: list[tuple[FrameData, GameAction, FrameData]],
+    ) -> str:
+        recent = "\n".join(
+            f"{i + 1}. {action.name}" for i, (_, action, _) in enumerate(history[-5:])
+        )
+        flat_rules = []
+        for cat_rules in self.known_rules.values():
+            flat_rules.extend(cat_rules)
+
+        merged_legend = frame_data.legend.copy()
+        if self.inferred_legend:
+            merged_legend.update(self.inferred_legend)
+
+        sys_prompt, user_prompt = prompts.get_plan_subgoal_prompt(
+            format_frames(frame_data.frame),
+            recent,
+            flat_rules,
+            merged_legend,
+        )
+        response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
+        return self._clean_subgoal(response)
+
+    def act_learn(
+        self,
+        frame_data: FrameData,
+        local: list[tuple[FrameData, GameAction, FrameData]],
+        subgoal: str = "",
+    ) -> GameAction:
+        hist = "\n".join(
+            f"- {action.name} (Board unchanged: {prev_frame.frame == next_frame.frame})"
+            for prev_frame, action, next_frame in local[-5:]
+        )
+        known_rules_text = self._get_known_rules_text("KNOWN RULES:")
+
+        sys_prompt, user_prompt = prompts.get_learning_act_prompt(
+            subgoal,
+            format_frames(frame_data.frame),
+            known_rules_text,
+            hist,
+        )
+        response = self.llm_client._call(sys_prompt, user_prompt, model_type="flash")
+        return self._parse_action(response)
+
+    def run_periodic_analysis(self, frame_data: FrameData) -> str:
+        history_window = self.history[-5:]
+        if history_window and any(
+            prev.frame != next_frame.frame for prev, _, next_frame in history_window
+        ):
+            self._log("Deducing rules from history...")
+            added_any = self.deduce_rules_from_history(history_window)
+            if added_any:
+                self._log("Compressing rules...")
+                self.compress_rules()
+        else:
+            self._log("All recent steps unchanged - skipping deduction")
+
+        self._log("Planning next subgoal...")
+        new_subgoal = self.plan_subgoal(frame_data, self.history)
+        self._log(f"New subgoal: {new_subgoal}")
+        return new_subgoal
+
 
 @dataclass
-class LearningTurnResult:
-    prev_frame: FrameData
-    action: GameAction
-    next_frame: FrameData
-    reached_terminal: bool
+class RunState:
+    frame_data: FrameData
+    steps: int = 0
+    local: list[tuple[FrameData, GameAction, FrameData]] = field(default_factory=list)
 
 
-def choose_action_for_learning(
-    cfg: Config,
-    frame_data: FrameData,
-    step_number: int,
-) -> GameAction:
+def _emit(message: str, event_sink: Optional[Callable[[str], None]] = None) -> None:
+    if event_sink is not None:
+        event_sink(message)
+        return
+    print(message)
+
+
+def _choose_placeholder_action(frame_data: FrameData, step_number: int) -> GameAction:
     available_actions = frame_data.available_actions or []
-    if not available_actions:
-        raise RuntimeError("No available actions returned by environment")
-
     non_reset_actions = [
         action for action in available_actions if action != GameAction.RESET
     ]
-    candidates = non_reset_actions or available_actions
-    return candidates[step_number % len(candidates)]
-
-
-def run_learning_turn(
-    cfg: Config,
-    env: BaseEnv,
-    agent: Agent,
-    current_frame: FrameData,
-    step_number: int,
-) -> LearningTurnResult:
-    action = choose_action_for_learning(cfg, current_frame, step_number)
-    next_frame = env.step(action)
-    agent.history.append((current_frame, action, next_frame))
-    reached_terminal = next_frame.state in {GameState.WIN, GameState.GAME_OVER}
-    return LearningTurnResult(
-        prev_frame=current_frame,
-        action=action,
-        next_frame=next_frame,
-        reached_terminal=reached_terminal,
-    )
+    if not non_reset_actions:
+        raise RuntimeError("No non-reset actions available for solve placeholder")
+    return non_reset_actions[step_number % len(non_reset_actions)]
 
 
 def run_learning_loop(
@@ -337,64 +487,107 @@ def run_learning_loop(
     dashboard=None,
     event_sink: Optional[Callable[[str], None]] = None,
 ) -> None:
-    def log(message: str) -> None:
-        if event_sink is not None:
-            event_sink(message)
-            return
-        print(message)
+    try:
+        frame_data = env.reset()
+    except Exception as e:
+        _emit(f"Failed to initialize environment: {e}", event_sink)
+        return
 
-    current_frame = env.reset()
-    for step in range(cfg.max_steps):
-        turn = run_learning_turn(cfg, env, agent, current_frame, step)
-        current_frame = turn.next_frame
-
-        if (step + 1) % 10 == 0:
-            log(f"Step {step + 1}: inferring legend from recent history")
-            agent.infer_legend(agent.history[-10:])
-            log(f"Step {step + 1}: deducing rules from recent history")
-            agent.deduce_rules_from_history(agent.history[-10:])
-
-        if turn.reached_terminal:
-            log(f"Reached terminal state: {turn.next_frame.state.name}. Resetting.")
-            current_frame = env.reset()
-
-    agent.compress_rules()
-
-
-def load_rules_text(path: str) -> str:
-    with open(path, "r", encoding="utf-8") as file:
-        return file.read()
-
-
-def request_solution_plan(
-    agent: Agent,
-    rules_text: str,
-    current_frame: FrameData,
-) -> str:
-    prompt = (
-        f"KNOWN RULES:\n{rules_text}\n\n"
-        f"CURRENT BOARD:\n{format_frames(current_frame.frame)}\n\n"
-        "Using the known rules only, provide a short action plan using W/A/S/D."
+    state = RunState(frame_data=frame_data)
+    _emit(
+        f"Started session {getattr(env, 'session_id', 'unknown')} in LEARN mode",
+        event_sink,
     )
-    return agent.llm_client._call(
-        "You solve grid worlds using provided rules.",
-        prompt,
-        model_type="pro",
-    )
+    _emit(f"Legend mapping from env: {frame_data.legend}", event_sink)
+    if dashboard is not None:
+        dashboard.set_status("Learning rules from live board transitions.")
+        dashboard.set_detail("Waiting for the next action.")
 
+    subgoal = ""
+    consecutive_unchanged = 0
+    legend_inferred = False
+    last_periodic_step = 0
 
-def parse_solution_actions(plan_text: str) -> list[GameAction]:
-    mapping = {
-        "W": GameAction.ACTION1,
-        "S": GameAction.ACTION2,
-        "A": GameAction.ACTION3,
-        "D": GameAction.ACTION4,
-    }
-    actions: list[GameAction] = []
-    for char in plan_text.upper():
-        if char in mapping:
-            actions.append(mapping[char])
-    return actions
+    while True:
+        if state.steps >= cfg.max_steps:
+            _emit("Max steps reached. Performing final analysis...", event_sink)
+            if dashboard is not None:
+                dashboard.close()
+                agent.event_sink = None
+                agent.llm_client.event_sink = None
+            agent.refine_and_complete_rules_and_legend()
+            break
+
+        if (
+            state.steps > 0
+            and state.steps % 5 == 0
+            and state.steps != last_periodic_step
+        ):
+            try:
+                subgoal = agent.run_periodic_analysis(state.frame_data)
+                if dashboard is not None:
+                    dashboard.set_detail(f"Subgoal: {subgoal}")
+            except RuntimeError as e:
+                _emit(f"LLM failure during analysis, skipping: {e}", event_sink)
+            last_periodic_step = state.steps
+
+        try:
+            action = agent.act_learn(state.frame_data, state.local, subgoal)
+        except RuntimeError as e:
+            _emit(f"LLM failure, skipping turn: {e}", event_sink)
+            time.sleep(2)
+            continue
+        _emit(f"Action: {action.name}", event_sink)
+
+        prev_frame = state.frame_data
+        next_frame = env.step(action)
+
+        agent.history.append((prev_frame, action, next_frame))
+        if len(agent.history) > 200:
+            agent.history = agent.history[-200:]
+
+        state.local.append((prev_frame, action, next_frame))
+        state.frame_data = next_frame
+
+        if prev_frame.frame == next_frame.frame:
+            _emit("Warning: Board state unchanged", event_sink)
+            consecutive_unchanged += 1
+            if consecutive_unchanged >= 3:
+                _emit("Stuck - forcing reset", event_sink)
+                state.frame_data = env.reset()
+                state.local = []
+                subgoal = ""
+                consecutive_unchanged = 0
+                if dashboard is not None:
+                    dashboard.set_detail("Board reset after repeated unchanged moves.")
+            time.sleep(1)
+            continue
+
+        consecutive_unchanged = 0
+        state.steps += 1
+
+        if not legend_inferred and state.steps >= 10 and len(agent.history) >= 10:
+            _emit("Inferring symbol roles from first 10 steps...", event_sink)
+            agent.infer_legend(agent.history[:10])
+            legend_inferred = True
+
+        if (
+            next_frame.state in [GameState.WIN, GameState.GAME_OVER]
+            or next_frame.levels_completed != prev_frame.levels_completed
+        ):
+            _emit("Level complete!", event_sink)
+            state.local = []
+            subgoal = ""
+            if cfg.mode == "win" and next_frame.state == GameState.WIN:
+                _emit("World completed successfully!", event_sink)
+                break
+            if next_frame.state == GameState.GAME_OVER:
+                _emit("Game Over... Resetting", event_sink)
+                state.frame_data = env.reset()
+                if dashboard is not None:
+                    dashboard.set_detail("Board reset after GAME_OVER.")
+
+        time.sleep(1)
 
 
 def run_solving_loop(
@@ -404,31 +597,38 @@ def run_solving_loop(
     dashboard=None,
     event_sink: Optional[Callable[[str], None]] = None,
 ) -> None:
-    def log(message: str) -> None:
-        if event_sink is not None:
-            event_sink(message)
+    frame_data = env.reset()
+    state = RunState(frame_data=frame_data)
+
+    _emit(
+        f"Started session {getattr(env, 'session_id', 'unknown')} in SOLVE mode",
+        event_sink,
+    )
+    if dashboard is not None:
+        dashboard.set_status("Running simple solve placeholder.")
+        dashboard.set_detail("Using non-reset moves only.")
+
+    while state.steps < cfg.max_steps:
+        action = _choose_placeholder_action(state.frame_data, state.steps)
+        _emit(f"Action: {action.name}", event_sink)
+
+        next_frame = env.step(action)
+        agent.history.append((state.frame_data, action, next_frame))
+        if len(agent.history) > 200:
+            agent.history = agent.history[-200:]
+
+        state.local.append((state.frame_data, action, next_frame))
+        state.steps += 1
+        state.frame_data = next_frame
+
+        if next_frame.state == GameState.WIN:
+            _emit("Game completed successfully!", event_sink)
             return
-        print(message)
 
-    current_frame = env.reset()
-    if not os.path.exists(agent.rules_file):
-        raise FileNotFoundError(f"Rules file not found: {agent.rules_file}")
-
-    rules_text = load_rules_text(agent.rules_file)
-    plan_text = request_solution_plan(agent, rules_text, current_frame)
-    actions = parse_solution_actions(plan_text)
-
-    if not actions:
-        raise RuntimeError("Solver returned no executable actions")
-
-    for action in actions[: cfg.max_steps]:
-        log(f"Executing planned action: {action.name}")
-        current_frame = env.step(action)
-        if current_frame.state == GameState.WIN:
-            log("Puzzle solved.")
-            return
-        if current_frame.state == GameState.GAME_OVER:
-            log("Game over encountered during solve.")
+        if next_frame.state == GameState.GAME_OVER:
+            _emit("Game Over encountered during solve.", event_sink)
             return
 
-    log("Stopped after max solve steps.")
+        time.sleep(1)
+
+    _emit("Stopped after max solve steps.", event_sink)

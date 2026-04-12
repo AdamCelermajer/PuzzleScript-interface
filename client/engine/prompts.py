@@ -108,3 +108,93 @@ def get_compress_rules_prompt(known_rules_text: str) -> tuple[str, str]:
         "Compress direction-specific duplicates into general rules where justified. Output only JSON."
     )
     return sys, prompt
+
+
+def get_refine_rules_prompt(
+    known_rules_text: str, history_log: str, game_name: str = "Unknown"
+) -> tuple[str, str]:
+    sys = (
+        "You are a quality auditor for world physics rules. "
+        f"The environment is named '{game_name}'. Use this title for thematic context when naming symbols. "
+        "You are given a candidate rule set and a transition history. "
+        "Your job is to produce the cleanest, most accurate, most minimal rule set possible.\n\n"
+        f"{RULE_FORMAT}\n\n"
+        "AUDIT STEPS (apply in order):\n"
+        "1. VERIFY: For each rule, find at least one event in the history that supports it. "
+        "If no supporting event exists, mark it as unverified.\n"
+        "2. REMOVE UNVERIFIED: Drop all unverified rules. Do not keep rules you cannot trace to an observation.\n"
+        "3. REMOVE CONTRADICTIONS: If two rules have the same condition but different effects, "
+        "keep the one supported by more observations and drop the other.\n"
+        "4. DIRECTION CHECK: Verify W=up, A=left, S=down, D=right in every rule. Fix any mismatches.\n"
+        "5. COMPRESS: Merge direction-specific rules into direction-agnostic forms where the behaviour "
+        "is genuinely identical across directions.\n"
+        "6. INFER LEGEND: Based on observed behaviour, assign a role name to each symbol.\n"
+        "7. FINAL GOAL: State the final goal of the environment based on the history.\n\n"
+        "DO NOT add rules that are not evidenced by the history.\n\n"
+        'Output ONLY valid JSON: {"final_rules": {"Category Name": ["rule 1", "rule 2"]}, "legend": {"symbol": "role", ...}, "final_goal": "goal description"}'
+    )
+    prompt = (
+        f"CANDIDATE RULES:\n{known_rules_text}\n\n"
+        f"TRANSITION HISTORY (ground truth):\n{history_log}\n\n"
+        "Audit and clean the rules. Output only the JSON."
+    )
+    return sys, prompt
+
+
+def get_plan_subgoal_prompt(
+    board: str,
+    recent: str,
+    known_rules: list,
+    inferred_legend: dict | None = None,
+) -> tuple[str, str]:
+    known_rules_text = (
+        "KNOWN RULES SO FAR:\n" + "\n".join(f"- {rule}" for rule in known_rules)
+        if known_rules
+        else "KNOWN RULES SO FAR: none yet"
+    )
+    legend_text = ""
+    if inferred_legend:
+        legend_text = (
+            f"SYMBOL ROLES DEDUCED SO FAR: {inferred_legend}\n"
+            "Use this to target the right objects in your subgoal.\n\n"
+        )
+
+    sys = (
+        "You are a systematic experiment designer for a 2D grid world. "
+        "Your goal is to identify gaps in the current rule set and design one targeted action sequence "
+        "that will produce a new, unseen interaction or will advance to the final goal of the world.\n\n"
+        "Think like a scientist: what interaction have you not yet observed? "
+        "What single subgoal would most likely reveal a new rule or advance to the final goal?"
+    )
+    prompt = (
+        f"CURRENT BOARD:\n{board}\n\n"
+        f"{legend_text}"
+        f"{known_rules_text}\n\n"
+        f"RECENT ACTIONS:\n{recent}\n\n"
+        "Identify the most important interaction that is not yet covered by the known rules. "
+        "State a single, concrete subgoal in one sentence. "
+        "Be specific about which object to interact with and in which direction."
+    )
+    return sys, prompt
+
+
+def get_learning_act_prompt(
+    subgoal: str, board: str, known_rules_text: str, hist: str
+) -> tuple[str, str]:
+    sys = (
+        "You are an agent in a 2D grid world. "
+        "You must select the single best next action to make progress toward your subgoal.\n\n"
+        "Actions: ACTION1 (up), ACTION2 (down), ACTION3 (left), ACTION4 (right), ACTION5 (action/space), RESET (reset board)\n\n"
+        "Output ONLY the exact action name (e.g. ACTION1). No explanation, no reasoning, no punctuation."
+    )
+    prompt = (
+        f"SUBGOAL: {subgoal}\n\n"
+        f"BOARD:\n{board}\n\n"
+        f"{known_rules_text}\n\n"
+        f"RECENT HISTORY:\n{hist}\n\n"
+        "Select the action that best moves you toward the subgoal. "
+        "Do not repeat an action that left the board unchanged. "
+        "If you are stuck, or any action does not help, you can use RESET to reset the board. "
+        "Output one action name only: ACTION1, ACTION2, ACTION3, ACTION4, ACTION5, or RESET."
+    )
+    return sys, prompt

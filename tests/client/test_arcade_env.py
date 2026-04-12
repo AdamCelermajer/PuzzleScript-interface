@@ -37,8 +37,10 @@ class FakeFrameDataRaw:
 class FakeEnvironmentWrapper:
     def __init__(self) -> None:
         self.stepped_actions: list[ArcGameAction] = []
+        self.reset_calls = 0
 
     def reset(self) -> FakeFrameDataRaw:
+        self.reset_calls += 1
         return FakeFrameDataRaw(
             game_id="sokoban-basic-v1",
             frame=[np.array([[0, 1], [1, 0]], dtype=np.int8)],
@@ -97,6 +99,17 @@ class ArcadeEnvTests(unittest.TestCase):
             frame.available_actions,
             [GameAction.ACTION1, GameAction.ACTION2, GameAction.ACTION7],
         )
+        self.assertEqual(env._env.reset_calls, 1)
+
+    def test_init_does_not_keep_wrapper_auto_reset_as_visible_turn(self) -> None:
+        env = ArcadeEnv(
+            game_id="sokoban-basic-v1",
+            backend_url="http://localhost:8000",
+            api_key="local-dev",
+            arcade_factory=FakeArcade,
+        )
+
+        self.assertEqual(env._env.reset_calls, 0)
 
     def test_step_forwards_arcengine_actions_and_maps_terminal_state(self) -> None:
         env = ArcadeEnv(
@@ -126,7 +139,7 @@ class ArcadeEnvTests(unittest.TestCase):
 
         self.assertEqual(
             env.arcade.make_calls[0],
-            ("sokoban-basic-v1", {"render_mode": None, "renderer": renderer}),
+            ("sokoban-basic-v1", {"render_mode": None}),
         )
 
 

@@ -24,6 +24,7 @@ class ArcadeEnv(BaseEnv):
         self.api_key = api_key if api_key is not None else os.getenv("ARC_API_KEY", "")
         self.render_mode = render_mode
         self.renderer = renderer
+        self._render_step = 0
         self.arcade = arcade_factory(
             operation_mode=OperationMode.ONLINE,
             arc_base_url=self.backend_url,
@@ -32,11 +33,16 @@ class ArcadeEnv(BaseEnv):
         self._env = self.arcade.make(
             self.game_id,
             render_mode=self.render_mode,
-            renderer=self.renderer,
         )
         if self._env is None:
             raise ValueError(f"Could not create ARC environment for {self.game_id}")
         self.session_id = self.game_id
+
+    def _render_frame(self, frame_data) -> None:
+        if self.renderer is None or frame_data is None:
+            return
+        self._render_step += 1
+        self.renderer(self._render_step, frame_data)
 
     def _convert_state(self, state: ArcGameState) -> GameState:
         if state == ArcGameState.WIN:
@@ -91,6 +97,7 @@ class ArcadeEnv(BaseEnv):
         frame_data = self._env.reset()
         if frame_data is None:
             raise RuntimeError(f"Failed to reset ARC environment {self.game_id}")
+        self._render_frame(frame_data)
         return self._convert_frame(frame_data)
 
     def step(self, action: GameAction) -> FrameData:
@@ -99,4 +106,5 @@ class ArcadeEnv(BaseEnv):
             raise RuntimeError(
                 f"Failed to step ARC environment {self.game_id} with {action.name}"
             )
+        self._render_frame(frame_data)
         return self._convert_frame(frame_data)
