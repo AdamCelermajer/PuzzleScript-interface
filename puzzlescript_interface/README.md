@@ -1,27 +1,31 @@
 # PuzzleScript Interface
 
-`puzzlescript_interface/` contains the local PuzzleScript implementation of the
-ARC-compatible challenge surface used by the client.
+`puzzlescript_interface/` contains the local PuzzleScript workflow used by the root README:
 
-## Contents
-
-- `runtime/` contains the Node.js PuzzleScript runtime wrapper.
-- `api/` contains the FastAPI ARC-compatible adapter.
-- `games/` contains the local PuzzleScript `.txt` sources.
-- `manifest.json` is the starting point for catalog metadata and future benchmark curation.
+- `runtime/` contains the Node.js PuzzleScript runtime.
+- `api/` contains the ARC-compatible Python service.
+- `games/` contains the local PuzzleScript `.txt` game sources.
 
 ## Run Locally
 
-Start the PuzzleScript runtime:
+From the repository root, start the PuzzleScript runtime:
 
 ```bash
-node puzzlescript_interface/runtime/server.js
+npm start
 ```
 
-Start the ARC-compatible adapter:
+Start the local ARC-compatible PuzzleScript service:
 
 ```bash
 python -m puzzlescript_interface.api.main
 ```
+
+Then run the client from the repository root:
+
+```bash
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic-v1 --mode learn --max_steps 50
+```
+
+This agent command requires `GOOGLE_API_KEY`.
 
 The runtime writes session history under the ignored `puzzlescript_interface/.runtime/` directory.

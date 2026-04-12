@@ -1,35 +1,35 @@
 # PuzzleScript Interface
 
-This repository is organized around two top-level products:
+This repository has two supported workflows:
 
-- `client/` is the generic ARC-compatible client. It contains the agent, ARC environment adapter, terminal UI, and inferred rules stored in `client/rules/`.
-- `puzzlescript_interface/` is the local PuzzleScript implementation of an ARC-compatible challenge surface. It contains the PuzzleScript games, the Node runtime, and the FastAPI adapter.
+- Local PuzzleScript: run the bundled PuzzleScript games through the local Node.js runtime and ARC-compatible Python service.
+- Official ARC-AGI-3: run the same `client/` agent directly against the hosted ARC backend.
 
-## Structure
+Related docs:
 
-```text
-client/
-  engine/
-  run_arc_agent.py
-  play_arc_client.py
-  terminal_dashboard.py
-  rules/
+- [`client/README.md`](client/README.md) for the client entry points, dashboard, and rule outputs.
+- [`docs/architecture/arc-agi-architecture.svg`](docs/architecture/arc-agi-architecture.svg) for a research-oriented architecture sketch of the LLM-driven workflow.
+- [`docs/research/`](docs/research/) for supporting research and specification materials.
+- [`examples/basic_client.py`](examples/basic_client.py) for a small standalone client example.
 
-puzzlescript_interface/
-  api/
-  runtime/
-  games/
-  manifest.json
-```
-
-## Setup
+## Install
 
 ```bash
 npm install
 pip install -r requirements.txt
 ```
 
-## Run The Local PuzzleScript Stack
+Copy `.env.example` to `.env` and fill in the variables you need.
+
+## Local PuzzleScript Workflow
+
+Environment variables for agent runs:
+
+- `GOOGLE_API_KEY` for the Gemini-based agent.
+- `ARC_API_KEY` is not required for the local PuzzleScript stack.
+- `OPENAI_API_KEY` is legacy and unused.
+
+Manual local play with `client.play_arc_client` does not require these keys.
 
 Start the PuzzleScript runtime:
 
@@ -37,27 +37,33 @@ Start the PuzzleScript runtime:
 npm start
 ```
 
-Start the ARC-compatible adapter:
+Start the local ARC-compatible PuzzleScript service:
 
 ```bash
 python -m puzzlescript_interface.api.main
 ```
 
-Run the learning agent against the local stack:
+Run the agent against the local service:
 
 ```bash
 python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic-v1 --mode learn --max_steps 50
 ```
 
-Play manually from the terminal:
+Play a local PuzzleScript game manually from the terminal:
 
 ```bash
 python -m client.play_arc_client --game-id sokoban-basic-v1
 ```
 
-## Official ARC-AGI-3
+## Official ARC-AGI-3 Workflow
 
-The same `client/` code can talk directly to the official ARC-AGI-3 backend:
+Required environment variables:
+
+- `GOOGLE_API_KEY` for the Gemini-based agent.
+- `ARC_API_KEY` for the official ARC backend.
+- `OPENAI_API_KEY` is legacy and unused.
+
+Run the agent against the official ARC-AGI-3 backend:
 
 ```bash
 python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50

@@ -1,22 +1,27 @@
 # Intro Sources for NotebookLM
 
 ## Project Overview
-This project, **"LLM-Based Rule Induction & Planning in PuzzleScript"**, is an M.Sc. Research project by Adam Celermajer at Bar-Ilan University. The core goal is to determine if Large Language Models (LLMs) can:
-1. **Induce Rules:** Infer latent game mechanics purely from observing state transitions in a discrete 2D grid environment (PuzzleScript).
-2. **Plan:** Use these inferred rules to generate valid solution trajectories for puzzles they haven't seen before.
-3. **Generalize:** Transfer learned dynamics across different levels or game variants.
+This repository supports two related workflows around ARC-compatible puzzle interaction:
+1. **Local PuzzleScript:** Run bundled PuzzleScript games through a local Node.js runtime and ARC-compatible Python service.
+2. **Official ARC-AGI-3:** Run the same Python client against the hosted ARC backend.
+
+Within that setup, the research focus is whether Large Language Models (LLMs) can:
+1. **Induce Rules:** Infer latent game mechanics from observed state transitions in discrete 2D grid environments.
+2. **Plan:** Use inferred rules to generate valid solution trajectories.
+3. **Generalize:** Transfer learned dynamics across different levels or task variants.
 
 ## System Architecture
-The system is divided into three main components:
-1. **The Environment (PuzzleScript Interface)**: A Node.js Express server (`puzzlescript_interface/runtime/server.js`) that runs a headless instance of the PuzzleScript engine. A FastAPI adapter (`puzzlescript_interface/api/app.py`) exposes that runtime through an ARC-compatible API.
-2. **The Agent (LLM Client)**: A Python client (`client/engine/agent.py`, `client/engine/llm_client.py`, `client/engine/prompts.py`) that communicates with ARC-compatible backends. It receives integer-grid frames, extracts observations, formulates hypotheses about rules, and generates moves.
-3. **The Evaluator**: Compares the Agent's internal model against the actual ground truth PuzzleScript rules.
+The repository is organized around two runtime stacks and their supporting docs:
+1. **The ARC-Compatible Client (`client/`)**: Python entrypoints and agent code for learning, solving, terminal play, and rule persistence against ARC-compatible backends.
+2. **The PuzzleScript Interface (`puzzlescript_interface/`)**: A Node.js PuzzleScript runtime (`puzzlescript_interface/runtime/server.js`) plus a FastAPI ARC-compatible adapter (`puzzlescript_interface/api/app.py`) for local PuzzleScript-backed runs.
+3. **Supporting Docs (`docs/` and `examples/`)**: Architecture, research/spec materials, and small reference examples that document the system without being part of the main runtime path.
 
 ## Key Files & Directories
 
 ### Root Directory
-*   `README.md`: Explains the two top-level products and how to run the local stack.
+*   `README.md`: Explains the two supported workflows, architecture diagram, research docs, and key entry points.
 *   `CLAUDE.md`: Repository-specific architecture and workflow notes.
+*   `examples/basic_client.py`: Small standalone client example.
 
 ### `client/`
 Contains the generic ARC-compatible client.
@@ -24,6 +29,11 @@ Contains the generic ARC-compatible client.
 *   `run_arc_agent.py`: CLI entrypoint for learning and solving.
 *   `play_arc_client.py`: Terminal client for manual play.
 *   `rules/`: Client-owned inferred rule files.
+
+### `docs/`
+Contains supporting documentation rather than runtime code.
+*   `architecture/arc-agi-architecture.svg`: Repository architecture diagram.
+*   `research/`: Supporting research and prompt-spec materials.
 
 ### `puzzlescript_interface/`
 Contains the local PuzzleScript-backed ARC-compatible challenge surface.

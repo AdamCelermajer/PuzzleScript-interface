@@ -61,7 +61,7 @@ DeduceRules[@T]: {
 
 InferLegend[@T]: {
     U: {
-        WORLD_ANALYST_INSTRUCTIONS // You are a world analyst. Your task is to infer the meaning of the symbols on the board from a history of world states. Provide the output as a JSON object where the key is the symbol and the value is its name (e.g., {P: Player, #: Wall
+        WORLD_ANALYST_INSTRUCTIONS // You are a world analyst. Your task is to infer the meaning of the symbols on the board from a history of world states. Provide the output as a JSON object where the key is the symbol and the value is its name (e.g., {"P": "Player", "#": "Wall"}).
 
         If @T > 1 {
             WORLD_HISTORY
@@ -94,22 +94,3 @@ RefineRules[@T]: {
     }
 }
 
-// This file defines the main orchestration loop for the PuzzleScript learning agent.
-// It references the individual prompt definitions located in context.acdl.
-
-MainLoop[@T]: {
-    N: {
-        // Final pass: consolidate and refine all known rules and legend
-        If @T == env.max_steps {
-            prompt.RefineRules[@T]
-        }
-        
-        // Every 5th step, deduce rules from recent history and plan a new subgoal
-        If @T > 0 & @T % 5 == 0 {
-            prompt.DeduceRules[@T]
-            prompt.PlanSubgoal[@T]
-        }
-        
-        prompt.LearningAct[@T]
-    }
-}
