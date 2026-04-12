@@ -103,6 +103,95 @@ class TerminalDashboardTests(unittest.TestCase):
         self.assertIn("[8, 9]", screen)
         self.assertIn("\x1b[38;2;249;60;49m██", screen)
 
+    def test_arc_profile_uses_compact_numeric_view_for_wide_boards(self) -> None:
+        dashboard = TerminalDashboard(
+            game_id="ls20",
+            mode="LEARN",
+            interactive=False,
+            display_profile="arc",
+        )
+
+        wide_row = [5] * 34 + [4] * 26 + [3] * 4
+        expected_row = "".join(str(value) for value in wide_row)
+        frame_data = SimpleNamespace(
+            frame=[[wide_row, wide_row]],
+            state=SimpleNamespace(name="PLAYING"),
+            levels_completed=0,
+            win_levels=1,
+            action_input=SimpleNamespace(id=SimpleNamespace(name="ACTION4")),
+        )
+
+        with patch(
+            "client.terminal_dashboard.shutil.get_terminal_size",
+            return_value=os.terminal_size((100, 20)),
+        ):
+            dashboard.render(2, frame_data)
+            screen = dashboard._build_screen()
+
+        self.assertIn("Compact View", screen)
+        self.assertNotIn("Color View", screen)
+        self.assertIn(expected_row, screen)
+        self.assertNotIn("[5, 5, 5", screen)
+
+    def test_arc_profile_keeps_color_view_for_small_boards(self) -> None:
+        dashboard = TerminalDashboard(
+            game_id="demo",
+            mode="LEARN",
+            interactive=False,
+            display_profile="arc",
+        )
+
+        frame_data = SimpleNamespace(
+            frame=[[[0, 1], [2, 3]], [[8, 9], [14, 15]]],
+            state=SimpleNamespace(name="PLAYING"),
+            levels_completed=0,
+            win_levels=1,
+            action_input=SimpleNamespace(id=SimpleNamespace(name="ACTION4")),
+        )
+
+        with patch(
+            "client.terminal_dashboard.shutil.get_terminal_size",
+            return_value=os.terminal_size((100, 20)),
+        ):
+            dashboard.render(2, frame_data)
+            screen = dashboard._build_screen()
+
+        self.assertIn("Color View", screen)
+        self.assertIn("[8, 9]", screen)
+        self.assertIn("\x1b[38;2;249;60;49m██", screen)
+
+    def test_arc_profile_uses_compact_and_color_when_both_fit(self) -> None:
+        dashboard = TerminalDashboard(
+            game_id="ls20",
+            mode="LEARN",
+            interactive=False,
+            display_profile="arc",
+        )
+
+        wide_row = [5] * 34 + [4] * 26 + [3] * 4
+        expected_row = "".join(str(value) for value in wide_row)
+        frame_data = SimpleNamespace(
+            frame=[[wide_row, wide_row]],
+            state=SimpleNamespace(name="PLAYING"),
+            levels_completed=0,
+            win_levels=1,
+            action_input=SimpleNamespace(id=SimpleNamespace(name="ACTION4")),
+        )
+
+        with patch(
+            "client.terminal_dashboard.shutil.get_terminal_size",
+            return_value=os.terminal_size((200, 20)),
+        ):
+            dashboard.render(2, frame_data)
+            screen = dashboard._build_screen()
+
+        self.assertIn("Compact View", screen)
+        self.assertIn("Color View", screen)
+        self.assertIn(expected_row, screen)
+        self.assertIn("\x1b[38;2;", screen)
+        self.assertIn("██", screen)
+        self.assertNotIn("[5, 5, 5", screen)
+
 
 if __name__ == "__main__":
     unittest.main()

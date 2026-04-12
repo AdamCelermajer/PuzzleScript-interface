@@ -93,6 +93,7 @@ def main() -> int:
         game_id=args.game_id,
         mode="PLAY",
         controls=CONTROLS_TEXT,
+        display_profile="puzzlescript",
     )
 
     try:

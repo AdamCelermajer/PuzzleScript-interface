@@ -45,15 +45,13 @@ def _normalize_grid(grid: Any) -> list[list[int]]:
     return [[int(value) for value in row] for row in grid]
 
 
-def format_numeric_grid(frames: list[Any]) -> str:
-    grid = last_grid(frames)
+def _format_numeric_grid(grid: list[list[int]]) -> str:
     if not grid:
         return "(no frame yet)"
     return format_grid(grid)
 
 
-def format_color_grid(frames: list[Any]) -> str:
-    grid = last_grid(frames)
+def _format_color_grid(grid: list[list[int]]) -> str:
     if not grid:
         return "(no frame yet)"
 
@@ -67,6 +65,31 @@ def format_color_grid(frames: list[Any]) -> str:
             color_line.append(f"{rgb_to_ansi(rgb)}{block}{reset}")
         lines.append("".join(color_line))
     return "\n".join(lines)
+
+
+def _compact_symbol(value: int) -> str:
+    digits = "0123456789ABCDEF"
+    if 0 <= value < len(digits):
+        return digits[value]
+    return "?"
+
+
+def _format_compact_grid(grid: list[list[int]]) -> str:
+    if not grid:
+        return "(no frame yet)"
+    return "\n".join(
+        "".join(_compact_symbol(int(value)) for value in row) for row in grid
+    )
+
+
+def format_numeric_grid(frames: list[Any]) -> str:
+    grid = last_grid(frames)
+    return _format_numeric_grid(grid)
+
+
+def format_color_grid(frames: list[Any]) -> str:
+    grid = last_grid(frames)
+    return _format_color_grid(grid)
 
 
 def _merge_columns(left: list[str], right: list[str], gap: str = "    ") -> list[str]:
@@ -86,6 +109,7 @@ class TerminalDashboard:
     mode: str
     controls: str = ""
     max_events: int = 6
+    display_profile: str = "puzzlescript"
     output: Any = sys.stdout
     interactive: bool | None = None
     step: int = 0
@@ -97,12 +121,18 @@ class TerminalDashboard:
     detail: str = ""
     numeric_frame_text: str = "(no frame yet)"
     color_frame_text: str = "(no frame yet)"
+    compact_frame_text: str = "(no frame yet)"
+    board_rows: int = 0
+    board_cols: int = 0
     events: list[str] = field(default_factory=list)
     _active: bool = field(default=False, init=False)
     _lock: threading.Lock = field(default_factory=threading.Lock, init=False)
 
     def __post_init__(self) -> None:
         _enable_windows_ansi()
+        self.display_profile = (
+            str(self.display_profile or "puzzlescript").strip().lower()
+        )
         if self.interactive is None:
             self.interactive = bool(getattr(self.output, "isatty", lambda: False)())
         atexit.register(self.close)
@@ -111,8 +141,12 @@ class TerminalDashboard:
         with self._lock:
             self.step = int(steps)
             frames = getattr(frame_data, "frame", []) or []
-            self.numeric_frame_text = format_numeric_grid(frames)
-            self.color_frame_text = format_color_grid(frames)
+            grid = last_grid(frames)
+            self.numeric_frame_text = _format_numeric_grid(grid)
+            self.color_frame_text = _format_color_grid(grid)
+            self.compact_frame_text = _format_compact_grid(grid)
+            self.board_rows = len(grid)
+            self.board_cols = max((len(row) for row in grid), default=0)
             state = getattr(frame_data, "state", "")
             self.state = getattr(state, "name", str(state or "UNKNOWN"))
             self.levels_completed = int(getattr(frame_data, "levels_completed", 0))
@@ -170,7 +204,7 @@ class TerminalDashboard:
         section = "-" * max(20, min(width, 80))
         lines = [
             divider,
-            "PuzzleScript Terminal",
+            self._title(),
             f"Game: {self.game_id} | Mode: {self.mode} | Turn: {self.step}",
             f"State: {self.state} | Levels: {self.levels_completed}/{self.win_levels}",
         ]
@@ -181,11 +215,7 @@ class TerminalDashboard:
         lines.extend(
             [
                 section,
-                "Board:",
-                *_merge_columns(
-                    ["LLM View", *self.numeric_frame_text.splitlines()],
-                    ["Color View", *self.color_frame_text.splitlines()],
-                ),
+                *self._build_board_lines(width),
                 section,
                 "Recent events:",
             ]
@@ -205,6 +235,81 @@ class TerminalDashboard:
                 divider,
             ]
         return "\n".join(screen_lines)
+
+    def _title(self) -> str:
+        if self.display_profile == "arc":
+            return "ARC Terminal"
+        return "PuzzleScript Terminal"
+
+    def _build_board_lines(self, width: int) -> list[str]:
+        numeric_lines = self.numeric_frame_text.splitlines()
+        color_lines = self.color_frame_text.splitlines()
+        compact_lines = self.compact_frame_text.splitlines()
+
+        if self._can_fit_side_by_side(width):
+            return [
+                "Board:",
+                *_merge_columns(
+                    ["LLM View", *numeric_lines],
+                    ["Color View", *color_lines],
+                ),
+            ]
+
+        if self._can_fit_compact_and_color(width):
+            return [
+                "Board:",
+                *_merge_columns(
+                    ["Compact View", *compact_lines],
+                    ["Color View", *color_lines],
+                ),
+            ]
+
+        if self._should_use_compact_view(width):
+            return ["Board:", "Compact View", *compact_lines]
+
+        return [
+            "Board:",
+            "LLM View",
+            *numeric_lines,
+            "Color View",
+            *color_lines,
+        ]
+
+    def _should_use_compact_view(self, width: int) -> bool:
+        numeric_width = self._frame_width(self.numeric_frame_text)
+        color_width = self._color_view_width()
+        if self.display_profile == "arc" and self._is_large_arc_board():
+            return True
+        return max(numeric_width, color_width) > width
+
+    def _can_fit_side_by_side(self, width: int) -> bool:
+        numeric_width = max(self._frame_width(self.numeric_frame_text), len("LLM View"))
+        color_width = max(self._color_view_width(), len("Color View"))
+        return numeric_width + 4 + color_width <= width
+
+    def _can_fit_compact_and_color(self, width: int) -> bool:
+        compact_width = max(
+            self._frame_width(self.compact_frame_text), len("Compact View")
+        )
+        color_width = max(self._color_view_width(), len("Color View"))
+        return compact_width + 4 + color_width <= width
+
+    def _frame_width(self, text: str) -> int:
+        return max((len(line) for line in text.splitlines()), default=0)
+
+    def _color_view_width(self) -> int:
+        if self.board_cols:
+            return self.board_cols * 2
+        return self._frame_width(self.color_frame_text)
+
+    def _is_large_arc_board(self) -> bool:
+        if not self.board_rows or not self.board_cols:
+            return False
+        return (
+            self.board_cols >= 30
+            or self.board_rows >= 20
+            or self.board_rows * self.board_cols >= 400
+        )
 
     def _wrap_line(self, label: str, text: str, width: int) -> list[str]:
         cleaned = text.strip()

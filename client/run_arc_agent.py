@@ -29,6 +29,11 @@ def main():
         game_id=args.game_id,
         mode=args.mode.upper(),
         controls="Live agent view. Press Ctrl+C to stop.",
+        display_profile=(
+            "arc"
+            if "three.arcprize.org" in (args.backend_url or "").strip().lower()
+            else "puzzlescript"
+        ),
     )
     event_sink = dashboard.push_event
     env = ArcadeEnv(
