@@ -8,16 +8,23 @@ A research framework for LLM agents that learn puzzle game mechanics by observin
 1. **PuzzleScript** – custom games defined in `.txt` files, run via a local Node.js server
 2. **ARC-AGI-3** – official benchmark tasks accessed through a remote REST API
 
-## Two-Runtime Architecture
+## Repo Layout
+
+The repository is organized into two product folders:
+
+- `client/` — the generic ARC-compatible client. This includes the agent, ARC toolkit adapter, terminal dashboard, and inferred rules in `client/rules/`.
+- `puzzlescript_interface/` — the local PuzzleScript implementation of an ARC-compatible challenge surface. This includes the PuzzleScript games, Node.js runtime, and FastAPI adapter.
+
+## Runtime Architecture
 
 The project has a deliberate split: the PuzzleScript game engine only exists as an npm package, so a **Node.js Express server** wraps it and exposes an internal REST API. A separate **Python ARC-compatible service** adapts that runtime into the public ARC-AGI-3 contract, and the **Python agent** talks only to that ARC surface.
 
 ```
-Python Agent (src/engine/)
+Python Agent (client/engine/)
     ↓ ARC toolkit / ARC REST
-PuzzleScript ARC Service (src/puzzlescript_arc/app.py)
+PuzzleScript ARC Service (puzzlescript_interface/api/app.py)
     ↓ internal HTTP REST
-Node.js Server (src/server.js)  ←→  PuzzleScript npm package
+Node.js Server (puzzlescript_interface/runtime/server.js)  ←→  PuzzleScript npm package
 ```
 
 For official ARC-AGI-3 tasks, the Python agent communicates directly with the remote API through the same ARC toolkit path.
@@ -43,36 +50,36 @@ npm run dev        # dev mode with auto-restart (nodemon)
 
 **Start the local PuzzleScript ARC service** (required for local PuzzleScript only):
 ```bash
-python src/arc_agi_endpoint.py
+python -m puzzlescript_interface.api.main
 ```
 
 **Run the Python agent:**
 ```bash
 # Local PuzzleScript via the ARC-compatible service
-python src/run_arc_agent.py --backend-url http://localhost:8000 --game-id sokoban-basic-v1 --mode learn --max_steps 50
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic-v1 --mode learn --max_steps 50
 
 # Official ARC-AGI-3
-python src/run_arc_agent.py --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50
+python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50
 ```
 
 **Interactive human play (CLI client):**
 ```bash
-python src/play_arc_client.py --game-id sokoban-basic-v1
+python -m client.play_arc_client --game-id sokoban-basic-v1
 ```
 
 ## Key Source Files
 
 | File | Role |
 |------|------|
-| `src/server.js` | Node.js PuzzleScript runtime — session management, game execution, internal REST API |
-| `src/puzzlescript_arc/app.py` | ARC-compatible PuzzleScript service — game catalog, scorecards, `/api/...` routes |
-| `src/engine/agent.py` | Main agent — rule learning, rule-based solving |
-| `src/engine/arcade_env.py` | ARC toolkit adapter used by the engine for both local PuzzleScript and official ARC |
-| `src/engine/llm_client.py` | LLM abstraction via `litellm` (Gemini Flash/Pro) |
-| `src/engine/prompts.py` | Prompt templates for legend inference, rule deduction, rule compression |
-| `src/engine/types.py` | Shared types: `GameAction`, `GameState`, `FrameData` |
-| `src/engine/base_env.py` | Abstract `BaseEnv` interface (`reset()` / `step()`) |
-| `src/run_arc_agent.py` | Generic CLI runner for ARC-compatible backends |
+| `puzzlescript_interface/runtime/server.js` | Node.js PuzzleScript runtime — session management, game execution, internal REST API |
+| `puzzlescript_interface/api/app.py` | ARC-compatible PuzzleScript service — game catalog, scorecards, `/api/...` routes |
+| `client/engine/agent.py` | Main agent — rule learning, rule-based solving |
+| `client/engine/arcade_env.py` | ARC toolkit adapter used by the engine for both local PuzzleScript and official ARC |
+| `client/engine/llm_client.py` | LLM abstraction via `litellm` (Gemini Flash/Pro) |
+| `client/engine/prompts.py` | Prompt templates for legend inference, rule deduction, rule compression |
+| `client/engine/types.py` | Shared types: `GameAction`, `GameState`, `FrameData` |
+| `client/engine/base_env.py` | Abstract `BaseEnv` interface (`reset()` / `step()`) |
+| `client/run_arc_agent.py` | Generic CLI runner for ARC-compatible backends |
 
 ## Data Flow
 
@@ -83,9 +90,9 @@ python src/play_arc_client.py --game-id sokoban-basic-v1
 
 ## Agent Learning Loop
 
-- In **learn** mode: agent collects `(before_frame, action, after_frame)` tuples, periodically calls LLM to infer legend and deduce rules, saves results to `rules/<game>_rules.txt`
+- In **learn** mode: agent collects `(before_frame, action, after_frame)` tuples, periodically calls LLM to infer legend and deduce rules, saves results to `client/rules/<game>_rules.txt`
 - In **solve** mode: agent loads existing rules and asks LLM to plan an action sequence toward the WIN state
-- Rules are plain text with a structured format — see any file in `rules/` for the schema
+- Rules are plain text with a structured format — see any file in `client/rules/` for the schema
 
 ## LLM Configuration
 
@@ -105,7 +112,7 @@ Actions map to: `ACTION1`=Up, `ACTION2`=Down, `ACTION3`=Left, `ACTION4`=Right, `
 
 ### ARC-compatible adapter endpoints
 
-For ARC-AGI-3-style agents, use the dedicated FastAPI service `src/puzzlescript_arc/app.py` via `src/arc_agi_endpoint.py` (default port `8000`), which forwards requests to PuzzleScript `server.js`.
+For ARC-AGI-3-style agents, use the dedicated FastAPI service `puzzlescript_interface/api/app.py` via `puzzlescript_interface/api/main.py` (default port `8000`), which forwards requests to the PuzzleScript runtime in `puzzlescript_interface/runtime/server.js`.
 
 Proxy routes:
 

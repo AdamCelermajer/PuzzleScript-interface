@@ -117,9 +117,9 @@ Thumbs.db
 debug_*.js
 
 
-# game history
+# PuzzleScript interface runtime data
 
-game_history.jsonl
+puzzlescript_interface/.runtime/
 
 __pycache__
 .worktrees/
