@@ -79,7 +79,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Play a local ARC-compatible PuzzleScript game from the terminal"
     )
-    parser.add_argument("--game-id", default="sokoban-basic-v1")
+    parser.add_argument("--game-id", default="sokoban-basic")
     parser.add_argument("--backend-url", default="http://127.0.0.1:8000")
     parser.add_argument("--api-key", default="local-dev")
     args = parser.parse_args()

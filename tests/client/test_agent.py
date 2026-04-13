@@ -26,7 +26,7 @@ def _frame(
         frame=frame if frame is not None else [[[0, 0], [0, 0]]],
         state=state,
         levels_completed=0,
-        game_id="sokoban-basic-v1",
+        game_id="sokoban-basic",
         win_levels=1,
         guid="guid-1",
         full_reset=(action == GameAction.RESET),
@@ -88,7 +88,7 @@ class AgentLoopTests(unittest.TestCase):
         tmpdir = tempfile.mkdtemp()
         return Config(
             api_key="test-key",
-            game="sokoban-basic-v1",
+            game="sokoban-basic",
             max_steps=max_steps,
             mode=mode,
             rules_dir=tmpdir,
@@ -117,6 +117,21 @@ class AgentLoopTests(unittest.TestCase):
 
         self.assertEqual(env.step_actions, [GameAction.ACTION4, GameAction.ACTION2])
         self.assertEqual(len(llm.calls), 3)
+
+    def test_local_sokoban_starts_without_preloaded_rules(self) -> None:
+        cfg = Config(
+            api_key="test-key",
+            game="sokoban-basic",
+            max_steps=2,
+            mode="learn",
+            rules_dir=os.path.join(ROOT, "client", "rules"),
+        )
+
+        agent = Agent(cfg, FakeLlmClient([]))
+
+        self.assertEqual(agent.known_rules, {})
+        self.assertEqual(agent.inferred_legend, {})
+        self.assertEqual(agent.inferred_final_goal, "")
 
     def test_solving_loop_uses_simple_non_llm_placeholder_actions(self) -> None:
         cfg = self._make_config(max_steps=3, mode="solve")

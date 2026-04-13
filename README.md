@@ -46,13 +46,13 @@ python -m puzzlescript_interface.api.main
 Run the agent against the local service:
 
 ```bash
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic-v1 --mode learn --max_steps 50
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic --mode learn --max_steps 50
 ```
 
 Play a local PuzzleScript game manually from the terminal:
 
 ```bash
-python -m client.play_arc_client --game-id sokoban-basic-v1
+python -m client.play_arc_client --game-id sokoban-basic
 ```
 
 ## Official ARC-AGI-3 Workflow

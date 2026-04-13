@@ -367,7 +367,7 @@ function newId(prefix) {
 }
 
 function loadGameSourceByName(gameName) {
-    const gamePath = path.join(__dirname, '..', 'games', gameName.endsWith('.txt') ? gameName : `${gameName}.txt`);
+    const gamePath = path.join(__dirname, '..', 'games', gameName, 'script.txt');
     if (!fs.existsSync(gamePath)) {
         return null;
     }

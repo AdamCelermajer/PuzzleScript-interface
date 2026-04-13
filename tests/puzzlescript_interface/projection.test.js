@@ -11,10 +11,18 @@ const {
     countCompletedPlayableLevels,
 } = require('../../puzzlescript_interface/runtime/arc_projection');
 
-function parseGame(fileName) {
+function parseGame(gameName) {
     const source = fs
         .readFileSync(
-            path.join(__dirname, '..', '..', 'puzzlescript_interface', 'games', fileName),
+            path.join(
+                __dirname,
+                '..',
+                '..',
+                'puzzlescript_interface',
+                'games',
+                gameName,
+                'script.txt'
+            ),
             'utf8'
         )
         .replace(/\r\n/g, '\n')
@@ -23,7 +31,7 @@ function parseGame(fileName) {
 }
 
 test('buildArcProjectionSpec creates a stable versioned mapping for visible legend chars', () => {
-    const gameData = parseGame('sokoban-basic.txt');
+    const gameData = parseGame('sokoban-basic');
 
     const projection = buildArcProjectionSpec(gameData);
 
@@ -57,13 +65,13 @@ test('projectRawGrid maps unknown cells to the reserved unknown token instead of
 });
 
 test('countPlayableLevels excludes message-only PuzzleScript levels', () => {
-    const gameData = parseGame('midas.txt');
+    const gameData = parseGame('midas');
 
     assert.equal(countPlayableLevels(gameData.levels), 15);
 });
 
 test('countCompletedPlayableLevels ignores message screens when tracking progress', () => {
-    const gameData = parseGame('midas.txt');
+    const gameData = parseGame('midas');
 
     assert.equal(countCompletedPlayableLevels(gameData.levels, 0), 0);
     assert.equal(countCompletedPlayableLevels(gameData.levels, 1), 1);

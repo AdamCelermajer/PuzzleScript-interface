@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 A research framework for LLM agents that learn puzzle game mechanics by observing state transitions. Supports two environments:
-1. **PuzzleScript** – custom games defined in `.txt` files, run via a local Node.js server
+1. **PuzzleScript** – local games stored as `games/<name>/script.txt`, run via a local Node.js server
 2. **ARC-AGI-3** – official benchmark tasks accessed through a remote REST API
 
 ## Repo Layout
@@ -56,7 +56,7 @@ python -m puzzlescript_interface.api.main
 **Run the Python agent:**
 ```bash
 # Local PuzzleScript via the ARC-compatible service
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic-v1 --mode learn --max_steps 50
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic --mode learn --max_steps 50
 
 # Official ARC-AGI-3
 python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50
@@ -64,7 +64,7 @@ python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-i
 
 **Interactive human play (CLI client):**
 ```bash
-python -m client.play_arc_client --game-id sokoban-basic-v1
+python -m client.play_arc_client --game-id sokoban-basic
 ```
 
 ## Key Source Files
@@ -83,7 +83,7 @@ python -m client.play_arc_client --game-id sokoban-basic-v1
 
 ## Data Flow
 
-1. `env.reset()` → ARC toolkit RESET → local service `/api/cmd/RESET` → PuzzleScript service loads the `.txt` game internally
+1. `env.reset()` → ARC toolkit RESET → local service `/api/cmd/RESET` → PuzzleScript service loads `games/<game-id>/script.txt` internally
 2. `env.step(action)` → ARC toolkit ACTION → local service `/api/cmd/ACTION...` → PuzzleScript runtime executes and returns `FrameData`
 3. `FrameData.frame` is a `list[list[list[int]]]` — a sequence of 2D integer grids (values 0–15)
 4. `FrameData.legend` is optional debug metadata only and should not be relied on by ARC-compatible code

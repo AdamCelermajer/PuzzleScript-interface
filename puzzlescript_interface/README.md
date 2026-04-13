@@ -4,7 +4,7 @@
 
 - `runtime/` contains the Node.js PuzzleScript runtime.
 - `api/` contains the ARC-compatible Python service.
-- `games/` contains the local PuzzleScript `.txt` game sources.
+- `games/` contains PuzzleScript game folders in the `name/script.txt` layout.
 
 ## Run Locally
 
@@ -23,7 +23,7 @@ python -m puzzlescript_interface.api.main
 Then run the client from the repository root:
 
 ```bash
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic-v1 --mode learn --max_steps 50
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic --mode learn --max_steps 50
 ```
 
 This agent command requires `GOOGLE_API_KEY`.
