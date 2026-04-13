@@ -1,0 +1,20 @@
+legendes:
+{
+  "0": "empty space",
+  "1": "wall",
+  "2": "player",
+  "3": "crate",
+  "5": "target"
+}
+
+final_goal:
+Move all crates to the target
+
+"Movement":{
+IF action is 'dir' AND '0' is in direction 'dir' of '2' THEN '2' moves dir
+}
+
+"Collision":{
+IF action is 'dir' AND '3' is in direction 'dir' of '2' AND '1' is in direction 'dir' of '3' THEN '2' does not move
+}
+
