@@ -56,7 +56,7 @@ python -m puzzlescript_interface.api.main
 **Run the Python agent:**
 ```bash
 # Local PuzzleScript via the ARC-compatible service
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id sokoban-basic --mode learn --max_steps 50
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --mode learn --max_steps 50
 
 # Official ARC-AGI-3
 python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50
@@ -64,7 +64,7 @@ python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-i
 
 **Interactive human play (CLI client):**
 ```bash
-python -m client.play_arc_client --game-id sokoban-basic
+python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 ```
 
 ## Key Source Files
@@ -103,7 +103,7 @@ python -m client.play_arc_client --game-id sokoban-basic
 The real request/response shapes used by `puzzlescript_env.py`:
 
 ```
-POST /init    body: { gameName: "sokoban-basic" } OR { gameSource: "<raw text>" }
+POST /init    body: { gameName: "ps_sokoban_basic-v1" } OR { gameSource: "<raw text>" }
 POST /action  body: { sessionId, action: "ACTION1"|"ACTION2"|...|"RESET" }
 GET  /observe query: ?sessionId=...
 ```

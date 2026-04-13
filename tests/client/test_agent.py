@@ -26,7 +26,7 @@ def _frame(
         frame=frame if frame is not None else [[[0, 0], [0, 0]]],
         state=state,
         levels_completed=0,
-        game_id="sokoban-basic",
+        game_id="ps_sokoban_basic-v1",
         win_levels=1,
         guid="guid-1",
         full_reset=(action == GameAction.RESET),
@@ -88,7 +88,7 @@ class AgentLoopTests(unittest.TestCase):
         tmpdir = tempfile.mkdtemp()
         return Config(
             api_key="test-key",
-            game="sokoban-basic",
+            game="ps_sokoban_basic-v1",
             max_steps=max_steps,
             mode=mode,
             rules_dir=tmpdir,
@@ -121,7 +121,7 @@ class AgentLoopTests(unittest.TestCase):
     def test_local_sokoban_starts_without_preloaded_rules(self) -> None:
         cfg = Config(
             api_key="test-key",
-            game="sokoban-basic",
+            game="ps_sokoban_basic-v1",
             max_steps=2,
             mode="learn",
             rules_dir=os.path.join(ROOT, "client", "rules"),

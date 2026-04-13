@@ -8,8 +8,8 @@
 - [ ] Trace the ARC projection mapping in `puzzlescript_interface/runtime/arc_projection.js`.
 - [ ] Trace the board rendering in `client/terminal_dashboard.py`.
 - [ ] Implement a switch or toggle between the current ASCII view and the in-game representation.
-- [ ] Validate the result on `puzzlescript_interface/games/sokoban-basic.txt`.
-- [ ] Validate the result on at least one more game, such as `puzzlescript_interface/games/match3.txt`.
+- [ ] Validate the result on `puzzlescript_interface/games/ps_sokoban_basic-v1/script.txt`.
+- [ ] Validate the result on at least one more game, such as `puzzlescript_interface/games/ps_midas-v1/script.txt`.
 
 - [ ] Task 2: fix `docs/architecture/arc-agi-architecture.svg`.
 - [ ] Review the SVG against the current repo structure.

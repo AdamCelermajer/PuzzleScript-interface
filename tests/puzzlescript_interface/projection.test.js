@@ -31,7 +31,7 @@ function parseGame(gameName) {
 }
 
 test('buildArcProjectionSpec creates a stable versioned mapping for visible legend chars', () => {
-    const gameData = parseGame('sokoban-basic');
+    const gameData = parseGame('ps_sokoban_basic-v1');
 
     const projection = buildArcProjectionSpec(gameData);
 
@@ -65,13 +65,13 @@ test('projectRawGrid maps unknown cells to the reserved unknown token instead of
 });
 
 test('countPlayableLevels excludes message-only PuzzleScript levels', () => {
-    const gameData = parseGame('midas');
+    const gameData = parseGame('ps_midas-v1');
 
     assert.equal(countPlayableLevels(gameData.levels), 15);
 });
 
 test('countCompletedPlayableLevels ignores message screens when tracking progress', () => {
-    const gameData = parseGame('midas');
+    const gameData = parseGame('ps_midas-v1');
 
     assert.equal(countCompletedPlayableLevels(gameData.levels, 0), 0);
     assert.equal(countCompletedPlayableLevels(gameData.levels, 1), 1);

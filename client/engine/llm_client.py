@@ -18,7 +18,7 @@ class Config:
     server_url: str = "http://localhost:3000"
     flash_model: str = "gemini-3-flash-preview"
     pro_model: str = "gemini-3.1-pro-preview"
-    game: str = "sokoban-basic"
+    game: str = "ps_sokoban_basic-v1"
     mode: str = "learn"
     max_steps: int = 20
     show_legend: bool = False

@@ -12,7 +12,7 @@ def main() -> None:
         arc_api_key="local-dev",
     )
 
-    env = arc.make("sokoban-basic", render_mode="terminal")
+    env = arc.make("ps_sokoban_basic-v1", render_mode="terminal")
     env.reset()
 
     for _ in range(10):

@@ -99,23 +99,27 @@ class ArcServiceTests(unittest.TestCase):
     def setUp(self) -> None:
         self.catalog = [
             GameCatalogEntry(
-                game_id="sokoban-basic",
+                game_id="ps_sokoban_basic-v1",
                 title="sokoban-basic",
-                source_name="sokoban-basic",
+                source_name="ps_sokoban_basic-v1",
                 file_path=os.path.join(
                     ROOT,
                     "puzzlescript_interface",
                     "games",
-                    "sokoban-basic",
+                    "ps_sokoban_basic-v1",
                     "script.txt",
                 ),
             ),
             GameCatalogEntry(
-                game_id="midas",
+                game_id="ps_midas-v1",
                 title="midas",
-                source_name="midas",
+                source_name="ps_midas-v1",
                 file_path=os.path.join(
-                    ROOT, "puzzlescript_interface", "games", "midas", "script.txt"
+                    ROOT,
+                    "puzzlescript_interface",
+                    "games",
+                    "ps_midas-v1",
+                    "script.txt",
                 ),
             ),
         ]
@@ -124,38 +128,45 @@ class ArcServiceTests(unittest.TestCase):
             create_app(catalog=self.catalog, puzzlescript_client=self.fake_client)
         )
 
-    def test_games_endpoint_returns_folder_name_game_ids(self) -> None:
+    def test_games_endpoint_returns_public_arc_safe_game_ids(self) -> None:
         response = self.client.get("/api/games")
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
             [
-                {"game_id": "sokoban-basic", "title": "sokoban-basic"},
-                {"game_id": "midas", "title": "midas"},
+                {"game_id": "ps_sokoban_basic-v1", "title": "sokoban-basic"},
+                {"game_id": "ps_midas-v1", "title": "midas"},
             ],
         )
 
-    def test_default_games_endpoint_uses_folder_name_ids(self) -> None:
+    def test_default_games_endpoint_uses_public_arc_safe_ids(self) -> None:
         client = TestClient(create_app())
 
         response = client.get("/api/games")
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(
-            {"game_id": "sokoban-basic", "title": "sokoban-basic"},
+            {"game_id": "ps_sokoban_basic-v1", "title": "sokoban-basic"},
             response.json(),
         )
         self.assertNotIn(
-            {"game_id": "sokoban-basic-v1", "title": "sokoban-basic"},
+            {"game_id": "ps_bouncers-v1", "title": "bouncers"},
             response.json(),
         )
 
-    def test_game_info_endpoint_accepts_folder_name_lookup(self) -> None:
+    def test_game_info_endpoint_accepts_public_id_stem_lookup(self) -> None:
+        response = self.client.get("/api/games/ps_sokoban_basic")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["game_id"], "ps_sokoban_basic-v1")
+        self.assertEqual(response.json()["title"], "sokoban-basic")
+
+    def test_game_info_endpoint_accepts_legacy_folder_name_lookup(self) -> None:
         response = self.client.get("/api/games/sokoban-basic")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["game_id"], "sokoban-basic")
+        self.assertEqual(response.json()["game_id"], "ps_sokoban_basic-v1")
         self.assertEqual(response.json()["title"], "sokoban-basic")
 
     def test_scorecard_lifecycle_tracks_reset_and_actions(self) -> None:
@@ -167,19 +178,20 @@ class ArcServiceTests(unittest.TestCase):
 
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
         self.assertEqual(reset_response.status_code, 200)
         reset_body = reset_response.json()
         FrameData.model_validate(reset_body)
-        self.assertEqual(self.fake_client.started_games, ["sokoban-basic"])
+        self.assertEqual(self.fake_client.started_games, ["ps_sokoban_basic-v1"])
+        self.assertEqual(reset_body["game_id"], "ps_sokoban_basic-v1")
         self.assertEqual(reset_body["available_actions"], [1, 2, 3, 4, 5, 7])
 
         guid = reset_body["guid"]
         action_response = self.client.post(
             "/api/cmd/ACTION1",
             json={
-                "game_id": "sokoban-basic",
+                "game_id": "ps_sokoban_basic-v1",
                 "guid": guid,
                 "reasoning": {"policy": "test"},
             },
@@ -203,18 +215,71 @@ class ArcServiceTests(unittest.TestCase):
         self.assertEqual(close_response.status_code, 200)
         self.assertIn("published_at", close_response.json())
 
+    def test_reset_command_accepts_public_id_stem_lookup(self) -> None:
+        card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
+
+        response = self.client.post(
+            "/api/cmd/RESET",
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["game_id"], "ps_sokoban_basic-v1")
+        self.assertEqual(self.fake_client.started_games[-1], "ps_sokoban_basic-v1")
+
+    def test_action_command_accepts_legacy_folder_name_lookup(self) -> None:
+        card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
+        reset_response = self.client.post(
+            "/api/cmd/RESET",
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
+        )
+        guid = reset_response.json()["guid"]
+
+        response = self.client.post(
+            "/api/cmd/ACTION1",
+            json={"game_id": "sokoban-basic", "guid": guid},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.fake_client.actions[-1], ("ps-session-1", "ACTION1"))
+
+    def test_reset_command_rejects_unknown_game_id_cleanly(self) -> None:
+        card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
+
+        response = self.client.post(
+            "/api/cmd/RESET",
+            json={"card_id": card_id, "game_id": "ps_missing-v1"},
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_action_command_rejects_unknown_game_id_cleanly(self) -> None:
+        card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
+        reset_response = self.client.post(
+            "/api/cmd/RESET",
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
+        )
+        guid = reset_response.json()["guid"]
+
+        response = self.client.post(
+            "/api/cmd/ACTION1",
+            json={"game_id": "ps_missing-v1", "guid": guid},
+        )
+
+        self.assertEqual(response.status_code, 404)
+
     def test_action6_is_rejected(self) -> None:
         open_response = self.client.post("/api/scorecard/open", json={})
         card_id = open_response.json()["card_id"]
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
         guid = reset_response.json()["guid"]
 
         response = self.client.post(
             "/api/cmd/ACTION6",
-            json={"game_id": "sokoban-basic", "guid": guid},
+            json={"game_id": "ps_sokoban_basic-v1", "guid": guid},
         )
 
         self.assertEqual(response.status_code, 400)
@@ -224,13 +289,13 @@ class ArcServiceTests(unittest.TestCase):
         card_id = open_response.json()["card_id"]
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
         guid = reset_response.json()["guid"]
 
         response = self.client.post(
             "/api/cmd/ACTION7",
-            json={"game_id": "sokoban-basic", "guid": guid},
+            json={"game_id": "ps_sokoban_basic-v1", "guid": guid},
         )
 
         self.assertEqual(response.status_code, 200)
@@ -247,7 +312,7 @@ class ArcServiceTests(unittest.TestCase):
 
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
 
         self.assertEqual(reset_response.status_code, 404)
@@ -257,13 +322,17 @@ class ArcServiceTests(unittest.TestCase):
         second_card = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": first_card, "game_id": "sokoban-basic"},
+            json={"card_id": first_card, "game_id": "ps_sokoban_basic-v1"},
         )
         guid = reset_response.json()["guid"]
 
         mismatched_reset = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": second_card, "game_id": "sokoban-basic", "guid": guid},
+            json={
+                "card_id": second_card,
+                "game_id": "ps_sokoban_basic-v1",
+                "guid": guid,
+            },
         )
 
         self.assertEqual(mismatched_reset.status_code, 400)
@@ -272,13 +341,13 @@ class ArcServiceTests(unittest.TestCase):
         card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
         guid = reset_response.json()["guid"]
 
         mismatched_reset = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "midas", "guid": guid},
+            json={"card_id": card_id, "game_id": "ps_midas-v1", "guid": guid},
         )
 
         self.assertEqual(mismatched_reset.status_code, 400)
@@ -287,7 +356,7 @@ class ArcServiceTests(unittest.TestCase):
         card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
         guid = reset_response.json()["guid"]
         close_response = self.client.post(
@@ -297,7 +366,7 @@ class ArcServiceTests(unittest.TestCase):
 
         action_response = self.client.post(
             "/api/cmd/ACTION1",
-            json={"game_id": "sokoban-basic", "guid": guid},
+            json={"game_id": "ps_sokoban_basic-v1", "guid": guid},
         )
 
         self.assertEqual(action_response.status_code, 404)
@@ -308,7 +377,7 @@ class ArcServiceTests(unittest.TestCase):
 
         response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
 
         self.assertEqual(response.status_code, 404)
@@ -318,7 +387,7 @@ class ArcServiceTests(unittest.TestCase):
         card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
         reset_response = self.client.post(
             "/api/cmd/RESET",
-            json={"card_id": card_id, "game_id": "sokoban-basic"},
+            json={"card_id": card_id, "game_id": "ps_sokoban_basic-v1"},
         )
         guid = reset_response.json()["guid"]
         self.fake_client.apply_action = lambda session_id, action_name: {
@@ -331,7 +400,7 @@ class ArcServiceTests(unittest.TestCase):
 
         action_response = self.client.post(
             "/api/cmd/ACTION1",
-            json={"game_id": "sokoban-basic", "guid": guid},
+            json={"game_id": "ps_sokoban_basic-v1", "guid": guid},
         )
         self.assertEqual(action_response.status_code, 200)
 

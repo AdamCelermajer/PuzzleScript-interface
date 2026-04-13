@@ -98,6 +98,15 @@ def _frame_response(
     }
 
 
+def _resolve_game_entry_or_404(
+    catalog: list[GameCatalogEntry], game_id: str
+) -> GameCatalogEntry:
+    try:
+        return resolve_game_entry(catalog, game_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="Game not found") from exc
+
+
 def create_app(
     *,
     catalog: list[GameCatalogEntry] | None = None,
@@ -122,10 +131,7 @@ def create_app(
 
     @app.get("/api/games/{game_id}")
     def game_info(game_id: str) -> dict[str, Any]:
-        try:
-            entry = resolve_game_entry(game_catalog, game_id)
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail="Game not found") from exc
+        entry = _resolve_game_entry_or_404(game_catalog, game_id)
         return {"game_id": entry.game_id, "title": entry.title}
 
     @app.post("/api/scorecard/open")
@@ -157,7 +163,7 @@ def create_app(
         except KeyError as exc:
             raise HTTPException(status_code=404, detail="Scorecard not found") from exc
 
-        entry = resolve_game_entry(game_catalog, request.game_id)
+        entry = _resolve_game_entry_or_404(game_catalog, request.game_id)
         if request.guid:
             binding = sessions_by_guid.get(request.guid)
             if not binding:
@@ -229,7 +235,10 @@ def create_app(
             scorecards.require_open_for_guid(request.guid)
         except KeyError as exc:
             raise HTTPException(status_code=404, detail="Scorecard not found") from exc
-        if binding.game_id != resolve_game_entry(game_catalog, request.game_id).game_id:
+        if (
+            binding.game_id
+            != _resolve_game_entry_or_404(game_catalog, request.game_id).game_id
+        ):
             raise HTTPException(status_code=400, detail="game_id mismatch")
 
         payload = client.apply_action(binding.session_id, action)

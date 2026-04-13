@@ -64,7 +64,7 @@ class LocalArcStackTests(unittest.TestCase):
             wait_for_http(f"http://127.0.0.1:{ARC_PORT}/api/games")
 
             env = ArcadeEnv(
-                game_id="sokoban-basic",
+                game_id="ps_sokoban_basic-v1",
                 backend_url=f"http://127.0.0.1:{ARC_PORT}",
                 api_key="local-dev",
             )
@@ -72,7 +72,7 @@ class LocalArcStackTests(unittest.TestCase):
             frame = env.reset()
             self.assertEqual(frame.state, GameState.PLAYING)
             self.assertEqual(frame.win_levels, 2)
-            self.assertEqual(frame.game_id, "sokoban-basic")
+            self.assertEqual(frame.game_id, "ps_sokoban_basic-v1")
 
             next_frame = env.step(GameAction.ACTION4)
             self.assertIn(next_frame.state, {GameState.PLAYING, GameState.WIN})
@@ -111,7 +111,11 @@ class LocalArcStackTests(unittest.TestCase):
             available_games = {env.game_id for env in arc.get_environments()}
             target_games = [
                 game_id
-                for game_id in ["sokoban-basic", "1-2-3-ban", "midas"]
+                for game_id in [
+                    "ps_sokoban_basic-v1",
+                    "ps_1_2_3_ban-v1",
+                    "ps_midas-v1",
+                ]
                 if game_id in available_games
             ]
 

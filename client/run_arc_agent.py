@@ -13,7 +13,7 @@ from client.terminal_dashboard import TerminalDashboard
 
 def main():
     parser = ArgumentParser(description="AI Agent for ARC-compatible environments")
-    parser.add_argument("--game-id", type=str, default="sokoban-basic")
+    parser.add_argument("--game-id", type=str, default="ps_sokoban_basic-v1")
     parser.add_argument("--backend-url", type=str, default="http://localhost:8000")
     parser.add_argument("--max_steps", type=int, default=50)
     parser.add_argument("--mode", type=str, choices=["learn", "solve"], default="learn")

@@ -53,7 +53,7 @@ class ClientEntrypointTests(unittest.TestCase):
         if globals_after_run:
             self.assertIn("main", globals_after_run)
 
-    def test_run_arc_agent_defaults_to_sokoban_basic(self) -> None:
+    def test_run_arc_agent_defaults_to_public_sokoban_id(self) -> None:
         from client import run_arc_agent
 
         captured: dict[str, object] = {}
@@ -85,9 +85,9 @@ class ClientEntrypointTests(unittest.TestCase):
         ):
             run_arc_agent.main()
 
-        self.assertEqual(captured["game_id"], "sokoban-basic")
+        self.assertEqual(captured["game_id"], "ps_sokoban_basic-v1")
 
-    def test_play_arc_client_defaults_to_sokoban_basic(self) -> None:
+    def test_play_arc_client_defaults_to_public_sokoban_id(self) -> None:
         from client import play_arc_client
 
         class FakeDashboard:
@@ -133,7 +133,7 @@ class ClientEntrypointTests(unittest.TestCase):
             exit_code = play_arc_client.main()
 
         self.assertEqual(exit_code, 0)
-        self.assertEqual(FakeArcade.make_calls[-1][0], "sokoban-basic")
+        self.assertEqual(FakeArcade.make_calls[-1][0], "ps_sokoban_basic-v1")
 
 
 if __name__ == "__main__":

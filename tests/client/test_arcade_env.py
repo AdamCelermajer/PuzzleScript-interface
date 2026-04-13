@@ -42,7 +42,7 @@ class FakeEnvironmentWrapper:
     def reset(self) -> FakeFrameDataRaw:
         self.reset_calls += 1
         return FakeFrameDataRaw(
-            game_id="sokoban-basic",
+            game_id="ps_sokoban_basic-v1",
             frame=[np.array([[0, 1], [1, 0]], dtype=np.int8)],
             state=ArcGameState.NOT_FINISHED,
             levels_completed=0,
@@ -58,7 +58,7 @@ class FakeEnvironmentWrapper:
     ) -> FakeFrameDataRaw:
         self.stepped_actions.append(action)
         return FakeFrameDataRaw(
-            game_id="sokoban-basic",
+            game_id="ps_sokoban_basic-v1",
             frame=[np.array([[1, 0], [0, 1]], dtype=np.int8)],
             state=ArcGameState.WIN,
             levels_completed=2,
@@ -84,7 +84,7 @@ class FakeArcade:
 class ArcadeEnvTests(unittest.TestCase):
     def test_reset_uses_arcade_wrapper_and_converts_actions(self) -> None:
         env = ArcadeEnv(
-            game_id="sokoban-basic",
+            game_id="ps_sokoban_basic-v1",
             backend_url="http://localhost:8000",
             api_key="local-dev",
             arcade_factory=FakeArcade,
@@ -103,7 +103,7 @@ class ArcadeEnvTests(unittest.TestCase):
 
     def test_init_does_not_keep_wrapper_auto_reset_as_visible_turn(self) -> None:
         env = ArcadeEnv(
-            game_id="sokoban-basic",
+            game_id="ps_sokoban_basic-v1",
             backend_url="http://localhost:8000",
             api_key="local-dev",
             arcade_factory=FakeArcade,
@@ -113,7 +113,7 @@ class ArcadeEnvTests(unittest.TestCase):
 
     def test_step_forwards_arcengine_actions_and_maps_terminal_state(self) -> None:
         env = ArcadeEnv(
-            game_id="sokoban-basic",
+            game_id="ps_sokoban_basic-v1",
             backend_url="http://localhost:8000",
             api_key="local-dev",
             arcade_factory=FakeArcade,
@@ -130,7 +130,7 @@ class ArcadeEnvTests(unittest.TestCase):
         renderer = lambda steps, frame_data: None
 
         env = ArcadeEnv(
-            game_id="sokoban-basic",
+            game_id="ps_sokoban_basic-v1",
             backend_url="http://localhost:8000",
             api_key="local-dev",
             arcade_factory=FakeArcade,
@@ -139,7 +139,7 @@ class ArcadeEnvTests(unittest.TestCase):
 
         self.assertEqual(
             env.arcade.make_calls[0],
-            ("sokoban-basic", {"render_mode": None}),
+            ("ps_sokoban_basic-v1", {"render_mode": None}),
         )
 
 

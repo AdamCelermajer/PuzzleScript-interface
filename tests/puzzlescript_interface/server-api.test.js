@@ -45,7 +45,7 @@ test('init counts only playable PuzzleScript levels in win_levels', async () => 
         const response = await fetch(`${SERVER_URL}/init`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ gameName: 'midas' }),
+            body: JSON.stringify({ gameName: 'ps_midas-v1' }),
         });
 
         assert.equal(response.status, 200);
@@ -66,7 +66,7 @@ test('ACTION7 undoes the previous move', async () => {
         const initResponse = await fetch(`${SERVER_URL}/init`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ gameName: 'sokoban-basic' }),
+            body: JSON.stringify({ gameName: 'ps_sokoban_basic-v1' }),
         });
         const initBody = await initResponse.json();
 
@@ -100,7 +100,7 @@ test('RESET returns the updated board immediately', async () => {
         const initResponse = await fetch(`${SERVER_URL}/init`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ gameName: 'sokoban-basic' }),
+            body: JSON.stringify({ gameName: 'ps_sokoban_basic-v1' }),
         });
         const initBody = await initResponse.json();
 
@@ -137,7 +137,7 @@ test('history is written under puzzlescript_interface/.runtime', async () => {
         const response = await fetch(`${SERVER_URL}/init`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ gameName: 'sokoban-basic' }),
+            body: JSON.stringify({ gameName: 'ps_sokoban_basic-v1' }),
         });
 
         assert.equal(response.status, 200);
