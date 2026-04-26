@@ -74,7 +74,46 @@ class LiveSokobanControllerTests(unittest.TestCase):
         self.assertIn("Prediction Failures", text)
         self.assertIn("R001", text)
         self.assertIn("Final Rule Set", text)
+        self.assertNotIn("ANY_DIRECTION", text)
         self.assertNotIn("client.engine.llm_client", sys.modules)
+
+    def test_controller_sleeps_after_each_executed_move_when_delay_is_set(self) -> None:
+        env = FakeSokobanEnv()
+        delays: list[float] = []
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / "live_rules.md"
+            result = LiveSokobanController(
+                env,
+                output_path=output_path,
+                step_delay=0.4,
+                sleeper=delays.append,
+                event_sink=lambda _message: None,
+            ).run(max_steps=80)
+
+        self.assertTrue(result.solved)
+        self.assertEqual(delays, [0.4] * result.steps)
+
+    def test_controller_announces_plain_english_explanation_for_new_rules(self) -> None:
+        env = FakeSokobanEnv()
+        events: list[str] = []
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / "live_rules.md"
+            LiveSokobanController(
+                env,
+                output_path=output_path,
+                event_sink=events.append,
+            ).run(max_steps=8)
+
+        self.assertTrue(
+            any(
+                event.startswith("Rule ")
+                and "means:" in event
+                and "the player moves one cell" in event
+                for event in events
+            )
+        )
 
 
 if __name__ == "__main__":

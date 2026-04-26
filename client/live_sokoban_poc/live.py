@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -7,7 +8,7 @@ from typing import Callable
 
 from client.engine.types import FrameData, GameAction
 from client.live_sokoban_poc.model import ACTION_DELTAS, BoardState, add_pos
-from client.live_sokoban_poc.rules import RuleModel
+from client.live_sokoban_poc.rules import RuleModel, explain_rule
 
 
 DEFAULT_RULE_FILE = (
@@ -39,11 +40,15 @@ class LiveSokobanController:
         *,
         output_path: str | Path = DEFAULT_RULE_FILE,
         event_sink: Callable[[str], None] | None = None,
+        step_delay: float = 0.0,
+        sleeper: Callable[[float], None] = time.sleep,
     ) -> None:
         self.env = env
         self.output_path = Path(output_path)
         self.model = RuleModel(output_path=self.output_path)
         self.event_sink = event_sink or print
+        self.step_delay = step_delay
+        self.sleeper = sleeper
         self.steps = 0
         self.actions: list[GameAction] = []
 
@@ -63,16 +68,23 @@ class LiveSokobanController:
 
             plan = self._plan_to_goal(board)
             if not plan:
-                action = self._choose_exploration_action(board)
-                board, frame = self._execute_and_learn(board, action)
-                continue
+                plan = self._plan_to_unmodeled_action(board)
+            if not plan:
+                frame = self.env.reset()
+                board = BoardState.from_frame_data(frame)
+                self._log("No useful experiment reachable. Resetting to explore again.")
+                plan = self._plan_to_unmodeled_action(board)
+            if not plan:
+                plan = [self._choose_exploration_action(board)]
 
-            for action in plan:
-                board, frame = self._execute_and_learn(board, action)
-                if self._is_solved(board, frame):
-                    return self._finish(True)
-                if self.steps >= max_steps:
-                    return self._finish(False)
+            if plan:
+                for action in plan:
+                    board, frame = self._execute_and_learn(board, action)
+                    if self._is_solved(board, frame):
+                        return self._finish(True)
+                    if self.steps >= max_steps:
+                        return self._finish(False)
+                continue
 
         return self._finish(False)
 
@@ -97,6 +109,8 @@ class LiveSokobanController:
             )
             rule = self.model.learn_from_transition(board, action, actual)
             self._log(f"explore {action.name}: created {rule.rule_id} ({rule.effect})")
+            self._log(f"Rule {rule.rule_id} means: {explain_rule(rule)}")
+            self._sleep_between_moves()
             return actual, frame
 
         if not self._is_solved(actual, frame) and prediction.board != actual:
@@ -108,28 +122,39 @@ class LiveSokobanController:
                 f"prediction failure on {action.name}: revised "
                 f"{faulty_rule.rule_id} -> {revised.rule_id}"
             )
+            self._log(f"Rule {revised.rule_id} means: {explain_rule(revised)}")
+            self._sleep_between_moves()
             return actual, frame
 
         self.model.record_success(prediction.rule_id, board, action, actual)
         self._log(f"predict {action.name}: {prediction.rule_id} matched")
+        self._sleep_between_moves()
         return actual, frame
 
     def _choose_exploration_action(self, board: BoardState) -> GameAction:
         effects = {rule.effect for rule in self.model.active_rules}
 
+        for action in ACTION_ORDER:
+            if self.model.predict(board, action) is None and self._would_observe_push(
+                board, action
+            ):
+                return action
+
+        for action in ACTION_ORDER:
+            if self.model.predict(board, action) is None and self._would_observe_move(
+                board, action
+            ):
+                return action
+
+        for action in ACTION_ORDER:
+            if self.model.predict(board, action) is None and self._would_observe_block(
+                board, action
+            ):
+                return action
+
         if "blocked" not in effects:
             for action in ACTION_ORDER:
                 if self._would_observe_block(board, action):
-                    return action
-
-        if "move_player" not in effects:
-            for action in ACTION_ORDER:
-                if self._would_observe_move(board, action):
-                    return action
-
-        if "push_crate" not in effects:
-            for action in ACTION_ORDER:
-                if self._would_observe_push(board, action):
                     return action
 
         return ACTION_ORDER[self.steps % len(ACTION_ORDER)]
@@ -160,6 +185,37 @@ class LiveSokobanController:
                 queue.append((next_board, [*path, action]))
         return []
 
+    def _plan_to_unmodeled_action(self, start: BoardState) -> list[GameAction]:
+        queue: deque[tuple[BoardState, list[GameAction]]] = deque([(start, [])])
+        seen = {self._state_key(start)}
+        best_candidate: tuple[int, list[GameAction]] | None = None
+
+        while queue:
+            board, path = queue.popleft()
+            for action in ACTION_ORDER:
+                prediction = self.model.predict(board, action)
+                if prediction is None:
+                    priority = self._unmodeled_action_priority(board, action)
+                    if priority is not None:
+                        candidate = (priority, [*path, action])
+                        if priority == 0:
+                            return candidate[1]
+                        if best_candidate is None or (
+                            priority,
+                            len(candidate[1]),
+                        ) < (best_candidate[0], len(best_candidate[1])):
+                            best_candidate = candidate
+                    continue
+                next_board = prediction.board
+                if next_board == board:
+                    continue
+                key = self._state_key(next_board)
+                if key in seen:
+                    continue
+                seen.add(key)
+                queue.append((next_board, [*path, action]))
+        return best_candidate[1] if best_candidate else []
+
     def _is_solved(self, board: BoardState, frame: FrameData) -> bool:
         return board.is_goal() or int(getattr(frame, "levels_completed", 0)) >= 1
 
@@ -178,6 +234,10 @@ class LiveSokobanController:
 
     def _log(self, message: str) -> None:
         self.event_sink(message)
+
+    def _sleep_between_moves(self) -> None:
+        if self.step_delay > 0:
+            self.sleeper(self.step_delay)
 
     def _state_key(self, board: BoardState) -> tuple[tuple[int, int], tuple[tuple[int, int], ...]]:
         return board.player, tuple(sorted(board.crates))
@@ -201,3 +261,23 @@ class LiveSokobanController:
             or not board.is_inside(front)
             or (front in board.crates and board.is_blocked(behind))
         )
+
+    def _would_observe_interesting_change(
+        self, board: BoardState, action: GameAction
+    ) -> bool:
+        return (
+            self._would_observe_push(board, action)
+            or self._would_observe_move(board, action)
+            or self._would_observe_block(board, action)
+        )
+
+    def _unmodeled_action_priority(
+        self, board: BoardState, action: GameAction
+    ) -> int | None:
+        if self._would_observe_push(board, action):
+            return 0
+        if self._would_observe_move(board, action):
+            return 1
+        if self._would_observe_block(board, action):
+            return 2
+        return None

@@ -19,6 +19,7 @@ def main() -> int:
     parser.add_argument("--api-key", default="local-dev")
     parser.add_argument("--max-steps", type=int, default=120)
     parser.add_argument("--output", default=str(DEFAULT_RULE_FILE))
+    parser.add_argument("--step-delay", type=float, default=0.4)
     args = parser.parse_args()
 
     env = ArcadeEnv(
@@ -26,9 +27,11 @@ def main() -> int:
         backend_url=args.backend_url,
         api_key=args.api_key,
     )
-    result = LiveSokobanController(env, output_path=args.output).run(
-        max_steps=args.max_steps
-    )
+    result = LiveSokobanController(
+        env,
+        output_path=args.output,
+        step_delay=args.step_delay,
+    ).run(max_steps=args.max_steps)
     return 0 if result.solved else 1
 
 

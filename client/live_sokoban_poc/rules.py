@@ -13,9 +13,6 @@ from client.live_sokoban_poc.model import (
 )
 
 
-ANY_DIRECTION = "ANY_DIRECTION"
-
-
 class RuleStatus(str, Enum):
     ACTIVE = "active"
     RETIRED = "retired"
@@ -108,7 +105,7 @@ class RuleModel:
 
     def predict(self, before: BoardState, action: GameAction) -> Prediction | None:
         for rule in self.active_rules:
-            if rule.action not in {action.name, ANY_DIRECTION}:
+            if rule.action != action.name:
                 continue
             if not conditions_match(rule.conditions, before, action):
                 continue
@@ -265,7 +262,7 @@ def build_rule_from_transition(
     return Rule(
         rule_id=rule_id,
         conditions=conditions,
-        action=ANY_DIRECTION,
+        action=action.name,
         effect=effect,
         emerged=emerged,
         vanished=vanished,
@@ -341,6 +338,36 @@ def apply_rule_effect(
     return board
 
 
+def explain_rule(rule: Rule) -> str:
+    conditions = set(rule.conditions)
+    if rule.effect == "move_player" and "FrontIsFree" in conditions:
+        return (
+            "If the cell in front of the player is free, "
+            "the player moves one cell in that direction."
+        )
+    if rule.effect == "push_crate" and {
+        "FrontIsCrate",
+        "BehindCrateIsFree",
+    }.issubset(conditions):
+        return (
+            "If a crate is in front of the player and the cell behind that crate is free, "
+            "the player pushes the crate one cell forward and moves into the crate's old cell."
+        )
+    if rule.effect == "blocked" and {
+        "FrontIsCrate",
+        "BehindCrateIsBlocked",
+    }.issubset(conditions):
+        return (
+            "The move is blocked because a crate is in front of the player "
+            "and the cell behind that crate is blocked."
+        )
+    if rule.effect == "blocked" and "FrontIsWall" in conditions:
+        return "The move is blocked because a wall is directly in front of the player."
+    if rule.effect == "blocked":
+        return "The move is blocked and the board does not change."
+    return "This rule predicts the observed Sokoban transition."
+
+
 def _application(
     before: BoardState, after: BoardState, action: GameAction, success: bool
 ) -> RuleApplication:
@@ -365,6 +392,7 @@ def _format_rule(rule: Rule) -> str:
             f"- action: `{rule.action}`",
             f"- conditions: `{', '.join(rule.conditions)}`",
             f"- effect: `{rule.effect}`",
+            f"- plain_english: {explain_rule(rule)}",
             f"- sibling: `{sibling}`",
             f"- retired_reason: `{retired_reason}`",
             f"- replacement: `{replacement}`",

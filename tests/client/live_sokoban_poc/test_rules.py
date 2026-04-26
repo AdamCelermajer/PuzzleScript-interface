@@ -26,11 +26,14 @@ class RuleModelTests(unittest.TestCase):
 
         rule = model.learn_from_transition(before, GameAction.ACTION2, after)
         prediction = model.predict(before, GameAction.ACTION2)
+        unrelated_prediction = model.predict(before, GameAction.ACTION1)
 
+        self.assertEqual(rule.action, "ACTION2")
         self.assertEqual(rule.effect, "move_player")
         self.assertIn("FrontIsFree", rule.conditions)
         self.assertEqual(prediction.board, after)
         self.assertEqual(prediction.rule_id, rule.rule_id)
+        self.assertIsNone(unrelated_prediction)
 
     def test_creates_push_rule_from_observed_transition(self) -> None:
         before = BoardState.from_grid(GRID).apply_sokoban_action(GameAction.ACTION2)
@@ -40,6 +43,7 @@ class RuleModelTests(unittest.TestCase):
         rule = model.learn_from_transition(before, GameAction.ACTION4, after)
         prediction = model.predict(before, GameAction.ACTION4)
 
+        self.assertEqual(rule.action, "ACTION4")
         self.assertEqual(rule.effect, "push_crate")
         self.assertIn("FrontIsCrate", rule.conditions)
         self.assertIn("BehindCrateIsFree", rule.conditions)
@@ -105,6 +109,23 @@ class RuleModelTests(unittest.TestCase):
         self.assertIn("R999", text)
         self.assertIn("Rule Timeline", text)
         self.assertIn("Final Rule Set", text)
+
+    def test_rule_file_includes_plain_english_rule_explanations(self) -> None:
+        before = BoardState.from_grid(GRID)
+        after = before.apply_sokoban_action(GameAction.ACTION2)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / "rules.md"
+            model = RuleModel(output_path=output_path)
+            rule = model.learn_from_transition(before, GameAction.ACTION2, after)
+            text = output_path.read_text(encoding="utf-8")
+
+        self.assertIn("plain_english", text)
+        self.assertIn(rule.rule_id, text)
+        self.assertIn(
+            "If the cell in front of the player is free, the player moves one cell in that direction.",
+            text,
+        )
 
 
 if __name__ == "__main__":
