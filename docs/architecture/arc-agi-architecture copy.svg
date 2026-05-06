@@ -1,0 +1,273 @@
+<svg width="100%" viewBox="0 0 1200 980" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Open rule-learning architecture for PuzzleScript and ARC-AGI-3</title>
+  <desc>
+    Layered target architecture showing an environment surface, a pluggable agent reasoning core,
+    a transition buffer, rule and subgoal refinement, active task context, and persistent knowledge.
+    The diagram avoids committing every module to an LLM implementation and avoids a fixed update
+    schedule.
+  </desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="context-stroke" />
+    </marker>
+
+    <style>
+      .page {
+        fill: #f7f8fb;
+      }
+
+      .title {
+        fill: #162033;
+        font: 700 28px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        fill: #526071;
+        font: 400 15px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      .layer-label {
+        fill: #617086;
+        font: 700 12px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0.08em;
+      }
+
+      .box-title {
+        fill: #172033;
+        font: 700 18px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      .box-text {
+        fill: #435064;
+        font: 400 13px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      .pill-text {
+        fill: #283244;
+        font: 600 12px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      .label {
+        fill: #39465a;
+        font: 600 12px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      .small-label {
+        fill: #667386;
+        font: 500 11px Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      .band {
+        fill: #ffffff;
+        stroke: #d8dee8;
+        stroke-width: 1.4;
+      }
+
+      .env-card {
+        fill: #edf6ff;
+        stroke: #8cbce7;
+        stroke-width: 1.4;
+      }
+
+      .agent-card {
+        fill: #f0f1ff;
+        stroke: #9ca3e8;
+        stroke-width: 1.5;
+      }
+
+      .transition-card {
+        fill: #fff7e8;
+        stroke: #e3b65d;
+        stroke-width: 1.5;
+      }
+
+      .learning-card {
+        fill: #eff8f3;
+        stroke: #8dc59f;
+        stroke-width: 1.5;
+      }
+
+      .context-card {
+        fill: #fff2f2;
+        stroke: #dc9696;
+        stroke-width: 1.5;
+      }
+
+      .memory-card {
+        fill: #f3f0ea;
+        stroke: #b7aa92;
+        stroke-width: 1.5;
+      }
+
+      .pill {
+        fill: #ffffff;
+        stroke: rgba(80, 92, 112, 0.22);
+        stroke-width: 1;
+      }
+
+      .arrow {
+        fill: none;
+        stroke: #48566a;
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        marker-end: url(#arrow);
+      }
+
+      .arrow-soft {
+        fill: none;
+        stroke: #7a8798;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        marker-end: url(#arrow);
+      }
+
+      .arrow-blue {
+        color: #2b6da8;
+        stroke: #2b6da8;
+      }
+
+      .arrow-purple {
+        color: #6761c9;
+        stroke: #6761c9;
+      }
+
+      .arrow-gold {
+        color: #9f6c14;
+        stroke: #9f6c14;
+      }
+
+      .arrow-green {
+        color: #3f8f55;
+        stroke: #3f8f55;
+      }
+
+      .arrow-red {
+        color: #b95656;
+        stroke: #b95656;
+      }
+
+      .arrow-gray {
+        color: #657184;
+        stroke: #657184;
+      }
+    </style>
+  </defs>
+
+  <rect class="page" x="0" y="0" width="1200" height="980" />
+
+  <text class="title" x="600" y="48" text-anchor="middle">Open rule-learning architecture</text>
+  <text class="subtitle" x="600" y="75" text-anchor="middle">
+    Target shape for PuzzleScript and ARC-AGI-3 agents without assuming every reasoning step is an LLM call.
+  </text>
+
+  <!-- Environment surface -->
+  <text class="layer-label" x="90" y="116">ENVIRONMENT SURFACE</text>
+  <rect class="band" x="80" y="130" width="1040" height="150" rx="16" />
+
+  <rect class="env-card" x="118" y="162" width="310" height="82" rx="12" />
+  <text class="box-title" x="273" y="190" text-anchor="middle">Local PuzzleScript</text>
+  <text class="box-text" x="273" y="215" text-anchor="middle">ARC-compatible API over</text>
+  <text class="box-text" x="273" y="235" text-anchor="middle">the Node.js PuzzleScript runtime</text>
+
+  <rect class="env-card" x="772" y="162" width="310" height="82" rx="12" />
+  <text class="box-title" x="927" y="190" text-anchor="middle">Official ARC-AGI-3</text>
+  <text class="box-text" x="927" y="215" text-anchor="middle">Remote ARC game surface</text>
+  <text class="box-text" x="927" y="235" text-anchor="middle">with the same reset/step contract</text>
+
+  <rect class="pill" x="476" y="168" width="248" height="70" rx="12" />
+  <text class="pill-text" x="600" y="194" text-anchor="middle">Shared interaction contract</text>
+  <text class="box-text" x="600" y="218" text-anchor="middle">state observation + available actions</text>
+
+  <!-- Agent reasoning core -->
+  <text class="layer-label" x="90" y="334">AGENT CONTROL</text>
+  <rect class="agent-card" x="200" y="350" width="800" height="150" rx="18" />
+  <text class="box-title" x="600" y="381" text-anchor="middle">Agent reasoning core</text>
+  <text class="box-text" x="600" y="407" text-anchor="middle">Chooses actions, interprets observations, and decides when new evidence is worth refining.</text>
+
+  <rect class="pill" x="250" y="432" width="100" height="34" rx="17" />
+  <text class="pill-text" x="300" y="454" text-anchor="middle">LLM</text>
+
+  <rect class="pill" x="370" y="432" width="126" height="34" rx="17" />
+  <text class="pill-text" x="433" y="454" text-anchor="middle">Search</text>
+
+  <rect class="pill" x="516" y="432" width="132" height="34" rx="17" />
+  <text class="pill-text" x="582" y="454" text-anchor="middle">Heuristics</text>
+
+  <rect class="pill" x="668" y="432" width="132" height="34" rx="17" />
+  <text class="pill-text" x="734" y="454" text-anchor="middle">Rule engine</text>
+
+  <rect class="pill" x="820" y="432" width="130" height="34" rx="17" />
+  <text class="pill-text" x="885" y="454" text-anchor="middle">Learned model</text>
+
+  <!-- Environment-agent arrows -->
+  <path class="arrow arrow-blue" d="M 535 280 L 535 346" />
+  <text class="label" x="498" y="319" text-anchor="end">observation</text>
+
+  <path class="arrow arrow-purple" d="M 665 350 L 665 284" />
+  <text class="label" x="702" y="319">action</text>
+
+  <!-- Transition buffer -->
+  <text class="layer-label" x="90" y="554">EXPERIENCE</text>
+  <rect class="transition-card" x="280" y="568" width="640" height="94" rx="16" />
+  <text class="box-title" x="600" y="601" text-anchor="middle">Transition buffer</text>
+  <text class="box-text" x="600" y="628" text-anchor="middle">Recent and selected experience tuples:</text>
+  <text class="box-text" x="600" y="648" text-anchor="middle">(state before, action, state after, reward/status)</text>
+
+  <path class="arrow arrow-gold" d="M 600 500 L 600 564" />
+  <text class="label" x="628" y="537">record executed transition</text>
+
+  <!-- Learning/refinement modules -->
+  <text class="layer-label" x="90" y="714">REFINEMENT MODULES</text>
+  <rect class="learning-card" x="150" y="728" width="410" height="126" rx="16" />
+  <text class="box-title" x="355" y="762" text-anchor="middle">Rule induction</text>
+  <text class="box-text" x="355" y="790" text-anchor="middle">Infers candidate mechanics from transitions.</text>
+  <text class="box-text" x="355" y="812" text-anchor="middle">Promotes stable rules only when evidence</text>
+  <text class="box-text" x="355" y="832" text-anchor="middle">supports the update.</text>
+
+  <rect class="learning-card" x="640" y="728" width="410" height="126" rx="16" />
+  <text class="box-title" x="845" y="762" text-anchor="middle">Subgoal engineering</text>
+  <text class="box-text" x="845" y="790" text-anchor="middle">Turns observations and rule hypotheses into</text>
+  <text class="box-text" x="845" y="812" text-anchor="middle">useful local goals, probes, and strategy hints.</text>
+  <text class="box-text" x="845" y="832" text-anchor="middle">Does not require a fixed timer.</text>
+
+  <path class="arrow arrow-green" d="M 520 662 L 355 724" />
+  <text class="small-label" x="370" y="690" text-anchor="end">evidence-triggered</text>
+
+  <path class="arrow arrow-green" d="M 680 662 L 845 724" />
+  <text class="small-label" x="830" y="690">evidence-triggered</text>
+
+  <!-- Active context and persistent memory -->
+  <text class="layer-label" x="90" y="894">WORKING CONTEXT AND MEMORY</text>
+  <rect class="context-card" x="130" y="908" width="500" height="52" rx="14" />
+  <text class="box-title" x="380" y="930" text-anchor="middle">Active task context</text>
+  <text class="box-text" x="380" y="950" text-anchor="middle">Known environment rules, current hypotheses, recent observations, current goals</text>
+
+  <rect class="memory-card" x="670" y="908" width="400" height="52" rx="14" />
+  <text class="box-title" x="870" y="930" text-anchor="middle">Persistent knowledge store</text>
+  <text class="box-text" x="870" y="950" text-anchor="middle">Validated rules, abstractions, priors, solved patterns</text>
+
+  <path class="arrow arrow-red" d="M 355 854 L 355 904" />
+  <text class="small-label" x="324" y="884" text-anchor="end">rule updates</text>
+
+  <path class="arrow arrow-red" d="M 845 854 L 548 905" />
+  <text class="small-label" x="710" y="878">goal updates</text>
+
+  <path class="arrow-soft arrow-gray" d="M 380 908 C 380 820 210 800 210 500 C 210 418 196 392 196 392" />
+  <text class="small-label" x="205" y="675" text-anchor="middle" transform="rotate(-90 205 675)">context guides reasoning</text>
+
+  <path class="arrow-soft arrow-red" d="M 630 936 L 666 936" />
+  <text class="small-label" x="648" y="921" text-anchor="middle">save validated</text>
+
+  <path class="arrow-soft arrow-gray" d="M 670 950 L 634 950" />
+  <text class="small-label" x="652" y="970" text-anchor="middle">retrieve relevant</text>
+</svg>

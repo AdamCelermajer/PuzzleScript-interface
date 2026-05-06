@@ -1,0 +1,7 @@
+{
+  "description": "Helped symbol end-state cells for ps_sokoban_basic-v1 level 1. Symbols are PuzzleScript display symbols, not human object names.",
+  "required_cells": [
+    [2, 1, "@"],
+    [1, 3, "@"]
+  ]
+}

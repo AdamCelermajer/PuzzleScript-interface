@@ -10,7 +10,7 @@ const {
 } = require('./arc_projection');
 
 const app = express();
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 3543);
 const runtimeDir = path.join(__dirname, '..', '.runtime');
 const historyPath = path.join(runtimeDir, 'game_history.jsonl');
 

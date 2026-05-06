@@ -120,6 +120,9 @@ debug_*.js
 # PuzzleScript interface runtime data
 
 puzzlescript_interface/.runtime/
+client/strict_live_sokoban/output/
+client/percept_live_sokoban/output/
+client/helped_live_sokoban/output/
 
 __pycache__
 .worktrees/

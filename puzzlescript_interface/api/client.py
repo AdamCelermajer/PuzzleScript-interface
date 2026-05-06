@@ -11,7 +11,7 @@ REQUEST_TIMEOUT = 30
 class PuzzleScriptClient:
     def __init__(self, base_url: str | None = None) -> None:
         self.base_url = (
-            base_url or os.getenv("PUZZLESCRIPT_SERVER_URL", "http://localhost:3000")
+            base_url or os.getenv("PUZZLESCRIPT_SERVER_URL", "http://localhost:3543")
         ).rstrip("/")
 
     def _request(

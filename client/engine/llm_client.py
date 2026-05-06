@@ -15,7 +15,7 @@ load_dotenv()
 class Config:
     """Runtime configuration for server and model clients."""
 
-    server_url: str = "http://localhost:3000"
+    server_url: str = "http://localhost:3543"
     flash_model: str = "gemini-3-flash-preview"
     pro_model: str = "gemini-3.1-pro-preview"
     game: str = "ps_sokoban_basic-v1"
