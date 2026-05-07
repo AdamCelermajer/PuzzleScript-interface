@@ -28,7 +28,7 @@ def main():
     dashboard = TerminalDashboard(
         game_id=args.game_id,
         mode=args.mode.upper(),
-        controls="Live agent view. Press Ctrl+C to stop.",
+        controls="Engine dashboard. Press Ctrl+C to stop.",
         display_profile=(
             "arc"
             if "three.arcprize.org" in (args.backend_url or "").strip().lower()

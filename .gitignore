@@ -101,7 +101,6 @@ dist
 
 # TernJS port file
 .tern-port
-*GEMINI.md
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
@@ -120,9 +119,14 @@ debug_*.js
 # PuzzleScript interface runtime data
 
 puzzlescript_interface/.runtime/
+client/rules/
+client/live_sokoban/output/
 client/strict_live_sokoban/output/
 client/percept_live_sokoban/output/
 client/helped_live_sokoban/output/
+
+# Local/generated test folders
+test/
 
 __pycache__
 .worktrees/

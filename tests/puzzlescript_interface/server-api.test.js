@@ -91,6 +91,26 @@ test('ACTION7 undoes the previous move', async () => {
     }
 });
 
+test('compound Sokoban cells render as their compound legend character', async () => {
+    const server = startServer();
+
+    try {
+        await waitForServer(`${SERVER_URL}/observe?sessionId=missing`);
+
+        const initResponse = await fetch(`${SERVER_URL}/init`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameName: 'ps_sokoban_basic-v1' }),
+        });
+        const initBody = await initResponse.json();
+
+        assert.equal(initBody.legend[4], 'Crate + Target');
+        assert.equal(initBody.frame.at(-1)[3][1], 4);
+    } finally {
+        server.kill();
+    }
+});
+
 test('RESET returns the updated board immediately', async () => {
     const server = startServer();
 

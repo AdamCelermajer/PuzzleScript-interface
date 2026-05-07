@@ -87,27 +87,26 @@ class AgentLoopTests(unittest.TestCase):
     def _make_config(self, *, max_steps: int = 2, mode: str = "learn") -> Config:
         tmpdir = tempfile.mkdtemp()
         return Config(
-            api_key="test-key",
+            openrouter_api_key="test-openrouter-key",
             game="ps_sokoban_basic-v1",
             max_steps=max_steps,
             mode=mode,
             rules_dir=tmpdir,
         )
 
-    def test_learning_loop_uses_llm_actions_each_turn(self) -> None:
+    def test_learning_loop_records_engine_evidence_from_llm_subgoal_actions(self) -> None:
         cfg = self._make_config(max_steps=2, mode="learn")
         llm = FakeLlmClient(
             [
-                "ACTION4",
-                "ACTION2",
-                '{"final_rules": {}, "legend": {}, "final_goal": ""}',
+                '{"subgoal": "probe the first move", "plan": ["ACTION1"]}',
+                '{"subgoal": "probe the second move", "plan": ["ACTION2"]}',
             ]
         )
         agent = Agent(cfg, llm)
         env = FakeEnv(
             reset_frames=[_frame(frame=[[[0, 0], [0, 0]]])],
             step_frames=[
-                _frame(action=GameAction.ACTION4, frame=[[[0, 1], [0, 0]]]),
+                _frame(action=GameAction.ACTION1, frame=[[[0, 1], [0, 0]]]),
                 _frame(action=GameAction.ACTION2, frame=[[[0, 1], [0, 1]]]),
             ],
         )
@@ -115,28 +114,41 @@ class AgentLoopTests(unittest.TestCase):
         with patch("client.engine.agent.time.sleep", return_value=None):
             run_learning_loop(cfg, env, agent)
 
-        self.assertEqual(env.step_actions, [GameAction.ACTION4, GameAction.ACTION2])
-        self.assertEqual(len(llm.calls), 3)
+        self.assertEqual(env.step_actions, [GameAction.ACTION1, GameAction.ACTION2])
+        self.assertEqual(len(llm.calls), 2)
+        self.assertTrue(
+            os.path.exists(os.path.join(cfg.rules_dir, cfg.game, "transitions.jsonl"))
+        )
+        self.assertTrue(
+            os.path.exists(os.path.join(cfg.rules_dir, cfg.game, "rules.json"))
+        )
 
-    def test_local_sokoban_starts_without_preloaded_rules(self) -> None:
+    def test_local_sokoban_uses_new_rule_library_store(self) -> None:
+        rules_dir = tempfile.mkdtemp()
         cfg = Config(
-            api_key="test-key",
+            openrouter_api_key="test-openrouter-key",
             game="ps_sokoban_basic-v1",
             max_steps=2,
             mode="learn",
-            rules_dir=os.path.join(ROOT, "client", "rules"),
+            rules_dir=rules_dir,
         )
 
         agent = Agent(cfg, FakeLlmClient([]))
 
-        self.assertEqual(agent.known_rules, {})
-        self.assertEqual(agent.inferred_legend, {})
-        self.assertEqual(agent.inferred_final_goal, "")
+        self.assertEqual(agent.engine.library.rules, [])
+        self.assertTrue(str(agent.engine.base_path).endswith("ps_sokoban_basic-v1"))
 
-    def test_solving_loop_uses_simple_non_llm_placeholder_actions(self) -> None:
+    def test_solving_loop_explores_available_actions_without_reset(self) -> None:
         cfg = self._make_config(max_steps=3, mode="solve")
-        llm = FakeLlmClient([])
+        llm = FakeLlmClient(
+            [
+                '{"subgoal": "try the first open direction", "plan": ["ACTION1"]}',
+                '{"subgoal": "try the next open direction", "plan": ["ACTION3"]}',
+                '{"subgoal": "finish the small board", "plan": ["ACTION1"]}',
+            ]
+        )
         agent = Agent(cfg, llm)
+        events: list[str] = []
         env = FakeEnv(
             reset_frames=[
                 _frame(
@@ -160,14 +172,21 @@ class AgentLoopTests(unittest.TestCase):
         )
 
         with patch("client.engine.agent.time.sleep", return_value=None):
-            run_solving_loop(cfg, env, agent)
+            run_solving_loop(cfg, env, agent, event_sink=events.append)
 
         self.assertEqual(
             env.step_actions,
-            [GameAction.ACTION1, GameAction.ACTION2, GameAction.ACTION3],
+            [GameAction.ACTION1, GameAction.ACTION3, GameAction.ACTION1],
         )
         self.assertNotIn(GameAction.RESET, env.step_actions)
-        self.assertEqual(llm.calls, [])
+        self.assertEqual(len(llm.calls), 3)
+        action_events = [event for event in events if event.startswith("Action:")]
+        self.assertTrue(action_events)
+        self.assertIn("LLM subgoal: try the first open direction", action_events[0])
+        self.assertNotIn("explore_least_seen", action_events[0])
+        self.assertFalse(
+            any(event.startswith("Expected observation:") for event in events)
+        )
 
 
 if __name__ == "__main__":

@@ -38,20 +38,27 @@ pip install -r requirements.txt   # Python deps
 ```
 
 **Environment variables** — copy `.env.example` and fill in:
-- `GOOGLE_API_KEY` — Gemini API (required for agent runs)
+- `OPENROUTER_API_KEY` — OpenRouter API (required for default agent runs)
 - `ARC_API_KEY` — ARC-AGI-3 official API (required only for official ARC-AGI-3 runs)
 - `OPENAI_API_KEY` — legacy, unused
 - `PORT` — optional port override for the Node.js PuzzleScript runtime (default `3000`)
 - `ARC_PROXY_PORT` — optional port override for the local ARC-compatible Python service (default `8000`)
 - `PUZZLESCRIPT_SERVER_URL` — optional URL override for the Python service to reach the Node.js runtime
 
-**Start the Node.js PuzzleScript runtime** (required for local PuzzleScript only):
+**Start the local PuzzleScript stack** (runtime + ARC service, one terminal):
+```bash
+npm run local
+```
+
+Closing that terminal or pressing Ctrl+C stops both owned child processes.
+
+**Start only the Node.js PuzzleScript runtime**:
 ```bash
 npm start          # production
 npm run dev        # dev mode with auto-restart (nodemon)
 ```
 
-**Start the local PuzzleScript ARC service** (required for local PuzzleScript only):
+**Start only the local PuzzleScript ARC service**:
 ```bash
 python -m puzzlescript_interface.api.main
 ```
@@ -78,8 +85,8 @@ python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 | `puzzlescript_interface/api/app.py` | ARC-compatible PuzzleScript service — game catalog, scorecards, `/api/...` routes |
 | `client/engine/agent.py` | Main agent — rule learning, rule-based solving |
 | `client/engine/arcade_env.py` | ARC toolkit adapter used by the engine for both local PuzzleScript and official ARC |
-| `client/engine/llm_client.py` | LLM abstraction via `litellm` (Gemini Flash/Pro) |
-| `client/engine/prompts.py` | Prompt templates for legend inference, rule deduction, rule compression |
+| `client/engine/llm_client.py` | LLM abstraction via `litellm` and OpenRouter |
+| `client/engine/prompts.py` | Prompt template for LLM rule-hypothesis induction |
 | `client/engine/types.py` | Shared types: `GameAction`, `GameState`, `FrameData` |
 | `client/engine/base_env.py` | Abstract `BaseEnv` interface (`reset()` / `step()`) |
 | `client/run_arc_agent.py` | Generic CLI runner for ARC-compatible backends |
@@ -93,13 +100,13 @@ python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 
 ## Agent Learning Loop
 
-- In **learn** mode: agent collects `(before_frame, action, after_frame)` tuples, periodically calls LLM to infer legend and deduce rules, saves results to `client/rules/<game>_rules.txt`
-- In **solve** mode: the current implementation uses a simple placeholder policy over available non-reset actions; it does not yet use learned rules for planning
-- Rules are plain text with a structured format — see any file in `client/rules/` for the schema
+- In **learn** mode: agent perceives `FrameData`, records `(before_state, action, after_state)` evidence, creates executable transition rules from verified observations, and periodically asks the LLM for non-executable rule hypotheses.
+- In **solve** mode: the planner searches over verified executable rules. If no verified plan exists, the LLM proposes a subgoal and short legal action plan; the engine executes it and records the real transition as evidence.
+- Rule artifacts are stored under `client/rules/<game-id>/` as `transitions.jsonl`, `rules.json`, `rules.md`, and `journal.md`.
 
 ## LLM Configuration
 
-`llm_client.py` uses `litellm` to route calls. Default model is `gemini-3-flash-preview` (low thinking budget). Pro reasoning uses `gemini-3.1-pro-preview` with `thinkingLevel: "high"`. Switch models by editing `llm_client.py` — the abstraction makes swapping providers straightforward.
+`llm_client.py` uses `litellm` to route calls through OpenRouter. The model is `deepseek/deepseek-v4-pro` for both flash and pro paths.
 
 ## Server REST API (internal behavior)
 
@@ -132,7 +139,7 @@ POST /api/cmd/ACTION7    body: { game_id, guid }
 
 The public ARC surface returns ARC fields (`frame`, `state`, `levels_completed`, `game_id`, `win_levels`, `guid`, `available_actions`, `action_input`).
 
-## Coding Guidelines (from GEMINI.md)
+## Coding Guidelines
 
 - State assumptions before implementing; surface tradeoffs rather than picking silently
 - Minimum code that solves the problem — no speculative abstractions

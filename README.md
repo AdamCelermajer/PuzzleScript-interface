@@ -25,22 +25,25 @@ Copy `.env.example` to `.env` and fill in the variables you need.
 
 Environment variables for agent runs:
 
-- `GOOGLE_API_KEY` for the Gemini-based agent.
+- `OPENROUTER_API_KEY` for the default OpenRouter-backed agent model.
 - `ARC_API_KEY` is not required for the local PuzzleScript stack.
 - `OPENAI_API_KEY` is legacy and unused.
 
 Manual local play with `client.play_arc_client` does not require these keys.
 
-Start the PuzzleScript runtime:
+Start the local stack in one terminal:
+
+```bash
+npm run local
+```
+
+This starts both the PuzzleScript runtime and the ARC-compatible Python service.
+Closing the terminal or pressing Ctrl+C stops both owned child processes.
+
+If you only need the PuzzleScript runtime:
 
 ```bash
 npm start
-```
-
-Start the local ARC-compatible PuzzleScript service:
-
-```bash
-python -m puzzlescript_interface.api.main
 ```
 
 Run the agent against the local service:
@@ -59,7 +62,7 @@ python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 
 Required environment variables:
 
-- `GOOGLE_API_KEY` for the Gemini-based agent.
+- `OPENROUTER_API_KEY` for the default OpenRouter-backed agent model.
 - `ARC_API_KEY` for the official ARC backend.
 - `OPENAI_API_KEY` is legacy and unused.
 

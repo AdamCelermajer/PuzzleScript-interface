@@ -1,7 +1,0 @@
-{
-  "description": "Raw end-state cells for ps_sokoban_basic-v1 level 1. The learner receives only required integer cells, not object names.",
-  "required_cells": [
-    [2, 1, 4],
-    [1, 3, 4]
-  ]
-}

@@ -26,6 +26,6 @@ Then run the client from the repository root:
 python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --mode learn --max_steps 50
 ```
 
-This agent command requires `GOOGLE_API_KEY`.
+This agent command requires `OPENROUTER_API_KEY`.
 
 The runtime writes session history under the ignored `puzzlescript_interface/.runtime/` directory.

@@ -149,6 +149,12 @@ class Session {
             if (aIsOr && !bIsOr) return 1;
             if (!aIsOr && bIsOr) return -1;
 
+            const aSpriteCount = a.tile.getSprites().length;
+            const bSpriteCount = b.tile.getSprites().length;
+            if (aSpriteCount !== bSpriteCount) {
+                return bSpriteCount - aSpriteCount;
+            }
+
             return 0; // maintain relative order
         });
 
