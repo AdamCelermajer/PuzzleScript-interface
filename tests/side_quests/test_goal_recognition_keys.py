@@ -1,4 +1,8 @@
-from side_quests.keys import default_arc_api_key, goal_recognition_config
+from side_quests.keys import (
+    GOAL_RECOGNITION_MODEL,
+    default_arc_api_key,
+    goal_recognition_config,
+)
 
 
 def test_default_arc_api_key_reads_environment_after_client_dotenv_load(
@@ -20,4 +24,7 @@ def test_goal_recognition_config_uses_client_openrouter_config(monkeypatch) -> N
     assert config.server_url == "https://three.arcprize.org"
     assert config.game == "goal_recognition"
     assert config.mode == "one_frame"
+    assert config.flash_model == GOAL_RECOGNITION_MODEL
+    assert config.pro_model == GOAL_RECOGNITION_MODEL
+    assert config.flash_model == "deepseek/deepseek-v4-pro"
     assert config.openrouter_api_key == "openrouter-test-key"

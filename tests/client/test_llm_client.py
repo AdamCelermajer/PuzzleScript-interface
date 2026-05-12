@@ -7,7 +7,7 @@ from client.engine.llm_client import Config, LlmClient
 
 
 class LlmClientConfigTests(unittest.TestCase):
-    def test_defaults_route_nitro_model_through_openrouter(self) -> None:
+    def test_defaults_route_deepseek_model_through_openrouter(self) -> None:
         with patch.dict(
             os.environ,
             {
@@ -20,14 +20,14 @@ class LlmClientConfigTests(unittest.TestCase):
             client = LlmClient(cfg)
             routed_key = os.environ["OPENROUTER_API_KEY"]
 
-        self.assertEqual(cfg.flash_model, "openai/gpt-oss-120b:nitro")
-        self.assertEqual(cfg.pro_model, "openai/gpt-oss-120b:nitro")
+        self.assertEqual(cfg.flash_model, "deepseek/deepseek-v4-pro")
+        self.assertEqual(cfg.pro_model, "deepseek/deepseek-v4-pro")
         self.assertEqual(cfg.openrouter_api_key, "test-openrouter-key")
         self.assertEqual(routed_key, "test-openrouter-key")
         self.assertFalse(hasattr(cfg, "api_key"))
         self.assertEqual(
             client._litellm_model("flash"),
-            "openrouter/openai/gpt-oss-120b:nitro",
+            "openrouter/deepseek/deepseek-v4-pro",
         )
 
     def test_openrouter_key_is_required(self) -> None:
@@ -50,7 +50,7 @@ class LlmClientConfigTests(unittest.TestCase):
 
         self.assertEqual(result, '{"plan": ["ACTION1"]}')
         self.assertEqual(completion.call_count, 1)
-        self.assertIn("Asking openrouter/openai/gpt-oss-120b:nitro", events[0])
+        self.assertIn("Asking openrouter/deepseek/deepseek-v4-pro", events[0])
 
     def test_call_json_returns_object_and_rejects_invalid_json(self) -> None:
         good = SimpleNamespace(

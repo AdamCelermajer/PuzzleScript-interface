@@ -18,8 +18,8 @@ class Config:
     """Runtime configuration for server and model clients."""
 
     server_url: str = "http://localhost:3543"
-    flash_model: str = "openai/gpt-oss-120b:nitro"
-    pro_model: str = "openai/gpt-oss-120b:nitro"
+    flash_model: str = "deepseek/deepseek-v4-pro"
+    pro_model: str = "deepseek/deepseek-v4-pro"
     game: str = "ps_sokoban_basic-v1"
     mode: str = "learn"
     max_steps: int = 20
