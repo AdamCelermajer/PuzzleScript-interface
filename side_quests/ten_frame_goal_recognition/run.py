@@ -76,7 +76,7 @@ def choose_random_action(
     actions = [
         action
         for action in frame_data.available_actions
-        if action not in {GameAction.RESET, GameAction.ACTION7}
+        if action not in {GameAction.RESET, GameAction.ACTION6, GameAction.ACTION7}
     ]
     if not actions:
         actions = list(frame_data.available_actions)

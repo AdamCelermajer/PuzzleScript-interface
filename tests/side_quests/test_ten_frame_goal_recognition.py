@@ -24,7 +24,14 @@ def frame_with_actions(actions: list[GameAction]) -> FrameData:
 
 def test_choose_random_action_excludes_reset_and_undo_when_other_actions_exist() -> None:
     action = choose_random_action(
-        frame_with_actions([GameAction.RESET, GameAction.ACTION1, GameAction.ACTION7]),
+        frame_with_actions(
+            [
+                GameAction.RESET,
+                GameAction.ACTION1,
+                GameAction.ACTION6,
+                GameAction.ACTION7,
+            ]
+        ),
         random.Random(1),
     )
 
