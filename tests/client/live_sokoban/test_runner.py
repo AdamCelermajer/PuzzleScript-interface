@@ -46,6 +46,24 @@ class LineWorldEnv:
 
 
 class LiveRunnerTests(unittest.TestCase):
+    def test_runner_seeds_hidden_target_positions_from_at_goal(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            model = LiveRuleModel(
+                output_path=Path(tmpdir) / "rules.md",
+                store_path=Path(tmpdir) / "rules.json",
+                journal_path=Path(tmpdir) / "journal.md",
+                load_existing=False,
+            )
+
+            LiveRunner(
+                LineWorldEnv(),
+                goal=SymbolGoal(required_cells=((1, 0, "@"), (2, 0, "@"))),
+                model=model,
+                event_sink=lambda _message: None,
+            )
+
+        self.assertEqual(model.target_positions, {(1, 0), (2, 0)})
+
     def test_later_episode_reuses_symbol_rules_to_plan_to_goal(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             output = Path(tmpdir) / "rules.md"

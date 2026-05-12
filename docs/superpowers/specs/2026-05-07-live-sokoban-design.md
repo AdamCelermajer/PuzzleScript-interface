@@ -12,11 +12,12 @@ The POC targets `ps_sokoban_basic-v1` through the existing ARC-compatible Puzzle
 
 State is represented by perception:
 
-- direct PuzzleScript display symbols such as `.`, `#`, `P`, `*`, `@`, and `O`
-- coordinate facts such as `At(P,2,3)`, `Empty(3,3)`, and `Adjacent(2,3,3,3)`
+- generalized wall facts such as `At(#,0,0)`; walls do not receive individual object IDs
+- singleton actor facts such as `At(P,2,3)`
+- numbered target and crate facts such as `At(O1,2,1)`, `At(O2,1,3)`, `At(*1,1,3)`, and `At(*2,3,4)`
+- derived covered-target facts: if a target and any crate occupy the same coordinate, emit `At(@n,x,y)` and `At(@,x,y)`
 - changed positions between before and after frames
 - learned static `O/@` cells, so target/floor rendering does not become a separate movement rule
-- explicit term abstractions: `EmptyForMotion`, `CrateBearing`, `TargetBase`, and `Solid`
 
 The representation is intentionally neutral. It gives the learner a stable perceptual surface, not domain mechanics.
 
@@ -27,12 +28,12 @@ The rule model attributes raw controller actions to the observed actor. For Soko
 Rules are stored as percept conditions and effects, not as PuzzleScript line rewrites. A push observation such as `P * . -> . P *` becomes:
 
 - action: `ACTION2(P)`
-- conditions: `At(P,x,y)`, `CrateBearing(x,y+1)`, `EmptyForMotion(x,y+2)`
-- effects: `Clear(P,x,y)`, `Set(P,x,y+1)`, `Clear(CrateBearing,x,y+1)`, `Set(CrateBearing,x,y+2)`
+- conditions: `At(P,x,y)`, `At(*a,x,y+1)`, `NOT At(#,x,y+2)`, `NOT At(*b,x,y+2)`
+- effects: `Remove(At(P,x,y))`, `Add(At(P,x,y+1))`, `Remove(At(*a,x,y+1))`, `Add(At(*a,x,y+2))`
 
 The line-rewrite form can still be shown to humans, but it is not the core rule representation.
 
-Action deltas are learned only from observed one-cell symbol movement. They are persisted and shown in the journal.
+Observed action directions are kept as internal metadata so the rule learner can map `ACTION2(P)` to a relative coordinate change. They are not presented as learned rules.
 
 ## LIVE-Style Revision
 

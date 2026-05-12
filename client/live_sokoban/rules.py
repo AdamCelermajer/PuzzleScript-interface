@@ -14,38 +14,15 @@ from .model import SymbolFrame
 DEFAULT_OUTPUT_PATH = Path(__file__).resolve().parent / "output" / "live_rules.md"
 DEFAULT_STORE_PATH = Path(__file__).resolve().parent / "output" / "live_rules.json"
 DEFAULT_JOURNAL_PATH = Path(__file__).resolve().parent / "output" / "live_journal.md"
-STORE_VERSION = 4
+DEFAULT_COMPACT_OUTPUT_PATH = (
+    Path(__file__).resolve().parent / "output" / "live_rules_compact.md"
+)
+STORE_VERSION = 5
 
 ACTION_ACTOR_SYMBOL = "P"
 EMPTY_SYMBOLS = {".", "O"}
 TARGET_SYMBOLS = {"O", "@"}
 CRATE_SYMBOLS = {"*", "@"}
-
-
-@dataclass(frozen=True)
-class TermDefinition:
-    name: str
-    kind: str
-    symbols: tuple[str, ...]
-
-    def matches(self, symbol: str | None) -> bool:
-        return symbol in self.symbols
-
-    def to_data(self) -> dict:
-        return {
-            "name": self.name,
-            "kind": self.kind,
-            "symbols": list(self.symbols),
-        }
-
-
-TERM_DEFINITIONS = (
-    TermDefinition("EmptyForMotion", "symbol_class", (".", "O")),
-    TermDefinition("CrateBearing", "symbol_class", ("*", "@")),
-    TermDefinition("TargetBase", "symbol_class", ("O", "@")),
-    TermDefinition("Solid", "symbol_class", ("#",)),
-)
-TERMS_BY_NAME = {term.name: term for term in TERM_DEFINITIONS}
 
 
 def _action_name(action: GameAction | str) -> str:
@@ -64,25 +41,12 @@ def _cell_object(symbol: str | None) -> str | None:
     return None
 
 
-def _term_for_condition_symbol(symbol: str) -> str | None:
-    if symbol in EMPTY_SYMBOLS:
-        return "EmptyForMotion"
-    if symbol in CRATE_SYMBOLS:
-        return "CrateBearing"
-    if symbol == "#":
-        return "Solid"
-    return None
-
-
-def _term_matches(term_name: str | None, symbol: str | None) -> bool:
-    if term_name is None:
-        return False
-    term = TERMS_BY_NAME.get(term_name)
-    return term.matches(symbol) if term is not None else False
+def _is_clear_for_motion(symbol: str | None) -> bool:
+    return symbol in EMPTY_SYMBOLS
 
 
 def _is_known_target(symbol: str | None) -> bool:
-    return _term_matches("TargetBase", symbol)
+    return symbol in TARGET_SYMBOLS
 
 
 def _coord_fact(index: int, dx: int, dy: int) -> str:
@@ -102,33 +66,36 @@ class RelativeCondition:
     index: int
     kind: str
     symbol: str | None = None
-    term: str | None = None
 
     @classmethod
     def from_symbol(cls, index: int, symbol: str) -> "RelativeCondition":
-        term = _term_for_condition_symbol(symbol)
-        if term is not None:
-            return cls(index=index, kind="term", term=term)
+        if symbol in EMPTY_SYMBOLS:
+            return cls(index=index, kind="clear")
+        if symbol in CRATE_SYMBOLS:
+            return cls(index=index, kind="crate", symbol="*a")
         return cls(index=index, kind="at", symbol=symbol)
 
     def matches(self, frame: SymbolFrame, x: int, y: int, dx: int, dy: int) -> bool:
         symbol = frame.cell(x + dx * self.index, y + dy * self.index)
-        if self.kind == "term":
-            return _term_matches(self.term, symbol)
+        if self.kind == "clear":
+            return _is_clear_for_motion(symbol)
+        if self.kind == "crate":
+            return symbol in CRATE_SYMBOLS
         return symbol == self.symbol
 
-    def fact(self, dx: int, dy: int) -> str:
+    def facts(self, dx: int, dy: int, crate_variable: str) -> tuple[str, ...]:
         coord = _coord_fact(self.index, dx, dy)
-        if self.kind == "term":
-            return f"{self.term}({coord})"
-        return f"At({self.symbol},{coord})"
+        if self.kind == "clear":
+            return (f"NOT At(#,{coord})", f"NOT At({crate_variable},{coord})")
+        if self.kind == "crate":
+            return (f"At(*a,{coord})",)
+        return (f"At({self.symbol},{coord})",)
 
     def to_data(self) -> dict:
         return {
             "index": self.index,
             "kind": self.kind,
             "symbol": self.symbol,
-            "term": self.term,
         }
 
     @classmethod
@@ -137,7 +104,6 @@ class RelativeCondition:
             index=int(data["index"]),
             kind=str(data["kind"]),
             symbol=(str(data["symbol"]) if data.get("symbol") is not None else None),
-            term=(str(data["term"]) if data.get("term") is not None else None),
         )
 
 
@@ -149,9 +115,9 @@ class RelativeEffect:
 
     def fact(self, dx: int, dy: int) -> str:
         coord = _coord_fact(self.index, dx, dy)
-        verb = "Clear" if self.kind == "clear" else "Set"
-        symbol = "CrateBearing" if self.symbol == "*" else self.symbol
-        return f"{verb}({symbol},{coord})"
+        verb = "Remove" if self.kind == "clear" else "Add"
+        symbol = "*a" if self.symbol == "*" else self.symbol
+        return f"{verb}(At({symbol},{coord}))"
 
     def to_data(self) -> dict:
         return {"index": self.index, "kind": self.kind, "symbol": self.symbol}
@@ -193,7 +159,7 @@ class LiveRule:
 
     @property
     def condition_facts(self) -> tuple[str, ...]:
-        return tuple(condition.fact(self.dx, self.dy) for condition in self.conditions)
+        return _condition_facts(self.conditions, self.dx, self.dy)
 
     @property
     def effect_facts(self) -> tuple[str, ...]:
@@ -240,11 +206,17 @@ class LiveRuleModel:
         store_path: str | Path | None = None,
         journal_path: str | Path | None = None,
         load_existing: bool = True,
+        compact_output_path: str | Path | None = None,
     ) -> None:
         self.output_path = Path(output_path) if output_path else DEFAULT_OUTPUT_PATH
         self.store_path = Path(store_path) if store_path else self._default_store_path()
         self.journal_path = (
             Path(journal_path) if journal_path else self._default_journal_path()
+        )
+        self.compact_output_path = (
+            Path(compact_output_path)
+            if compact_output_path
+            else self._default_compact_output_path()
         )
         self.action_deltas: dict[tuple[str, str], tuple[int, int]] = {}
         self.context_attempts: dict[str, int] = {}
@@ -255,6 +227,9 @@ class LiveRuleModel:
         self.loaded_rule_count = 0
         if load_existing:
             self._load()
+
+    def seed_target_positions(self, positions: Iterable[tuple[int, int]]) -> None:
+        self.target_positions.update((int(x), int(y)) for x, y in positions)
 
     def observe(
         self, before: SymbolFrame, action: GameAction | str, after: SymbolFrame
@@ -395,9 +370,7 @@ class LiveRuleModel:
                             _attributed_action(action_name, actor_symbol),
                             dx,
                             dy,
-                            tuple(
-                                condition.fact(dx, dy) for condition in conditions
-                            ),
+                            _condition_facts(conditions, dx, dy),
                         )
                         if self._context_observations(context) == 0:
                             return action, context
@@ -409,7 +382,7 @@ class LiveRuleModel:
         reason: str,
         context: tuple | None = None,
     ) -> None:
-        if context is not None:
+        if context is not None and reason == "current_unseen_context":
             key = self._context_key(context)
             self.context_attempts[key] = self.context_attempts.get(key, 0) + 1
             self._save()
@@ -420,6 +393,11 @@ class LiveRuleModel:
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
         self.output_path.write_text(
             self._render(final=final, extra_sections=extra_sections or []),
+            encoding="utf-8",
+        )
+        self.compact_output_path.parent.mkdir(parents=True, exist_ok=True)
+        self.compact_output_path.write_text(
+            self._render_compact_rules(),
             encoding="utf-8",
         )
 
@@ -571,7 +549,8 @@ class LiveRuleModel:
                     self.action_deltas[key] = (dx, dy)
                     learned.append((ACTION_ACTOR_SYMBOL, dx, dy))
                     self._append_journal(
-                        f"created ActionDelta({action},{ACTION_ACTOR_SYMBOL},{dx},{dy})"
+                        f"observed action direction {_attributed_action(action, ACTION_ACTOR_SYMBOL)}: "
+                        f"dx={dx}, dy={dy}"
                     )
         return learned
 
@@ -747,6 +726,11 @@ class LiveRuleModel:
             return DEFAULT_JOURNAL_PATH
         return self.output_path.with_name(f"{self.output_path.stem}_journal.md")
 
+    def _default_compact_output_path(self) -> Path:
+        if self.output_path == DEFAULT_OUTPUT_PATH:
+            return DEFAULT_COMPACT_OUTPUT_PATH
+        return self.output_path.with_name(f"{self.output_path.stem}_compact.md")
+
     def _load(self) -> None:
         if not self.store_path.exists():
             return
@@ -843,7 +827,6 @@ class LiveRuleModel:
         return {
             "version": STORE_VERSION,
             "next_id": self._next_id,
-            "terms": [term.to_data() for term in TERM_DEFINITIONS],
             "context_attempts": [
                 {"context": context, "attempts": attempts}
                 for context, attempts in sorted(self.context_attempts.items())
@@ -916,25 +899,13 @@ class LiveRuleModel:
             f"Append-only growth journal: `{self.journal_path}`.",
             f"Loaded persisted percept rules at start: {self.loaded_rule_count}.",
             "",
-            "## Learned Terms",
+            "## Observed Action Directions",
             "",
         ]
-        for term in TERM_DEFINITIONS:
-            symbols = ", ".join(f"`{symbol}`" for symbol in term.symbols)
-            lines.append(f"- {term.name}: {symbols}")
-
-        lines.extend(
-            [
-                "",
-                "## Learned Action Deltas",
-                "",
-            ]
-        )
         if not self.action_deltas:
             lines.append("- None yet.")
         for (action, symbol), (dx, dy) in sorted(self.action_deltas.items()):
-            lines.append(f"- ActionDelta({action},{symbol},{dx},{dy})")
-            lines.append(f"  attributed action: `{_attributed_action(action, symbol)}`")
+            lines.append(f"- {_attributed_action(action, symbol)}: dx={dx}, dy={dy}")
 
         lines.extend(["", "## Known `O/@` Cells", ""])
         if not self.target_positions:
@@ -953,29 +924,7 @@ class LiveRuleModel:
         if not active:
             lines.append("- None yet.")
         for rule in active:
-            lines.extend(
-                [
-                    f"### {rule.id}",
-                    "",
-                    f"- raw_action: {rule.action}",
-                    f"- attributed_action: {rule.attributed_action}",
-                    f"- actor_symbol: {rule.actor_symbol}",
-                    f"- delta: ({rule.dx},{rule.dy})",
-                    f"- sibling_group: {rule.sibling_group or '-'}",
-                    f"- parent_id: {rule.parent_id or '-'}",
-                    f"- specificity: {rule.specificity}",
-                    f"- observations: {rule.observations}",
-                    f"- prediction_hits: {rule.prediction_hits}",
-                    "- conditions:",
-                    *[f"  - `{fact}`" for fact in rule.condition_facts],
-                    "- effects:",
-                    *[
-                        f"  - `{fact}`"
-                        for fact in (rule.effect_facts or ("NoChange",))
-                    ],
-                    "",
-                ]
-            )
+            lines.extend(_render_rule_block(rule))
 
         lines.extend(["## Sibling Rule Families", ""])
         sibling_rules = [rule for rule in self.rules if rule.sibling_group]
@@ -989,7 +938,8 @@ class LiveRuleModel:
                 lines.append(
                     f"- {rule.id} [{rule.status}] parent={rule.parent_id or '-'} "
                     f"specificity={rule.specificity} "
-                    f"{rule.condition_facts}->{rule.effect_facts or ('NoChange',)}"
+                    f"{_join_logic(rule.condition_facts)} -> "
+                    f"{_prediction_statement(rule.effect_facts)}"
                 )
                 if rule.created_from_failure:
                     lines.append(f"  created_from_failure: {rule.created_from_failure}")
@@ -1010,11 +960,21 @@ class LiveRuleModel:
         if final:
             lines.extend(["", "## Final Rule Set", ""])
             for rule in active:
-                lines.append(
-                    f"- {rule.id}: {rule.attributed_action} "
-                    f"{rule.condition_facts} -> {rule.effect_facts or ('NoChange',)}"
-                )
+                lines.extend(_render_rule_block(rule))
 
+        return "\n".join(lines) + "\n"
+
+    def _render_compact_rules(self) -> str:
+        lines = []
+        seen = set()
+        for rule in self.active_rules():
+            line = _compact_rule_line(rule)
+            if line in seen:
+                continue
+            lines.append(line)
+            seen.add(line)
+        if not lines:
+            return ""
         return "\n".join(lines) + "\n"
 
 
@@ -1024,11 +984,93 @@ def _facts_are_prefix(shorter: tuple[str, ...], longer: tuple[str, ...]) -> bool
     return longer[: len(shorter)] == shorter
 
 
+def _condition_facts(
+    conditions: tuple[RelativeCondition, ...], dx: int, dy: int
+) -> tuple[str, ...]:
+    facts: list[str] = []
+    crate_seen = False
+    for condition in conditions:
+        if condition.kind == "clear":
+            crate_variable = "*b" if crate_seen else "*a"
+        else:
+            crate_variable = "*a"
+        facts.extend(condition.facts(dx, dy, crate_variable))
+        if condition.kind == "crate":
+            crate_seen = True
+    return tuple(facts)
+
+
 def _object_index(line: tuple[str, ...], object_symbol: str) -> int | None:
     for index, symbol in enumerate(line):
         if _cell_object(symbol) == object_symbol:
             return index
     return None
+
+
+def _render_rule_block(rule: LiveRule) -> list[str]:
+    return [
+        f"### {rule.id}",
+        "",
+        "```text",
+        f"Index:      {rule.id}",
+        f"Condition:  {_join_logic(rule.condition_facts)}",
+        f"Action:     {rule.attributed_action}",
+        f"Prediction: {_prediction_statement(rule.effect_facts)}",
+        f"Sibling:    {rule.sibling_group or rule.parent_id or '-'}",
+        "```",
+        "",
+    ]
+
+
+def _compact_rule_line(rule: LiveRule) -> str:
+    return (
+        f"{rule.attributed_action}: "
+        f"{_compact_logic(rule.condition_facts)} => "
+        f"{_compact_prediction(rule.effect_facts)}"
+    )
+
+
+def _compact_logic(facts: tuple[str, ...]) -> str:
+    if not facts:
+        return "TRUE"
+    return " & ".join(_compact_fact(fact) for fact in facts)
+
+
+def _compact_prediction(effect_facts: tuple[str, ...]) -> str:
+    if not effect_facts:
+        return "NoChange"
+    return " & ".join(_compact_fact(fact) for fact in effect_facts)
+
+
+def _compact_fact(fact: str) -> str:
+    if fact.startswith("NOT "):
+        return f"!{fact[len('NOT '):]}"
+    if fact.startswith("Remove(") and fact.endswith(")"):
+        return f"!{fact[len('Remove('):-1]}"
+    if fact.startswith("Add(") and fact.endswith(")"):
+        return fact[len("Add(") : -1]
+    return fact
+
+
+def _join_logic(facts: tuple[str, ...]) -> str:
+    if not facts:
+        return "TRUE"
+    return " AND ".join(facts)
+
+
+def _prediction_statement(effect_facts: tuple[str, ...]) -> str:
+    if not effect_facts:
+        return "NoChange"
+    statements = []
+    for fact in effect_facts:
+        if fact.startswith("Remove(At(") and fact.endswith("))"):
+            inner = fact[len("Remove(") : -1]
+            statements.append(f"NOT {inner}")
+        elif fact.startswith("Add(At(") and fact.endswith("))"):
+            statements.append(fact[len("Add(") : -1])
+        else:
+            statements.append(fact)
+    return " AND ".join(statements)
 
 
 def _apply_effects(

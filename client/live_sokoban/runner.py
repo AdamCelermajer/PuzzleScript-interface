@@ -46,6 +46,7 @@ class LiveRunner:
         output_path: str | Path | None = None,
         store_path: str | Path | None = None,
         journal_path: str | Path | None = None,
+        compact_output_path: str | Path | None = None,
         model: LiveRuleModel | None = None,
         symbol_map: dict[int, str] | None = None,
         max_steps: int = 200,
@@ -62,7 +63,10 @@ class LiveRunner:
             output_path or DEFAULT_OUTPUT_PATH,
             store_path=store_path,
             journal_path=journal_path,
+            compact_output_path=compact_output_path,
         )
+        if hasattr(self.model, "seed_target_positions"):
+            self.model.seed_target_positions(self.goal.target_positions())
         self.actions_taken: list[GameAction] = []
         self.action_attempts: dict[tuple[SymbolFrame, GameAction], int] = {}
 
@@ -229,7 +233,12 @@ class LiveRunner:
             "",
             "## Current Percepts",
             "",
-            *[f"- `{fact}`" for fact in current.facts()],
+            *[
+                f"- `{fact}`"
+                for fact in current.facts(
+                    known_target_positions=self.model.target_positions
+                )
+            ],
             "",
             "## Run Status",
             "",

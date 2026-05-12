@@ -11,6 +11,7 @@ if __package__ in {None, ""}:
 from client.engine.arcade_env import ArcadeEnv
 from client.live_sokoban.model import SymbolGoal
 from client.live_sokoban.rules import (
+    DEFAULT_COMPACT_OUTPUT_PATH,
     DEFAULT_JOURNAL_PATH,
     DEFAULT_OUTPUT_PATH,
     DEFAULT_STORE_PATH,
@@ -34,6 +35,9 @@ def main() -> None:
     parser.add_argument("--game-id", default="ps_sokoban_basic-v1")
     parser.add_argument("--goal", type=Path, default=DEFAULT_GOAL_PATH)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
+    parser.add_argument(
+        "--compact-output", type=Path, default=DEFAULT_COMPACT_OUTPUT_PATH
+    )
     parser.add_argument("--store", type=Path, default=DEFAULT_STORE_PATH)
     parser.add_argument("--journal", type=Path, default=DEFAULT_JOURNAL_PATH)
     parser.add_argument("--max-steps", type=int, default=40)
@@ -44,7 +48,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.fresh_memory:
-        for path in (args.output, args.store, args.journal):
+        for path in (args.output, args.compact_output, args.store, args.journal):
             if path.exists():
                 path.unlink()
 
@@ -53,6 +57,7 @@ def main() -> None:
         output_path=args.output,
         store_path=args.store,
         journal_path=args.journal,
+        compact_output_path=args.compact_output,
         load_existing=not args.fresh_memory,
     )
 
@@ -94,6 +99,7 @@ def main() -> None:
             print(f"steps={result.steps}")
         if result is not None:
             print(f"rules={result.output_path}")
+            print(f"compact_rules={model.compact_output_path}")
             print(f"store={model.store_path}")
             print(f"journal={model.journal_path}")
     finally:

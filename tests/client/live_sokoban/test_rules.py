@@ -80,8 +80,9 @@ class LiveRuleTests(unittest.TestCase):
                 for rule in model.active_rules("ACTION4")
                 if rule.condition_facts == (
                     "At(P,x,y)",
-                    "CrateBearing(x+1,y)",
-                    "EmptyForMotion(x+2,y)",
+                    "At(*a,x+1,y)",
+                    "NOT At(#,x+2,y)",
+                    "NOT At(*b,x+2,y)",
                 )
             ]
 
@@ -91,11 +92,36 @@ class LiveRuleTests(unittest.TestCase):
         self.assertEqual(
             push_rules[0].effect_facts,
             (
-                "Clear(P,x,y)",
-                "Set(P,x+1,y)",
-                "Clear(CrateBearing,x+1,y)",
-                "Set(CrateBearing,x+2,y)",
+                "Remove(At(P,x,y))",
+                "Add(At(P,x+1,y))",
+                "Remove(At(*a,x+1,y))",
+                "Add(At(*a,x+2,y))",
             ),
+        )
+
+    def test_move_rule_effects_are_real_at_differences(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            model = LiveRuleModel(
+                output_path=Path(tmpdir) / "rules.md",
+                store_path=Path(tmpdir) / "rules.json",
+                journal_path=Path(tmpdir) / "journal.md",
+                load_existing=False,
+            )
+
+            model.observe(
+                SymbolFrame.from_rows(["P."]),
+                GameAction.ACTION4,
+                SymbolFrame.from_rows([".P"]),
+            )
+            move_rule = model.active_rules("ACTION4")[0]
+
+        self.assertEqual(
+            move_rule.condition_facts,
+            ("At(P,x,y)", "NOT At(#,x+1,y)", "NOT At(*a,x+1,y)"),
+        )
+        self.assertEqual(
+            move_rule.effect_facts,
+            ("Remove(At(P,x,y))", "Add(At(P,x+1,y))"),
         )
 
     def test_target_floor_variants_collapse_into_one_move_rule(self) -> None:
@@ -124,7 +150,8 @@ class LiveRuleTests(unittest.TestCase):
             move_rules = [
                 rule
                 for rule in model.active_rules("ACTION4")
-                if rule.condition_facts == ("At(P,x,y)", "EmptyForMotion(x+1,y)")
+                if rule.condition_facts
+                == ("At(P,x,y)", "NOT At(#,x+1,y)", "NOT At(*a,x+1,y)")
             ]
 
         self.assertEqual(len(move_rules), 1)
@@ -164,8 +191,9 @@ class LiveRuleTests(unittest.TestCase):
                 for rule in model.active_rules("ACTION4")
                 if rule.condition_facts == (
                     "At(P,x,y)",
-                    "CrateBearing(x+1,y)",
-                    "EmptyForMotion(x+2,y)",
+                    "At(*a,x+1,y)",
+                    "NOT At(#,x+2,y)",
+                    "NOT At(*b,x+2,y)",
                 )
             ]
 
@@ -220,8 +248,8 @@ class LiveRuleTests(unittest.TestCase):
                 for rule in model.active_rules("ACTION4")
                 if rule.condition_facts == (
                     "At(P,x,y)",
-                    "CrateBearing(x+1,y)",
-                    "Solid(x+2,y)",
+                    "At(*a,x+1,y)",
+                    "At(#,x+2,y)",
                 )
             ]
 
@@ -267,6 +295,30 @@ class LiveRuleTests(unittest.TestCase):
         self.assertIn("Sibling Rule Families", rules_text)
         self.assertIn("created sibling family", journal_text)
 
+    def test_reachable_context_selection_does_not_count_as_an_attempt(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            model = LiveRuleModel(
+                output_path=Path(tmpdir) / "rules.md",
+                store_path=Path(tmpdir) / "rules.json",
+                journal_path=Path(tmpdir) / "journal.md",
+                load_existing=False,
+            )
+            context = (
+                "P",
+                "ACTION1(P)",
+                0,
+                -1,
+                ("At(P,x,y)", "At(*a,x,y-1)"),
+            )
+
+            model.record_explorer_selection(
+                GameAction.ACTION4,
+                "reachable_unseen_context",
+                context,
+            )
+
+        self.assertEqual(model.context_attempts, {})
+
     def test_rule_files_persist_and_show_growth_without_object_names(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             output = Path(tmpdir) / "rules.md"
@@ -293,14 +345,108 @@ class LiveRuleTests(unittest.TestCase):
             growth = journal.read_text(encoding="utf-8")
 
         self.assertEqual(loaded.action_deltas[("ACTION4", "P")], (1, 0))
-        self.assertIn("ActionDelta(ACTION4,P,1,0)", text)
+        self.assertIn("ACTION4(P): dx=1, dy=0", text)
         self.assertIn("ACTION4(P)", text)
         self.assertIn("At(P,x,y)", text)
-        self.assertIn("EmptyForMotion(x+1,y)", text)
-        self.assertIn("CrateBearing", text)
+        self.assertIn("NOT At(#,x+1,y)", text)
+        self.assertNotIn("EmptyForMotion", text)
+        self.assertNotIn("CrateBearing", text)
+        self.assertNotIn("Learned Terms", text)
+        self.assertNotIn("ActionDelta", text)
         self.assertIn("created", growth)
         self.assertNotIn("Player", text)
         self.assertNotIn("Wall", text)
+
+    def test_rule_markdown_uses_paper_style_blocks(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "rules.md"
+            model = LiveRuleModel(
+                output_path=output,
+                store_path=Path(tmpdir) / "rules.json",
+                journal_path=Path(tmpdir) / "journal.md",
+                load_existing=False,
+            )
+
+            model.observe(
+                SymbolFrame.from_rows(["P."]),
+                GameAction.ACTION4,
+                SymbolFrame.from_rows([".P"]),
+            )
+            text = output.read_text(encoding="utf-8")
+
+        self.assertIn("Index:      R001", text)
+        self.assertIn(
+            "Condition:  At(P,x,y) AND NOT At(#,x+1,y) AND NOT At(*a,x+1,y)",
+            text,
+        )
+        self.assertIn("Action:     ACTION4(P)", text)
+        self.assertIn(
+            "Prediction: NOT At(P,x,y) AND At(P,x+1,y)",
+            text,
+        )
+        self.assertIn("Sibling:    -", text)
+        self.assertNotIn("- raw_action:", text)
+
+    def test_writes_compact_rules_only_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "rules.md"
+            compact = Path(tmpdir) / "rules_compact.md"
+            model = LiveRuleModel(
+                output_path=output,
+                store_path=Path(tmpdir) / "rules.json",
+                journal_path=Path(tmpdir) / "journal.md",
+                load_existing=False,
+            )
+
+            model.observe(
+                SymbolFrame.from_rows(["P."]),
+                GameAction.ACTION4,
+                SymbolFrame.from_rows([".P"]),
+            )
+            text = compact.read_text(encoding="utf-8")
+
+        self.assertEqual(
+            text.strip(),
+            "ACTION4(P): At(P,x,y) & !At(#,x+1,y) & !At(*a,x+1,y) => "
+            "!At(P,x,y) & At(P,x+1,y)",
+        )
+        self.assertNotIn("State is represented", text)
+        self.assertNotIn("Current Symbol Frame", text)
+        self.assertNotIn("Append-only growth journal", text)
+        self.assertNotIn("R001", text)
+
+    def test_compact_rules_file_deduplicates_same_rule_content(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "rules.md"
+            compact = Path(tmpdir) / "rules_compact.md"
+            model = LiveRuleModel(
+                output_path=output,
+                store_path=Path(tmpdir) / "rules.json",
+                journal_path=Path(tmpdir) / "journal.md",
+                load_existing=False,
+            )
+
+            model.observe(
+                SymbolFrame.from_rows(["P."]),
+                GameAction.ACTION4,
+                SymbolFrame.from_rows([".P"]),
+            )
+            duplicate = model.active_rules("ACTION4")[0]
+            model.rules.append(
+                type(duplicate)(
+                    id="R999",
+                    action=duplicate.action,
+                    actor_symbol=duplicate.actor_symbol,
+                    dx=duplicate.dx,
+                    dy=duplicate.dy,
+                    conditions=duplicate.conditions,
+                    effects=duplicate.effects,
+                )
+            )
+            model.write()
+            text = compact.read_text(encoding="utf-8")
+
+        self.assertEqual(len(text.strip().splitlines()), 1)
 
     def test_load_skips_old_symbol_line_rules(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -369,49 +515,15 @@ class LiveRuleTests(unittest.TestCase):
             )
             data = json.loads(store.read_text(encoding="utf-8"))
 
-        self.assertEqual(data["version"], 4)
-        self.assertEqual(
-            data["terms"],
-            [
-                {
-                    "name": "EmptyForMotion",
-                    "kind": "symbol_class",
-                    "symbols": [".", "O"],
-                },
-                {
-                    "name": "CrateBearing",
-                    "kind": "symbol_class",
-                    "symbols": ["*", "@"],
-                },
-                {
-                    "name": "TargetBase",
-                    "kind": "symbol_class",
-                    "symbols": ["O", "@"],
-                },
-                {
-                    "name": "Solid",
-                    "kind": "symbol_class",
-                    "symbols": ["#"],
-                },
-            ],
-        )
+        self.assertEqual(data["version"], 5)
+        self.assertNotIn("terms", data)
         self.assertEqual(data["rules"][0]["attributed_action"], "ACTION4(P)")
         self.assertEqual(
             data["rules"][0]["conditions"],
             [
-                {"index": 0, "kind": "at", "symbol": "P", "term": None},
-                {
-                    "index": 1,
-                    "kind": "term",
-                    "symbol": None,
-                    "term": "CrateBearing",
-                },
-                {
-                    "index": 2,
-                    "kind": "term",
-                    "symbol": None,
-                    "term": "EmptyForMotion",
-                },
+                {"index": 0, "kind": "at", "symbol": "P"},
+                {"index": 1, "kind": "crate", "symbol": "*a"},
+                {"index": 2, "kind": "clear", "symbol": None},
             ],
         )
         self.assertNotIn("before_symbols", data["rules"][0])

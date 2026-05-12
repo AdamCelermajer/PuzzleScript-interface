@@ -15,7 +15,7 @@ SYMBOLS = {
 
 
 class LivePerceptTests(unittest.TestCase):
-    def test_perceiver_builds_symbol_facts_without_human_object_names(self) -> None:
+    def test_perceiver_builds_identity_precepts_without_human_object_names(self) -> None:
         frame = SymbolPerceiver(SYMBOLS).from_grid(
             [
                 [1, 2, 0],
@@ -26,13 +26,31 @@ class LivePerceptTests(unittest.TestCase):
 
         self.assertIn("At(#,0,0)", facts)
         self.assertIn("At(P,1,0)", facts)
-        self.assertIn("Empty(2,0)", facts)
-        self.assertIn("Adjacent(1,0,2,0)", facts)
+        self.assertIn("At(O1,0,1)", facts)
+        self.assertIn("At(O2,1,1)", facts)
+        self.assertIn("At(*1,1,1)", facts)
+        self.assertIn("At(*2,2,1)", facts)
+        self.assertIn("At(@2,1,1)", facts)
+        self.assertNotIn("At(#1,0,0)", facts)
         self.assertNotIn("Player", "\n".join(facts))
         self.assertNotIn("Wall", "\n".join(facts))
 
-    def test_star_goal_accepts_any_crate_bearing_symbol(self) -> None:
-        goal = SymbolGoal(required_cells=((2, 1, "*"), (1, 3, "*")))
+    def test_identity_precepts_can_use_known_hidden_target_positions(self) -> None:
+        frame = SymbolFrame.from_rows(
+            [
+                ".P.",
+                "...",
+                "...",
+            ]
+        )
+        facts = frame.facts(known_target_positions={(1, 0), (2, 2)})
+
+        self.assertIn("At(O1,1,0)", facts)
+        self.assertIn("At(O2,2,2)", facts)
+        self.assertIn("At(P,1,0)", facts)
+
+    def test_at_goal_requires_crate_on_target_symbol(self) -> None:
+        goal = SymbolGoal(required_cells=((2, 1, "@"), (1, 3, "@")))
         unsolved = SymbolFrame.from_rows(
             [
                 "###",
@@ -60,7 +78,7 @@ class LivePerceptTests(unittest.TestCase):
 
         self.assertFalse(goal.is_satisfied(unsolved))
         self.assertTrue(goal.is_satisfied(solved))
-        self.assertTrue(goal.is_satisfied(solved_with_flat_crates))
+        self.assertFalse(goal.is_satisfied(solved_with_flat_crates))
 
 
 if __name__ == "__main__":

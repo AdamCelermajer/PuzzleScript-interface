@@ -20,6 +20,11 @@ DEFAULT_SYMBOL_MAP: dict[int, str] = {
 SymbolCell = tuple[int, int, str]
 
 
+def _reading_order(position: tuple[int, int]) -> tuple[int, int]:
+    x, y = position
+    return y, x
+
+
 @dataclass(frozen=True)
 class SymbolFrame:
     """Grid represented as PuzzleScript display symbols, not human object names."""
@@ -98,19 +103,62 @@ class SymbolFrame:
             rows[cy][cx] = symbol
         return SymbolFrame(tuple(tuple(row) for row in rows))
 
-    def facts(self) -> tuple[str, ...]:
+    def facts(
+        self,
+        known_target_positions: Iterable[tuple[int, int]] | None = None,
+    ) -> tuple[str, ...]:
         facts: list[str] = []
+        walls: list[tuple[int, int]] = []
+        targets: set[tuple[int, int]] = set(known_target_positions or ())
+        crates: list[tuple[int, int]] = []
+        players: list[tuple[int, int]] = []
+
         for y, row in enumerate(self.grid):
             for x, symbol in enumerate(row):
-                if symbol == ".":
-                    facts.append(f"Empty({x},{y})")
-                else:
-                    facts.append(f"At({symbol},{x},{y})")
-                facts.append(f"InBounds({x},{y})")
-                for nx, ny in ((x + 1, y), (x, y + 1)):
-                    if self.cell(nx, ny) is not None:
-                        facts.append(f"Adjacent({x},{y},{nx},{ny})")
-                        facts.append(f"Adjacent({nx},{ny},{x},{y})")
+                if symbol == "#":
+                    walls.append((x, y))
+                elif symbol == "P":
+                    players.append((x, y))
+                elif symbol == "O":
+                    targets.add((x, y))
+                elif symbol == "*":
+                    crates.append((x, y))
+                elif symbol == "@":
+                    targets.add((x, y))
+                    crates.append((x, y))
+
+        for x, y in sorted(walls, key=_reading_order):
+            facts.append(f"At(#,{x},{y})")
+
+        numbered_targets = tuple(
+            (f"O{index}", x, y)
+            for index, (x, y) in enumerate(sorted(targets, key=_reading_order), start=1)
+        )
+        numbered_crates = tuple(
+            (f"*{index}", x, y)
+            for index, (x, y) in enumerate(sorted(crates, key=_reading_order), start=1)
+        )
+
+        for name, x, y in numbered_targets:
+            facts.append(f"At({name},{x},{y})")
+
+        for name, x, y in numbered_crates:
+            facts.append(f"At({name},{x},{y})")
+
+        for x, y in sorted(players, key=_reading_order):
+            facts.append(f"At(P,{x},{y})")
+
+        crate_positions = {(x, y) for _name, x, y in numbered_crates}
+        for index, (_name, x, y) in enumerate(numbered_targets, start=1):
+            if (x, y) in crate_positions:
+                facts.append(f"At(@{index},{x},{y})")
+                facts.append(f"At(@,{x},{y})")
+
+        for player_x, player_y in players:
+            for crate_name, crate_x, crate_y in numbered_crates:
+                if abs(player_x - crate_x) + abs(player_y - crate_y) == 1:
+                    facts.append(f"Adjacent(P,{crate_name})")
+
         return tuple(facts)
 
     def changed_positions(self, other: "SymbolFrame") -> tuple[tuple[int, int], ...]:
@@ -150,4 +198,11 @@ class SymbolGoal:
         return "\n".join(
             f"- At({symbol},{x},{y})" for x, y, symbol in self.required_cells
         )
+
+    def target_positions(self) -> set[tuple[int, int]]:
+        return {
+            (x, y)
+            for x, y, symbol in self.required_cells
+            if symbol in {"@", "O"}
+        }
 
