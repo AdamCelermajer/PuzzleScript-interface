@@ -124,6 +124,8 @@ client/live_sokoban/output/
 client/strict_live_sokoban/output/
 client/percept_live_sokoban/output/
 client/helped_live_sokoban/output/
+side_quests/*/artifacts/
+side_quests/run_logs/
 
 # Local/generated test folders
 test/
