@@ -119,6 +119,7 @@ def run_game(
     args: argparse.Namespace,
     llm: LlmClient,
     frames_dir: Path,
+    prompts_dir: Path,
 ) -> dict[str, Any]:
     env = ArcadeEnv(
         game_id=game_id,
@@ -129,6 +130,15 @@ def run_game(
     grid = last_grid(frame_data.frame)
     available_actions = [action.name for action in frame_data.available_actions]
     system, prompt = build_prompt(game_id, grid, available_actions)
+    write_json(
+        prompts_dir / frame_path_name(game_id),
+        {
+            "game_id": game_id,
+            "setup": SETUP,
+            "system": system,
+            "prompt": prompt,
+        },
+    )
     raw_response = llm.call_json(system, prompt, model_type=args.model_type)
     prediction = normalize_prediction(raw_response)
 
@@ -223,11 +233,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     run_id, run_dir = resolve_run_dir(args)
     frames_dir = run_dir / "frames"
+    prompts_dir = run_dir / "prompts"
     predictions_path = run_dir / "predictions.jsonl"
     errors_path = run_dir / "errors.jsonl"
 
     run_dir.mkdir(parents=True, exist_ok=True)
     frames_dir.mkdir(parents=True, exist_ok=True)
+    prompts_dir.mkdir(parents=True, exist_ok=True)
     predictions_path.touch(exist_ok=True)
     errors_path.touch(exist_ok=True)
 
@@ -241,7 +253,8 @@ def main(argv: list[str] | None = None) -> int:
             print(f"skipping {game_id}")
             continue
         try:
-            row = run_game(game_id, args, llm, frames_dir)
+            print(f"running {game_id}")
+            row = run_game(game_id, args, llm, frames_dir, prompts_dir)
             write_jsonl(predictions_path, row)
             print(f"saved {game_id}")
         except Exception as exc:

@@ -140,12 +140,22 @@ def run_game(
     args: argparse.Namespace,
     llm: LlmClient,
     frames_dir: Path,
+    prompts_dir: Path,
 ) -> dict[str, Any]:
     rng = random.Random(args.seed + sum(ord(char) for char in game_id))
     env = ArcadeEnv(game_id=game_id, backend_url=args.backend_url, api_key=args.api_key)
     trajectory, actions_taken, frame_data = collect_trajectory(env, args.steps, rng)
     available_actions = [action.name for action in frame_data.available_actions]
     system, prompt = build_prompt(game_id, trajectory, available_actions)
+    write_json(
+        prompts_dir / frame_path_name(game_id),
+        {
+            "game_id": game_id,
+            "setup": SETUP,
+            "system": system,
+            "prompt": prompt,
+        },
+    )
     raw_response = llm.call_json(system, prompt, model_type=args.model_type)
     prediction = normalize_prediction(raw_response)
 
@@ -223,10 +233,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     run_id, run_dir = resolve_run_dir(args)
     frames_dir = run_dir / "frames"
+    prompts_dir = run_dir / "prompts"
     predictions_path = run_dir / "predictions.jsonl"
     errors_path = run_dir / "errors.jsonl"
     run_dir.mkdir(parents=True, exist_ok=True)
     frames_dir.mkdir(parents=True, exist_ok=True)
+    prompts_dir.mkdir(parents=True, exist_ok=True)
 
     llm = make_llm(args)
     games = selected_games(args)
@@ -249,7 +261,8 @@ def main(argv: list[str] | None = None) -> int:
         if game_id in done:
             continue
         try:
-            row = run_game(game_id, args, llm, frames_dir)
+            print(f"running {game_id}")
+            row = run_game(game_id, args, llm, frames_dir, prompts_dir)
             write_jsonl(predictions_path, row)
             print(f"saved {game_id}")
         except Exception as exc:
