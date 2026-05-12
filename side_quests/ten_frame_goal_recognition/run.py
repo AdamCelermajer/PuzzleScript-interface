@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import random
 import sys
 from datetime import datetime, timezone
@@ -12,9 +11,10 @@ from typing import Any
 from arc_agi import Arcade, OperationMode
 
 from client.engine.arcade_env import ArcadeEnv
-from client.engine.llm_client import Config, LlmClient
+from client.engine.llm_client import LlmClient
 from client.engine.types import FrameData, GameAction, GameState
 from client.engine.utils import last_grid
+from side_quests.keys import default_arc_api_key, goal_recognition_config
 from side_quests.ten_frame_goal_recognition.prompt import build_prompt
 
 
@@ -106,12 +106,9 @@ def selected_games(args: argparse.Namespace) -> list[str]:
 
 
 def make_llm(args: argparse.Namespace) -> LlmClient:
-    cfg = Config(
-        game="goal_recognition",
-        mode="goal_recognition",
-        server_url=args.backend_url,
+    return LlmClient(
+        goal_recognition_config(backend_url=args.backend_url, mode="ten_frame_random")
     )
-    return LlmClient(cfg)
 
 
 def collect_trajectory(
@@ -184,7 +181,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         description="Run ten-frame random-action goal recognition."
     )
     parser.add_argument("--backend-url", default=DEFAULT_BACKEND_URL)
-    parser.add_argument("--api-key", default=os.getenv("ARC_API_KEY", ""))
+    parser.add_argument("--api-key", default=default_arc_api_key())
     parser.add_argument("--games", default="all")
     parser.add_argument("--game-id")
     parser.add_argument("--limit", type=int, default=30)

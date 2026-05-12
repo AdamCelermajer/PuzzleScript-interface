@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -11,6 +10,7 @@ from arcengine import GameAction
 
 from client.play_arc_client import QUIT_COMMAND, key_to_action, read_key, update_dashboard
 from client.terminal_dashboard import TerminalDashboard
+from side_quests.keys import default_arc_api_key
 
 
 LABELS = {
@@ -116,7 +116,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--predictions", type=Path, required=True)
     parser.add_argument("--backend-url", default="https://three.arcprize.org")
-    parser.add_argument("--api-key", default=os.getenv("ARC_API_KEY", ""))
+    parser.add_argument("--api-key", default=default_arc_api_key())
     parser.add_argument("--out", type=Path)
     return parser.parse_args(argv)
 

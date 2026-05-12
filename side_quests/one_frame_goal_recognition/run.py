@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,8 +10,9 @@ from typing import Any
 from arc_agi import Arcade, OperationMode
 
 from client.engine.arcade_env import ArcadeEnv
-from client.engine.llm_client import Config, LlmClient
+from client.engine.llm_client import LlmClient
 from client.engine.utils import last_grid
+from side_quests.keys import default_arc_api_key, goal_recognition_config
 from side_quests.one_frame_goal_recognition.prompt import build_prompt
 
 
@@ -105,12 +105,9 @@ def selected_games(args: argparse.Namespace) -> list[str]:
 
 
 def make_llm(args: argparse.Namespace) -> LlmClient:
-    config = Config(
-        server_url=args.backend_url,
-        game="goal_recognition",
-        mode="one_frame",
+    return LlmClient(
+        goal_recognition_config(backend_url=args.backend_url, mode="one_frame")
     )
-    return LlmClient(config)
 
 
 def frame_path_name(game_id: str) -> str:
@@ -167,7 +164,7 @@ def run_game(
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run one-frame ARC goal recognition.")
     parser.add_argument("--backend-url", default=DEFAULT_BACKEND_URL)
-    parser.add_argument("--api-key", default=os.getenv("ARC_API_KEY", ""))
+    parser.add_argument("--api-key", default=default_arc_api_key())
     parser.add_argument("--games", default="all")
     parser.add_argument("--game-id")
     parser.add_argument("--limit", type=int, default=30)
