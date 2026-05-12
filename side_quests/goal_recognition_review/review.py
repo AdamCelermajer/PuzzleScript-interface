@@ -95,15 +95,17 @@ def play_for_review(row: dict, backend_url: str, api_key: str) -> None:
 
 
 def ask_verdict() -> tuple[str, str]:
+    note = ""
     while True:
         command = input(
             "Verdict [c correct / w wrong / p partial / s skip / n note]: "
         ).strip().lower()
         if command == "n":
             note = input("Note: ").strip()
-            return "partial", note
+            continue
         if command in LABELS:
-            note = input("Note, optional: ").strip()
+            if not note:
+                note = input("Note, optional: ").strip()
             return LABELS[command], note
         print("Use c, w, p, s, or n.")
 

@@ -53,6 +53,10 @@ def completed_game_ids(path: Path) -> set[str]:
     return completed
 
 
+def frame_path_name(game_id: str) -> str:
+    return game_id.replace("/", "_").replace("\\", "_") + ".json"
+
+
 def normalize_prediction(data: dict[str, Any]) -> dict[str, Any]:
     key_objects = data.get("key_objects")
     uncertainties = data.get("uncertainties")
@@ -149,7 +153,7 @@ def run_game(
     prediction = normalize_prediction(raw_response)
 
     write_json(
-        frames_dir / f"{game_id}.json",
+        frames_dir / frame_path_name(game_id),
         {
             "game_id": game_id,
             "setup": SETUP,
@@ -192,10 +196,35 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def latest_run_dir(out_dir: Path) -> Path | None:
+    if (out_dir / "manifest.json").exists():
+        return out_dir
+    if not out_dir.exists():
+        return None
+
+    run_dirs = [
+        path
+        for path in out_dir.iterdir()
+        if path.is_dir() and (path / "manifest.json").exists()
+    ]
+    if not run_dirs:
+        return None
+    return max(run_dirs, key=lambda path: path.stat().st_mtime)
+
+
+def resolve_run_dir(args: argparse.Namespace) -> tuple[str, Path]:
+    if args.resume:
+        existing = latest_run_dir(args.out)
+        if existing is not None:
+            return existing.name, existing
+
+    run_id = utc_run_id()
+    return run_id, args.out / run_id
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
-    run_id = utc_run_id()
-    run_dir = args.out / run_id
+    run_id, run_dir = resolve_run_dir(args)
     frames_dir = run_dir / "frames"
     predictions_path = run_dir / "predictions.jsonl"
     errors_path = run_dir / "errors.jsonl"

@@ -18,7 +18,7 @@ from side_quests.one_frame_goal_recognition.prompt import build_prompt
 
 SETUP = "one_frame"
 DEFAULT_BACKEND_URL = "https://three.arcprize.org"
-DEFAULT_OUT = Path("artifacts")
+DEFAULT_OUT = Path(__file__).resolve().parent / "artifacts"
 
 
 def utc_run_id() -> str:
