@@ -73,13 +73,17 @@ def choose_random_action(
     frame_data: FrameData,
     rng: random.Random,
 ) -> GameAction | None:
+    unsupported = {GameAction.ACTION6}
+    controls = {GameAction.RESET, GameAction.ACTION7}
     actions = [
         action
         for action in frame_data.available_actions
-        if action not in {GameAction.RESET, GameAction.ACTION6, GameAction.ACTION7}
+        if action not in unsupported and action not in controls
     ]
     if not actions:
-        actions = list(frame_data.available_actions)
+        actions = [
+            action for action in frame_data.available_actions if action not in unsupported
+        ]
     if not actions:
         return None
     return rng.choice(actions)

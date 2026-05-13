@@ -47,6 +47,13 @@ def test_choose_random_action_falls_back_to_any_available_action() -> None:
     assert action in {GameAction.RESET, GameAction.ACTION7}
 
 
+def test_choose_random_action_never_falls_back_to_action6() -> None:
+    assert choose_random_action(
+        frame_with_actions([GameAction.ACTION6]),
+        random.Random(1),
+    ) is None
+
+
 def test_choose_random_action_returns_none_without_available_actions() -> None:
     assert choose_random_action(frame_with_actions([]), random.Random(1)) is None
 
