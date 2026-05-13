@@ -31,6 +31,16 @@ def test_load_and_write_rows_round_trip_jsonl(tmp_path: Path) -> None:
     assert load_rows(path) == rows
 
 
+def test_load_rows_accepts_utf8_bom_jsonl(tmp_path: Path) -> None:
+    path = tmp_path / "predictions.jsonl"
+    path.write_text(
+        '\ufeff{"game_id": "a", "manual_verification": null}\n',
+        encoding="utf-8",
+    )
+
+    assert load_rows(path) == [{"game_id": "a", "manual_verification": None}]
+
+
 def test_count_labels_groups_by_setup_and_label() -> None:
     rows = [
         {"setup": "one_frame", "manual_verification": {"label": "correct"}},

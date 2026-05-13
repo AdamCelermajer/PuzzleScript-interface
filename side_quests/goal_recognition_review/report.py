@@ -19,7 +19,7 @@ COLORS = {
 def load_rows(paths: list[Path]) -> list[dict]:
     rows = []
     for path in paths:
-        for line in path.read_text(encoding="utf-8").splitlines():
+        for line in path.read_text(encoding="utf-8-sig").splitlines():
             if line.strip():
                 rows.append(json.loads(line))
     return rows
