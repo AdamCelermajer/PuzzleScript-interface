@@ -192,6 +192,36 @@ class TerminalDashboardTests(unittest.TestCase):
         self.assertIn("██", screen)
         self.assertNotIn("[5, 5, 5", screen)
 
+    def test_review_color_profile_always_uses_color_view(self) -> None:
+        dashboard = TerminalDashboard(
+            game_id="ls20",
+            mode="VERIFY",
+            interactive=False,
+            display_profile="review_color",
+        )
+
+        wide_row = [5] * 34 + [4] * 26 + [3] * 4
+        frame_data = SimpleNamespace(
+            frame=[[wide_row, wide_row]],
+            state=SimpleNamespace(name="PLAYING"),
+            levels_completed=0,
+            win_levels=1,
+            action_input=SimpleNamespace(id=SimpleNamespace(name="ACTION4")),
+        )
+
+        with patch(
+            "client.terminal_dashboard.shutil.get_terminal_size",
+            return_value=os.terminal_size((100, 20)),
+        ):
+            dashboard.render(2, frame_data)
+            screen = dashboard._build_screen()
+
+        self.assertIn("Color View", screen)
+        self.assertIn("\x1b[38;2;", screen)
+        self.assertIn("\u2588\u2588", screen)
+        self.assertNotIn("Compact View", screen)
+        self.assertNotIn("[5, 5, 5", screen)
+
 
 if __name__ == "__main__":
     unittest.main()

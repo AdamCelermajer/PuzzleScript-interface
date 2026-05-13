@@ -246,6 +246,9 @@ class TerminalDashboard:
         color_lines = self.color_frame_text.splitlines()
         compact_lines = self.compact_frame_text.splitlines()
 
+        if self.display_profile in {"color", "review_color"}:
+            return ["Board:", "Color View", *color_lines]
+
         if self._can_fit_side_by_side(width):
             return [
                 "Board:",

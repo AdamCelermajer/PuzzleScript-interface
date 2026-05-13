@@ -69,7 +69,7 @@ def play_for_review(row: dict, backend_url: str, api_key: str) -> None:
         game_id=game_id,
         mode="VERIFY",
         controls="W/A/S/D move | R reset | Z undo | Q return to verdict",
-        display_profile="arc" if "three.arcprize.org" in backend_url else "puzzlescript",
+        display_profile="review_color",
     )
     try:
         env = arcade.make(game_id, renderer=dashboard.render)
