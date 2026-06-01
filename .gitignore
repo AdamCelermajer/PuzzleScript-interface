@@ -132,6 +132,7 @@ side_quests/codex_goal_recognition_3shot/node_modules/
 side_quests/run_logs/
 
 # Local experiment inputs, exports, and scratch drops
+_local/
 answer.csv
 report.json
 dataset/
