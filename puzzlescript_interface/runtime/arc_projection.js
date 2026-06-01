@@ -23,6 +23,9 @@ function buildArcProjectionSpec(gameData) {
     const charToInt = {};
     const intToChar = {};
     let nextValue = 0;
+    const maxDistinctVisibleValues = 15;
+    const overflowValue = 15;
+    const overflowChars = [];
 
     if (displayLegend['.'] !== undefined) {
         charToInt['.'] = nextValue;
@@ -34,24 +37,25 @@ function buildArcProjectionSpec(gameData) {
         if (key === '.' || charToInt[key] !== undefined) {
             continue;
         }
-        charToInt[key] = nextValue;
-        intToChar[nextValue] = key;
-        nextValue += 1;
+        if (nextValue < maxDistinctVisibleValues) {
+            charToInt[key] = nextValue;
+            intToChar[nextValue] = key;
+            nextValue += 1;
+        } else {
+            charToInt[key] = overflowValue;
+            overflowChars.push(key);
+        }
     }
 
-    if (charToInt['?'] === undefined) {
-        charToInt['?'] = nextValue;
-        intToChar[nextValue] = '?';
-        nextValue += 1;
-    }
-
-    if (nextValue > 16) {
-        throw new Error(`ARC projection exceeds 16 visible states (${nextValue})`);
-    }
+    const unknownValue = overflowChars.length > 0 ? overflowValue : nextValue;
+    charToInt['?'] = unknownValue;
+    intToChar[unknownValue] = '?';
 
     return {
         charToInt,
         intToChar,
+        compressed: overflowChars.length > 0,
+        overflowChars,
     };
 }
 

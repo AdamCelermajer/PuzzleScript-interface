@@ -3,6 +3,9 @@
 from typing import Any, List
 
 
+GRID_SYMBOLS = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+
 def _normalize_grid(grid: Any) -> List[List[int]]:
     if hasattr(grid, "tolist"):
         grid = grid.tolist()
@@ -17,13 +20,19 @@ def last_grid(frames: List[Any]) -> List[List[int]]:
 
 
 def format_grid(grid: List[List[int]]) -> str:
-    """Format a 2D integer grid for LLM reading."""
+    """Format a 2D integer grid for compact LLM reading."""
     if not grid:
         return "[]"
 
     lines = []
     for row in grid:
-        lines.append("  " + str(row))
+        cells = []
+        for value in row:
+            if 0 <= value < len(GRID_SYMBOLS):
+                cells.append(GRID_SYMBOLS[value])
+            else:
+                cells.append(f"{{{value}}}")
+        lines.append("".join(cells))
     return "\n".join(lines)
 
 

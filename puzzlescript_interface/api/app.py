@@ -95,6 +95,7 @@ def _frame_response(
         "win_levels": binding.win_levels,
         "action_input": {"id": ACTION_IDS[action_name], "data": {}},
         "available_actions": _available_actions(payload),
+        "projection": payload.get("projection", {}),
     }
 
 

@@ -93,6 +93,7 @@ class ArcadeEnv(BaseEnv):
             available_actions=available_actions,
             action_input=action_input,
             legend={},
+            projection=getattr(frame_data, "projection", {}) or {},
         )
 
     def reset(self) -> FrameData:
@@ -102,8 +103,8 @@ class ArcadeEnv(BaseEnv):
         self._render_frame(frame_data)
         return self._convert_frame(frame_data)
 
-    def step(self, action: GameAction) -> FrameData:
-        frame_data = self._env.step(ArcGameAction[action.name])
+    def step(self, action: GameAction, data: dict | None = None) -> FrameData:
+        frame_data = self._env.step(ArcGameAction[action.name], data=data)
         if frame_data is None:
             raise RuntimeError(
                 f"Failed to step ARC environment {self.game_id} with {action.name}"

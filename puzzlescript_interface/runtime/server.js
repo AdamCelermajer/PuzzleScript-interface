@@ -285,6 +285,10 @@ class Session {
         const projection = buildArcProjectionSpec(this.gameData);
 
         this.charToInt = projection.charToInt;
+        this.projectionCompression = {
+            compressed: projection.compressed,
+            overflow_chars: projection.overflowChars,
+        };
         const intToName = {};
         for (const [char, value] of Object.entries(this.charToInt)) {
             intToName[value] = displayLegend[char] || (char === '?' ? 'Unknown' : char);
@@ -492,6 +496,7 @@ app.post('/init', (req, res) => {
             levels_completed: 0,
             win_levels: session.winLevels,
             legend: session.intToName,
+            projection: session.projectionCompression,
             available_actions: session.availableActions
         });
     } catch (e) {
@@ -512,6 +517,7 @@ app.post('/action', async (req, res) => {
             levels_completed: result.levels_completed,
             message: result.message,
             legend: session.intToName,
+            projection: session.projectionCompression,
             win_levels: session.winLevels,
             available_actions: session.availableActions
         });
@@ -531,6 +537,7 @@ app.get('/observe', (req, res) => {
             state: session.handler.won ? "WIN" : "PLAYING",
             levels_completed: countCompletedPlayableLevels(session.gameData.levels || [], session.engine.currentLevelNum),
             legend: session.intToName,
+            projection: session.projectionCompression,
             available_actions: session.availableActions
         });
     } catch (e) {

@@ -126,6 +126,20 @@ class ArcadeEnvTests(unittest.TestCase):
         self.assertEqual(env._env.stepped_actions, [ArcGameAction.ACTION3])
         self.assertEqual(frame.action_input.action, GameAction.ACTION3)
 
+    def test_step_forwards_click_data(self) -> None:
+        env = ArcadeEnv(
+            game_id="ps_sokoban_basic-v1",
+            backend_url="http://localhost:8000",
+            api_key="local-dev",
+            arcade_factory=FakeArcade,
+        )
+        env.reset()
+
+        frame = env.step(GameAction.ACTION6, data={"x": 1, "y": 0})
+
+        self.assertEqual(env._env.stepped_actions, [ArcGameAction.ACTION6])
+        self.assertEqual(frame.action_input.data, {"x": 1, "y": 0})
+
     def test_renderer_is_forwarded_to_arcade_make(self) -> None:
         renderer = lambda steps, frame_data: None
 

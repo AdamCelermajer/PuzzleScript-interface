@@ -29,8 +29,8 @@ class EngineUtilsTests(unittest.TestCase):
 
         self.assertNotIn("Grid 0", formatted)
         self.assertNotIn("[0, 1]", formatted)
-        self.assertIn("[2, 3]", formatted)
-        self.assertIn("[3, 2]", formatted)
+        self.assertIn("23", formatted)
+        self.assertIn("32", formatted)
 
 
 if __name__ == "__main__":

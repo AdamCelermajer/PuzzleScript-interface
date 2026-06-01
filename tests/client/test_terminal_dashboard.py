@@ -27,8 +27,8 @@ class TerminalDashboardTests(unittest.TestCase):
         )
 
         self.assertNotIn("[0, 1]", formatted)
-        self.assertIn("[3, 2]", formatted)
-        self.assertIn("[1, 0]", formatted)
+        self.assertIn("32", formatted)
+        self.assertIn("10", formatted)
 
     def test_color_grid_renders_ansi_blocks_for_final_grid(self) -> None:
         formatted = format_color_grid(
@@ -100,7 +100,7 @@ class TerminalDashboardTests(unittest.TestCase):
 
         self.assertIn("LLM View", screen)
         self.assertIn("Color View", screen)
-        self.assertIn("[8, 9]", screen)
+        self.assertIn("89", screen)
         self.assertIn("\x1b[38;2;249;60;49m██", screen)
 
     def test_arc_profile_uses_compact_numeric_view_for_wide_boards(self) -> None:
@@ -157,7 +157,7 @@ class TerminalDashboardTests(unittest.TestCase):
             screen = dashboard._build_screen()
 
         self.assertIn("Color View", screen)
-        self.assertIn("[8, 9]", screen)
+        self.assertIn("89", screen)
         self.assertIn("\x1b[38;2;249;60;49m██", screen)
 
     def test_arc_profile_uses_compact_and_color_when_both_fit(self) -> None:
@@ -185,22 +185,23 @@ class TerminalDashboardTests(unittest.TestCase):
             dashboard.render(2, frame_data)
             screen = dashboard._build_screen()
 
-        self.assertIn("Compact View", screen)
+        self.assertIn("LLM View", screen)
         self.assertIn("Color View", screen)
         self.assertIn(expected_row, screen)
         self.assertIn("\x1b[38;2;", screen)
         self.assertIn("██", screen)
         self.assertNotIn("[5, 5, 5", screen)
 
-    def test_review_color_profile_always_uses_color_view(self) -> None:
+    def test_review_numeric_profile_uses_numbers_only(self) -> None:
         dashboard = TerminalDashboard(
             game_id="ls20",
             mode="VERIFY",
             interactive=False,
-            display_profile="review_color",
+            display_profile="review_numeric",
         )
 
         wide_row = [5] * 34 + [4] * 26 + [3] * 4
+        expected_row = "".join(format(value, "x") for value in wide_row)
         frame_data = SimpleNamespace(
             frame=[[wide_row, wide_row]],
             state=SimpleNamespace(name="PLAYING"),
@@ -216,11 +217,58 @@ class TerminalDashboardTests(unittest.TestCase):
             dashboard.render(2, frame_data)
             screen = dashboard._build_screen()
 
-        self.assertIn("Color View", screen)
-        self.assertIn("\x1b[38;2;", screen)
-        self.assertIn("\u2588\u2588", screen)
-        self.assertNotIn("Compact View", screen)
+        self.assertIn("Compact View", screen)
+        self.assertIn(expected_row, screen)
+        self.assertNotIn("Color View", screen)
+        self.assertNotIn("\x1b[38;2;", screen)
         self.assertNotIn("[5, 5, 5", screen)
+
+    def test_color_profile_maps_terminal_mouse_position_to_cell(self) -> None:
+        dashboard = TerminalDashboard(
+            game_id="demo",
+            mode="PLAY",
+            interactive=False,
+            display_profile="color",
+        )
+        frame_data = SimpleNamespace(
+            frame=[[[0, 1], [2, 3]]],
+            state=SimpleNamespace(name="PLAYING"),
+            levels_completed=0,
+            win_levels=1,
+            action_input=SimpleNamespace(id=SimpleNamespace(name="RESET")),
+        )
+        dashboard.render(1, frame_data)
+        dashboard._build_screen()
+
+        row = dashboard.color_origin_row
+        col = dashboard.color_origin_col
+        self.assertEqual(dashboard.click_cell_from_terminal_position(col, row), (0, 0))
+        self.assertEqual(
+            dashboard.click_cell_from_terminal_position(col + 2, row + 1),
+            (1, 1),
+        )
+
+    def test_color_profile_shows_coordinate_axes_for_click_games(self) -> None:
+        dashboard = TerminalDashboard(
+            game_id="demo",
+            mode="PLAY",
+            interactive=False,
+            display_profile="color",
+        )
+        frame_data = SimpleNamespace(
+            frame=[[[0, 1], [2, 3]]],
+            state=SimpleNamespace(name="PLAYING"),
+            levels_completed=0,
+            win_levels=1,
+            action_input=SimpleNamespace(id=SimpleNamespace(name="RESET")),
+        )
+        dashboard.render(1, frame_data)
+
+        screen = dashboard._build_screen()
+
+        self.assertIn("x | 0001", screen)
+        self.assertIn("00 | ", screen)
+        self.assertIn("01 | ", screen)
 
 
 if __name__ == "__main__":

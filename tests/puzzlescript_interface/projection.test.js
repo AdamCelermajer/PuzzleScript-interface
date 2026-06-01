@@ -64,6 +64,18 @@ test('projectRawGrid maps unknown cells to the reserved unknown token instead of
     ]);
 });
 
+test('buildArcProjectionSpec compresses overflow chars into the unknown bucket', () => {
+    const gameData = parseGame('ps_baba_is_you-v1');
+
+    const projection = buildArcProjectionSpec(gameData);
+    const values = Object.values(projection.charToInt);
+
+    assert.equal(projection.compressed, true);
+    assert.equal(Math.max(...values), 15);
+    assert.equal(projection.charToInt['?'], 15);
+    assert.ok(projection.overflowChars.length > 0);
+});
+
 test('countPlayableLevels excludes message-only PuzzleScript levels', () => {
     const gameData = parseGame('ps_midas-v1');
 

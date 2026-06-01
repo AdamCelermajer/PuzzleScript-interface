@@ -38,3 +38,4 @@ class FrameData:
     available_actions: list[GameAction]
     action_input: ActionInput
     legend: dict[int, str] = field(default_factory=dict)
+    projection: dict = field(default_factory=dict)

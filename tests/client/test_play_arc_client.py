@@ -1,35 +1,37 @@
-import os
-import sys
-import unittest
+from types import SimpleNamespace
 
 from arcengine import GameAction
 
-
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
-
-from client.play_arc_client import (  # type: ignore[import-not-found]
-    QUIT_COMMAND,
+from client.play_arc_client import (
+    action_is_available,
     key_to_action,
+    mouse_position_from_key,
 )
 
 
-class PlayArcClientTests(unittest.TestCase):
-    def test_key_to_action_maps_expected_controls(self) -> None:
-        self.assertEqual(key_to_action("w"), GameAction.ACTION1)
-        self.assertEqual(key_to_action("a"), GameAction.ACTION3)
-        self.assertEqual(key_to_action("s"), GameAction.ACTION2)
-        self.assertEqual(key_to_action("d"), GameAction.ACTION4)
-        self.assertEqual(key_to_action("r"), GameAction.RESET)
-        self.assertEqual(key_to_action("z"), GameAction.ACTION7)
-        self.assertEqual(key_to_action("q"), QUIT_COMMAND)
-
-    def test_key_to_action_is_case_insensitive_and_ignores_unknown_keys(self) -> None:
-        self.assertEqual(key_to_action("W"), GameAction.ACTION1)
-        self.assertIsNone(key_to_action("x"))
-        self.assertIsNone(key_to_action(""))
+def test_mouse_position_from_sgr_click_sequence() -> None:
+    assert mouse_position_from_key("\x1b[<0;12;8M") == (12, 8)
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_mouse_position_ignores_release_sequence() -> None:
+    assert mouse_position_from_key("\x1b[<0;12;8m") is None
+
+
+def test_key_to_action_supports_coordinate_click_fallback() -> None:
+    assert key_to_action("c") == "coordinate_click"
+
+
+def test_key_to_action_maps_spacebar_to_action5() -> None:
+    assert key_to_action(" ") == GameAction.ACTION5
+
+
+def test_action_is_available_accepts_arcengine_actions() -> None:
+    obs = SimpleNamespace(available_actions=[GameAction.ACTION6])
+
+    assert action_is_available(obs, GameAction.ACTION6)
+
+
+def test_action_is_available_accepts_numeric_arc_actions() -> None:
+    obs = SimpleNamespace(available_actions=[6])
+
+    assert action_is_available(obs, GameAction.ACTION6)

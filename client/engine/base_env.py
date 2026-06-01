@@ -11,5 +11,5 @@ class BaseEnv(ABC):
         """Reset the environment to its initial state and return the first FrameData."""
 
     @abstractmethod
-    def step(self, action: GameAction) -> FrameData:
+    def step(self, action: GameAction, data: dict | None = None) -> FrameData:
         """Apply an action to the environment and return the resulting FrameData."""

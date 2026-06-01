@@ -17,6 +17,8 @@ from client.engine.utils import format_grid, last_grid
 CSI = "\x1b["
 ENTER_ALT_SCREEN = f"{CSI}?1049h"
 EXIT_ALT_SCREEN = f"{CSI}?1049l"
+ENABLE_MOUSE = f"{CSI}?1000h{CSI}?1006h"
+DISABLE_MOUSE = f"{CSI}?1000l{CSI}?1006l"
 HIDE_CURSOR = f"{CSI}?25l"
 SHOW_CURSOR = f"{CSI}?25h"
 HOME = f"{CSI}H"
@@ -65,6 +67,20 @@ def _format_color_grid(grid: list[list[int]]) -> str:
             color_line.append(f"{rgb_to_ansi(rgb)}{block}{reset}")
         lines.append("".join(color_line))
     return "\n".join(lines)
+
+
+def _add_color_axes(color_lines: list[str], columns: int) -> list[str]:
+    if not color_lines or columns <= 0:
+        return color_lines
+
+    row_label_width = max(2, len(str(len(color_lines) - 1)))
+    header = f"{'x':>{row_label_width}} | " + "".join(
+        f"{column % 100:02d}" for column in range(columns)
+    )
+    rows = [header]
+    for index, line in enumerate(color_lines):
+        rows.append(f"{index:0{row_label_width}d} | {line}")
+    return rows
 
 
 def _compact_symbol(value: int) -> str:
@@ -124,6 +140,8 @@ class TerminalDashboard:
     compact_frame_text: str = "(no frame yet)"
     board_rows: int = 0
     board_cols: int = 0
+    color_origin_row: int = 0
+    color_origin_col: int = 0
     events: list[str] = field(default_factory=list)
     _active: bool = field(default=False, init=False)
     _lock: threading.Lock = field(default_factory=threading.Lock, init=False)
@@ -183,15 +201,32 @@ class TerminalDashboard:
         with self._lock:
             if not self._active or not self.interactive:
                 return
-            self.output.write(f"{SHOW_CURSOR}{EXIT_ALT_SCREEN}")
+            self.output.write(f"{SHOW_CURSOR}{DISABLE_MOUSE}{EXIT_ALT_SCREEN}")
             self.output.flush()
             self._active = False
+
+    def click_cell_from_terminal_position(
+        self,
+        column: int,
+        row: int,
+    ) -> tuple[int, int] | None:
+        if not self.color_origin_row or not self.color_origin_col:
+            return None
+        if row < self.color_origin_row or column < self.color_origin_col:
+            return None
+        y = row - self.color_origin_row
+        x = (column - self.color_origin_col) // 2
+        if y < 0 or y >= self.board_rows:
+            return None
+        if x < 0 or x >= self.board_cols:
+            return None
+        return x, y
 
     def _redraw_locked(self) -> None:
         if not self.interactive:
             return
         if not self._active:
-            self.output.write(f"{ENTER_ALT_SCREEN}{HIDE_CURSOR}")
+            self.output.write(f"{ENTER_ALT_SCREEN}{ENABLE_MOUSE}{HIDE_CURSOR}")
             self._active = True
         self.output.write(f"{HOME}{CLEAR_SCREEN}{self._build_screen()}")
         self.output.flush()
@@ -212,10 +247,11 @@ class TerminalDashboard:
             lines.append(f"Last action: {self.last_action}")
         lines.extend(self._wrap_line("Status", self.status, width))
         lines.extend(self._wrap_line("Detail", self.detail, width))
+        board_lines = self._build_board_lines(width)
         lines.extend(
             [
                 section,
-                *self._build_board_lines(width),
+                *board_lines,
                 section,
                 "Recent events:",
             ]
@@ -229,6 +265,7 @@ class TerminalDashboard:
         lines.append(divider)
         max_lines = max(8, height)
         screen_lines = "\n".join(lines).splitlines()
+        self._set_color_click_origin(screen_lines)
         if len(screen_lines) > max_lines:
             screen_lines = screen_lines[: max_lines - 2] + [
                 "... output truncated to fit terminal ...",
@@ -246,8 +283,14 @@ class TerminalDashboard:
         color_lines = self.color_frame_text.splitlines()
         compact_lines = self.compact_frame_text.splitlines()
 
-        if self.display_profile in {"color", "review_color"}:
-            return ["Board:", "Color View", *color_lines]
+        if self.display_profile == "color":
+            labeled_color_lines = _add_color_axes(color_lines, self.board_cols)
+            return ["Board:", "Color View", *labeled_color_lines]
+
+        if self.display_profile == "review_numeric":
+            if self._should_use_compact_view(width):
+                return ["Board:", "Compact View", *compact_lines]
+            return ["Board:", "LLM View", *numeric_lines]
 
         if self._can_fit_side_by_side(width):
             return [
@@ -302,7 +345,10 @@ class TerminalDashboard:
 
     def _color_view_width(self) -> int:
         if self.board_cols:
-            return self.board_cols * 2
+            if self.display_profile != "color":
+                return self.board_cols * 2
+            row_label_width = max(2, len(str(max(0, self.board_rows - 1))))
+            return row_label_width + 3 + self.board_cols * 2
         return self._frame_width(self.color_frame_text)
 
     def _is_large_arc_board(self) -> bool:
@@ -313,6 +359,16 @@ class TerminalDashboard:
             or self.board_rows >= 20
             or self.board_rows * self.board_cols >= 400
         )
+
+    def _set_color_click_origin(self, screen_lines: list[str]) -> None:
+        self.color_origin_row = 0
+        self.color_origin_col = 0
+        for index, line in enumerate(screen_lines):
+            header_index = line.find("x | ")
+            if header_index >= 0:
+                self.color_origin_row = index + 2
+                self.color_origin_col = header_index + len("x | ") + 1
+                return
 
     def _wrap_line(self, label: str, text: str, width: int) -> list[str]:
         cleaned = text.strip()
