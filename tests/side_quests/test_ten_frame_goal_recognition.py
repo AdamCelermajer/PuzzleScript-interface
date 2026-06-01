@@ -3,8 +3,10 @@ import random
 from client.engine.types import ActionInput, FrameData, GameAction, GameState
 from side_quests.ten_frame_goal_recognition.prompt import build_prompt
 from side_quests.ten_frame_goal_recognition.run import (
+    action_label,
     choose_random_action,
     normalize_prediction,
+    random_action_data,
 )
 
 
@@ -47,11 +49,24 @@ def test_choose_random_action_falls_back_to_any_available_action() -> None:
     assert action in {GameAction.RESET, GameAction.ACTION7}
 
 
-def test_choose_random_action_never_falls_back_to_action6() -> None:
+def test_choose_random_action_supports_click_only_games() -> None:
     assert choose_random_action(
         frame_with_actions([GameAction.ACTION6]),
         random.Random(1),
-    ) is None
+    ) == GameAction.ACTION6
+
+
+def test_random_action_data_adds_click_coordinates() -> None:
+    data = random_action_data(
+        GameAction.ACTION6,
+        frame_with_actions([GameAction.ACTION6]),
+        random.Random(1),
+    )
+
+    assert data is not None
+    assert 0 <= data["x"] < 2
+    assert 0 <= data["y"] < 2
+    assert action_label(GameAction.ACTION6, data).startswith("ACTION6 ")
 
 
 def test_choose_random_action_returns_none_without_available_actions() -> None:
@@ -72,7 +87,8 @@ def test_ten_frame_prompt_contains_actions_and_frames_but_not_game_id() -> None:
     assert "ls20" not in prompt
     assert "ACTION1" in prompt
     assert "ACTION2" in prompt
-    assert "[0, 1]" in prompt
+    assert "01" in prompt
+    assert "[0, 1]" not in prompt
     assert "trajectory" in prompt.lower()
 
 

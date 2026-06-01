@@ -10,8 +10,7 @@ def build_prompt(
 ) -> tuple[str, str]:
     _ = game_id
     system = (
-        "You are evaluating goal recognition in ARC-AGI-3 games. "
-        "Infer the likely game goal only from the provided random-action trajectory."
+        "Goal recognition: infer the likely ARC game goal from a random numeric trajectory. Output JSON only."
     )
 
     observations = []
@@ -19,18 +18,18 @@ def build_prompt(
         observations.append(
             f"Observation {index}\n"
             f"Action before observation: {item['action']}\n"
-            f"Frame:\n{format_grid(item['grid'])}"
+            f"Grid rows:\n{format_grid(item['grid'])}"
         )
 
     prompt = (
-        "You see a short random-action trajectory from an unknown ARC-AGI-3 game.\n"
-        "Actions were random legal actions, not a solution attempt.\n"
-        "Do not assume hidden source code, title semantics, README text, or known solutions.\n"
-        "Numeric grid values are visual object/color ids, not labels.\n\n"
-        f"Available actions after final observation: {', '.join(available_actions) or 'none'}\n\n"
+        "Use only this random-action trajectory. Actions are random, not a solution.\n"
+        "No hidden metadata, titles, source, README, or external hints.\n"
+        "Grid symbols are visual ids, not names/colors. Legend: 0-9 keep their value; "
+        "a=10, b=11, c=12, d=13, e=14, f=15.\n"
+        f"Final actions: {', '.join(available_actions) or 'none'}\n\n"
         "Trajectory:\n"
         + "\n\n".join(observations)
-        + "\n\nReturn JSON only with this shape:\n"
+        + "\n\nJSON shape:\n"
         "{\n"
         '  "goal_guess": "short plain-English goal",\n'
         '  "win_condition_guess": "observable condition that would mean success",\n'

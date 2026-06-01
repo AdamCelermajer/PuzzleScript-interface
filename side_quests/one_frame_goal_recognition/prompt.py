@@ -9,17 +9,16 @@ def build_prompt(
     available_actions: list[str],
 ) -> tuple[str, str]:
     system = (
-        "You are doing ARC goal recognition. Infer the likely objective from "
-        "one numeric observation frame."
+        "Goal recognition: infer the likely ARC game goal from numeric observations. Output JSON only."
     )
     prompt = (
-        "You see one frame from an unknown ARC environment.\n"
-        "Use only the numeric grid and the available action names below.\n"
-        "Do not use hidden metadata, title semantics, source files, or solution hints.\n"
-        "Grid values are visual object or color ids, not object names.\n\n"
-        f"Available actions: {', '.join(available_actions) or 'none'}\n"
-        f"Numeric grid:\n{format_grid(grid)}\n\n"
-        "Return JSON only with this shape:\n"
+        "Use only this one frame and action list. No hidden metadata, titles, "
+        "source, or external hints.\n"
+        "Grid symbols are visual ids, not names/colors. Legend: 0-9 keep their value; "
+        "a=10, b=11, c=12, d=13, e=14, f=15.\n"
+        f"Actions: {', '.join(available_actions) or 'none'}\n"
+        f"Grid rows:\n{format_grid(grid)}\n\n"
+        "JSON shape:\n"
         "{\n"
         '  "goal_guess": "short plain-English goal",\n'
         '  "win_condition_guess": "observable condition that would mean success",\n'

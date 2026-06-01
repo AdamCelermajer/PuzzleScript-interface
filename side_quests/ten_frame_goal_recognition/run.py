@@ -73,20 +73,39 @@ def choose_random_action(
     frame_data: FrameData,
     rng: random.Random,
 ) -> GameAction | None:
-    unsupported = {GameAction.ACTION6}
     controls = {GameAction.RESET, GameAction.ACTION7}
     actions = [
         action
         for action in frame_data.available_actions
-        if action not in unsupported and action not in controls
+        if action not in controls
     ]
     if not actions:
-        actions = [
-            action for action in frame_data.available_actions if action not in unsupported
-        ]
+        actions = list(frame_data.available_actions)
     if not actions:
         return None
     return rng.choice(actions)
+
+
+def random_action_data(
+    action: GameAction,
+    frame_data: FrameData,
+    rng: random.Random,
+) -> dict[str, int] | None:
+    if action != GameAction.ACTION6:
+        return None
+
+    grid = last_grid(frame_data.frame)
+    height = len(grid)
+    width = len(grid[0]) if height else 0
+    if width <= 0 or height <= 0:
+        return None
+    return {"x": rng.randrange(width), "y": rng.randrange(height)}
+
+
+def action_label(action: GameAction, data: dict | None) -> str:
+    if not data:
+        return action.name
+    return f"{action.name} {json.dumps(data, sort_keys=True)}"
 
 
 def discover_games(backend_url: str, api_key: str) -> list[str]:
@@ -132,9 +151,11 @@ def collect_trajectory(
         if action is None:
             break
 
-        actions_taken.append(action.name)
-        frame_data = env.step(action)
-        trajectory.append({"action": action.name, "grid": last_grid(frame_data.frame)})
+        action_data = random_action_data(action, frame_data, rng)
+        label = action_label(action, action_data)
+        actions_taken.append(label)
+        frame_data = env.step(action, data=action_data)
+        trajectory.append({"action": label, "grid": last_grid(frame_data.frame)})
 
     return trajectory, actions_taken, frame_data
 
@@ -181,6 +202,10 @@ def run_game(
         "frames_seen": len(trajectory),
         "actions_taken": actions_taken,
         "available_actions": available_actions,
+        "review_evidence": {
+            "trajectory": trajectory,
+            "available_actions": available_actions,
+        },
         "state": frame_data.state.name,
         "levels_completed": frame_data.levels_completed,
         "win_levels": frame_data.win_levels,

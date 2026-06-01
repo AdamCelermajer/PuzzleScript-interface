@@ -1,0 +1,15 @@
+{
+  "name": "openrouter-goal-recognition-matrix",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Contained OpenRouter runner for PuzzleScript goal-recognition prompt matrix.",
+  "scripts": {
+    "stage1": "python -m side_quests.codex_goal_recognition_3shot.prepare_artifacts",
+    "stage2": "python -m side_quests.codex_goal_recognition_3shot.build_prompts",
+    "run-codex": "node run_codex.mjs"
+  },
+  "dependencies": {
+    "@openai/codex-sdk": "^0.134.0"
+  }
+}

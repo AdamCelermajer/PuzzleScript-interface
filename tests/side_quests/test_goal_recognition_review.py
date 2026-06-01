@@ -1,9 +1,16 @@
+import os
 from pathlib import Path
 
 from side_quests.goal_recognition_review.report import count_labels, svg_bar_chart
 from side_quests.goal_recognition_review.review import (
     apply_verification,
+    find_evidence_file,
+    format_compact_review_grid,
+    format_review_grid,
     load_rows,
+    load_review_evidence,
+    parse_args,
+    review_evidence_grid,
     write_rows,
 )
 
@@ -39,6 +46,78 @@ def test_load_rows_accepts_utf8_bom_jsonl(tmp_path: Path) -> None:
     )
 
     assert load_rows(path) == [{"game_id": "a", "manual_verification": None}]
+
+
+def test_review_defaults_to_browser_verification() -> None:
+    args = parse_args(["--predictions", "predictions.jsonl"])
+
+    assert args.play is False
+
+
+def test_review_can_still_launch_terminal_player() -> None:
+    args = parse_args(["--predictions", "predictions.jsonl", "--play"])
+
+    assert args.play is True
+
+
+def test_load_review_evidence_prefers_embedded_row_data() -> None:
+    row = {
+        "review_evidence": {
+            "frames": [[[1, 2], [3, 4]]],
+            "available_actions": ["ACTION6"],
+        }
+    }
+
+    assert load_review_evidence(row, roots=[]) == row["review_evidence"]
+
+
+def test_find_evidence_file_loads_latest_frame_artifact(tmp_path: Path) -> None:
+    old_file = tmp_path / "old" / "frames" / "tn36-ef4dde99.json"
+    new_file = tmp_path / "new" / "frames" / "tn36-ef4dde99.json"
+    old_file.parent.mkdir(parents=True)
+    new_file.parent.mkdir(parents=True)
+    old_file.write_text(
+        '{"frames": [[[1]]], "available_actions": ["ACTION6"]}\n',
+        encoding="utf-8",
+    )
+    new_file.write_text(
+        '{"frames": [[[2]]], "available_actions": ["ACTION6"]}\n',
+        encoding="utf-8",
+    )
+    os.utime(old_file, (1, 1))
+    os.utime(new_file, (2, 2))
+
+    found = find_evidence_file({"game_id": "tn36-ef4dde99"}, [tmp_path])
+    evidence = load_review_evidence(
+        {"game_id": "tn36-ef4dde99", "setup": "one_frame"},
+        roots=[tmp_path],
+    )
+
+    assert found == new_file
+    assert evidence is not None
+    assert evidence["frames"] == [[[2]]]
+
+
+def test_format_review_grid_uses_fixed_width_numbers() -> None:
+    assert format_review_grid([[1, 11], [0, 5]]) == " 1 11\n 0  5"
+
+
+def test_format_compact_review_grid_matches_prompt_symbols() -> None:
+    assert format_compact_review_grid([[0, 11], [2, 0]]) == "0b\n20"
+
+
+def test_review_evidence_grid_uses_latest_trajectory_frame() -> None:
+    label, grid = review_evidence_grid(
+        {
+            "trajectory": [
+                {"action": "RESET", "grid": [[1]]},
+                {"action": "ACTION6 {\"x\": 1, \"y\": 0}", "grid": [[2]]},
+            ]
+        }
+    )
+
+    assert label.startswith("Latest observation 1")
+    assert grid == [[2]]
 
 
 def test_count_labels_groups_by_setup_and_label() -> None:

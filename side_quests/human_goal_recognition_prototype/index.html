@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Goal Recognition Study</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <h1>Goal Recognition Study</h1>
+        <p>Look at each first frame and answer from the screenshot alone.</p>
+      </div>
+      <div class="session-box">
+        <span>Sample</span>
+        <strong id="sample-count">0 / 3</strong>
+      </div>
+    </header>
+
+    <section id="loading" class="status-panel">
+      Loading game sample...
+    </section>
+
+    <form id="survey" class="survey" hidden>
+      <div id="games"></div>
+
+      <div class="form-actions">
+        <button type="button" id="resample-button" class="secondary-button">New sample</button>
+        <button type="submit" class="primary-button">Submit responses</button>
+      </div>
+    </form>
+
+    <section id="result" class="result-panel" hidden>
+      <h2>Mock saved payload</h2>
+      <p>This is the shape that the Google Sheet writer would receive.</p>
+      <pre id="payload"></pre>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
