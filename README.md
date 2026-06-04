@@ -1,9 +1,11 @@
 # PuzzleScript Interface
 
-This repository has two supported workflows:
+This repository has two core runtime workflows and two research studies:
 
 - Local PuzzleScript: run the bundled PuzzleScript games through the local Node.js runtime and ARC-compatible Python service.
 - Official ARC-AGI-3: run the same `client/` agent directly against the hosted ARC backend.
+- Goal recognition study: see `studies/goal_recognition/` for the dataset, prompts, model outputs, review tools, and static results website.
+- LIVE framework study: see `studies/LIVE_framework/` for the LIVE-style Sokoban rule-learning POC.
 
 Related docs:
 
@@ -11,6 +13,8 @@ Related docs:
 - [`docs/architecture/arc-agi-architecture.svg`](docs/architecture/arc-agi-architecture.svg) for a research-oriented architecture sketch of the LLM-driven workflow.
 - [`docs/research/`](docs/research/) for supporting research and specification materials.
 - [`examples/basic_client.py`](examples/basic_client.py) for a small standalone client example.
+- [`studies/goal_recognition/README.md`](studies/goal_recognition/README.md) for goal-recognition study commands and artifacts.
+- [`studies/LIVE_framework/README.md`](studies/LIVE_framework/README.md) for LIVE framework study commands and artifacts.
 
 ## Install
 

@@ -1,4 +1,4 @@
-const fs = require("node:fs");
+﻿const fs = require("node:fs");
 const path = require("node:path");
 
 const repoRoot = path.resolve(__dirname, "..");
@@ -7,10 +7,10 @@ const defaultRunId = "2026-05-31T19-29-42-openrouter-matrix";
 const runDirArg = process.argv[2];
 const runDir = path.resolve(
   repoRoot,
-  runDirArg || `side_quests/codex_goal_recognition_3shot/artifacts/${defaultRunId}`,
+  runDirArg || `studies/goal_recognition/experiment/artifacts/${defaultRunId}`,
 );
 const reportPath = path.resolve(repoRoot, "report.json");
-const outputDir = path.resolve(repoRoot, "deploy/goal-recognition-results");
+const outputDir = path.resolve(repoRoot, "studies/goal_recognition/website");
 const outputPath = path.join(outputDir, "app-data.js");
 
 function readJson(filePath) {
@@ -77,6 +77,64 @@ function firstExistingScreenshot(gameId) {
   fs.mkdirSync(screenshotsDir, { recursive: true });
   fs.copyFileSync(found, target);
   return relativeFromOutput(target);
+}
+
+function compactGrid(grid) {
+  if (!Array.isArray(grid)) {
+    return "";
+  }
+
+  return grid
+    .map((row) => {
+      if (!Array.isArray(row)) {
+        return "";
+      }
+
+      return row
+        .map((value) => {
+          const number = Number(value);
+          return Number.isInteger(number) && number >= 0 && number < 16
+            ? number.toString(16)
+            : "?";
+        })
+        .join("");
+    })
+    .join("\n");
+}
+
+function observationText(observation) {
+  const textGrid = observation?.text_grid == null
+    ? ""
+    : String(observation.text_grid).replace(/\r\n/g, "\n").replace(/\n+$/, "");
+  if (textGrid.trim()) {
+    return textGrid;
+  }
+
+  return compactGrid(observation?.grid);
+}
+
+function firstLlmFrame(gameId) {
+  const candidates = [
+    path.join(runDir, "evidence", gameId, "one_frame.json"),
+    path.join(runDir, "evidence", gameId, "three_random_actions.json"),
+  ];
+
+  for (const candidate of candidates) {
+    if (!fs.existsSync(candidate)) {
+      continue;
+    }
+
+    const evidence = readJson(candidate);
+    const observations = Array.isArray(evidence.observations) ? evidence.observations : [];
+    for (const observation of observations) {
+      const text = observationText(observation);
+      if (text) {
+        return text;
+      }
+    }
+  }
+
+  return "";
 }
 
 function groupHumanAnswers(report) {
@@ -286,9 +344,10 @@ function buildViewerData() {
   const games = gameIds.map((gameId) => ({
     game_id: gameId,
     screenshot: firstExistingScreenshot(gameId),
-      human_answers: humanAnswers.get(gameId) || [],
-      llm_answers: predictionsByGame.get(gameId) || [],
-      error_count: errorsByGame.get(gameId) || 0,
+    first_llm_frame: firstLlmFrame(gameId),
+    human_answers: humanAnswers.get(gameId) || [],
+    llm_answers: predictionsByGame.get(gameId) || [],
+    error_count: errorsByGame.get(gameId) || 0,
     skip_count: skipsByGame.get(gameId) || 0,
   }));
 

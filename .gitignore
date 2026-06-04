@@ -111,6 +111,8 @@ dist
 *.swo
 .DS_Store
 Thumbs.db
+.pytest_cache/
+.playwright-mcp/
 
 # Debug scripts
 debug_*.js
@@ -120,16 +122,10 @@ debug_*.js
 
 puzzlescript_interface/.runtime/
 client/rules/
-client/live_sokoban/output/
-client/strict_live_sokoban/output/
-client/percept_live_sokoban/output/
-client/helped_live_sokoban/output/
-side_quests/*/artifacts/
-!side_quests/codex_goal_recognition_3shot/artifacts/
-side_quests/codex_goal_recognition_3shot/artifacts/*
-!side_quests/codex_goal_recognition_3shot/artifacts/.gitkeep
-side_quests/codex_goal_recognition_3shot/node_modules/
-side_quests/run_logs/
+studies/LIVE_framework/output/
+studies/goal_recognition/experiment/artifacts/*
+!studies/goal_recognition/experiment/artifacts/.gitkeep
+studies/goal_recognition/experiment/node_modules/
 
 # Local experiment inputs, exports, and scratch drops
 _local/
@@ -142,12 +138,7 @@ pz_sideproject10/
 colorblind-toggle-local.png
 human-goal-recognition-prototype.png
 BF00993064 (4).pdf
-deploy/human-goal-recognition/
-deploy/railway-human-goal-study/
-deploy/human-goal-recognition/dataset/
-deploy/railway-human-goal-study/dataset/
-deploy/railway-human-goal-study/exports/
-deploy/railway-human-goal-study/report.json
+trash/
 
 # Local/generated test folders
 test/
