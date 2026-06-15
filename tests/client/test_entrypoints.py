@@ -1,4 +1,5 @@
 import os
+import inspect
 import runpy
 import sys
 from types import SimpleNamespace
@@ -46,6 +47,14 @@ class ClientEntrypointTests(unittest.TestCase):
         from client.engine.arcade_env import ArcadeEnv as EngineArcadeEnv
 
         self.assertIs(EngineArcadeEnv, ArcadeEnv)
+
+    def test_run_arc_agent_uses_runtime_boundary_imports(self) -> None:
+        from client import run_arc_agent
+
+        source = inspect.getsource(run_arc_agent)
+
+        self.assertIn("from client.arc.arcade_env import ArcadeEnv", source)
+        self.assertIn("from client.runtime.runner import RuleReasoningLoop", source)
 
     def test_run_arc_agent_can_be_loaded_with_script_style_sys_path(self) -> None:
         globals_after_run = _run_script_style(RUN_AGENT_PATH)

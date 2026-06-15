@@ -6,9 +6,9 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from client.engine.architecture import EngineArchitecture
-from client.engine.arcade_env import ArcadeEnv
 from client.engine.llm_client import Config, LlmClient
-from client.engine.loop import RuleReasoningLoop
+from client.arc.arcade_env import ArcadeEnv
+from client.runtime.runner import RuleReasoningLoop
 from client.terminal_dashboard import TerminalDashboard
 
 
