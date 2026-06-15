@@ -8,6 +8,7 @@ const {
     countPlayableLevels,
     countCompletedPlayableLevels,
 } = require('./arc_projection');
+const { renderSessionFrame } = require('./rendered_frame');
 
 const app = express();
 const port = Number(process.env.PORT || 3543);
@@ -460,6 +461,7 @@ async function executeAction(session, action) {
 
     return {
         frame: framesList,
+        rendered_frame: renderSessionFrame(session),
         state: arcState,
         levels_completed: levelsCompleted,
         message
@@ -492,6 +494,7 @@ app.post('/init', (req, res) => {
         res.json({
             sessionId,
             frame: [session.renderIntGrid()],
+            rendered_frame: renderSessionFrame(session),
             state: "PLAYING",
             levels_completed: 0,
             win_levels: session.winLevels,
@@ -513,6 +516,7 @@ app.post('/action', async (req, res) => {
         const result = await executeAction(session, action);
         res.json({
             frame: result.frame,
+            rendered_frame: result.rendered_frame,
             state: result.state,
             levels_completed: result.levels_completed,
             message: result.message,
@@ -534,6 +538,7 @@ app.get('/observe', (req, res) => {
         if (!session) return res.status(404).json({ error: "Session not found" });
         res.json({
             frame: [session.renderIntGrid()],
+            rendered_frame: renderSessionFrame(session),
             state: session.handler.won ? "WIN" : "PLAYING",
             levels_completed: countCompletedPlayableLevels(session.gameData.levels || [], session.engine.currentLevelNum),
             legend: session.intToName,

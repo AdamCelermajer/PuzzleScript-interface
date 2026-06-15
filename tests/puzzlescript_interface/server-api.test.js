@@ -57,6 +57,42 @@ test('init counts only playable PuzzleScript levels in win_levels', async () => 
     }
 });
 
+test('init and action include real rendered PNG data URLs', async () => {
+    const server = startServer();
+
+    try {
+        await waitForServer(`${SERVER_URL}/observe?sessionId=missing`);
+
+        const initResponse = await fetch(`${SERVER_URL}/init`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameName: 'ps_sokoban_basic-v1' }),
+        });
+        const initBody = await initResponse.json();
+
+        assert.equal(initBody.rendered_frame.mime_type, 'image/png');
+        assert.match(initBody.rendered_frame.data_url, /^data:image\/png;base64,/);
+        assert.equal(
+            Buffer.from(initBody.rendered_frame.data_url.split(',')[1], 'base64')
+                .subarray(1, 4)
+                .toString('ascii'),
+            'PNG'
+        );
+
+        const actionResponse = await fetch(`${SERVER_URL}/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: initBody.sessionId, action: 'ACTION4' }),
+        });
+        const actionBody = await actionResponse.json();
+
+        assert.equal(actionBody.rendered_frame.mime_type, 'image/png');
+        assert.match(actionBody.rendered_frame.data_url, /^data:image\/png;base64,/);
+    } finally {
+        server.kill();
+    }
+});
+
 test('ACTION7 undoes the previous move', async () => {
     const server = startServer();
 
