@@ -4,7 +4,13 @@ from arc_agi import Arcade, OperationMode
 from arcengine import GameAction as ArcGameAction, GameState as ArcGameState
 
 from client.engine.base_env import BaseEnv
-from client.engine.types import ActionInput, FrameData, GameAction, GameState
+from client.engine.types import (
+    ActionInput,
+    FrameData,
+    GameAction,
+    GameState,
+    RenderedFrame,
+)
 
 
 class ArcadeEnv(BaseEnv):
@@ -58,6 +64,29 @@ class ArcadeEnv(BaseEnv):
             return GameAction[str(getattr(action_value, "name"))]
         return GameAction(int(action_value))
 
+    def _convert_rendered_frame(self, rendered_frame) -> RenderedFrame | None:
+        if not rendered_frame:
+            return None
+        if isinstance(rendered_frame, RenderedFrame):
+            return rendered_frame
+        if isinstance(rendered_frame, dict):
+            get_value = rendered_frame.get
+        else:
+            get_value = lambda key, default=None: getattr(
+                rendered_frame, key, default
+            )
+
+        mime_type = get_value("mime_type")
+        data_url = get_value("data_url")
+        if not mime_type or not data_url:
+            return None
+        return RenderedFrame(
+            mime_type=str(mime_type),
+            data_url=str(data_url),
+            width=get_value("width"),
+            height=get_value("height"),
+        )
+
     def _convert_frame(self, frame_data) -> FrameData:
         frame_layers = [
             layer.tolist() if hasattr(layer, "tolist") else layer
@@ -94,6 +123,9 @@ class ArcadeEnv(BaseEnv):
             action_input=action_input,
             legend={},
             projection=getattr(frame_data, "projection", {}) or {},
+            rendered_frame=self._convert_rendered_frame(
+                getattr(frame_data, "rendered_frame", None)
+            ),
         )
 
     def reset(self) -> FrameData:

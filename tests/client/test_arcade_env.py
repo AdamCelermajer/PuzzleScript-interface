@@ -32,6 +32,7 @@ class FakeFrameDataRaw:
     guid: str
     full_reset: bool
     available_actions: list[int]
+    rendered_frame: dict | None = None
 
 
 class FakeEnvironmentWrapper:
@@ -155,6 +156,37 @@ class ArcadeEnvTests(unittest.TestCase):
             env.arcade.make_calls[0],
             ("ps_sokoban_basic-v1", {"render_mode": None}),
         )
+
+    def test_convert_frame_preserves_optional_rendered_frame(self) -> None:
+        env = ArcadeEnv.__new__(ArcadeEnv)
+        env.game_id = "ps_sokoban_basic-v1"
+        raw = FakeFrameDataRaw(
+            game_id="ps_sokoban_basic-v1",
+            frame=[np.array([[0]], dtype=np.int8)],
+            state=ArcGameState.NOT_FINISHED,
+            levels_completed=0,
+            win_levels=1,
+            action_input=FakeActionInput(id=ArcGameAction.RESET, data={}),
+            guid="guid-1",
+            full_reset=True,
+            available_actions=[1],
+            rendered_frame={
+                "mime_type": "image/png",
+                "data_url": "data:image/png;base64,iVBORw0KGgo=",
+                "width": 10,
+                "height": 10,
+            },
+        )
+
+        converted = env._convert_frame(raw)
+
+        self.assertIsNotNone(converted.rendered_frame)
+        self.assertEqual(converted.rendered_frame.mime_type, "image/png")
+        self.assertTrue(
+            converted.rendered_frame.data_url.startswith("data:image/png;base64,")
+        )
+        self.assertEqual(converted.rendered_frame.width, 10)
+        self.assertEqual(converted.rendered_frame.height, 10)
 
 
 if __name__ == "__main__":
