@@ -1,0 +1,1012 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Current Client Explainer</title>
+  <style>
+    :root {
+      --ink: #17201b;
+      --muted: #5d6862;
+      --paper: #fbfbf8;
+      --line: #d9ddd5;
+      --panel: #ffffff;
+      --soft: #f1f5ef;
+      --mint: #d9efe3;
+      --coral: #ffd9cb;
+      --gold: #ffe7a6;
+      --blue: #d8e8ff;
+      --green: #146b4f;
+      --red: #9c3e2e;
+      --shadow: 0 18px 45px rgba(23, 32, 27, 0.10);
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.45;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      min-height: 100vh;
+    }
+
+    .hero {
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(217, 239, 227, 0.72), rgba(255, 231, 166, 0.45) 48%, rgba(216, 232, 255, 0.60)),
+        var(--paper);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero .wrap {
+      padding: 46px 0 34px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 880px;
+      margin: 0;
+      font-size: clamp(2.15rem, 5vw, 4.35rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      margin: 18px 0 0;
+      color: #334139;
+      font-size: 1.08rem;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 30px;
+    }
+
+    .fact {
+      min-height: 92px;
+      padding: 14px;
+      border: 1px solid rgba(23, 32, 27, 0.12);
+      background: rgba(255, 255, 255, 0.62);
+      border-radius: 8px;
+    }
+
+    .fact strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .fact span {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      border-bottom: 1px solid var(--line);
+      background: rgba(251, 251, 248, 0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav .wrap {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .nav a {
+      flex: 0 0 auto;
+      padding: 8px 10px;
+      border-radius: 6px;
+      color: #3f4b44;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .nav a:hover {
+      background: var(--soft);
+    }
+
+    section {
+      padding: 42px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.55rem;
+      letter-spacing: 0;
+    }
+
+    .section-lede {
+      max-width: 760px;
+      margin: -6px 0 22px;
+      color: var(--muted);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(106px, 1fr));
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .step {
+      position: relative;
+      min-height: 126px;
+      padding: 14px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 8px 20px rgba(23, 32, 27, 0.05);
+    }
+
+    .step::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: -8px;
+      width: 8px;
+      height: 2px;
+      background: #aeb7af;
+    }
+
+    .step:last-child::after {
+      display: none;
+    }
+
+    .step .num {
+      display: inline-grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      margin-bottom: 12px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: white;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .step h3 {
+      margin: 0 0 7px;
+      font-size: 0.98rem;
+      letter-spacing: 0;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .simple-diagram {
+      overflow-x: auto;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .simple-diagram svg {
+      display: block;
+      min-width: 940px;
+      width: 100%;
+      height: auto;
+    }
+
+    .diagram-box {
+      fill: #fbfbf8;
+      stroke: #17201b;
+      stroke-width: 2;
+      rx: 8;
+    }
+
+    .diagram-box.env {
+      fill: var(--blue);
+    }
+
+    .diagram-box.memory {
+      fill: var(--mint);
+    }
+
+    .diagram-box.reason {
+      fill: #fff7dd;
+    }
+
+    .diagram-box.action {
+      fill: var(--coral);
+    }
+
+    .diagram-title {
+      fill: var(--ink);
+      font-family: var(--sans);
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .diagram-text {
+      fill: #37433c;
+      font-family: var(--sans);
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    .diagram-small {
+      fill: var(--muted);
+      font-family: var(--sans);
+      font-size: 12px;
+      letter-spacing: 0;
+    }
+
+    .diagram-arrow {
+      fill: none;
+      stroke: #17201b;
+      stroke-width: 2;
+      marker-end: url(#arrow);
+    }
+
+    .diagram-arrow.soft {
+      stroke: #657169;
+      stroke-dasharray: 5 5;
+    }
+
+    .diagram-note {
+      fill: #17201b;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #f8faf6;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--mint);
+      color: #15523f;
+      font-size: 0.78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .file-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .file-row {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid #eef0eb;
+    }
+
+    .file-row:last-child {
+      border-bottom: 0;
+    }
+
+    code,
+    .path {
+      font-family: var(--mono);
+      font-size: 0.88em;
+    }
+
+    .path {
+      color: #27312c;
+      overflow-wrap: anywhere;
+    }
+
+    .desc {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .tabs {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 8px;
+      border-bottom: 1px solid var(--line);
+      background: #f7f9f4;
+    }
+
+    .tab-buttons button {
+      min-height: 36px;
+      padding: 7px 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: #3b463f;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-buttons button[aria-selected="true"] {
+      border-color: #b6c2b8;
+      background: white;
+      color: var(--ink);
+    }
+
+    .tab {
+      display: none;
+    }
+
+    .tab.active {
+      display: block;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px;
+      overflow-x: auto;
+      background: #17201b;
+      color: #eaf1ec;
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .module {
+      min-height: 170px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--green);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .module:nth-child(3n + 2) {
+      border-top-color: var(--red);
+    }
+
+    .module:nth-child(3n) {
+      border-top-color: #9a7414;
+    }
+
+    .module h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .module .path {
+      display: block;
+      margin-bottom: 10px;
+      color: #435049;
+      font-size: 0.78rem;
+    }
+
+    .module p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.91rem;
+    }
+
+    .module-code-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .module-code {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 8px 20px rgba(23, 32, 27, 0.05);
+    }
+
+    .module-code header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: #f8faf6;
+    }
+
+    .module-code h3 {
+      margin: 0;
+      font-size: 0.98rem;
+    }
+
+    .module-code .path {
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-align: right;
+    }
+
+    .module-code pre {
+      box-shadow: none;
+      font-size: 0.8rem;
+      min-height: 172px;
+    }
+
+    .callout {
+      display: grid;
+      grid-template-columns: 12px minmax(0, 1fr);
+      gap: 14px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .callout::before {
+      content: "";
+      width: 12px;
+      border-radius: 8px;
+      background: linear-gradient(var(--green), var(--gold), var(--red));
+    }
+
+    .callout h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .callout p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .status {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .status.good {
+      border-top: 5px solid var(--green);
+    }
+
+    .status.weak {
+      border-top: 5px solid var(--red);
+    }
+
+    .status h3 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    li + li {
+      margin-top: 7px;
+    }
+
+    .footer {
+      padding: 30px 0 52px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 940px) {
+      .facts,
+      .split,
+      .module-grid,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .file-row {
+        grid-template-columns: 1fr;
+        gap: 5px;
+      }
+
+      .flow {
+        grid-template-columns: repeat(8, 180px);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .hero .wrap {
+        padding-top: 34px;
+      }
+
+      section {
+        padding: 32px 0;
+      }
+
+      pre {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="wrap">
+        <p class="eyebrow">PuzzleScript-interface / client</p>
+        <h1>How the current LLM client actually works</h1>
+        <p class="subtitle">
+          A code-grounded map of the current agent: what starts it, what owns each
+          decision, where the LLM is called, and how observations become stored rules.
+        </p>
+        <div class="facts" aria-label="Current architecture summary">
+          <div class="fact">
+            <strong>Entry point</strong>
+            <span><code>client/run_arc_agent.py</code> builds config, env, LLM, dashboard, architecture, and loop.</span>
+          </div>
+          <div class="fact">
+            <strong>Truth source</strong>
+            <span>The environment is always stepped for real. Rules are judged against observed transitions.</span>
+          </div>
+          <div class="fact">
+            <strong>LLM role today</strong>
+            <span>It proposes exploratory plans and generalized rule candidates. It does not own the whole loop.</span>
+          </div>
+          <div class="fact">
+            <strong>Modularity</strong>
+            <span>Module boundaries now match the diagram; <code>agent.py</code> remains only as a compatibility shim.</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="nav" aria-label="Page sections">
+      <div class="wrap">
+        <a href="#flow">Flow</a>
+        <a href="#simple-diagram">Simple Diagram</a>
+        <a href="#module-pseudocode">Module Pseudocode</a>
+      </div>
+    </nav>
+
+    <main>
+      <section id="flow">
+        <div class="wrap">
+          <h2>Small Abstract Flow</h2>
+          <p class="section-lede">
+            This is the useful level of abstraction: one loop, one environment, one
+            rule memory, and occasional LLM calls.
+          </p>
+          <div class="flow" aria-label="Client flow">
+            <div class="step">
+              <span class="num">1</span>
+              <h3>Start CLI</h3>
+              <p>Parse game, backend, mode, max steps.</p>
+            </div>
+            <div class="step">
+              <span class="num">2</span>
+              <h3>Build runtime</h3>
+              <p>Create environment, LLM client, dashboard, and engine modules.</p>
+            </div>
+            <div class="step">
+              <span class="num">3</span>
+              <h3>Reset</h3>
+              <p>Ask ARC surface for the first frame.</p>
+            </div>
+            <div class="step">
+              <span class="num">4</span>
+              <h3>Perceive</h3>
+              <p>Convert raw frame data into stable engine state.</p>
+            </div>
+            <div class="step">
+              <span class="num">5</span>
+              <h3>Choose action</h3>
+              <p>Planner uses verified rules first, LLM fallback second.</p>
+            </div>
+            <div class="step">
+              <span class="num">6</span>
+              <h3>Act</h3>
+              <p>Step the real environment with the chosen action.</p>
+            </div>
+            <div class="step">
+              <span class="num">7</span>
+              <h3>Record truth</h3>
+              <p>Store before/action/after evidence and exact transition memory.</p>
+            </div>
+            <div class="step">
+              <span class="num">8</span>
+              <h3>Maybe induce</h3>
+              <p>Ask LLM for generalized rules, then verify them against evidence.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="simple-diagram">
+        <div class="wrap">
+          <h2>Simple Module Diagram</h2>
+          <p class="section-lede">
+            Yes, the client is modular in this sense: environment, perception,
+            persistent memory, reasoning, and action are separate boxes. The main
+            caveat is that <code>rules.py</code> is still broad internally, but it is now behind <code>rulebook.py</code>.
+          </p>
+          <div class="simple-diagram" aria-label="Simple current client module diagram">
+            <svg viewBox="0 0 1120 610" role="img" aria-labelledby="diagram-title diagram-desc">
+              <title id="diagram-title">Current client module diagram</title>
+              <desc id="diagram-desc">
+                A simplified diagram showing environment state flowing through perception into memory and reasoning, then action returning to the environment.
+              </desc>
+              <defs>
+                <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+                  <path d="M2,2 L10,6 L2,10 Z" fill="#17201b"></path>
+                </marker>
+              </defs>
+
+              <rect class="diagram-box env" x="830" y="66" width="210" height="82"></rect>
+              <text class="diagram-title" x="935" y="104" text-anchor="middle">PuzzleScript / ARC env</text>
+              <text class="diagram-small" x="935" y="128" text-anchor="middle">truth source</text>
+
+              <rect class="diagram-box" x="590" y="74" width="170" height="66"></rect>
+              <text class="diagram-title" x="675" y="102" text-anchor="middle">Receive state</text>
+              <text class="diagram-small" x="675" y="124" text-anchor="middle">ArcadeEnv + FrameData</text>
+
+              <rect class="diagram-box" x="354" y="74" width="170" height="66"></rect>
+              <text class="diagram-title" x="439" y="102" text-anchor="middle">Perceive</text>
+              <text class="diagram-small" x="439" y="124" text-anchor="middle">FrameData -> EngineState</text>
+
+              <rect class="diagram-box memory" x="98" y="54" width="190" height="106"></rect>
+              <text class="diagram-title" x="193" y="90" text-anchor="middle">Persistent memory</text>
+              <text class="diagram-text" x="193" y="118" text-anchor="middle">TransitionHistory</text>
+              <text class="diagram-text" x="193" y="140" text-anchor="middle">RuleLibrary</text>
+
+              <rect class="diagram-box reason" x="388" y="256" width="260" height="134"></rect>
+              <text class="diagram-title" x="518" y="294" text-anchor="middle">Rule induction</text>
+              <text class="diagram-text" x="518" y="324" text-anchor="middle">LLM proposes rule hypothesis</text>
+              <text class="diagram-text" x="518" y="348" text-anchor="middle">Verifier checks evidence</text>
+              <text class="diagram-text" x="518" y="372" text-anchor="middle">RuleLibrary stores result</text>
+
+              <rect class="diagram-box reason" x="120" y="420" width="235" height="106"></rect>
+              <text class="diagram-title" x="237" y="458" text-anchor="middle">Planning</text>
+              <text class="diagram-text" x="237" y="488" text-anchor="middle">verified plan</text>
+              <text class="diagram-text" x="237" y="510" text-anchor="middle">or LLM subgoal</text>
+
+              <rect class="diagram-box action" x="492" y="440" width="150" height="66"></rect>
+              <text class="diagram-title" x="567" y="478" text-anchor="middle">ACT</text>
+              <text class="diagram-small" x="567" y="500" text-anchor="middle">one action step</text>
+
+              <rect class="diagram-box" x="760" y="416" width="240" height="122"></rect>
+              <text class="diagram-title" x="880" y="450" text-anchor="middle">RuleReasoningLoop</text>
+              <text class="diagram-text" x="880" y="480" text-anchor="middle">orchestrates modules</text>
+              <text class="diagram-text" x="880" y="504" text-anchor="middle">handles reset/stuck/win</text>
+              <text class="diagram-small" x="880" y="526" text-anchor="middle">client/engine/loop.py</text>
+
+              <path class="diagram-arrow" d="M830 107 L760 107"></path>
+              <text class="diagram-note" x="786" y="92">state</text>
+
+              <path class="diagram-arrow" d="M590 107 L524 107"></path>
+              <path class="diagram-arrow" d="M354 107 L288 107"></path>
+              <text class="diagram-note" x="306" y="92">evidence</text>
+
+              <path class="diagram-arrow" d="M288 132 C360 210 410 228 462 256"></path>
+              <text class="diagram-note" x="332" y="204">recent evidence</text>
+
+              <path class="diagram-arrow" d="M388 337 C300 352 230 376 211 420"></path>
+              <text class="diagram-note" x="273" y="376">known rules</text>
+
+              <path class="diagram-arrow" d="M193 420 L193 160"></path>
+              <text class="diagram-note" x="126" y="314" transform="rotate(-90 126 314)">read rules/history</text>
+
+              <path class="diagram-arrow soft" d="M648 323 C714 348 778 378 830 416"></path>
+              <text class="diagram-note" x="732" y="372">loop control</text>
+
+              <path class="diagram-arrow" d="M355 473 L492 473"></path>
+              <text class="diagram-note" x="398" y="456">chosen action</text>
+
+              <path class="diagram-arrow" d="M642 473 C758 458 866 338 910 148"></path>
+              <text class="diagram-note" x="770" y="326">action</text>
+
+              <path class="diagram-arrow soft" d="M760 477 L642 477"></path>
+              <text class="diagram-note" x="682" y="512">execute step</text>
+
+              <path class="diagram-arrow soft" d="M760 436 C690 404 650 382 621 367"></path>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section id="module-pseudocode">
+        <div class="wrap">
+          <h2>Module Pseudocode</h2>
+          <p class="section-lede">
+            Each card describes one current module. This is code-shaped, but still
+            simplified to show ownership and flow instead of every implementation detail.
+          </p>
+          <div class="module-code-grid">
+            <article class="module-code">
+              <header>
+                <h3>Environment</h3>
+                <span class="path">environment.py / arcade_env.py</span>
+              </header>
+<pre><code>EnvironmentSurface.reset():
+    frame_data = wrapped_env.reset()
+    return frame_data
+
+EnvironmentSurface.step(action):
+    frame_data = wrapped_env.step(action)
+    return frame_data
+
+ArcadeEnv.step(action):
+    arc_action = ArcGameAction[action.name]
+    raw_frame = arc_env.step(arc_action)
+    return convert_to_FrameData(raw_frame)</code></pre>
+            </article>
+
+            <article class="module-code">
+              <header>
+                <h3>Perception</h3>
+                <span class="path">perception.py / perceiver.py</span>
+              </header>
+<pre><code>Perception.perceive(frame_data):
+    final_grid = last_grid(frame_data.frame)
+    grid = tuple(tuple(int(cell) for cell in row)
+                 for row in final_grid)
+
+    return EngineState(
+        grid=grid,
+        state=frame_data.state,
+        levels_completed=frame_data.levels_completed,
+        win_levels=frame_data.win_levels,
+        game_id=frame_data.game_id,
+    )</code></pre>
+            </article>
+
+            <article class="module-code">
+              <header>
+                <h3>Memory</h3>
+                <span class="path">memory.py / history.py</span>
+              </header>
+<pre><code>EngineMemory.record_transition(before, action, after):
+    record = TransitionRecord(
+        id=next_transition_id(),
+        before=before,
+        action=action,
+        after=after,
+    )
+    append_jsonl(record)
+    return record
+
+EngineMemory.recent(limit):
+    return last limit records from history</code></pre>
+            </article>
+
+            <article class="module-code">
+              <header>
+                <h3>Rulebook</h3>
+                <span class="path">rulebook.py</span>
+              </header>
+<pre><code>EngineRulebook.predict(state, action):
+    predictions = verified_generalized_rules(state, action)
+    if predictions:
+        return predictions
+
+    return exact_transition_predictions(state, action)
+
+EngineRulebook.record_prediction_result(...):
+    if actual_after in predictions:
+        mark matching rule hit
+    else:
+        reject failing prediction rules
+
+EngineRulebook.record_observed_transition(record):
+    library.record_transition(record)</code></pre>
+            </article>
+
+            <article class="module-code">
+              <header>
+                <h3>Planning</h3>
+                <span class="path">planning.py</span>
+              </header>
+<pre><code>RuleFirstPlanner.choose_action(state, frame):
+    actions = available_actions(frame)
+
+    plan = plan_to_win_using_rulebook(state, actions)
+    if plan:
+        clear_pending_llm_plan()
+        return verified plan action
+
+    if pending LLM plan:
+        return next LLM action
+
+    response = ask_llm_for_subgoal(
+        board=state.rows(),
+        actions=actions,
+        known_rules=rulebook.known_rules_text(),
+        recent_events=memory.recent(5),
+    )
+    store response.plan[1:] as pending
+    return response.plan[0]</code></pre>
+            </article>
+
+            <article class="module-code">
+              <header>
+                <h3>Induction</h3>
+                <span class="path">induction.py</span>
+              </header>
+<pre><code>RuleInducer.propose_from_recent(game, records):
+    events = format records as before/action/after text
+    data = llm.call_json(rule_prompt(events))
+    candidates = parse GeneralizedRule objects
+
+    for candidate in candidates:
+        verified = verifier.verify(candidate)
+        library.add_generalized_rule(verified)
+
+RuleVerifier.verify(rule):
+    for evidence_id in rule.evidence_ids:
+        record = find transition by id
+        if record.after not in rule.predict(record.before):
+            return rejected rule
+    return verified rule</code></pre>
+            </article>
+
+            <article class="module-code">
+              <header>
+                <h3>Actions</h3>
+                <span class="path">actions.py</span>
+              </header>
+<pre><code>ActionExecutor.execute(frame, state, decision):
+    after_frame = env.step(decision.action)
+    after_state = perceiver.perceive(after_frame)
+
+    return StepOutcome(
+        before_frame=frame,
+        before_state=state,
+        decision=decision,
+        after_frame=after_frame,
+        after_state=after_state,
+    )</code></pre>
+            </article>
+
+            <article class="module-code">
+              <header>
+                <h3>Loop</h3>
+                <span class="path">loop.py</span>
+              </header>
+<pre><code>RuleReasoningLoop.run_learning():
+    frame = env.reset()
+    state = perceiver.perceive(frame)
+
+    while steps < max_steps:
+        decision = planner.choose_action(state, frame)
+        predictions = rulebook.predict(state, decision.action)
+        outcome = actions.execute(frame, state, decision)
+
+        rulebook.record_prediction_result(outcome, predictions)
+        record = memory.record_transition(...)
+        rulebook.record_observed_transition(record)
+
+        if prediction diverged or checkpoint:
+            inducer.propose_from_recent(game_id, memory.recent(5))
+
+        frame = outcome.after_frame
+        state = outcome.after_state</code></pre>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        Built as a static explanation page for the current client. Open directly from
+        <code>docs/architecture/current-client-explainer.html</code>.
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll("[data-tab]"));
+    const tabs = Array.from(document.querySelectorAll(".tab"));
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const id = button.getAttribute("data-tab");
+        buttons.forEach((item) => {
+          item.setAttribute("aria-selected", String(item === button));
+        });
+        tabs.forEach((tab) => {
+          tab.classList.toggle("active", tab.id === id);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
