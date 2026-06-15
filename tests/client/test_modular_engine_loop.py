@@ -156,14 +156,30 @@ class ModularEngineLoopTests(unittest.TestCase):
                 planner,
                 inducer,
                 ActionExecutor(env, Perceiver()),
+                sleep_fn=lambda _seconds: None,
             )
 
-            with patch("client.engine.loop.time.sleep", return_value=None):
-                loop.run_learning(max_steps=1, game_id="modular-world")
+            loop.run_learning(max_steps=1, game_id="modular-world")
 
             self.assertEqual(env.step_actions, [GameAction.ACTION4])
             self.assertEqual(memory.recent(1)[0].action, GameAction.ACTION4)
             self.assertTrue(rulebook.predict(memory.recent(1)[0].before, GameAction.ACTION4))
+
+    def test_runtime_runner_executes_engine_decisions_outside_engine(self) -> None:
+        from client.runtime.runner import ActionExecutor
+
+        before_frame = _frame([[2, 0]])
+        after_frame = _frame([[0, 2]], action=GameAction.ACTION4)
+        before_state = Perceiver().perceive(before_frame)
+        env = FakeEnv(before_frame, [after_frame])
+        decision = PlanDecision(GameAction.ACTION4, "test", [GameAction.ACTION4])
+
+        outcome = ActionExecutor(env, Perceiver()).execute(
+            before_frame, before_state, decision
+        )
+
+        self.assertEqual(env.step_actions, [GameAction.ACTION4])
+        self.assertEqual(outcome.action, GameAction.ACTION4)
 
 
 if __name__ == "__main__":
