@@ -86,7 +86,7 @@ def _games_root() -> Path:
 def _frame_response(
     payload: dict[str, Any], binding: SessionBinding, action_name: str
 ) -> dict[str, Any]:
-    return {
+    response = {
         "game_id": binding.game_id,
         "guid": binding.guid,
         "frame": payload.get("frame", []),
@@ -97,6 +97,10 @@ def _frame_response(
         "available_actions": _available_actions(payload),
         "projection": payload.get("projection", {}),
     }
+    rendered_frame = payload.get("rendered_frame")
+    if rendered_frame:
+        response["rendered_frame"] = rendered_frame
+    return response
 
 
 def _resolve_game_entry_or_404(

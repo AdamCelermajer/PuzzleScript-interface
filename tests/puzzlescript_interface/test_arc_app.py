@@ -32,6 +32,12 @@ class FakePuzzleScriptClient:
         return {
             "sessionId": "ps-session-1",
             "frame": [[[0, 1], [1, 0]]],
+            "rendered_frame": {
+                "mime_type": "image/png",
+                "data_url": "data:image/png;base64,iVBORw0KGgo=",
+                "width": 10,
+                "height": 10,
+            },
             "state": "PLAYING",
             "levels_completed": 0,
             "win_levels": 2,
@@ -186,6 +192,12 @@ class ArcServiceTests(unittest.TestCase):
         self.assertEqual(self.fake_client.started_games, ["ps_sokoban_basic-v1"])
         self.assertEqual(reset_body["game_id"], "ps_sokoban_basic-v1")
         self.assertEqual(reset_body["available_actions"], [1, 2, 3, 4, 5, 7])
+        self.assertEqual(reset_body["rendered_frame"]["mime_type"], "image/png")
+        self.assertTrue(
+            reset_body["rendered_frame"]["data_url"].startswith(
+                "data:image/png;base64,"
+            )
+        )
 
         guid = reset_body["guid"]
         action_response = self.client.post(
