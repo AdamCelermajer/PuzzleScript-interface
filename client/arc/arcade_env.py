@@ -1,5 +1,7 @@
 import os
+from types import SimpleNamespace
 
+import requests
 from arc_agi import Arcade, OperationMode
 from arcengine import GameAction as ArcGameAction, GameState as ArcGameState
 
@@ -13,6 +15,70 @@ from client.arc.types import (
 )
 
 
+def _to_namespace(value):
+    if isinstance(value, dict):
+        return SimpleNamespace(
+            **{key: _to_namespace(item) for key, item in value.items()}
+        )
+    if isinstance(value, list):
+        return [_to_namespace(item) for item in value]
+    return value
+
+
+def _is_official_arc_url(url: str) -> bool:
+    return "three.arcprize.org" in str(url or "").strip().lower()
+
+
+class LocalArcEnvironmentWrapper:
+    """Direct local ARC-compatible HTTP wrapper that preserves extension fields."""
+
+    def __init__(
+        self,
+        game_id: str,
+        base_url: str,
+        api_key: str,
+        http_session=None,
+    ) -> None:
+        self.game_id = game_id
+        self.base_url = base_url.rstrip("/")
+        self.headers = {"X-API-Key": api_key, "Accept": "application/json"}
+        self._session = http_session or requests.Session()
+        self.scorecard_id = self._open_scorecard()
+        self.guid: str | None = None
+
+    def _request(self, method: str, path: str, payload: dict | None = None):
+        response = self._session.request(
+            method,
+            f"{self.base_url}{path}",
+            json=payload,
+            headers=self.headers,
+            timeout=45,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def _open_scorecard(self) -> str:
+        payload = self._request("POST", "/api/scorecard/open", {})
+        return str(payload["card_id"])
+
+    def reset(self):
+        payload = {"card_id": self.scorecard_id, "game_id": self.game_id}
+        if self.guid:
+            payload["guid"] = self.guid
+        frame = self._request("POST", "/api/cmd/RESET", payload)
+        self.guid = str(frame.get("guid") or self.guid or "")
+        return _to_namespace(frame)
+
+    def step(self, action: GameAction, data: dict | None = None):
+        if not self.guid:
+            raise RuntimeError("Cannot step before reset")
+        payload = {"game_id": self.game_id, "guid": self.guid}
+        if data:
+            payload.update(data)
+        frame = self._request("POST", f"/api/cmd/{action.name}", payload)
+        return _to_namespace(frame)
+
+
 class ArcadeEnv(BaseEnv):
     """Thin adapter from ARC toolkit environments to the local engine types."""
 
@@ -24,6 +90,7 @@ class ArcadeEnv(BaseEnv):
         render_mode: str | None = None,
         renderer=None,
         arcade_factory=Arcade,
+        http_session=None,
     ) -> None:
         self.game_id = game_id
         self.backend_url = backend_url
@@ -31,15 +98,24 @@ class ArcadeEnv(BaseEnv):
         self.render_mode = render_mode
         self.renderer = renderer
         self._render_step = 0
-        self.arcade = arcade_factory(
-            operation_mode=OperationMode.ONLINE,
-            arc_base_url=self.backend_url,
-            arc_api_key=self.api_key,
-        )
-        self._env = self.arcade.make(
-            self.game_id,
-            render_mode=self.render_mode,
-        )
+        self.arcade = None
+        if arcade_factory is Arcade and not _is_official_arc_url(self.backend_url):
+            self._env = LocalArcEnvironmentWrapper(
+                self.game_id,
+                self.backend_url,
+                self.api_key,
+                http_session=http_session,
+            )
+        else:
+            self.arcade = arcade_factory(
+                operation_mode=OperationMode.ONLINE,
+                arc_base_url=self.backend_url,
+                arc_api_key=self.api_key,
+            )
+            self._env = self.arcade.make(
+                self.game_id,
+                render_mode=self.render_mode,
+            )
         if self._env is None:
             raise ValueError(f"Could not create ARC environment for {self.game_id}")
         self.session_id = self.game_id
@@ -50,10 +126,11 @@ class ArcadeEnv(BaseEnv):
         self._render_step += 1
         self.renderer(self._render_step, frame_data)
 
-    def _convert_state(self, state: ArcGameState) -> GameState:
-        if state == ArcGameState.WIN:
+    def _convert_state(self, state) -> GameState:
+        normalized = getattr(state, "name", str(state or "")).upper()
+        if state == ArcGameState.WIN or normalized == "WIN":
             return GameState.WIN
-        if state == ArcGameState.GAME_OVER:
+        if state == ArcGameState.GAME_OVER or normalized == "GAME_OVER":
             return GameState.GAME_OVER
         return GameState.PLAYING
 
@@ -136,7 +213,12 @@ class ArcadeEnv(BaseEnv):
         return self._convert_frame(frame_data)
 
     def step(self, action: GameAction, data: dict | None = None) -> FrameData:
-        frame_data = self._env.step(ArcGameAction[action.name], data=data)
+        runtime_action = (
+            action
+            if isinstance(self._env, LocalArcEnvironmentWrapper)
+            else ArcGameAction[action.name]
+        )
+        frame_data = self._env.step(runtime_action, data=data)
         if frame_data is None:
             raise RuntimeError(
                 f"Failed to step ARC environment {self.game_id} with {action.name}"
