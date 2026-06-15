@@ -41,6 +41,12 @@ def _run_script_style(path: str) -> dict:
 
 
 class ClientEntrypointTests(unittest.TestCase):
+    def test_arcade_env_canonical_import_lives_outside_engine(self) -> None:
+        from client.arc.arcade_env import ArcadeEnv
+        from client.engine.arcade_env import ArcadeEnv as EngineArcadeEnv
+
+        self.assertIs(EngineArcadeEnv, ArcadeEnv)
+
     def test_run_arc_agent_can_be_loaded_with_script_style_sys_path(self) -> None:
         globals_after_run = _run_script_style(RUN_AGENT_PATH)
 
