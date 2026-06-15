@@ -53,7 +53,7 @@ npm start
 Run the agent against the local service:
 
 ```bash
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --mode learn --max_steps 50
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
 ```
 
 Play a local PuzzleScript game manually from the terminal:
@@ -73,7 +73,7 @@ Required environment variables:
 Run the agent against the official ARC-AGI-3 backend:
 
 ```bash
-python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50  
+python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --max_steps 50
 ```
 
 ## Tests

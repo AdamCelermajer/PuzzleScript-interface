@@ -565,6 +565,7 @@ class RuleLibrary:
             f"set({effect.dx},{effect.dy})={effect.value}" for effect in rule.effects
         )
         return (
+            f"{rule.summary} "
             f"{rule.action} anchored on {rule.anchor}: "
             f"IF {conditions or 'true'} THEN {effects or 'no change'}"
-        )
+        ).strip()

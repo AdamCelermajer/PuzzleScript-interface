@@ -199,8 +199,10 @@ class EngineArchitectureTests(unittest.TestCase):
                 [
                     '{"subgoal": "move right to test empty space", '
                     '"plan": ["ACTION4"]}',
+                    '{"rules": []}',
                     '{"subgoal": "move left to compare the reverse", '
                     '"plan": ["ACTION3"]}',
+                    '{"rules": []}',
                 ]
             )
             agent = Agent(cfg, llm)
@@ -216,7 +218,7 @@ class EngineArchitectureTests(unittest.TestCase):
                 run_solving_loop(cfg, env, agent)
 
             self.assertEqual(env.step_actions, [GameAction.ACTION4, GameAction.ACTION3])
-            self.assertEqual(len(llm.calls), 2)
+            self.assertEqual(len(llm.calls), 4)
             self.assertIn("Available actions: ACTION3, ACTION4", llm.calls[0][1])
             self.assertNotIn("expected_observation", llm.calls[0][0] + llm.calls[0][1])
 
@@ -224,7 +226,10 @@ class EngineArchitectureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             cfg = self._config(tmpdir, max_steps=1)
             llm = FakeLlmClient(
-                ['{"subgoal": "test undo behavior", "plan": ["ACTION7"]}']
+                [
+                    '{"subgoal": "test undo behavior", "plan": ["ACTION7"]}',
+                    '{"rules": []}',
+                ]
             )
             agent = Agent(cfg, llm)
             env = FakeEnv(
@@ -253,7 +258,7 @@ class EngineArchitectureTests(unittest.TestCase):
                 run_solving_loop(cfg, env, agent)
 
             self.assertEqual(env.step_actions, [GameAction.ACTION7])
-            self.assertEqual(len(llm.calls), 1)
+            self.assertEqual(len(llm.calls), 2)
             self.assertIn("Available actions: ACTION4, ACTION7", llm.calls[0][1])
 
     def test_planner_attaches_rendered_frame_to_llm_subgoal_request(self) -> None:
@@ -283,6 +288,95 @@ class EngineArchitectureTests(unittest.TestCase):
             self.assertEqual(decision.action, GameAction.ACTION4)
             self.assertEqual(llm.calls[0]["image_data_urls"], [image_url])
             self.assertIn("Rendered image: attached", llm.calls[0]["prompt"])
+
+    def test_planner_sends_only_last_visual_transition_pair_to_llm(self) -> None:
+        from client.engine.planner import Planner
+        from client.engine.visual_context import VisualTransition
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            before_image = "data:image/png;base64,before"
+            after_image = "data:image/png;base64,after"
+            current_image = "data:image/png;base64,current"
+            llm = FakeImageLlmClient(
+                {"subgoal": "compare the last move", "plan": ["ACTION4"]}
+            )
+            library = RuleLibrary(Path(tmpdir))
+            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
+            planner = Planner(library, history, llm_client=llm)
+            current_frame = _frame(
+                [[0, 2, 0]],
+                rendered_frame=RenderedFrame("image/png", current_image),
+            )
+            visual_transition = VisualTransition(
+                before_frame=_frame(
+                    [[2, 0, 0]],
+                    rendered_frame=RenderedFrame("image/png", before_image),
+                ),
+                action=GameAction.ACTION4,
+                after_frame=_frame(
+                    [[0, 2, 0]],
+                    action=GameAction.ACTION4,
+                    rendered_frame=RenderedFrame("image/png", after_image),
+                ),
+            )
+            state = Perceiver().perceive(current_frame)
+
+            planner.choose_action(
+                state,
+                current_frame,
+                visual_transition=visual_transition,
+            )
+
+            self.assertEqual(
+                llm.calls[0]["image_data_urls"],
+                [before_image, after_image],
+            )
+            self.assertNotIn(current_image, llm.calls[0]["image_data_urls"])
+            self.assertIn("Last visual transition", llm.calls[0]["prompt"])
+            self.assertIn("Action: ACTION4", llm.calls[0]["prompt"])
+
+    def test_visual_transition_dump_writes_latest_images_for_inspection(self) -> None:
+        from client.engine.visual_context import (
+            VisualTransition,
+            dump_visual_transition,
+        )
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            visual_transition = VisualTransition(
+                before_frame=_frame(
+                    [[2, 0]],
+                    rendered_frame=RenderedFrame(
+                        "image/png",
+                        "data:image/png;base64,YmVmb3Jl",
+                    ),
+                ),
+                action=GameAction.ACTION4,
+                after_frame=_frame(
+                    [[0, 2]],
+                    action=GameAction.ACTION4,
+                    rendered_frame=RenderedFrame(
+                        "image/png",
+                        "data:image/png;base64,YWZ0ZXI=",
+                    ),
+                ),
+            )
+
+            dump_visual_transition(visual_transition, Path(tmpdir))
+
+            self.assertEqual((Path(tmpdir) / "latest-before.png").read_bytes(), b"before")
+            self.assertEqual((Path(tmpdir) / "latest-after.png").read_bytes(), b"after")
+            context = (Path(tmpdir) / "latest-context.txt").read_text(
+                encoding="utf-8"
+            )
+            preview = (Path(tmpdir) / "latest-preview.html").read_text(
+                encoding="utf-8"
+            )
+            self.assertIn("Action: ACTION4", context)
+            self.assertIn("Frame -2", context)
+            self.assertIn("Frame -1", context)
+            self.assertIn("latest-before.png", preview)
+            self.assertIn("latest-after.png", preview)
+            self.assertIn("image-rendering: pixelated", preview)
 
 
 if __name__ == "__main__":

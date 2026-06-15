@@ -72,6 +72,8 @@ test('init and action include real rendered PNG data URLs', async () => {
 
         assert.equal(initBody.rendered_frame.mime_type, 'image/png');
         assert.match(initBody.rendered_frame.data_url, /^data:image\/png;base64,/);
+        assert.equal(initBody.rendered_frame.width, initBody.frame.at(-1)[0].length * 45);
+        assert.equal(initBody.rendered_frame.height, initBody.frame.at(-1).length * 45);
         assert.equal(
             Buffer.from(initBody.rendered_frame.data_url.split(',')[1], 'base64')
                 .subarray(1, 4)

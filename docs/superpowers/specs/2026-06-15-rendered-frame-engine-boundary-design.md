@@ -160,17 +160,17 @@ flickscreen/zoomscreen exact UI behavior can be handled later if needed.
 
 ## Dashboard
 
-The new visual display is a client/runtime concern. It should show
-`rendered_frame` on a screen-style dashboard and keep terminal rendering as a
-fallback. The dashboard should not be imported by `client/engine/`.
+The visual display is a client/runtime concern. It should show `rendered_frame`
+on a screen-style dashboard alongside the ARC/ascii frame. The dashboard should
+not be imported by `client/engine/`.
 
-Initial CLI behavior should use an explicit option such as:
+Initial CLI behavior should use the screen dashboard directly:
 
 ```text
---dashboard terminal|screen
+python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
 ```
 
-Terminal remains the default until the screen dashboard is stable.
+Terminal rendering is not part of the engine-run path.
 
 ## Testing
 

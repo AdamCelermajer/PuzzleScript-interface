@@ -55,6 +55,8 @@ class ClientEntrypointTests(unittest.TestCase):
 
         self.assertIn("from client.arc.arcade_env import ArcadeEnv", source)
         self.assertIn("from client.runtime.runner import RuleReasoningLoop", source)
+        self.assertIn("from client.screen_dashboard import ScreenDashboard", source)
+        self.assertNotIn("TerminalDashboard", source)
 
     def test_run_arc_agent_can_be_loaded_with_script_style_sys_path(self) -> None:
         globals_after_run = _run_script_style(RUN_AGENT_PATH)
@@ -78,6 +80,10 @@ class ClientEntrypointTests(unittest.TestCase):
             def __init__(self, **kwargs) -> None:
                 self.render = lambda *args, **kwargs: None
                 self.push_event = lambda *args, **kwargs: None
+
+            def run_engine(self, target) -> None:
+                captured["run_engine_called"] = True
+                target()
 
             def close(self) -> None:
                 return None
@@ -114,15 +120,12 @@ class ClientEntrypointTests(unittest.TestCase):
                 captured["loop_env"] = env
                 captured["loop_dashboard"] = dashboard
 
-            def run_learning(self, *, max_steps: int, game_id: str, mode: str) -> None:
-                loop_calls.append(f"learn:{game_id}:{max_steps}:{mode}")
-
-            def run_solving(self, *, max_steps: int) -> None:
-                loop_calls.append(f"solve:{max_steps}")
+            def run(self, *, max_steps: int, game_id: str) -> None:
+                loop_calls.append(f"run:{game_id}:{max_steps}")
 
         with (
             patch.object(sys, "argv", [RUN_AGENT_PATH]),
-            patch.object(run_arc_agent, "TerminalDashboard", FakeDashboard),
+            patch.object(run_arc_agent, "ScreenDashboard", FakeDashboard),
             patch.object(run_arc_agent, "ArcadeEnv", FakeArcadeEnv),
             patch.object(run_arc_agent, "LlmClient", lambda *args, **kwargs: object()),
             patch.object(
@@ -134,7 +137,8 @@ class ClientEntrypointTests(unittest.TestCase):
 
         self.assertEqual(captured["game_id"], "ps_sokoban_basic-v1")
         self.assertEqual(captured["architecture_game"], "ps_sokoban_basic-v1")
-        self.assertEqual(loop_calls, ["learn:ps_sokoban_basic-v1:50:learn"])
+        self.assertEqual(captured["run_engine_called"], True)
+        self.assertEqual(loop_calls, ["run:ps_sokoban_basic-v1:50"])
 
     def test_play_arc_client_defaults_to_public_sokoban_id(self) -> None:
         from client import play_arc_client

@@ -668,7 +668,7 @@
             <div class="step">
               <span class="num">1</span>
               <h3>Start CLI</h3>
-              <p>Parse game, backend, mode, max steps.</p>
+              <p>Parse game, backend, max steps.</p>
             </div>
             <div class="step">
               <span class="num">2</span>
@@ -910,8 +910,7 @@ EngineRulebook.record_observed_transition(record):
         known_rules=rulebook.known_rules_text(),
         recent_events=memory.recent(5),
     )
-    store response.plan[1:] as pending
-    return response.plan[0]</code></pre>
+    return first action from response.plan</code></pre>
             </article>
 
             <article class="module-code">
@@ -959,7 +958,7 @@ RuleVerifier.verify(rule):
                 <h3>Loop</h3>
                 <span class="path">loop.py</span>
               </header>
-<pre><code>RuleReasoningLoop.run_learning():
+<pre><code>RuleReasoningLoop.run():
     frame = env.reset()
     state = perceiver.perceive(frame)
 
@@ -972,7 +971,7 @@ RuleVerifier.verify(rule):
         record = memory.record_transition(...)
         rulebook.record_observed_transition(record)
 
-        if prediction diverged or checkpoint:
+        if no rule explained the result:
             inducer.propose_from_recent(game_id, memory.recent(5))
 
         frame = outcome.after_frame

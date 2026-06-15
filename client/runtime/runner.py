@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import time
+import tempfile
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Callable, Optional
 
 from client.arc.base_env import BaseEnv
@@ -10,6 +12,7 @@ from client.engine.memory import EngineMemory
 from client.engine.planner import PlanDecision
 from client.engine.rulebook import EngineRulebook
 from client.engine.state import EngineState
+from client.engine.visual_context import VisualTransition, dump_visual_transition
 
 
 HistoryEntry = tuple[FrameData, GameAction, FrameData]
@@ -123,13 +126,15 @@ class RuleReasoningLoop:
         self.event_sink = event_sink
         self.sleep_fn = sleep_fn
         self.history: list[HistoryEntry] = []
+        self.last_visual_transition: VisualTransition | None = None
+        self.visual_debug_dir: Path | None = None
+        self._visual_debug_announced = False
 
-    def run_learning(
+    def run(
         self,
         *,
         max_steps: int,
         game_id: str,
-        mode: str = "learn",
     ) -> None:
         try:
             frame_data = self.env.reset()
@@ -138,15 +143,16 @@ class RuleReasoningLoop:
             return
 
         current_state = self.perceiver.perceive(frame_data)
-        steps = unchanged = last_induction_step = 0
+        actual_game_id = game_id or current_state.game_id
+        steps = unchanged = 0
         emit(
-            f"Started session {getattr(self.env, 'session_id', 'unknown')} in LEARN mode",
+            f"Started session {getattr(self.env, 'session_id', 'unknown')} in unified rule loop",
             self.event_sink,
         )
         emit(f"Legend mapping from env: {frame_data.legend}", self.event_sink)
         set_dashboard(
             self.dashboard,
-            status="Learning from perceived transitions.",
+            status="Learning rules and solving from perceived transitions.",
             detail="Evidence store ready.",
         )
 
@@ -155,7 +161,11 @@ class RuleReasoningLoop:
                 emit("Max steps reached.", self.event_sink)
                 return
 
-            decision = self.planner.choose_action(current_state, frame_data)
+            decision = self.planner.choose_action(
+                current_state,
+                frame_data,
+                visual_transition=self.last_visual_transition,
+            )
             predictions = self.rulebook.predict(current_state, decision.action)
             emit(
                 format_action_event(
@@ -172,13 +182,22 @@ class RuleReasoningLoop:
                 frame_data, current_state, decision
             )
             self._record_outcome(outcome, predictions)
-            prediction_diverged = (
-                bool(predictions) and outcome.after_state not in predictions
+            self.last_visual_transition = VisualTransition(
+                before_frame=outcome.before_frame,
+                action=outcome.action,
+                after_frame=outcome.after_frame,
             )
-            if prediction_diverged and hasattr(self.planner, "clear_llm_plan"):
+            self._dump_visual_transition_debug(self.last_visual_transition)
+            unexplained = not predictions or outcome.after_state not in predictions
+            if unexplained and hasattr(self.planner, "clear_llm_plan"):
                 self.planner.clear_llm_plan()
+            self._maybe_induce_rules(
+                actual_game_id,
+                visual_transition=self.last_visual_transition,
+            )
 
             remember(self.history, (frame_data, decision.action, outcome.after_frame))
+            steps += 1
             frame_data = outcome.after_frame
             current_state = outcome.after_state
 
@@ -198,13 +217,6 @@ class RuleReasoningLoop:
                 continue
 
             unchanged = 0
-            steps += 1
-            if prediction_diverged:
-                self._maybe_induce_rules(game_id)
-                last_induction_step = steps
-            elif steps and steps % 5 == 0 and steps != last_induction_step:
-                self._maybe_induce_rules(game_id)
-                last_induction_step = steps
 
             if (
                 outcome.after_frame.state in {GameState.WIN, GameState.GAME_OVER}
@@ -212,7 +224,7 @@ class RuleReasoningLoop:
                 != outcome.before_frame.levels_completed
             ):
                 emit("Level complete!", self.event_sink)
-                if mode == "win" and outcome.after_frame.state == GameState.WIN:
+                if outcome.after_frame.state == GameState.WIN:
                     emit("World completed successfully!", self.event_sink)
                     return
                 if outcome.after_frame.state == GameState.GAME_OVER:
@@ -226,59 +238,16 @@ class RuleReasoningLoop:
 
             self.sleep_fn(1)
 
+    def run_learning(
+        self,
+        *,
+        max_steps: int,
+        game_id: str,
+    ) -> None:
+        self.run(max_steps=max_steps, game_id=game_id)
+
     def run_solving(self, *, max_steps: int) -> None:
-        frame_data = self.env.reset()
-        current_state = self.perceiver.perceive(frame_data)
-        steps = 0
-        emit(
-            f"Started session {getattr(self.env, 'session_id', 'unknown')} in SOLVE mode",
-            self.event_sink,
-        )
-        set_dashboard(
-            self.dashboard,
-            status="Solving with verified engine rules.",
-            detail="Evidence store ready.",
-        )
-
-        while steps < max_steps:
-            decision = self.planner.choose_action(current_state, frame_data)
-            predictions = self.rulebook.predict(current_state, decision.action)
-            emit(
-                format_action_event(
-                    decision.action,
-                    decision.reason,
-                    decision.plan,
-                    len(predictions),
-                    decision.subgoal,
-                ),
-                self.event_sink,
-            )
-
-            outcome = self.action_executor.execute(
-                frame_data, current_state, decision
-            )
-            self._record_outcome(outcome, predictions)
-            if (
-                predictions
-                and outcome.after_state not in predictions
-                and hasattr(self.planner, "clear_llm_plan")
-            ):
-                self.planner.clear_llm_plan()
-
-            remember(self.history, (frame_data, decision.action, outcome.after_frame))
-            steps += 1
-            frame_data = outcome.after_frame
-            current_state = outcome.after_state
-
-            if outcome.after_frame.state == GameState.WIN:
-                emit("Game completed successfully!", self.event_sink)
-                return
-            if outcome.after_frame.state == GameState.GAME_OVER:
-                emit("Game Over encountered during solve.", self.event_sink)
-                return
-            self.sleep_fn(1)
-
-        emit("Stopped after max solve steps.", self.event_sink)
+        self.run(max_steps=max_steps, game_id="")
 
     def _record_outcome(self, outcome: StepOutcome, predictions):
         self.rulebook.record_prediction_result(
@@ -295,12 +264,20 @@ class RuleReasoningLoop:
         self.rulebook.record_observed_transition(record)
         return record
 
-    def _maybe_induce_rules(self, game_id: str) -> None:
-        recent = self.memory.recent(5)
+    def _maybe_induce_rules(
+        self,
+        game_id: str,
+        visual_transition: VisualTransition | None = None,
+    ) -> None:
+        recent = self.memory.recent(1)
         if not recent:
             return
         try:
-            hypotheses = self.inducer.propose_from_recent(game_id, recent)
+            hypotheses = self.inducer.propose_from_recent(
+                game_id,
+                recent,
+                visual_transition=visual_transition,
+            )
         except RuntimeError as e:
             emit(f"LLM failure during rule induction, skipping: {e}", self.event_sink)
             return
@@ -309,3 +286,20 @@ class RuleReasoningLoop:
             return
         if hypotheses:
             emit(f"Proposed {len(hypotheses)} rule hypotheses.", self.event_sink)
+
+    def _dump_visual_transition_debug(
+        self, visual_transition: VisualTransition
+    ) -> None:
+        if not visual_transition.image_data_urls():
+            return
+        if self.visual_debug_dir is None:
+            self.visual_debug_dir = Path(
+                tempfile.mkdtemp(prefix="puzzlescript-llm-visual-")
+            )
+        dump_visual_transition(visual_transition, self.visual_debug_dir)
+        if not self._visual_debug_announced:
+            emit(
+                f"LLM visual context debug files: {self.visual_debug_dir}",
+                self.event_sink,
+            )
+            self._visual_debug_announced = True

@@ -48,6 +48,7 @@ class GeneralizedRule:
     conditions: tuple[CellCondition, ...]
     effects: tuple[CellEffect, ...]
     evidence_ids: tuple[str, ...]
+    summary: str = ""
     status: str = "candidate"
     failures: tuple[str, ...] = ()
     prediction_hits: int = 0
@@ -68,6 +69,7 @@ class GeneralizedRule:
             ),
             effects=tuple(CellEffect.from_data(item) for item in data.get("effects", [])),
             evidence_ids=tuple(str(item) for item in data.get("evidence_ids", [])),
+            summary=str(data.get("summary", "")),
             status=str(data.get("status", "candidate")),
             failures=tuple(str(item) for item in data.get("failures", [])),
             prediction_hits=int(data.get("prediction_hits", 0)),
@@ -90,6 +92,7 @@ class GeneralizedRule:
             "conditions": [item.to_data() for item in self.conditions],
             "effects": [item.to_data() for item in self.effects],
             "evidence_ids": list(self.evidence_ids),
+            "summary": self.summary,
             "status": self.status,
             "failures": list(self.failures),
             "prediction_hits": self.prediction_hits,
@@ -180,8 +183,11 @@ def candidate_rules_from_llm_json(data: dict[str, Any]) -> list[GeneralizedRule]
             raise ValueError(f"rule {index} must be an object")
         _require_fields(
             raw_rule,
-            ("action", "anchor", "conditions", "effects", "evidence_ids"),
+            ("summary", "action", "anchor", "conditions", "effects", "evidence_ids"),
         )
+        summary = str(raw_rule.get("summary", "")).strip()
+        if not summary:
+            raise ValueError(f"rule {index} must include a natural-language summary")
         evidence_ids = tuple(str(item) for item in raw_rule.get("evidence_ids", []))
         if not evidence_ids:
             raise ValueError(f"rule {index} must cite at least one evidence id")
@@ -197,6 +203,7 @@ def candidate_rules_from_llm_json(data: dict[str, Any]) -> list[GeneralizedRule]
                 conditions=conditions,
                 effects=effects,
                 evidence_ids=evidence_ids,
+                summary=summary,
                 result_state=(
                     str(raw_rule["result_state"])
                     if raw_rule.get("result_state") is not None

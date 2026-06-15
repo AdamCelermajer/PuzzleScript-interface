@@ -7,6 +7,7 @@ from client.engine.history import TransitionRecord
 from client.engine.rule_schema import candidate_rules_from_llm_json
 from client.engine.rules import RuleLibrary
 from client.engine.verifier import RuleVerifier
+from client.engine.visual_context import VisualTransition
 
 
 class RuleInducer:
@@ -25,19 +26,31 @@ class RuleInducer:
         self.event_sink = event_sink or (lambda _message: None)
 
     def propose_from_recent(
-        self, game_name: str, records: list[TransitionRecord]
+        self,
+        game_name: str,
+        records: list[TransitionRecord],
+        visual_transition: VisualTransition | None = None,
     ) -> list[str]:
         if not records:
             return []
 
-        events = "\n\n".join(
-            [
-                f"Event {index}:\n"
-                f"Action: {record.action.name}\n"
-                f"Board Before:\n{self._rows(record.before)}\n"
-                f"Board After:\n{self._rows(record.after)}"
-                for index, record in enumerate(records, start=1)
-            ]
+        events = (
+            visual_transition.prompt_text()
+            if visual_transition is not None
+            else "\n\n".join(
+                [
+                    f"Event {index}:\n"
+                    f"Action: {record.action.name}\n"
+                    f"Board Before:\n{self._rows(record.before)}\n"
+                    f"Board After:\n{self._rows(record.after)}"
+                    for index, record in enumerate(records, start=1)
+                ]
+            )
+        )
+        image_data_urls = (
+            visual_transition.image_data_urls()
+            if visual_transition is not None
+            else []
         )
         sys_prompt, user_prompt = prompts.get_deduce_rules_prompt(
             events,
@@ -46,7 +59,11 @@ class RuleInducer:
             game_name=game_name,
         )
         try:
-            data = self._call_rule_model(sys_prompt, user_prompt)
+            data = self._call_rule_model(
+                sys_prompt,
+                user_prompt,
+                image_data_urls=image_data_urls,
+            )
             candidates = candidate_rules_from_llm_json(data)
         except ValueError as e:
             self.event_sink(f"Rejected malformed rule candidate: {e}")
@@ -56,16 +73,37 @@ class RuleInducer:
         stored = self.library.add_generalized_rules(verified)
         return [rule.id for rule in stored if rule.status == "verified"]
 
-    def _call_rule_model(self, system: str, prompt: str) -> dict:
+    def _call_rule_model(
+        self,
+        system: str,
+        prompt: str,
+        image_data_urls: list[str] | None = None,
+    ) -> dict:
         if hasattr(self.llm_client, "call_json"):
-            return self.llm_client.call_json(system, prompt, model_type="pro")
+            return self.llm_client.call_json(
+                system,
+                prompt,
+                model_type="pro",
+                image_data_urls=image_data_urls,
+            )
 
         import json
+        import inspect
 
         from client.engine.utils import extract_json
 
+        call = self.llm_client._call
+        try:
+            signature = inspect.signature(call)
+        except (TypeError, ValueError):
+            signature = None
+        kwargs = {"model_type": "pro", "json_mode": True}
+        if signature is None or "image_data_urls" in signature.parameters:
+            kwargs["image_data_urls"] = image_data_urls
         response = self.llm_client._call(
-            system, prompt, model_type="pro", json_mode=True
+            system,
+            prompt,
+            **kwargs,
         )
         return json.loads(extract_json(response))
 

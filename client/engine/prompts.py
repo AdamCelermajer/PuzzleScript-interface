@@ -1,6 +1,7 @@
 RULE_FORMAT = """
 Executable rule JSON shape:
   {
+    "summary": "ACTION4 moves the player one cell right into empty space.",
     "action": "ACTION4",
     "anchor": 2,
     "conditions": [
@@ -28,7 +29,8 @@ def get_deduce_rules_prompt(
         f"{RULE_FORMAT}\n\n"
         "Only propose rules directly supported by the event log. "
         "Do not guess, do not duplicate known rules, and do not over-generalize from one direction. "
-        "Every rule must cite the transition ids that support it.\n\n"
+        "Every rule must include a concise natural-language summary and cite the "
+        "transition ids that support it.\n\n"
         'Output only JSON: {"rules": [<rule objects>]}\n'
         'If no rule is supported, output: {"rules": []}'
     )
@@ -53,7 +55,7 @@ def get_explore_subgoal_prompt(
         "You guide an agent learning a grid puzzle by experiment. "
         f"The game is '{game_name}'. "
         "Verified rules could not produce a plan, so choose a small useful subgoal "
-        "and a short action plan to learn more or move toward solving. "
+        "and one next action to learn more or move toward solving. "
         "Use only the available actions. "
         "Do not predict the next board or dump a full state. "
         'Output only JSON: {"subgoal": "one short sentence", "plan": ["ACTION1"]}'
@@ -67,6 +69,6 @@ def get_explore_subgoal_prompt(
         f"Known rule hypotheses:\n{known_rules_text or '- none'}\n\n"
         f"Recent evidence:\n{recent_events or '- none'}\n\n"
         f"{image_section}"
-        "Choose the next subgoal and action plan. Output only JSON."
+        "Choose the next subgoal and one-action plan. Output only JSON."
     )
     return system, prompt

@@ -9,7 +9,13 @@ from client.engine.planner import Planner
 from client.engine.rule_schema import CellCondition, CellEffect, GeneralizedRule
 from client.engine.rules import RuleLibrary
 from client.engine.state import EngineState
-from client.engine.types import GameAction, GameState
+from client.engine.types import (
+    ActionInput,
+    FrameData,
+    GameAction,
+    GameState,
+    RenderedFrame,
+)
 from client.engine.verifier import RuleVerifier
 
 
@@ -46,13 +52,41 @@ def _verified_rule() -> GeneralizedRule:
 class FakeJsonLlm:
     def __init__(self, payloads: list[dict]) -> None:
         self.payloads = list(payloads)
-        self.calls: list[tuple[str, str, str]] = []
+        self.calls: list[dict] = []
 
-    def call_json(self, system: str, prompt: str, model_type: str = "flash") -> dict:
-        self.calls.append((system, prompt, model_type))
+    def call_json(
+        self,
+        system: str,
+        prompt: str,
+        model_type: str = "flash",
+        image_data_urls: list[str] | None = None,
+    ) -> dict:
+        self.calls.append(
+            {
+                "system": system,
+                "prompt": prompt,
+                "model_type": model_type,
+                "image_data_urls": list(image_data_urls or []),
+            }
+        )
         if not self.payloads:
             raise AssertionError("Unexpected LLM call")
         return self.payloads.pop(0)
+
+
+def _frame(grid: list[list[int]], image_url: str) -> FrameData:
+    return FrameData(
+        frame=[grid],
+        state=GameState.PLAYING,
+        levels_completed=0,
+        game_id="test-grid",
+        win_levels=1,
+        guid="test-grid",
+        full_reset=False,
+        available_actions=[GameAction.ACTION4],
+        action_input=ActionInput(action=GameAction.ACTION4),
+        rendered_frame=RenderedFrame("image/png", image_url),
+    )
 
 
 class EngineGeneralizedRuleTests(unittest.TestCase):
@@ -79,6 +113,7 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
                     {
                         "rules": [
                             {
+                                "summary": "ACTION4 moves the player one cell right into empty space.",
                                 "action": "ACTION4",
                                 "anchor": 2,
                                 "conditions": [
@@ -102,8 +137,20 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
 
             self.assertEqual(len(hypotheses), 1)
             self.assertEqual(library.generalized_rules[0].status, "verified")
+            self.assertEqual(
+                library.generalized_rules[0].summary,
+                "ACTION4 moves the player one cell right into empty space.",
+            )
+            self.assertIn(
+                "ACTION4 moves the player one cell right into empty space.",
+                library.known_rules_text(),
+            )
             saved = json.loads((Path(tmpdir) / "rules_v2.json").read_text())
             self.assertEqual(saved["rules"][0]["status"], "verified")
+            self.assertEqual(
+                saved["rules"][0]["summary"],
+                "ACTION4 moves the player one cell right into empty space.",
+            )
 
     def test_inducer_logs_malformed_llm_output_without_crashing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -121,6 +168,37 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
 
             self.assertEqual(hypotheses, [])
             self.assertIn("Rejected malformed rule candidate", events[0])
+
+    def test_inducer_sends_only_last_visual_transition_pair_to_llm(self) -> None:
+        from client.engine.visual_context import VisualTransition
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
+            record = history.add(
+                _state([[2, 0, 1]]), GameAction.ACTION4, _state([[0, 2, 1]])
+            )
+            library = RuleLibrary(Path(tmpdir))
+            llm = FakeJsonLlm([{"rules": []}])
+            before_image = "data:image/png;base64,before"
+            after_image = "data:image/png;base64,after"
+            visual_transition = VisualTransition(
+                before_frame=_frame([[2, 0, 1]], before_image),
+                action=GameAction.ACTION4,
+                after_frame=_frame([[0, 2, 1]], after_image),
+            )
+
+            RuleInducer(llm, library, RuleVerifier(history)).propose_from_recent(
+                "test-grid",
+                [record],
+                visual_transition=visual_transition,
+            )
+
+            self.assertEqual(
+                llm.calls[0]["image_data_urls"],
+                [before_image, after_image],
+            )
+            self.assertIn("Last visual transition", llm.calls[0]["prompt"])
+            self.assertIn("Action: ACTION4", llm.calls[0]["prompt"])
 
     def test_planner_uses_generalized_rules_before_llm_probe(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

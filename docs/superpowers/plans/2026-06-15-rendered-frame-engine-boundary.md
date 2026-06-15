@@ -577,7 +577,7 @@ from client.arc.arcade_env import ArcadeEnv
 from client.runtime.runner import RuleReasoningLoop
 ```
 
-Keep `TerminalDashboard` as the default dashboard for now.
+Use `ScreenDashboard` as the engine-run dashboard.
 
 - [ ] **Step 4: Run test to verify it passes**
 

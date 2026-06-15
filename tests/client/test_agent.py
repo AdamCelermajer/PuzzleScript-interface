@@ -99,7 +99,9 @@ class AgentLoopTests(unittest.TestCase):
         llm = FakeLlmClient(
             [
                 '{"subgoal": "probe the first move", "plan": ["ACTION1"]}',
+                '{"rules": []}',
                 '{"subgoal": "probe the second move", "plan": ["ACTION2"]}',
+                '{"rules": []}',
             ]
         )
         agent = Agent(cfg, llm)
@@ -115,7 +117,7 @@ class AgentLoopTests(unittest.TestCase):
             run_learning_loop(cfg, env, agent)
 
         self.assertEqual(env.step_actions, [GameAction.ACTION1, GameAction.ACTION2])
-        self.assertEqual(len(llm.calls), 2)
+        self.assertEqual(len(llm.calls), 4)
         self.assertTrue(
             os.path.exists(os.path.join(cfg.rules_dir, cfg.game, "transitions.jsonl"))
         )
@@ -143,8 +145,11 @@ class AgentLoopTests(unittest.TestCase):
         llm = FakeLlmClient(
             [
                 '{"subgoal": "try the first open direction", "plan": ["ACTION1"]}',
+                '{"rules": []}',
                 '{"subgoal": "try the next open direction", "plan": ["ACTION3"]}',
+                '{"rules": []}',
                 '{"subgoal": "finish the small board", "plan": ["ACTION1"]}',
+                '{"rules": []}',
             ]
         )
         agent = Agent(cfg, llm)
@@ -179,7 +184,7 @@ class AgentLoopTests(unittest.TestCase):
             [GameAction.ACTION1, GameAction.ACTION3, GameAction.ACTION1],
         )
         self.assertNotIn(GameAction.RESET, env.step_actions)
-        self.assertEqual(len(llm.calls), 3)
+        self.assertEqual(len(llm.calls), 6)
         action_events = [event for event in events if event.startswith("Action:")]
         self.assertTrue(action_events)
         self.assertIn("LLM subgoal: try the first open direction", action_events[0])

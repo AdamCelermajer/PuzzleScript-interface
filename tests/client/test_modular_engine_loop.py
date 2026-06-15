@@ -165,6 +165,58 @@ class ModularEngineLoopTests(unittest.TestCase):
             self.assertEqual(memory.recent(1)[0].action, GameAction.ACTION4)
             self.assertTrue(rulebook.predict(memory.recent(1)[0].before, GameAction.ACTION4))
 
+    def test_unified_loop_induces_rules_after_each_unexplained_llm_action(
+        self,
+    ) -> None:
+        from client.engine.actions import ActionExecutor
+        from client.engine.induction import RuleInducer
+        from client.engine.loop import RuleReasoningLoop
+        from client.engine.memory import EngineMemory
+        from client.engine.planning import RuleFirstPlanner
+        from client.engine.rulebook import EngineRulebook
+        from client.engine.verifier import RuleVerifier
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            before_frame = _frame([[2, 0, 0]])
+            middle_frame = _frame([[0, 2, 0]], action=GameAction.ACTION4)
+            after_frame = _frame([[0, 0, 2]], action=GameAction.ACTION4)
+            env = FakeEnv(before_frame, [middle_frame, after_frame])
+            memory = EngineMemory(TransitionHistory(Path(tmpdir) / "transitions.jsonl"))
+            rulebook = EngineRulebook(RuleLibrary(Path(tmpdir)))
+            llm = FakeLlmClient(
+                [
+                    '{"subgoal": "try moving right twice", "plan": ["ACTION4", "ACTION4"]}',
+                    '{"rules": []}',
+                    '{"subgoal": "re-plan after the observed move", "plan": ["ACTION4"]}',
+                    '{"rules": []}',
+                ]
+            )
+            planner = RuleFirstPlanner(rulebook, memory, llm_client=llm)
+            inducer = RuleInducer(
+                llm,
+                rulebook.library,
+                RuleVerifier(memory.history),
+            )
+            loop = RuleReasoningLoop(
+                env,
+                Perceiver(),
+                memory,
+                rulebook,
+                planner,
+                inducer,
+                ActionExecutor(env, Perceiver()),
+                sleep_fn=lambda _seconds: None,
+            )
+
+            loop.run(max_steps=2, game_id="modular-world")
+
+            self.assertEqual(env.step_actions, [GameAction.ACTION4, GameAction.ACTION4])
+            self.assertEqual(len(llm.calls), 4)
+            self.assertIn("choose a small useful subgoal", llm.calls[0][0])
+            self.assertIn("propose executable mechanical rules", llm.calls[1][0])
+            self.assertIn("choose a small useful subgoal", llm.calls[2][0])
+            self.assertIn("propose executable mechanical rules", llm.calls[3][0])
+
     def test_runtime_runner_executes_engine_decisions_outside_engine(self) -> None:
         from client.runtime.runner import ActionExecutor
 

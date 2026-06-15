@@ -59,6 +59,7 @@ class RuleSchemaTests(unittest.TestCase):
             "rules": [
                 {
                     "id": "llm-move-right",
+                    "summary": "ACTION4 moves the player one cell right into empty space.",
                     "action": "ACTION4",
                     "anchor": 2,
                     "conditions": [
@@ -78,6 +79,10 @@ class RuleSchemaTests(unittest.TestCase):
 
         self.assertEqual(len(rules), 1)
         self.assertEqual(rules[0].action, GameAction.ACTION4.name)
+        self.assertEqual(
+            rules[0].summary,
+            "ACTION4 moves the player one cell right into empty space.",
+        )
         self.assertEqual(rules[0].status, "candidate")
 
     def test_malformed_llm_rule_json_raises_clear_error(self) -> None:

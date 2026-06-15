@@ -59,7 +59,7 @@ def run_learning_loop(
     event_sink: Optional[Callable[[str], None]] = None,
 ) -> None:
     loop = _make_loop(env, agent, dashboard=dashboard, event_sink=event_sink)
-    loop.run_learning(max_steps=cfg.max_steps, game_id=cfg.game, mode=cfg.mode)
+    loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
     agent.history = loop.history
 
 
@@ -71,5 +71,5 @@ def run_solving_loop(
     event_sink: Optional[Callable[[str], None]] = None,
 ) -> None:
     loop = _make_loop(env, agent, dashboard=dashboard, event_sink=event_sink)
-    loop.run_solving(max_steps=cfg.max_steps)
+    loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
     agent.history = loop.history

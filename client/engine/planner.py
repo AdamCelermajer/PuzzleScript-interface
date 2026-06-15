@@ -11,6 +11,7 @@ from client.engine.rules import RuleLibrary
 from client.engine.state import EngineState
 from client.engine.types import FrameData, GameAction
 from client.engine.utils import extract_json
+from client.engine.visual_context import VisualTransition
 
 
 DEFAULT_ACTIONS = (
@@ -51,7 +52,10 @@ class Planner:
         self.pending_llm_subgoal = ""
 
     def choose_action(
-        self, current: EngineState, frame_data: FrameData
+        self,
+        current: EngineState,
+        frame_data: FrameData,
+        visual_transition: VisualTransition | None = None,
     ) -> PlanDecision:
         actions = self.available_actions(frame_data)
         plan = self.plan_to_win(current, actions)
@@ -59,18 +63,13 @@ class Planner:
             self.clear_llm_plan()
             return PlanDecision(plan[0], "verified_plan", plan)
 
-        while self.pending_llm_plan:
-            action = self.pending_llm_plan.pop(0)
-            if action not in actions:
-                continue
-            return PlanDecision(
-                action,
-                "llm_subgoal",
-                [action, *self.pending_llm_plan],
-                subgoal=self.pending_llm_subgoal,
-            )
-
-        return self.ask_llm_for_subgoal(current, actions, frame_data)
+        self.clear_llm_plan()
+        return self.ask_llm_for_subgoal(
+            current,
+            actions,
+            frame_data,
+            visual_transition=visual_transition,
+        )
 
     def clear_llm_plan(self) -> None:
         self.pending_llm_plan = []
@@ -119,34 +118,48 @@ class Planner:
         current: EngineState,
         actions: list[GameAction],
         frame_data: FrameData,
+        visual_transition: VisualTransition | None = None,
     ) -> PlanDecision:
         if self.llm_client is None:
             raise RuntimeError(
                 "Planner needs an LLM client when no verified plan exists"
             )
 
-        image_data_urls = self._image_data_urls(frame_data)
+        image_data_urls = (
+            visual_transition.image_data_urls()
+            if visual_transition is not None
+            else self._image_data_urls(frame_data)
+        )
+        recent_events = (
+            visual_transition.prompt_text()
+            if visual_transition is not None
+            else self._recent_events_text()
+        )
+        rendered_image_note = ""
+        if image_data_urls:
+            rendered_image_note = (
+                "attached as the last before/after visual transition."
+                if visual_transition is not None
+                else "attached as current visual observation."
+            )
         system, prompt = prompts.get_explore_subgoal_prompt(
             current_board="\n".join(current.rows()),
             available_actions=", ".join(action.name for action in actions),
-            recent_events=self._recent_events_text(),
+            recent_events=recent_events,
             known_rules_text=self.library.known_rules_text(),
             game_name=current.game_id,
-            rendered_image_note=(
-                "attached as current visual observation."
-                if image_data_urls
-                else ""
-            ),
+            rendered_image_note=rendered_image_note,
         )
         data = self._call_json(system, prompt, image_data_urls=image_data_urls)
         plan = self._parse_action_plan(data, actions)
-        self.pending_llm_plan = plan[1:]
-        self.pending_llm_subgoal = str(data.get("subgoal", "")).strip()
+        self.pending_llm_plan = []
+        self.pending_llm_subgoal = ""
+        subgoal = str(data.get("subgoal", "")).strip()
         return PlanDecision(
             plan[0],
             "llm_subgoal",
-            plan,
-            subgoal=self.pending_llm_subgoal,
+            [plan[0]],
+            subgoal=subgoal,
         )
 
     def _call_json(
@@ -215,7 +228,7 @@ class Planner:
 
     def _recent_events_text(self) -> str:
         lines = []
-        for record in self.history.recent(5):
+        for record in self.history.recent(1):
             lines.append(
                 f"{record.id}: {record.action.name}\n"
                 f"Before:\n{self._rows(record.before)}\n"

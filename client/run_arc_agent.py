@@ -9,7 +9,7 @@ from client.engine.architecture import EngineArchitecture
 from client.engine.llm_client import Config, LlmClient
 from client.arc.arcade_env import ArcadeEnv
 from client.runtime.runner import RuleReasoningLoop
-from client.terminal_dashboard import TerminalDashboard
+from client.screen_dashboard import ScreenDashboard
 
 
 def main():
@@ -17,24 +17,17 @@ def main():
     parser.add_argument("--game-id", type=str, default="ps_sokoban_basic-v1")
     parser.add_argument("--backend-url", type=str, default="http://localhost:8000")
     parser.add_argument("--max_steps", type=int, default=50)
-    parser.add_argument("--mode", type=str, choices=["learn", "solve"], default="learn")
     args = parser.parse_args()
 
     cfg = Config(
         game=args.game_id,
         max_steps=args.max_steps,
-        mode=args.mode,
         server_url=args.backend_url,
     )
-    dashboard = TerminalDashboard(
+    dashboard = ScreenDashboard(
         game_id=args.game_id,
-        mode=args.mode.upper(),
-        controls="Engine dashboard. Press Ctrl+C to stop.",
-        display_profile=(
-            "arc"
-            if "three.arcprize.org" in (args.backend_url or "").strip().lower()
-            else "puzzlescript"
-        ),
+        mode="RUN",
+        controls="Engine dashboard. Close the window or press Ctrl+C to stop.",
     )
     event_sink = dashboard.push_event
     env = ArcadeEnv(
@@ -57,15 +50,11 @@ def main():
         event_sink=event_sink,
     )
 
+    def run_engine() -> None:
+        loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
+
     try:
-        if args.mode == "learn":
-            loop.run_learning(
-                max_steps=cfg.max_steps,
-                game_id=cfg.game,
-                mode=cfg.mode,
-            )
-        else:
-            loop.run_solving(max_steps=cfg.max_steps)
+        dashboard.run_engine(run_engine)
     finally:
         dashboard.close()
 

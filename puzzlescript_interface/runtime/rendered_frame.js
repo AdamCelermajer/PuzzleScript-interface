@@ -1,6 +1,12 @@
 const zlib = require('zlib');
 const { BaseUI } = require('puzzlescript');
 
+const MIN_RENDER_SCALE = 9;
+const configuredScale = Number(process.env.PUZZLESCRIPT_RENDER_SCALE ?? MIN_RENDER_SCALE);
+const RENDER_SCALE = Number.isFinite(configuredScale)
+    ? Math.max(MIN_RENDER_SCALE, configuredScale)
+    : MIN_RENDER_SCALE;
+
 class HeadlessPixelUI extends BaseUI {
     renderLevelScreen() {}
     setPixel() {}
@@ -71,6 +77,28 @@ function encodePng(width, height, rgba) {
     ]);
 }
 
+function scaleRgba(width, height, rgba, scale) {
+    if (scale <= 1) {
+        return { width, height, rgba };
+    }
+    const scaledWidth = width * scale;
+    const scaledHeight = height * scale;
+    const scaled = Buffer.alloc(scaledWidth * scaledHeight * 4);
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const source = (y * width + x) * 4;
+            for (let sy = 0; sy < scale; sy++) {
+                for (let sx = 0; sx < scale; sx++) {
+                    const target =
+                        ((y * scale + sy) * scaledWidth + (x * scale + sx)) * 4;
+                    rgba.copy(scaled, target, source, source + 4);
+                }
+            }
+        }
+    }
+    return { width: scaledWidth, height: scaledHeight, rgba: scaled };
+}
+
 function rgbaFromColor(color) {
     if (!color || color.isTransparent()) {
         return [0, 0, 0, 0];
@@ -119,12 +147,13 @@ function renderSessionFrame(session) {
         }
     }
 
-    const png = encodePng(width, height, rgba);
+    const scaled = scaleRgba(width, height, rgba, RENDER_SCALE);
+    const png = encodePng(scaled.width, scaled.height, scaled.rgba);
     return {
         mime_type: 'image/png',
         data_url: `data:image/png;base64,${png.toString('base64')}`,
-        width,
-        height,
+        width: scaled.width,
+        height: scaled.height,
     };
 }
 
