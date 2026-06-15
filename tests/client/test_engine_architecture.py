@@ -9,7 +9,13 @@ from client.engine.history import TransitionHistory
 from client.engine.llm_client import Config
 from client.engine.perceiver import Perceiver
 from client.engine.rules import RuleLibrary
-from client.engine.types import ActionInput, FrameData, GameAction, GameState
+from client.engine.types import (
+    ActionInput,
+    FrameData,
+    GameAction,
+    GameState,
+    RenderedFrame,
+)
 
 
 def _frame(
@@ -18,6 +24,7 @@ def _frame(
     state: GameState = GameState.PLAYING,
     action: GameAction = GameAction.RESET,
     available_actions: list[GameAction] | None = None,
+    rendered_frame: RenderedFrame | None = None,
 ) -> FrameData:
     return FrameData(
         frame=[grid],
@@ -32,6 +39,7 @@ def _frame(
         else [GameAction.ACTION3, GameAction.ACTION4, GameAction.RESET],
         action_input=ActionInput(action=action),
         legend={},
+        rendered_frame=rendered_frame,
     )
 
 
@@ -68,6 +76,29 @@ class FakeLlmClient:
         if not self.responses:
             raise AssertionError("Unexpected LLM call")
         return self.responses.pop(0)
+
+
+class FakeImageLlmClient:
+    def __init__(self, response: dict) -> None:
+        self.response = response
+        self.calls: list[dict] = []
+
+    def call_json(
+        self,
+        system: str,
+        prompt: str,
+        model_type: str = "flash",
+        image_data_urls: list[str] | None = None,
+    ) -> dict:
+        self.calls.append(
+            {
+                "system": system,
+                "prompt": prompt,
+                "model_type": model_type,
+                "image_data_urls": list(image_data_urls or []),
+            }
+        )
+        return self.response
 
 
 class EngineArchitectureTests(unittest.TestCase):
@@ -224,6 +255,34 @@ class EngineArchitectureTests(unittest.TestCase):
             self.assertEqual(env.step_actions, [GameAction.ACTION7])
             self.assertEqual(len(llm.calls), 1)
             self.assertIn("Available actions: ACTION4, ACTION7", llm.calls[0][1])
+
+    def test_planner_attaches_rendered_frame_to_llm_subgoal_request(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            image_url = "data:image/png;base64,iVBORw0KGgo="
+            llm = FakeImageLlmClient(
+                {"subgoal": "inspect rendered board", "plan": ["ACTION4"]}
+            )
+            library = RuleLibrary(Path(tmpdir))
+            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
+            from client.engine.planner import Planner
+
+            planner = Planner(library, history, llm_client=llm)
+            frame = _frame(
+                [[2, 0]],
+                rendered_frame=RenderedFrame(
+                    mime_type="image/png",
+                    data_url=image_url,
+                    width=10,
+                    height=10,
+                ),
+            )
+            state = Perceiver().perceive(frame)
+
+            decision = planner.choose_action(state, frame)
+
+            self.assertEqual(decision.action, GameAction.ACTION4)
+            self.assertEqual(llm.calls[0]["image_data_urls"], [image_url])
+            self.assertIn("Rendered image: attached", llm.calls[0]["prompt"])
 
 
 if __name__ == "__main__":

@@ -22,6 +22,7 @@ class LlmClientConfigTests(unittest.TestCase):
 
         self.assertEqual(cfg.flash_model, "deepseek/deepseek-v4-pro")
         self.assertEqual(cfg.pro_model, "deepseek/deepseek-v4-pro")
+        self.assertEqual(cfg.image_model, "openai/gpt-4o-mini")
         self.assertEqual(cfg.openrouter_api_key, "test-openrouter-key")
         self.assertEqual(routed_key, "test-openrouter-key")
         self.assertFalse(hasattr(cfg, "api_key"))
@@ -51,6 +52,41 @@ class LlmClientConfigTests(unittest.TestCase):
         self.assertEqual(result, '{"plan": ["ACTION1"]}')
         self.assertEqual(completion.call_count, 1)
         self.assertIn("Asking openrouter/deepseek/deepseek-v4-pro", events[0])
+
+    def test_call_can_attach_image_data_urls_to_user_message(self) -> None:
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content='{"plan": []}'))]
+        )
+        image_url = "data:image/png;base64,iVBORw0KGgo="
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            cfg = Config()
+            client = LlmClient(cfg)
+            with patch(
+                "client.engine.llm_client.litellm.completion",
+                return_value=response,
+            ) as completion:
+                result = client._call(
+                    "system",
+                    "prompt",
+                    json_mode=True,
+                    image_data_urls=[image_url],
+                )
+
+        self.assertEqual(result, '{"plan": []}')
+        messages = completion.call_args.kwargs["messages"]
+        self.assertEqual(
+            completion.call_args.kwargs["model"],
+            "openrouter/openai/gpt-4o-mini",
+        )
+        self.assertEqual(messages[0], {"role": "system", "content": "system"})
+        self.assertEqual(messages[1]["role"], "user")
+        self.assertEqual(
+            messages[1]["content"],
+            [
+                {"type": "text", "text": "prompt"},
+                {"type": "image_url", "image_url": {"url": image_url}},
+            ],
+        )
 
     def test_call_json_returns_object_and_rejects_invalid_json(self) -> None:
         good = SimpleNamespace(

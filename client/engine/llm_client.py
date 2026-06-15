@@ -20,6 +20,7 @@ class Config:
     server_url: str = "http://localhost:3543"
     flash_model: str = "deepseek/deepseek-v4-pro"
     pro_model: str = "deepseek/deepseek-v4-pro"
+    image_model: str = "openai/gpt-4o-mini"
     game: str = "ps_sokoban_basic-v1"
     mode: str = "learn"
     max_steps: int = 20
@@ -62,12 +63,23 @@ class LlmClient:
         prompt: str,
         model_type: str = "flash",
         json_mode: bool = False,
+        image_data_urls: list[str] | None = None,
     ) -> str:
         """Call the configured OpenRouter model and return plain text output."""
-        litellm_model = self._litellm_model(model_type)
+        user_content: str | list[dict] = prompt
+        images = [url for url in image_data_urls or [] if str(url).strip()]
+        litellm_model = self._litellm_model("image" if images else model_type)
+        if images:
+            user_content = [
+                {"type": "text", "text": prompt},
+                *[
+                    {"type": "image_url", "image_url": {"url": str(url)}}
+                    for url in images
+                ],
+            ]
         messages = [
             {"role": "system", "content": system},
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": user_content},
         ]
 
         kwargs = {}
@@ -93,16 +105,30 @@ class LlmClient:
         system: str,
         prompt: str,
         model_type: str = "flash",
+        image_data_urls: list[str] | None = None,
     ) -> str:
-        return self._call(system, prompt, model_type=model_type, json_mode=False)
+        return self._call(
+            system,
+            prompt,
+            model_type=model_type,
+            json_mode=False,
+            image_data_urls=image_data_urls,
+        )
 
     def call_json(
         self,
         system: str,
         prompt: str,
         model_type: str = "flash",
+        image_data_urls: list[str] | None = None,
     ) -> dict:
-        response = self._call(system, prompt, model_type=model_type, json_mode=True)
+        response = self._call(
+            system,
+            prompt,
+            model_type=model_type,
+            json_mode=True,
+            image_data_urls=image_data_urls,
+        )
         try:
             data = json.loads(extract_json(response))
         except json.JSONDecodeError as e:
@@ -112,6 +138,8 @@ class LlmClient:
         return data
 
     def _model_name(self, model_type: str) -> str:
+        if model_type == "image":
+            return self.cfg.image_model
         return self.cfg.pro_model if model_type == "pro" else self.cfg.flash_model
 
     def _litellm_model(self, model_type: str) -> str:

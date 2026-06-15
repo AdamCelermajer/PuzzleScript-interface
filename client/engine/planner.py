@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import inspect
 from collections import deque
 from dataclasses import dataclass
 
@@ -69,7 +70,7 @@ class Planner:
                 subgoal=self.pending_llm_subgoal,
             )
 
-        return self.ask_llm_for_subgoal(current, actions)
+        return self.ask_llm_for_subgoal(current, actions, frame_data)
 
     def clear_llm_plan(self) -> None:
         self.pending_llm_plan = []
@@ -114,21 +115,30 @@ class Planner:
         ]
 
     def ask_llm_for_subgoal(
-        self, current: EngineState, actions: list[GameAction]
+        self,
+        current: EngineState,
+        actions: list[GameAction],
+        frame_data: FrameData,
     ) -> PlanDecision:
         if self.llm_client is None:
             raise RuntimeError(
                 "Planner needs an LLM client when no verified plan exists"
             )
 
+        image_data_urls = self._image_data_urls(frame_data)
         system, prompt = prompts.get_explore_subgoal_prompt(
             current_board="\n".join(current.rows()),
             available_actions=", ".join(action.name for action in actions),
             recent_events=self._recent_events_text(),
             known_rules_text=self.library.known_rules_text(),
             game_name=current.game_id,
+            rendered_image_note=(
+                "attached as current visual observation."
+                if image_data_urls
+                else ""
+            ),
         )
-        data = self._call_json(system, prompt)
+        data = self._call_json(system, prompt, image_data_urls=image_data_urls)
         plan = self._parse_action_plan(data, actions)
         self.pending_llm_plan = plan[1:]
         self.pending_llm_subgoal = str(data.get("subgoal", "")).strip()
@@ -139,13 +149,43 @@ class Planner:
             subgoal=self.pending_llm_subgoal,
         )
 
-    def _call_json(self, system: str, prompt: str) -> dict:
+    def _call_json(
+        self,
+        system: str,
+        prompt: str,
+        image_data_urls: list[str] | None = None,
+    ) -> dict:
         if hasattr(self.llm_client, "call_json"):
-            return self.llm_client.call_json(system, prompt, model_type="flash")
-        response = self.llm_client._call(
-            system, prompt, model_type="flash", json_mode=True
-        )
+            call_json = self.llm_client.call_json
+            try:
+                signature = inspect.signature(call_json)
+            except (TypeError, ValueError):
+                signature = None
+            if signature is None or "image_data_urls" in signature.parameters:
+                return call_json(
+                    system,
+                    prompt,
+                    model_type="flash",
+                    image_data_urls=image_data_urls,
+                )
+            return call_json(system, prompt, model_type="flash")
+        call = self.llm_client._call
+        try:
+            signature = inspect.signature(call)
+        except (TypeError, ValueError):
+            signature = None
+        kwargs = {"model_type": "flash", "json_mode": True}
+        if signature is None or "image_data_urls" in signature.parameters:
+            kwargs["image_data_urls"] = image_data_urls
+        response = call(system, prompt, **kwargs)
         return json.loads(extract_json(response))
+
+    def _image_data_urls(self, frame_data: FrameData) -> list[str]:
+        rendered_frame = getattr(frame_data, "rendered_frame", None)
+        data_url = getattr(rendered_frame, "data_url", "")
+        if not data_url:
+            return []
+        return [str(data_url)]
 
     def _parse_action_plan(
         self, data: dict, available_actions: list[GameAction]

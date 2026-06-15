@@ -47,6 +47,7 @@ def get_explore_subgoal_prompt(
     recent_events: str,
     known_rules_text: str,
     game_name: str = "Unknown",
+    rendered_image_note: str = "",
 ) -> tuple[str, str]:
     system = (
         "You guide an agent learning a grid puzzle by experiment. "
@@ -57,11 +58,15 @@ def get_explore_subgoal_prompt(
         "Do not predict the next board or dump a full state. "
         'Output only JSON: {"subgoal": "one short sentence", "plan": ["ACTION1"]}'
     )
+    image_section = (
+        f"Rendered image: {rendered_image_note}\n\n" if rendered_image_note else ""
+    )
     prompt = (
         f"Current board:\n{current_board}\n\n"
         f"Available actions: {available_actions}\n\n"
         f"Known rule hypotheses:\n{known_rules_text or '- none'}\n\n"
         f"Recent evidence:\n{recent_events or '- none'}\n\n"
+        f"{image_section}"
         "Choose the next subgoal and action plan. Output only JSON."
     )
     return system, prompt
