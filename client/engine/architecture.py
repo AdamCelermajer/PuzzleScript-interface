@@ -6,8 +6,10 @@ from pathlib import Path
 from client.engine.history import TransitionHistory
 from client.engine.induction import RuleInducer
 from client.engine.llm_client import Config
-from client.engine.perceiver import Perceiver
-from client.engine.planner import Planner
+from client.engine.memory import EngineMemory
+from client.engine.perception import Perception
+from client.engine.planning import RuleFirstPlanner
+from client.engine.rulebook import EngineRulebook
 from client.engine.rules import RuleLibrary
 from client.engine.verifier import RuleVerifier
 
@@ -22,11 +24,13 @@ def game_rules_path(rules_dir: str | Path, game_id: str) -> Path:
 
 @dataclass
 class EngineArchitecture:
-    perceiver: Perceiver
+    perceiver: Perception
     history: TransitionHistory
     library: RuleLibrary
+    memory: EngineMemory
+    rulebook: EngineRulebook
     inducer: RuleInducer
-    planner: Planner
+    planner: RuleFirstPlanner
     base_path: Path
 
     @classmethod
@@ -36,12 +40,16 @@ class EngineArchitecture:
         base_path = game_rules_path(config.rules_dir, config.game)
         history = TransitionHistory(base_path / "transitions.jsonl")
         library = RuleLibrary(base_path)
+        memory = EngineMemory(history)
+        rulebook = EngineRulebook(library)
         verifier = RuleVerifier(history)
         return cls(
-            perceiver=Perceiver(),
+            perceiver=Perception(),
             history=history,
             library=library,
+            memory=memory,
+            rulebook=rulebook,
             inducer=RuleInducer(llm_client, library, verifier, event_sink=event_sink),
-            planner=Planner(library, history, llm_client=llm_client),
+            planner=RuleFirstPlanner(rulebook, memory, llm_client=llm_client),
             base_path=base_path,
         )

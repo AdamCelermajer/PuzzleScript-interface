@@ -57,6 +57,7 @@ class ClientEntrypointTests(unittest.TestCase):
         from client import run_arc_agent
 
         captured: dict[str, object] = {}
+        loop_calls: list[str] = []
 
         class FakeDashboard:
             def __init__(self, **kwargs) -> None:
@@ -70,22 +71,55 @@ class ClientEntrypointTests(unittest.TestCase):
             def __init__(self, **kwargs) -> None:
                 captured.update(kwargs)
 
+        class FakeArchitecture:
+            perceiver = object()
+            memory = object()
+            rulebook = object()
+            planner = object()
+            inducer = object()
+
+            @classmethod
+            def from_config(cls, cfg, llm_client, event_sink=None):
+                captured["architecture_game"] = cfg.game
+                return cls()
+
+        class FakeLoop:
+            def __init__(
+                self,
+                env,
+                perceiver,
+                memory,
+                rulebook,
+                planner,
+                inducer,
+                *,
+                dashboard=None,
+                event_sink=None,
+            ) -> None:
+                captured["loop_env"] = env
+                captured["loop_dashboard"] = dashboard
+
+            def run_learning(self, *, max_steps: int, game_id: str, mode: str) -> None:
+                loop_calls.append(f"learn:{game_id}:{max_steps}:{mode}")
+
+            def run_solving(self, *, max_steps: int) -> None:
+                loop_calls.append(f"solve:{max_steps}")
+
         with (
             patch.object(sys, "argv", [RUN_AGENT_PATH]),
             patch.object(run_arc_agent, "TerminalDashboard", FakeDashboard),
             patch.object(run_arc_agent, "ArcadeEnv", FakeArcadeEnv),
             patch.object(run_arc_agent, "LlmClient", lambda *args, **kwargs: object()),
-            patch.object(run_arc_agent, "Agent", lambda *args, **kwargs: object()),
             patch.object(
-                run_arc_agent, "run_learning_loop", lambda *args, **kwargs: None
+                run_arc_agent, "EngineArchitecture", FakeArchitecture
             ),
-            patch.object(
-                run_arc_agent, "run_solving_loop", lambda *args, **kwargs: None
-            ),
+            patch.object(run_arc_agent, "RuleReasoningLoop", FakeLoop),
         ):
             run_arc_agent.main()
 
         self.assertEqual(captured["game_id"], "ps_sokoban_basic-v1")
+        self.assertEqual(captured["architecture_game"], "ps_sokoban_basic-v1")
+        self.assertEqual(loop_calls, ["learn:ps_sokoban_basic-v1:50:learn"])
 
     def test_play_arc_client_defaults_to_public_sokoban_id(self) -> None:
         from client import play_arc_client

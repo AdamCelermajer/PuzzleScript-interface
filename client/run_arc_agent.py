@@ -5,9 +5,10 @@ from pathlib import Path
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from client.engine.agent import Agent, run_learning_loop, run_solving_loop
+from client.engine.architecture import EngineArchitecture
 from client.engine.arcade_env import ArcadeEnv
 from client.engine.llm_client import Config, LlmClient
+from client.engine.loop import RuleReasoningLoop
 from client.terminal_dashboard import TerminalDashboard
 
 
@@ -42,25 +43,29 @@ def main():
         renderer=dashboard.render,
     )
     llm_client = LlmClient(cfg, event_sink=event_sink)
-    agent = Agent(cfg, llm_client, event_sink=event_sink)
+    engine = EngineArchitecture.from_config(
+        cfg, llm_client, event_sink=event_sink
+    )
+    loop = RuleReasoningLoop(
+        env,
+        engine.perceiver,
+        engine.memory,
+        engine.rulebook,
+        engine.planner,
+        engine.inducer,
+        dashboard=dashboard,
+        event_sink=event_sink,
+    )
 
     try:
         if args.mode == "learn":
-            run_learning_loop(
-                cfg,
-                env,
-                agent,
-                dashboard=dashboard,
-                event_sink=event_sink,
+            loop.run_learning(
+                max_steps=cfg.max_steps,
+                game_id=cfg.game,
+                mode=cfg.mode,
             )
         else:
-            run_solving_loop(
-                cfg,
-                env,
-                agent,
-                dashboard=dashboard,
-                event_sink=event_sink,
-            )
+            loop.run_solving(max_steps=cfg.max_steps)
     finally:
         dashboard.close()
 
