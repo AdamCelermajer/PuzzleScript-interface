@@ -18,9 +18,12 @@ class Config:
     """Runtime configuration for server and model clients."""
 
     server_url: str = "http://localhost:3543"
-    flash_model: str = "deepseek/deepseek-v4-pro"
-    pro_model: str = "deepseek/deepseek-v4-pro"
-    image_model: str = "openai/gpt-4o-mini"
+    flash_model: str = "openai/gpt-5.5"
+    pro_model: str = "openai/gpt-5.5"
+    image_model: str = "openai/gpt-5.5"
+    flash_reasoning_effort: str = "low"
+    pro_reasoning_effort: str = "high"
+    image_reasoning_effort: str = "low"
     game: str = "ps_sokoban_basic-v1"
     mode: str = "learn"
     max_steps: int = 20
@@ -85,6 +88,9 @@ class LlmClient:
         kwargs = {}
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
+        reasoning_effort = self._reasoning_effort("image" if images else model_type)
+        if reasoning_effort:
+            kwargs["reasoning_effort"] = reasoning_effort
 
         kwargs["timeout"] = 45
         self._log(f"Asking {litellm_model}...")
@@ -141,6 +147,13 @@ class LlmClient:
         if model_type == "image":
             return self.cfg.image_model
         return self.cfg.pro_model if model_type == "pro" else self.cfg.flash_model
+
+    def _reasoning_effort(self, model_type: str) -> str:
+        if model_type == "image":
+            return self.cfg.image_reasoning_effort
+        if model_type == "pro":
+            return self.cfg.pro_reasoning_effort
+        return self.cfg.flash_reasoning_effort
 
     def _litellm_model(self, model_type: str) -> str:
         model_name = self._model_name(model_type)

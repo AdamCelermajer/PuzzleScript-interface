@@ -5,7 +5,7 @@ import os
 from client.engine.llm_client import Config
 
 
-GOAL_RECOGNITION_MODEL = "deepseek/deepseek-v4-pro"
+GOAL_RECOGNITION_MODEL = "openai/gpt-5.5"
 
 
 def default_arc_api_key() -> str:

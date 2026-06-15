@@ -7,7 +7,7 @@ from client.engine.llm_client import Config, LlmClient
 
 
 class LlmClientConfigTests(unittest.TestCase):
-    def test_defaults_route_deepseek_model_through_openrouter(self) -> None:
+    def test_defaults_route_gpt_55_model_through_openrouter(self) -> None:
         with patch.dict(
             os.environ,
             {
@@ -20,15 +20,18 @@ class LlmClientConfigTests(unittest.TestCase):
             client = LlmClient(cfg)
             routed_key = os.environ["OPENROUTER_API_KEY"]
 
-        self.assertEqual(cfg.flash_model, "deepseek/deepseek-v4-pro")
-        self.assertEqual(cfg.pro_model, "deepseek/deepseek-v4-pro")
-        self.assertEqual(cfg.image_model, "openai/gpt-4o-mini")
+        self.assertEqual(cfg.flash_model, "openai/gpt-5.5")
+        self.assertEqual(cfg.pro_model, "openai/gpt-5.5")
+        self.assertEqual(cfg.image_model, "openai/gpt-5.5")
+        self.assertEqual(cfg.flash_reasoning_effort, "low")
+        self.assertEqual(cfg.pro_reasoning_effort, "high")
+        self.assertEqual(cfg.image_reasoning_effort, "low")
         self.assertEqual(cfg.openrouter_api_key, "test-openrouter-key")
         self.assertEqual(routed_key, "test-openrouter-key")
         self.assertFalse(hasattr(cfg, "api_key"))
         self.assertEqual(
             client._litellm_model("flash"),
-            "openrouter/deepseek/deepseek-v4-pro",
+            "openrouter/openai/gpt-5.5",
         )
 
     def test_openrouter_key_is_required(self) -> None:
@@ -51,7 +54,28 @@ class LlmClientConfigTests(unittest.TestCase):
 
         self.assertEqual(result, '{"plan": ["ACTION1"]}')
         self.assertEqual(completion.call_count, 1)
-        self.assertIn("Asking openrouter/deepseek/deepseek-v4-pro", events[0])
+        self.assertIn("Asking openrouter/openai/gpt-5.5", events[0])
+        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "low")
+
+    def test_pro_calls_use_high_reasoning_effort(self) -> None:
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))]
+        )
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            cfg = Config()
+            client = LlmClient(cfg)
+            with patch(
+                "client.engine.llm_client.litellm.completion",
+                return_value=response,
+            ) as completion:
+                result = client.call_text("system", "prompt", model_type="pro")
+
+        self.assertEqual(result, "ok")
+        self.assertEqual(
+            completion.call_args.kwargs["model"],
+            "openrouter/openai/gpt-5.5",
+        )
+        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "high")
 
     def test_call_can_attach_image_data_urls_to_user_message(self) -> None:
         response = SimpleNamespace(
@@ -76,8 +100,9 @@ class LlmClientConfigTests(unittest.TestCase):
         messages = completion.call_args.kwargs["messages"]
         self.assertEqual(
             completion.call_args.kwargs["model"],
-            "openrouter/openai/gpt-4o-mini",
+            "openrouter/openai/gpt-5.5",
         )
+        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "low")
         self.assertEqual(messages[0], {"role": "system", "content": "system"})
         self.assertEqual(messages[1]["role"], "user")
         self.assertEqual(
