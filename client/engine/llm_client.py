@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
 
-import litellm
+from openai import OpenAI
 from dotenv import load_dotenv
 
 from client.engine.utils import extract_json
@@ -18,8 +18,10 @@ class Config:
     """Runtime configuration for server and model clients."""
 
     server_url: str = "http://localhost:3543"
-    model: str = "openai/gpt-5.5"
-    reasoning_effort: str = "low"
+    model: str = "moonshotai/kimi-k2.7-code"
+    # reasoning_effort is sent to the model only when non-empty.
+    # Use "low"/"medium"/"high" only if the chosen model supports it.
+    reasoning_effort: str = ""
     game: str = "ps_sokoban_basic-v1"
     mode: str = "learn"
     max_steps: int = 20
@@ -38,23 +40,25 @@ class Config:
 
 
 class LlmClient:
-    """Wrapper around litellm with a purpose label for future routing."""
+    """Direct OpenRouter client via the OpenAI-compatible API."""
 
     def __init__(
         self,
         config: Config,
         event_sink: Optional[Callable[[str], None]] = None,
     ) -> None:
-        """Initialize provider credentials and runtime config."""
+        """Initialize OpenRouter credentials and runtime config."""
         self.cfg = config
         self.event_sink = event_sink
-        os.environ["OPENROUTER_API_KEY"] = config.openrouter_api_key
+        self.client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=config.openrouter_api_key,
+        )
 
     def _log(self, message: str) -> None:
+        print(message)
         if self.event_sink is not None:
             self.event_sink(message)
-            return
-        print(message)
 
     def _call(
         self,
@@ -67,7 +71,6 @@ class LlmClient:
         """Call the configured OpenRouter model and return plain text output."""
         user_content: str | list[dict] = prompt
         images = [url for url in image_data_urls or [] if str(url).strip()]
-        litellm_model = self._litellm_model()
         if images:
             user_content = [
                 {"type": "text", "text": prompt},
@@ -81,22 +84,22 @@ class LlmClient:
             {"role": "user", "content": user_content},
         ]
 
-        kwargs = {}
+        kwargs: dict = {"timeout": 45}
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
         if self.cfg.reasoning_effort:
             kwargs["reasoning_effort"] = self.cfg.reasoning_effort
 
-        kwargs["timeout"] = 45
+        model = self._openrouter_model()
         purpose_text = f" for {purpose}" if purpose else ""
-        self._log(f"Asking {litellm_model}{purpose_text}...")
+        self._log(f"Asking {model}{purpose_text}...")
         start = time.time()
-        response = litellm.completion(
-            model=litellm_model,
+        response = self.client.chat.completions.create(
+            model=model,
             messages=messages,
             **kwargs,
         )
-        self._log(f"[{litellm_model}] Response time: {time.time() - start:.1f}s")
+        self._log(f"[{model}] Response time: {time.time() - start:.1f}s")
         content = response.choices[0].message.content
         if not content or not content.strip():
             raise ValueError("LLM returned empty content")
@@ -139,7 +142,8 @@ class LlmClient:
             raise ValueError("LLM JSON response must be an object")
         return data
 
-    def _litellm_model(self) -> str:
+    def _openrouter_model(self) -> str:
+        """Return the bare OpenRouter model ID (strip litellm-style prefix)."""
         if self.cfg.model.startswith("openrouter/"):
-            return self.cfg.model
-        return f"openrouter/{self.cfg.model}"
+            return self.cfg.model[len("openrouter/"):]
+        return self.cfg.model

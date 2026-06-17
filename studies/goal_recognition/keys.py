@@ -22,6 +22,7 @@ def goal_recognition_config(
     return Config(
         server_url=backend_url,
         model=GOAL_RECOGNITION_MODEL,
+        reasoning_effort="low",
         game="goal_recognition",
         mode=mode,
     )

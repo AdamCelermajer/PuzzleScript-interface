@@ -2,13 +2,22 @@ import os
 import unittest
 from dataclasses import fields
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from client.engine.llm_client import Config, LlmClient
 
 
 class LlmClientConfigTests(unittest.TestCase):
-    def test_defaults_route_gpt_55_model_through_openrouter(self) -> None:
+    def _make_client(self, cfg: Config, event_sink=None):
+        """Create an LlmClient with the real OpenAI client mocked out."""
+        with patch("client.engine.llm_client.OpenAI") as MockOpenAI:
+            client = LlmClient(cfg, event_sink=event_sink)
+            mock_client = MockOpenAI.return_value
+            # Replace the instance created in __init__ with our mock client.
+            client.client = mock_client
+            return client, mock_client
+
+    def test_defaults_use_openrouter_compatible_values(self) -> None:
         with patch.dict(
             os.environ,
             {
@@ -18,20 +27,25 @@ class LlmClientConfigTests(unittest.TestCase):
             clear=True,
         ):
             cfg = Config()
-            client = LlmClient(cfg)
-            routed_key = os.environ["OPENROUTER_API_KEY"]
+            client, _ = self._make_client(cfg)
 
-        self.assertEqual(cfg.model, "openai/gpt-5.5")
-        self.assertEqual(cfg.reasoning_effort, "low")
+        self.assertEqual(cfg.model, "moonshotai/kimi-k2.7-code")
+        self.assertEqual(cfg.reasoning_effort, "")
         self.assertEqual(cfg.openrouter_api_key, "test-openrouter-key")
-        self.assertEqual(routed_key, "test-openrouter-key")
         self.assertFalse(hasattr(cfg, "api_key"))
         self.assertIn("model", {field.name for field in fields(Config)})
         self.assertIn("reasoning_effort", {field.name for field in fields(Config)})
         self.assertEqual(
-            client._litellm_model(),
-            "openrouter/openai/gpt-5.5",
+            client._openrouter_model(),
+            "moonshotai/kimi-k2.7-code",
         )
+
+    def test_openrouter_prefix_is_stripped_from_model(self) -> None:
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            cfg = Config(model="openrouter/moonshotai/kimi-k2.7-code")
+            client, _ = self._make_client(cfg)
+
+        self.assertEqual(client._openrouter_model(), "moonshotai/kimi-k2.7-code")
 
     def test_openrouter_key_is_required(self) -> None:
         with patch.dict(os.environ, {"UNRELATED_LLM_KEY": "ignored"}, clear=True):
@@ -47,14 +61,17 @@ class LlmClientConfigTests(unittest.TestCase):
         )
         with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
             cfg = Config()
-            client = LlmClient(cfg, event_sink=events.append)
-            with patch("client.engine.llm_client.litellm.completion", return_value=response) as completion:
-                result = client._call("system", "prompt", json_mode=True)
+            client, mock_client = self._make_client(cfg, event_sink=events.append)
+            mock_client.chat.completions.create.return_value = response
+            result = client._call("system", "prompt", json_mode=True)
 
         self.assertEqual(result, '{"plan": ["ACTION1"]}')
-        self.assertEqual(completion.call_count, 1)
-        self.assertIn("Asking openrouter/openai/gpt-5.5", events[0])
-        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "low")
+        self.assertEqual(mock_client.chat.completions.create.call_count, 1)
+        self.assertIn("Asking moonshotai/kimi-k2.7-code", events[0])
+        self.assertNotIn(
+            "reasoning_effort",
+            mock_client.chat.completions.create.call_args.kwargs,
+        )
 
     def test_call_logs_purpose_when_supplied(self) -> None:
         events: list[str] = []
@@ -63,38 +80,31 @@ class LlmClientConfigTests(unittest.TestCase):
         )
         with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
             cfg = Config()
-            client = LlmClient(cfg, event_sink=events.append)
-            with patch(
-                "client.engine.llm_client.litellm.completion",
-                return_value=response,
-            ):
-                result = client._call("system", "prompt", purpose="subgoal/action")
+            client, mock_client = self._make_client(cfg, event_sink=events.append)
+            mock_client.chat.completions.create.return_value = response
+            result = client._call("system", "prompt", purpose="subgoal/action")
 
         self.assertEqual(result, "ok")
         self.assertEqual(
             events[0],
-            "Asking openrouter/openai/gpt-5.5 for subgoal/action...",
+            "Asking moonshotai/kimi-k2.7-code for subgoal/action...",
         )
 
-    def test_call_text_uses_single_low_reasoning_model(self) -> None:
+    def test_call_text_uses_configured_model(self) -> None:
         response = SimpleNamespace(
             choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))]
         )
         with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
             cfg = Config()
-            client = LlmClient(cfg)
-            with patch(
-                "client.engine.llm_client.litellm.completion",
-                return_value=response,
-            ) as completion:
-                result = client.call_text("system", "prompt", purpose="rule creation")
+            client, mock_client = self._make_client(cfg)
+            mock_client.chat.completions.create.return_value = response
+            result = client.call_text("system", "prompt", purpose="rule creation")
 
         self.assertEqual(result, "ok")
         self.assertEqual(
-            completion.call_args.kwargs["model"],
-            "openrouter/openai/gpt-5.5",
+            mock_client.chat.completions.create.call_args.kwargs["model"],
+            "moonshotai/kimi-k2.7-code",
         )
-        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "low")
 
     def test_call_can_attach_image_data_urls_to_user_message(self) -> None:
         response = SimpleNamespace(
@@ -103,25 +113,19 @@ class LlmClientConfigTests(unittest.TestCase):
         image_url = "data:image/png;base64,iVBORw0KGgo="
         with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
             cfg = Config()
-            client = LlmClient(cfg)
-            with patch(
-                "client.engine.llm_client.litellm.completion",
-                return_value=response,
-            ) as completion:
-                result = client._call(
-                    "system",
-                    "prompt",
-                    json_mode=True,
-                    image_data_urls=[image_url],
-                )
+            client, mock_client = self._make_client(cfg)
+            mock_client.chat.completions.create.return_value = response
+            result = client._call(
+                "system",
+                "prompt",
+                json_mode=True,
+                image_data_urls=[image_url],
+            )
 
         self.assertEqual(result, '{"plan": []}')
-        messages = completion.call_args.kwargs["messages"]
-        self.assertEqual(
-            completion.call_args.kwargs["model"],
-            "openrouter/openai/gpt-5.5",
-        )
-        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "low")
+        create_kwargs = mock_client.chat.completions.create.call_args.kwargs
+        messages = create_kwargs["messages"]
+        self.assertEqual(create_kwargs["model"], "moonshotai/kimi-k2.7-code")
         self.assertEqual(messages[0], {"role": "system", "content": "system"})
         self.assertEqual(messages[1]["role"], "user")
         self.assertEqual(
@@ -141,14 +145,11 @@ class LlmClientConfigTests(unittest.TestCase):
         )
         with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
             cfg = Config()
-            client = LlmClient(cfg)
-            with patch(
-                "client.engine.llm_client.litellm.completion",
-                side_effect=[good, bad],
-            ):
-                self.assertEqual(client.call_json("system", "prompt"), {"rules": []})
-                with self.assertRaisesRegex(ValueError, "invalid JSON"):
-                    client.call_json("system", "prompt")
+            client, mock_client = self._make_client(cfg)
+            mock_client.chat.completions.create.side_effect = [good, bad]
+            self.assertEqual(client.call_json("system", "prompt"), {"rules": []})
+            with self.assertRaisesRegex(ValueError, "invalid JSON"):
+                client.call_json("system", "prompt")
 
 
 if __name__ == "__main__":

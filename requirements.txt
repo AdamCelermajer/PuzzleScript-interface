@@ -2,7 +2,5 @@ requests
 arc-agi
 openai
 python-dotenv
-
-litellm
 fastapi
 uvicorn

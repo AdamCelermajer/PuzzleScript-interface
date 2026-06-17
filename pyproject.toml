@@ -1,0 +1,21 @@
+[project]
+name = "puzzlescript-interface"
+version = "1.0.0"
+description = "Research framework for LLM agents that learn puzzle game mechanics by observing state transitions."
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "arc-agi",
+    "openai",
+    "python-dotenv",
+    "fastapi",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+package = false
