@@ -194,6 +194,8 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             self.assertEqual(llm.calls[0]["purpose"], "rule creation")
             self.assertIn("Last memory transition", llm.calls[0]["prompt"])
             self.assertIn("ACTION4", llm.calls[0]["prompt"])
+            self.assertIn('"anchor": {"value": 2}', llm.calls[0]["system"])
+            self.assertIn('"offset": [1, 0]', llm.calls[0]["system"])
 
     def test_planner_uses_generalized_rules_before_llm_probe(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

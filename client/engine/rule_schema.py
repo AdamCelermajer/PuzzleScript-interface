@@ -102,11 +102,15 @@ class GeneralizedRule:
         return cls(
             id=str(data["id"]),
             action=action,
-            anchor=int(data["anchor"]),
+            anchor=_anchor_value(data["anchor"]),
             conditions=tuple(
-                CellCondition.from_data(item) for item in data.get("conditions", [])
+                CellCondition.from_data(_offset_item(item))
+                for item in data.get("conditions", [])
             ),
-            effects=tuple(CellEffect.from_data(item) for item in data.get("effects", [])),
+            effects=tuple(
+                CellEffect.from_data(_offset_item(item))
+                for item in data.get("effects", [])
+            ),
             evidence_ids=tuple(str(item) for item in data.get("evidence_ids", [])),
             summary=str(data.get("summary", "")),
             contradictions=tuple(
@@ -245,14 +249,17 @@ def candidate_rules_from_llm_json(data: dict[str, Any]) -> list[GeneralizedRule]
         if not evidence_ids:
             raise ValueError(f"rule {index} must cite at least one evidence id")
         conditions = tuple(
-            CellCondition.from_data(item) for item in raw_rule["conditions"]
+            CellCondition.from_data(_offset_item(item))
+            for item in raw_rule["conditions"]
         )
-        effects = tuple(CellEffect.from_data(item) for item in raw_rule["effects"])
+        effects = tuple(
+            CellEffect.from_data(_offset_item(item)) for item in raw_rule["effects"]
+        )
         rules.append(
             GeneralizedRule(
                 id=str(raw_rule.get("id") or ""),
                 action=_action_name(raw_rule["action"]),
-                anchor=int(raw_rule["anchor"]),
+                anchor=_anchor_value(raw_rule["anchor"]),
                 conditions=conditions,
                 effects=effects,
                 evidence_ids=evidence_ids,
@@ -283,6 +290,14 @@ def _action_name(value: Any) -> str:
     if name not in GameAction.__members__:
         raise ValueError(f"unknown action '{value}'")
     return name
+
+
+def _anchor_value(value: Any) -> int:
+    if isinstance(value, dict):
+        if "value" not in value:
+            raise ValueError("anchor object must include field 'value'")
+        value = value["value"]
+    return int(value)
 
 
 def _offset_item(data: dict[str, Any]) -> dict[str, Any]:

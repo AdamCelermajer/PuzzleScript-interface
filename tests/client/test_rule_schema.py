@@ -85,6 +85,55 @@ class RuleSchemaTests(unittest.TestCase):
         self.assertEqual(rules[0].contradictions, ())
         self.assertEqual(rules[0].revision_count, 0)
 
+    def test_llm_rule_json_accepts_structured_logical_rule_shape(self) -> None:
+        data = {
+            "rules": [
+                {
+                    "summary": "ACTION4 moves the player one cell right into empty space.",
+                    "action": "ACTION4",
+                    "anchor": {"value": 2},
+                    "conditions": [
+                        {"offset": [0, 0], "equals": 2},
+                        {"offset": [1, 0], "equals": 0},
+                    ],
+                    "effects": [
+                        {"offset": [0, 0], "set": 0},
+                        {"offset": [1, 0], "set": 2},
+                    ],
+                    "evidence_ids": ["T000001"],
+                }
+            ]
+        }
+
+        rules = candidate_rules_from_llm_json(data)
+
+        self.assertEqual(rules[0].anchor, 2)
+        self.assertEqual(rules[0].conditions[1].dx, 1)
+        self.assertEqual(rules[0].effects[1].value, 2)
+
+    def test_legacy_rule_data_accepts_structured_anchor_and_offsets(self) -> None:
+        rule = GeneralizedRule.from_data(
+            {
+                "id": "G000001",
+                "summary": "ACTION4 moves the player right.",
+                "action": "ACTION4",
+                "anchor": {"value": 2},
+                "conditions": [
+                    {"offset": [0, 0], "equals": 2},
+                    {"offset": [1, 0], "equals": 0},
+                ],
+                "effects": [
+                    {"offset": [0, 0], "set": 0},
+                    {"offset": [1, 0], "set": 2},
+                ],
+                "evidence_ids": ["T000001"],
+            }
+        )
+
+        self.assertEqual(rule.anchor, 2)
+        self.assertEqual(rule.conditions[1].dx, 1)
+        self.assertEqual(rule.effects[1].value, 2)
+
     def test_malformed_llm_rule_json_raises_clear_error(self) -> None:
         with self.assertRaisesRegex(ValueError, "missing required field"):
             candidate_rules_from_llm_json({"rules": [{"action": "ACTION4"}]})

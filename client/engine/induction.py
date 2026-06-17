@@ -13,14 +13,14 @@ Executable rule JSON shape:
   {
     "summary": "ACTION4 moves the player one cell right into empty space.",
     "action": "ACTION4",
-    "anchor": 2,
+    "anchor": {"value": 2},
     "conditions": [
-      {"dx": 0, "dy": 0, "value": 2},
-      {"dx": 1, "dy": 0, "value": 0}
+      {"offset": [0, 0], "equals": 2},
+      {"offset": [1, 0], "equals": 0}
     ],
     "effects": [
-      {"dx": 0, "dy": 0, "value": 0},
-      {"dx": 1, "dy": 0, "value": 2}
+      {"offset": [0, 0], "set": 0},
+      {"offset": [1, 0], "set": 2}
     ],
     "evidence_ids": ["T000001"]
   }
