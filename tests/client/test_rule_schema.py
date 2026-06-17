@@ -1,4 +1,4 @@
-import unittest
+﻿import unittest
 
 from client.engine.rule_schema import (
     CellCondition,
@@ -6,8 +6,8 @@ from client.engine.rule_schema import (
     GeneralizedRule,
     candidate_rules_from_llm_json,
 )
-from client.engine.state import EngineState
-from client.engine.types import GameAction, GameState
+from client.engine.perception import EngineState
+from client.arc.types import GameAction, GameState
 
 
 def _state(grid: list[list[int]]) -> EngineState:

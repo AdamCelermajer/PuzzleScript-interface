@@ -208,7 +208,7 @@ from typing import Any
 
 from arc_agi import Arcade, OperationMode
 
-from client.engine.arcade_env import ArcadeEnv
+from client.arc.arcade_env import ArcadeEnv
 from client.engine.llm_client import Config, LlmClient
 from client.engine.utils import last_grid
 from side_quests.one_frame_goal_recognition.prompt import build_prompt
@@ -292,7 +292,7 @@ def run_game(game_id: str, args: argparse.Namespace, llm: LlmClient, frames_dir:
     grid = last_grid(frame_data.frame)
     available_actions = [action.name for action in frame_data.available_actions]
     system, prompt = build_prompt(game_id, grid, available_actions)
-    raw_response = llm.call_json(system, prompt, model_type=args.model_type)
+    raw_response = llm.call_json(system, prompt, purpose=SETUP)
     prediction = normalize_prediction(raw_response)
 
     write_json(
@@ -329,7 +329,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--game-id")
     parser.add_argument("--limit", type=int, default=30)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--model-type", choices=["flash", "pro"], default="flash")
     parser.add_argument("--resume", action="store_true")
     return parser.parse_args(argv)
 
@@ -353,7 +352,7 @@ def main(argv: list[str] | None = None) -> int:
             "run_id": run_id,
             "setup": SETUP,
             "backend_url": args.backend_url,
-            "model_type": args.model_type,
+            "purpose": SETUP,
             "limit": args.limit,
             "games": games,
         },
@@ -424,7 +423,7 @@ Create `tests/side_quests/test_ten_frame_goal_recognition.py`:
 ```python
 import random
 
-from client.engine.types import ActionInput, FrameData, GameAction, GameState
+from client.arc.types import ActionInput, FrameData, GameAction, GameState
 from side_quests.ten_frame_goal_recognition.prompt import build_prompt
 from side_quests.ten_frame_goal_recognition.run import choose_random_action, normalize_prediction
 
@@ -559,9 +558,9 @@ from typing import Any
 
 from arc_agi import Arcade, OperationMode
 
-from client.engine.arcade_env import ArcadeEnv
+from client.arc.arcade_env import ArcadeEnv
 from client.engine.llm_client import Config, LlmClient
-from client.engine.types import FrameData, GameAction, GameState
+from client.arc.types import FrameData, GameAction, GameState
 from client.engine.utils import last_grid
 from side_quests.ten_frame_goal_recognition.prompt import build_prompt
 
@@ -675,7 +674,7 @@ def run_game(game_id: str, args: argparse.Namespace, llm: LlmClient, frames_dir:
     trajectory, actions_taken, frame_data = collect_trajectory(env, args.steps, rng)
     available_actions = [action.name for action in frame_data.available_actions]
     system, prompt = build_prompt(game_id, trajectory, available_actions)
-    raw_response = llm.call_json(system, prompt, model_type=args.model_type)
+    raw_response = llm.call_json(system, prompt, purpose=SETUP)
     prediction = normalize_prediction(raw_response)
 
     write_json(
@@ -715,7 +714,6 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--steps", type=int, default=10)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
-    parser.add_argument("--model-type", choices=["flash", "pro"], default="flash")
     parser.add_argument("--resume", action="store_true")
     return parser.parse_args(argv)
 
@@ -739,7 +737,7 @@ def main(argv: list[str] | None = None) -> int:
             "run_id": run_id,
             "setup": SETUP,
             "backend_url": args.backend_url,
-            "model_type": args.model_type,
+            "purpose": SETUP,
             "limit": args.limit,
             "steps": args.steps,
             "seed": args.seed,
@@ -1259,4 +1257,3 @@ Expected: branch is clean except for intentional uncommitted changes if the user
 - [ ] **Step 4: Record any runtime limitation**
 
 If `ARC_API_KEY` or `OPENROUTER_API_KEY` is missing, do not claim a live ARC/LLM run passed. State exactly which smoke checks passed and which live checks were skipped.
-

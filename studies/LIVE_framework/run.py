@@ -8,7 +8,7 @@ from pathlib import Path
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from client.engine.arcade_env import ArcadeEnv
+from client.arc.arcade_env import ArcadeEnv
 from studies.LIVE_framework.model import SymbolGoal
 from studies.LIVE_framework.rules import (
     DEFAULT_COMPACT_OUTPUT_PATH,

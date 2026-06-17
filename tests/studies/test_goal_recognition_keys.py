@@ -24,9 +24,7 @@ def test_goal_recognition_config_uses_client_openrouter_config(monkeypatch) -> N
     assert config.server_url == "https://three.arcprize.org"
     assert config.game == "goal_recognition"
     assert config.mode == "one_frame"
-    assert config.flash_model == GOAL_RECOGNITION_MODEL
-    assert config.pro_model == GOAL_RECOGNITION_MODEL
-    assert config.flash_model == "openai/gpt-5.5"
-    assert config.flash_reasoning_effort == "low"
-    assert config.pro_reasoning_effort == "high"
+    assert config.model == GOAL_RECOGNITION_MODEL
+    assert config.model == "openai/gpt-5.5"
+    assert config.reasoning_effort == "low"
     assert config.openrouter_api_key == "openrouter-test-key"

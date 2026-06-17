@@ -4,7 +4,7 @@ import argparse
 import random
 from pathlib import Path
 
-from client.engine.arcade_env import ArcadeEnv
+from client.arc.arcade_env import ArcadeEnv
 from studies.goal_recognition.experiment.collect import (
     collect_random_trajectory,
 )

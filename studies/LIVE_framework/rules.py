@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
@@ -6,7 +6,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-from client.engine.types import GameAction
+from client.arc.types import GameAction
 
 from .model import SymbolFrame
 

@@ -1,4 +1,5 @@
-import tempfile
+﻿import tempfile
+import json
 import unittest
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -11,11 +12,11 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from client.engine.history import TransitionHistory
-from client.engine.perceiver import Perceiver
+from client.engine.memory import EngineMemory
+from client.engine.perception import Perception
 from client.engine.planner import PlanDecision
-from client.engine.rules import RuleLibrary
-from client.engine.types import ActionInput, FrameData, GameAction, GameState
+from client.engine.rulebook import Rulebook
+from client.arc.types import ActionInput, FrameData, GameAction, GameState
 
 
 def _frame(
@@ -66,26 +67,44 @@ class FakeLlmClient:
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         json_mode: bool = False,
+        image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> str:
-        self.calls.append((system, prompt, model_type, json_mode))
+        self.calls.append((system, prompt, json_mode, purpose))
         if not self.responses:
             raise AssertionError("Unexpected LLM call")
         return self.responses.pop(0)
 
+    def call_json(
+        self,
+        system: str,
+        prompt: str,
+        image_data_urls: list[str] | None = None,
+        purpose: str = "",
+    ) -> dict:
+        return json.loads(
+            self._call(
+                system,
+                prompt,
+                json_mode=True,
+                image_data_urls=image_data_urls,
+                purpose=purpose,
+            )
+        )
+
 
 class ModularEngineLoopTests(unittest.TestCase):
     def test_action_executor_returns_before_after_outcome(self) -> None:
-        from client.engine.actions import ActionExecutor
+        from client.runtime.runner import ActionExecutor
 
         before_frame = _frame([[2, 0], [0, 0]])
         after_frame = _frame([[0, 2], [0, 0]], action=GameAction.ACTION4)
-        before_state = Perceiver().perceive(before_frame)
+        before_state = Perception().perceive(before_frame)
         env = FakeEnv(before_frame, [after_frame])
         decision = PlanDecision(GameAction.ACTION4, "test", [GameAction.ACTION4])
 
-        outcome = ActionExecutor(env, Perceiver()).execute(
+        outcome = ActionExecutor(env, Perception()).execute(
             before_frame, before_state, decision
         )
 
@@ -95,20 +114,17 @@ class ModularEngineLoopTests(unittest.TestCase):
         self.assertIs(outcome.after_frame, after_frame)
         self.assertEqual(outcome.after_state.grid, ((0, 2), (0, 0)))
 
-    def test_memory_and_rulebook_record_observed_transition(self) -> None:
-        from client.engine.memory import EngineMemory
-        from client.engine.rulebook import EngineRulebook
-
+    def test_memory_and_rulebook_record_transition(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            perceiver = Perceiver()
-            before = perceiver.perceive(_frame([[2, 0]]))
-            after = perceiver.perceive(_frame([[0, 2]], action=GameAction.ACTION4))
-            memory = EngineMemory(TransitionHistory(Path(tmpdir) / "transitions.jsonl"))
-            rulebook = EngineRulebook(RuleLibrary(Path(tmpdir)))
+            perception = Perception()
+            before = perception.perceive(_frame([[2, 0]]))
+            after = perception.perceive(_frame([[0, 2]], action=GameAction.ACTION4))
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            rulebook = Rulebook(Path(tmpdir))
 
             record = memory.record_transition(before, GameAction.ACTION4, after)
             rulebook.record_prediction_result(before, GameAction.ACTION4, after, [])
-            rule = rulebook.record_observed_transition(record)
+            rule = rulebook.record_transition(record)
 
             self.assertEqual(record.id, "T000001")
             self.assertEqual(memory.recent(1), [record])
@@ -116,46 +132,44 @@ class ModularEngineLoopTests(unittest.TestCase):
             self.assertTrue(rulebook.predict(before, GameAction.ACTION4))
 
     def test_named_architecture_modules_are_importable(self) -> None:
-        from client.engine.environment import EnvironmentSurface
-        from client.engine.perception import Perception
-        from client.engine.planning import RuleFirstPlanner
+        from client.engine.goal_manager import GoalManager
+        from client.engine.perception import EngineState, Perception
+        from client.engine.planner import Planner
 
-        self.assertIsNotNone(EnvironmentSurface)
+        self.assertIsNotNone(GoalManager)
+        self.assertIsNotNone(EngineState)
         self.assertIsNotNone(Perception)
-        self.assertIsNotNone(RuleFirstPlanner)
+        self.assertIsNotNone(Planner)
 
     def test_rule_reasoning_loop_records_one_learning_step(self) -> None:
-        from client.engine.actions import ActionExecutor
+        from client.runtime.runner import ActionExecutor
         from client.engine.induction import RuleInducer
         from client.engine.loop import RuleReasoningLoop
-        from client.engine.memory import EngineMemory
-        from client.engine.planning import RuleFirstPlanner
-        from client.engine.rulebook import EngineRulebook
+        from client.engine.planner import Planner
         from client.engine.verifier import RuleVerifier
 
         with tempfile.TemporaryDirectory() as tmpdir:
             before_frame = _frame([[2, 0]])
             after_frame = _frame([[0, 2]], action=GameAction.ACTION4)
             env = FakeEnv(before_frame, [after_frame])
-            memory = EngineMemory(TransitionHistory(Path(tmpdir) / "transitions.jsonl"))
-            rulebook = EngineRulebook(RuleLibrary(Path(tmpdir)))
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            rulebook = Rulebook(Path(tmpdir))
             llm = FakeLlmClient(
-                ['{"subgoal": "move right to test empty space", "plan": ["ACTION4"]}']
+                [
+                    '{"subgoal": "move right to test empty space", "plan": ["ACTION4"]}',
+                    '{"rules": []}',
+                ]
             )
-            planner = RuleFirstPlanner(rulebook, memory, llm_client=llm)
-            inducer = RuleInducer(
-                llm,
-                rulebook.library,
-                RuleVerifier(memory.history),
-            )
+            planner = Planner(rulebook=rulebook, memory=memory, llm_client=llm)
+            inducer = RuleInducer(llm, rulebook, RuleVerifier(memory))
             loop = RuleReasoningLoop(
                 env,
-                Perceiver(),
+                Perception(),
                 memory,
                 rulebook,
                 planner,
                 inducer,
-                ActionExecutor(env, Perceiver()),
+                ActionExecutor(env, Perception()),
                 sleep_fn=lambda _seconds: None,
             )
 
@@ -168,12 +182,10 @@ class ModularEngineLoopTests(unittest.TestCase):
     def test_unified_loop_induces_rules_after_each_unexplained_llm_action(
         self,
     ) -> None:
-        from client.engine.actions import ActionExecutor
+        from client.runtime.runner import ActionExecutor
         from client.engine.induction import RuleInducer
         from client.engine.loop import RuleReasoningLoop
-        from client.engine.memory import EngineMemory
-        from client.engine.planning import RuleFirstPlanner
-        from client.engine.rulebook import EngineRulebook
+        from client.engine.planner import Planner
         from client.engine.verifier import RuleVerifier
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -181,8 +193,8 @@ class ModularEngineLoopTests(unittest.TestCase):
             middle_frame = _frame([[0, 2, 0]], action=GameAction.ACTION4)
             after_frame = _frame([[0, 0, 2]], action=GameAction.ACTION4)
             env = FakeEnv(before_frame, [middle_frame, after_frame])
-            memory = EngineMemory(TransitionHistory(Path(tmpdir) / "transitions.jsonl"))
-            rulebook = EngineRulebook(RuleLibrary(Path(tmpdir)))
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            rulebook = Rulebook(Path(tmpdir))
             llm = FakeLlmClient(
                 [
                     '{"subgoal": "try moving right twice", "plan": ["ACTION4", "ACTION4"]}',
@@ -191,20 +203,16 @@ class ModularEngineLoopTests(unittest.TestCase):
                     '{"rules": []}',
                 ]
             )
-            planner = RuleFirstPlanner(rulebook, memory, llm_client=llm)
-            inducer = RuleInducer(
-                llm,
-                rulebook.library,
-                RuleVerifier(memory.history),
-            )
+            planner = Planner(rulebook=rulebook, memory=memory, llm_client=llm)
+            inducer = RuleInducer(llm, rulebook, RuleVerifier(memory))
             loop = RuleReasoningLoop(
                 env,
-                Perceiver(),
+                Perception(),
                 memory,
                 rulebook,
                 planner,
                 inducer,
-                ActionExecutor(env, Perceiver()),
+                ActionExecutor(env, Perception()),
                 sleep_fn=lambda _seconds: None,
             )
 
@@ -222,11 +230,11 @@ class ModularEngineLoopTests(unittest.TestCase):
 
         before_frame = _frame([[2, 0]])
         after_frame = _frame([[0, 2]], action=GameAction.ACTION4)
-        before_state = Perceiver().perceive(before_frame)
+        before_state = Perception().perceive(before_frame)
         env = FakeEnv(before_frame, [after_frame])
         decision = PlanDecision(GameAction.ACTION4, "test", [GameAction.ACTION4])
 
-        outcome = ActionExecutor(env, Perceiver()).execute(
+        outcome = ActionExecutor(env, Perception()).execute(
             before_frame, before_state, decision
         )
 

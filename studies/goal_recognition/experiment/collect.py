@@ -1,11 +1,11 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import json
 import random
 from dataclasses import dataclass
 from typing import Any
 
-from client.engine.types import FrameData, GameAction, GameState
+from client.arc.types import FrameData, GameAction, GameState
 from client.engine.utils import last_grid
 
 

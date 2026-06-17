@@ -66,8 +66,8 @@ The two setup directories are independent enough for parallel implementation. Th
 
 Use existing ARC and LLM wrappers instead of building new API clients:
 
-- `client.engine.arcade_env.ArcadeEnv` for reset and step against local or official ARC backends.
-- `client.engine.types.FrameData` as the normalized observation contract.
+- `client.arc.arcade_env.ArcadeEnv` for reset and step against local or official ARC backends.
+- `client.arc.types.FrameData` as the normalized observation contract.
 - `client.engine.llm_client.LlmClient` for OpenRouter JSON calls.
 - `arc_agi.Arcade.get_environments()` for game discovery when running all games.
 - `client.play_arc_client` control mapping and terminal play behavior as the base for manual review.
@@ -82,8 +82,7 @@ One-frame runner:
 python -m side_quests.one_frame_goal_recognition.run ^
   --backend-url https://three.arcprize.org ^
   --games all ^
-  --limit 30 ^
-  --model-type flash
+  --limit 30
 ```
 
 Ten-frame runner:
@@ -94,8 +93,7 @@ python -m side_quests.ten_frame_goal_recognition.run ^
   --games all ^
   --limit 30 ^
   --steps 10 ^
-  --seed 1 ^
-  --model-type flash
+  --seed 1
 ```
 
 Useful common options:
@@ -144,7 +142,7 @@ artifacts/
   "run_id": "2026-05-12T12-00-00-one-frame",
   "setup": "one_frame",
   "backend_url": "https://three.arcprize.org",
-  "model_type": "flash",
+  "purpose": "one_frame",
   "model": "openrouter/openai/gpt-oss-120b:nitro",
   "limit": 30
 }

@@ -1,9 +1,9 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Iterable, Sequence
 
-from client.engine.types import FrameData
+from client.arc.types import FrameData
 from client.engine.utils import last_grid
 
 

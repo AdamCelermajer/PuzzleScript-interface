@@ -1,15 +1,16 @@
-import tempfile
+﻿import tempfile
+import json
 import unittest
 from dataclasses import dataclass, field
 from pathlib import Path
 from unittest.mock import patch
 
 from client.engine.agent import Agent, run_solving_loop
-from client.engine.history import TransitionHistory
 from client.engine.llm_client import Config
-from client.engine.perceiver import Perceiver
-from client.engine.rules import RuleLibrary
-from client.engine.types import (
+from client.engine.memory import EngineMemory
+from client.engine.perception import Perception
+from client.engine.rulebook import Rulebook
+from client.arc.types import (
     ActionInput,
     FrameData,
     GameAction,
@@ -69,13 +70,31 @@ class FakeLlmClient:
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         json_mode: bool = False,
+        image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> str:
-        self.calls.append((system, prompt, model_type, json_mode))
+        self.calls.append((system, prompt, json_mode, purpose))
         if not self.responses:
             raise AssertionError("Unexpected LLM call")
         return self.responses.pop(0)
+
+    def call_json(
+        self,
+        system: str,
+        prompt: str,
+        image_data_urls: list[str] | None = None,
+        purpose: str = "",
+    ) -> dict:
+        return json.loads(
+            self._call(
+                system,
+                prompt,
+                json_mode=True,
+                image_data_urls=image_data_urls,
+                purpose=purpose,
+            )
+        )
 
 
 class FakeImageLlmClient:
@@ -87,15 +106,15 @@ class FakeImageLlmClient:
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> dict:
         self.calls.append(
             {
                 "system": system,
                 "prompt": prompt,
-                "model_type": model_type,
                 "image_data_urls": list(image_data_urls or []),
+                "purpose": purpose,
             }
         )
         return self.response
@@ -111,56 +130,57 @@ class EngineArchitectureTests(unittest.TestCase):
             rules_dir=rules_dir,
         )
 
-    def test_transition_history_persists_state_action_state_evidence(self) -> None:
+    def test_memory_persists_state_action_state_timeline(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            perceiver = Perceiver()
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            before = perceiver.perceive(_frame([[2, 0]]))
-            after = perceiver.perceive(_frame([[0, 2]], action=GameAction.ACTION4))
+            perception = Perception()
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            before = perception.perceive(_frame([[2, 0]]))
+            after = perception.perceive(_frame([[0, 2]], action=GameAction.ACTION4))
 
-            record = history.add(before, GameAction.ACTION4, after)
+            memory.append_initial_state(before)
+            record = memory.append_action_result(GameAction.ACTION4, after)
 
             self.assertEqual(record.id, "T000001")
-            self.assertEqual(history.recent(1), [record])
-            text = (Path(tmpdir) / "transitions.jsonl").read_text(encoding="utf-8")
-            self.assertIn('"action": "ACTION4"', text)
-            self.assertIn('"before"', text)
-            self.assertIn('"after"', text)
+            self.assertEqual([item.kind for item in memory.timeline], ["state", "action", "state"])
+            self.assertEqual(memory.recent(1), [record])
+            text = (Path(tmpdir) / "timeline.jsonl").read_text(encoding="utf-8")
+            self.assertIn('"kind": "state"', text)
+            self.assertIn('"kind": "action"', text)
+            self.assertIn('"before_id": "S000001"', text)
+            self.assertIn('"after_id": "S000002"', text)
 
-    def test_rule_library_verifies_hits_and_rejects_failed_predictions(self) -> None:
+    def test_rulebook_verifies_hits_and_rejects_failed_predictions(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            perceiver = Perceiver()
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            library = RuleLibrary(Path(tmpdir))
-            before = perceiver.perceive(_frame([[2, 0]]))
-            after = perceiver.perceive(_frame([[0, 2]], action=GameAction.ACTION4))
-            unexpected = perceiver.perceive(_frame([[2, 0]], action=GameAction.ACTION4))
+            perception = Perception()
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            rulebook = Rulebook(Path(tmpdir))
+            before = perception.perceive(_frame([[2, 0]]))
+            after = perception.perceive(_frame([[0, 2]], action=GameAction.ACTION4))
+            unexpected = perception.perceive(_frame([[2, 0]], action=GameAction.ACTION4))
 
-            first = history.add(before, GameAction.ACTION4, after)
-            library.add_hypotheses(["moving right shifts the active object"], first)
-            library.record_transition(first)
+            first = memory.record_transition(before, GameAction.ACTION4, after)
+            rulebook.add_hypotheses(["moving right shifts the active object"], first)
+            rulebook.record_transition(first)
 
-            self.assertNotIn("exact observed transition", library.known_rules_text())
+            self.assertNotIn("exact observed transition", rulebook.known_rules_text())
             markdown = (Path(tmpdir) / "rules.md").read_text(encoding="utf-8")
             self.assertIn("## Executable State Transitions", markdown)
             self.assertIn("## LLM Rule Hypotheses", markdown)
 
-            predictions = library.predict(before, GameAction.ACTION4)
-            library.record_prediction_result(
-                before, GameAction.ACTION4, after, predictions
-            )
+            predictions = rulebook.predict(before, GameAction.ACTION4)
+            rulebook.record_prediction_result(before, GameAction.ACTION4, after, predictions)
 
-            hypothesis = library.hypotheses()[0]
+            hypothesis = rulebook.hypotheses()[0]
             self.assertEqual(hypothesis.status, "verified")
             self.assertEqual(hypothesis.prediction_hits, 1)
 
-            predictions = library.predict(before, GameAction.ACTION4)
-            library.record_prediction_result(
+            predictions = rulebook.predict(before, GameAction.ACTION4)
+            rulebook.record_prediction_result(
                 before, GameAction.ACTION4, unexpected, predictions
             )
 
             transition_rule = next(
-                rule for rule in library.rules if rule.kind == "transition"
+                rule for rule in rulebook.rules if rule.kind == "transition"
             )
             self.assertEqual(transition_rule.status, "rejected")
             self.assertEqual(transition_rule.prediction_failures, 1)
@@ -169,15 +189,19 @@ class EngineArchitectureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             cfg = self._config(tmpdir, max_steps=2)
             agent = Agent(cfg, FakeLlmClient())
-            start = Perceiver().perceive(_frame([[2, 0, 0]]))
-            middle = Perceiver().perceive(_frame([[0, 2, 0]], action=GameAction.ACTION4))
-            win = Perceiver().perceive(
+            start = Perception().perceive(_frame([[2, 0, 0]]))
+            middle = Perception().perceive(_frame([[0, 2, 0]], action=GameAction.ACTION4))
+            win = Perception().perceive(
                 _frame([[0, 0, 2]], state=GameState.WIN, action=GameAction.ACTION4)
             )
-            first = agent.engine.history.add(start, GameAction.ACTION4, middle)
-            second = agent.engine.history.add(middle, GameAction.ACTION4, win)
-            agent.engine.library.record_transition(first)
-            agent.engine.library.record_transition(second)
+            first = agent.engine.memory.record_transition(
+                start, GameAction.ACTION4, middle
+            )
+            second = agent.engine.memory.record_transition(
+                middle, GameAction.ACTION4, win
+            )
+            agent.engine.rulebook.record_transition(first)
+            agent.engine.rulebook.record_transition(second)
 
             env = FakeEnv(
                 reset_frame=_frame([[2, 0, 0]]),
@@ -197,11 +221,9 @@ class EngineArchitectureTests(unittest.TestCase):
             cfg = self._config(tmpdir, max_steps=2)
             llm = FakeLlmClient(
                 [
-                    '{"subgoal": "move right to test empty space", '
-                    '"plan": ["ACTION4"]}',
+                    '{"subgoal": "move right to test empty space", "plan": ["ACTION4"]}',
                     '{"rules": []}',
-                    '{"subgoal": "move left to compare the reverse", '
-                    '"plan": ["ACTION3"]}',
+                    '{"subgoal": "move left to compare the reverse", "plan": ["ACTION3"]}',
                     '{"rules": []}',
                 ]
             )
@@ -261,17 +283,16 @@ class EngineArchitectureTests(unittest.TestCase):
             self.assertEqual(len(llm.calls), 2)
             self.assertIn("Available actions: ACTION4, ACTION7", llm.calls[0][1])
 
-    def test_planner_attaches_rendered_frame_to_llm_subgoal_request(self) -> None:
+    def test_planner_attaches_state_image_to_llm_subgoal_request(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             image_url = "data:image/png;base64,iVBORw0KGgo="
             llm = FakeImageLlmClient(
                 {"subgoal": "inspect rendered board", "plan": ["ACTION4"]}
             )
-            library = RuleLibrary(Path(tmpdir))
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            rulebook = Rulebook(Path(tmpdir))
             from client.engine.planner import Planner
 
-            planner = Planner(library, history, llm_client=llm)
             frame = _frame(
                 [[2, 0]],
                 rendered_frame=RenderedFrame(
@@ -281,102 +302,14 @@ class EngineArchitectureTests(unittest.TestCase):
                     height=10,
                 ),
             )
-            state = Perceiver().perceive(frame)
+            memory.append_initial_state(Perception().perceive(frame))
+            planner = Planner(rulebook=rulebook, memory=memory, llm_client=llm)
 
-            decision = planner.choose_action(state, frame)
+            decision = planner.choose_action()
 
             self.assertEqual(decision.action, GameAction.ACTION4)
             self.assertEqual(llm.calls[0]["image_data_urls"], [image_url])
-            self.assertIn("Rendered image: attached", llm.calls[0]["prompt"])
-
-    def test_planner_sends_only_last_visual_transition_pair_to_llm(self) -> None:
-        from client.engine.planner import Planner
-        from client.engine.visual_context import VisualTransition
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            before_image = "data:image/png;base64,before"
-            after_image = "data:image/png;base64,after"
-            current_image = "data:image/png;base64,current"
-            llm = FakeImageLlmClient(
-                {"subgoal": "compare the last move", "plan": ["ACTION4"]}
-            )
-            library = RuleLibrary(Path(tmpdir))
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            planner = Planner(library, history, llm_client=llm)
-            current_frame = _frame(
-                [[0, 2, 0]],
-                rendered_frame=RenderedFrame("image/png", current_image),
-            )
-            visual_transition = VisualTransition(
-                before_frame=_frame(
-                    [[2, 0, 0]],
-                    rendered_frame=RenderedFrame("image/png", before_image),
-                ),
-                action=GameAction.ACTION4,
-                after_frame=_frame(
-                    [[0, 2, 0]],
-                    action=GameAction.ACTION4,
-                    rendered_frame=RenderedFrame("image/png", after_image),
-                ),
-            )
-            state = Perceiver().perceive(current_frame)
-
-            planner.choose_action(
-                state,
-                current_frame,
-                visual_transition=visual_transition,
-            )
-
-            self.assertEqual(
-                llm.calls[0]["image_data_urls"],
-                [before_image, after_image],
-            )
-            self.assertNotIn(current_image, llm.calls[0]["image_data_urls"])
-            self.assertIn("Last visual transition", llm.calls[0]["prompt"])
-            self.assertIn("Action: ACTION4", llm.calls[0]["prompt"])
-
-    def test_visual_transition_dump_writes_latest_images_for_inspection(self) -> None:
-        from client.engine.visual_context import (
-            VisualTransition,
-            dump_visual_transition,
-        )
-
-        with tempfile.TemporaryDirectory() as tmpdir:
-            visual_transition = VisualTransition(
-                before_frame=_frame(
-                    [[2, 0]],
-                    rendered_frame=RenderedFrame(
-                        "image/png",
-                        "data:image/png;base64,YmVmb3Jl",
-                    ),
-                ),
-                action=GameAction.ACTION4,
-                after_frame=_frame(
-                    [[0, 2]],
-                    action=GameAction.ACTION4,
-                    rendered_frame=RenderedFrame(
-                        "image/png",
-                        "data:image/png;base64,YWZ0ZXI=",
-                    ),
-                ),
-            )
-
-            dump_visual_transition(visual_transition, Path(tmpdir))
-
-            self.assertEqual((Path(tmpdir) / "latest-before.png").read_bytes(), b"before")
-            self.assertEqual((Path(tmpdir) / "latest-after.png").read_bytes(), b"after")
-            context = (Path(tmpdir) / "latest-context.txt").read_text(
-                encoding="utf-8"
-            )
-            preview = (Path(tmpdir) / "latest-preview.html").read_text(
-                encoding="utf-8"
-            )
-            self.assertIn("Action: ACTION4", context)
-            self.assertIn("Frame -2", context)
-            self.assertIn("Frame -1", context)
-            self.assertIn("latest-before.png", preview)
-            self.assertIn("latest-after.png", preview)
-            self.assertIn("image-rendering: pixelated", preview)
+            self.assertIn("Rendered image context is attached.", llm.calls[0]["prompt"])
 
 
 if __name__ == "__main__":

@@ -106,7 +106,7 @@ python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 
 ## LLM Configuration
 
-`llm_client.py` uses `litellm` to route calls through OpenRouter. The default model is `openai/gpt-5.5` for flash, pro, and image paths; flash/image calls use low reasoning effort and pro calls use high reasoning effort.
+`llm_client.py` uses `litellm` to route calls through OpenRouter. The default model is `openai/gpt-5.5` with low reasoning effort. Calls carry a `purpose` label so routing can be customized later without reintroducing model tiers.
 
 ## Server REST API (internal behavior)
 

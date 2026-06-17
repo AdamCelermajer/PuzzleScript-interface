@@ -2,7 +2,7 @@
 import random
 from pathlib import Path
 
-from client.engine.types import ActionInput, FrameData, GameAction, GameState
+from client.arc.types import ActionInput, FrameData, GameAction, GameState
 from studies.goal_recognition.experiment.collect import (
     action_label,
     collect_random_trajectory,

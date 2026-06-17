@@ -11,7 +11,7 @@
 
 ## Rules Output
 
-During runs, the agent writes readable evidence and rule artifacts under `client/rules/<game-id>/`: `transitions.jsonl`, `rules.json`, `rules.md`, and `journal.md`.
+During runs, the agent writes readable evidence and rule artifacts under `client/rules/<game-id>/`: `timeline.jsonl`, `rules.json`, `rules.md`, and `journal.md`.
 
 Action choice is engine-first, then LLM-guided: the planner uses verified executable rules when they can reach the goal, and otherwise asks the LLM for one exploratory action. The engine records the real transition afterward and immediately tries to induce rules for unexplained outcomes, so the LLM proposal becomes evidence instead of trusted truth.
 

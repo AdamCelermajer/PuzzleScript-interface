@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from client.engine.arcade_env import ArcadeEnv
+from client.arc.arcade_env import ArcadeEnv
 from studies.goal_recognition.experiment.collect import collect_random_trajectory
 from studies.goal_recognition.experiment.games import load_curated_games
 from studies.goal_recognition.experiment.progress import Progress

@@ -1,7 +1,7 @@
-import unittest
+﻿import unittest
 
-from client.engine.state import EngineState
-from client.engine.types import GameState
+from client.engine.perception import EngineState
+from client.arc.types import GameState
 
 
 def _state(grid: list[list[int]]) -> EngineState:

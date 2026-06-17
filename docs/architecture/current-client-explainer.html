@@ -1,25 +1,21 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Current Client Explainer</title>
+  <title>Current Client Architecture</title>
   <style>
     :root {
-      --ink: #17201b;
-      --muted: #5d6862;
-      --paper: #fbfbf8;
-      --line: #d9ddd5;
+      --bg: #f7f8f5;
+      --ink: #1c2520;
+      --muted: #5b6760;
+      --line: #cfd6ce;
       --panel: #ffffff;
-      --soft: #f1f5ef;
-      --mint: #d9efe3;
-      --coral: #ffd9cb;
-      --gold: #ffe7a6;
-      --blue: #d8e8ff;
-      --green: #146b4f;
-      --red: #9c3e2e;
-      --shadow: 0 18px 45px rgba(23, 32, 27, 0.10);
-      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --engine: #dcefe5;
+      --runtime: #dce8f8;
+      --llm: #fff0c9;
+      --store: #ffe0d3;
+      --mono: Consolas, "SFMono-Regular", "Liberation Mono", monospace;
       --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
@@ -29,814 +25,616 @@
 
     body {
       margin: 0;
-      background: var(--paper);
+      background: var(--bg);
       color: var(--ink);
       font-family: var(--sans);
       line-height: 1.45;
     }
 
-    a {
-      color: inherit;
-    }
-
-    .page {
-      min-height: 100vh;
-    }
-
-    .hero {
-      border-bottom: 1px solid var(--line);
-      background:
-        linear-gradient(90deg, rgba(217, 239, 227, 0.72), rgba(255, 231, 166, 0.45) 48%, rgba(216, 232, 255, 0.60)),
-        var(--paper);
-    }
-
-    .wrap {
-      width: min(1180px, calc(100% - 40px));
+    main {
+      width: min(1160px, calc(100% - 32px));
       margin: 0 auto;
+      padding: 28px 0 42px;
     }
 
-    .hero .wrap {
-      padding: 46px 0 34px;
-    }
-
-    .eyebrow {
-      margin: 0 0 12px;
-      color: var(--green);
-      font-size: 0.78rem;
-      font-weight: 800;
-      letter-spacing: 0;
-      text-transform: uppercase;
+    header {
+      margin-bottom: 18px;
     }
 
     h1 {
-      max-width: 880px;
-      margin: 0;
-      font-size: clamp(2.15rem, 5vw, 4.35rem);
-      line-height: 0.98;
+      margin: 0 0 6px;
+      font-size: 2rem;
       letter-spacing: 0;
     }
 
-    .subtitle {
-      max-width: 780px;
-      margin: 18px 0 0;
-      color: #334139;
-      font-size: 1.08rem;
-    }
-
-    .facts {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 30px;
-    }
-
-    .fact {
-      min-height: 92px;
-      padding: 14px;
-      border: 1px solid rgba(23, 32, 27, 0.12);
-      background: rgba(255, 255, 255, 0.62);
-      border-radius: 8px;
-    }
-
-    .fact strong {
-      display: block;
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-    }
-
-    .fact span {
+    .note {
+      margin: 0;
       color: var(--muted);
-      font-size: 0.88rem;
-    }
-
-    .nav {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      border-bottom: 1px solid var(--line);
-      background: rgba(251, 251, 248, 0.92);
-      backdrop-filter: blur(12px);
-    }
-
-    .nav .wrap {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 10px 0;
-    }
-
-    .nav a {
-      flex: 0 0 auto;
-      padding: 8px 10px;
-      border-radius: 6px;
-      color: #3f4b44;
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .nav a:hover {
-      background: var(--soft);
+      font-size: 0.95rem;
     }
 
     section {
-      padding: 42px 0;
-      border-bottom: 1px solid var(--line);
+      margin-top: 18px;
     }
 
     h2 {
-      margin: 0 0 16px;
-      font-size: 1.55rem;
+      margin: 0 0 10px;
+      font-size: 1.1rem;
       letter-spacing: 0;
     }
 
-    .section-lede {
-      max-width: 760px;
-      margin: -6px 0 22px;
-      color: var(--muted);
-    }
-
-    .flow {
+    .engine-diagram {
       display: grid;
-      grid-template-columns: repeat(8, minmax(106px, 1fr));
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .step {
-      position: relative;
-      min-height: 126px;
-      padding: 14px 12px;
+      gap: 12px;
+      padding: 14px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--panel);
-      box-shadow: 0 8px 20px rgba(23, 32, 27, 0.05);
     }
 
-    .step::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      right: -8px;
-      width: 8px;
-      height: 2px;
-      background: #aeb7af;
+    .diagram-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
     }
 
-    .step:last-child::after {
-      display: none;
+    .diagram-row.two {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     }
 
-    .step .num {
-      display: inline-grid;
-      width: 24px;
-      height: 24px;
-      place-items: center;
-      margin-bottom: 12px;
-      border-radius: 50%;
-      background: var(--ink);
-      color: white;
+    .diagram-row.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .diagram-card {
+      min-height: 118px;
+      padding: 12px;
+      border: 1px solid #1c2520;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .diagram-card.engine {
+      background: var(--engine);
+    }
+
+    .diagram-card.runtime {
+      background: var(--runtime);
+    }
+
+    .diagram-card.store {
+      background: var(--store);
+    }
+
+    .diagram-card.llm {
+      background: var(--llm);
+    }
+
+    .diagram-card h3 {
+      margin-bottom: 6px;
+    }
+
+    .diagram-card .module {
+      display: block;
+      margin-bottom: 8px;
+      color: #435049;
+      font-family: var(--mono);
       font-size: 0.78rem;
-      font-weight: 800;
+      overflow-wrap: anywhere;
     }
 
-    .step h3 {
-      margin: 0 0 7px;
-      font-size: 0.98rem;
-      letter-spacing: 0;
-    }
-
-    .step p {
+    .diagram-card p {
       margin: 0;
-      color: var(--muted);
-      font-size: 0.86rem;
+      color: #354039;
+      font-size: 0.9rem;
     }
 
-    .simple-diagram {
+    .connector {
+      display: grid;
+      min-width: 82px;
+      place-items: center;
+      color: #27312c;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      text-align: center;
+    }
+
+    .connector::before {
+      content: "->";
+      display: block;
+      font-weight: 800;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    .lane-label {
+      margin: 4px 0 -4px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .architecture-diagram {
       overflow-x: auto;
-      padding: 10px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: white;
-      box-shadow: var(--shadow);
+      background: #ffffff;
     }
 
-    .simple-diagram svg {
+    .architecture-diagram svg {
       display: block;
-      min-width: 940px;
+      min-width: 0;
       width: 100%;
       height: auto;
     }
 
-    .diagram-box {
-      fill: #fbfbf8;
-      stroke: #17201b;
-      stroke-width: 2;
+    .svg-box {
+      stroke: #1c2520;
+      stroke-width: 1.6;
       rx: 8;
     }
 
-    .diagram-box.env {
-      fill: var(--blue);
+    .svg-runtime {
+      fill: var(--runtime);
     }
 
-    .diagram-box.memory {
-      fill: var(--mint);
+    .svg-engine {
+      fill: var(--engine);
     }
 
-    .diagram-box.reason {
-      fill: #fff7dd;
+    .svg-store {
+      fill: var(--store);
     }
 
-    .diagram-box.action {
-      fill: var(--coral);
+    .svg-llm {
+      fill: var(--llm);
     }
 
-    .diagram-title {
+    .svg-title {
       fill: var(--ink);
       font-family: var(--sans);
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
       letter-spacing: 0;
     }
 
-    .diagram-text {
-      fill: #37433c;
-      font-family: var(--sans);
-      font-size: 14px;
+    .svg-module {
+      fill: #435049;
+      font-family: var(--mono);
+      font-size: 11px;
       letter-spacing: 0;
     }
 
-    .diagram-small {
-      fill: var(--muted);
+    .svg-text {
+      fill: #354039;
       font-family: var(--sans);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .svg-label {
+      fill: #27312c;
+      font-family: var(--mono);
       font-size: 12px;
       letter-spacing: 0;
     }
 
-    .diagram-arrow {
+    .svg-arrow {
       fill: none;
-      stroke: #17201b;
+      stroke: #1c2520;
       stroke-width: 2;
-      marker-end: url(#arrow);
+      marker-end: url(#svg-arrow-head);
     }
 
-    .diagram-arrow.soft {
-      stroke: #657169;
-      stroke-dasharray: 5 5;
+    .svg-soft {
+      stroke: #657269;
+      stroke-dasharray: 6 5;
+      opacity: 0.68;
     }
 
-    .diagram-note {
-      fill: #17201b;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0;
-    }
-
-    .split {
-      display: grid;
-      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-      gap: 22px;
-      align-items: start;
-    }
-
-    .panel {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-      box-shadow: var(--shadow);
-    }
-
-    .panel-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--line);
-      background: #f8faf6;
-    }
-
-    .panel-head h3 {
-      margin: 0;
-      font-size: 1rem;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      min-height: 24px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--mint);
-      color: #15523f;
-      font-size: 0.78rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .panel-body {
-      padding: 16px;
-    }
-
-    .file-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .file-row {
-      display: grid;
-      grid-template-columns: 220px minmax(0, 1fr);
-      gap: 14px;
-      padding: 10px 0;
-      border-bottom: 1px solid #eef0eb;
-    }
-
-    .file-row:last-child {
-      border-bottom: 0;
-    }
-
-    code,
-    .path {
-      font-family: var(--mono);
-      font-size: 0.88em;
-    }
-
-    .path {
-      color: #27312c;
-      overflow-wrap: anywhere;
-    }
-
-    .desc {
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .tabs {
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    .tab-buttons {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding: 8px;
-      border-bottom: 1px solid var(--line);
-      background: #f7f9f4;
-    }
-
-    .tab-buttons button {
-      min-height: 36px;
-      padding: 7px 10px;
-      border: 1px solid transparent;
-      border-radius: 6px;
-      background: transparent;
-      color: #3b463f;
-      font: inherit;
-      font-size: 0.9rem;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .tab-buttons button[aria-selected="true"] {
-      border-color: #b6c2b8;
-      background: white;
-      color: var(--ink);
-    }
-
-    .tab {
-      display: none;
-    }
-
-    .tab.active {
-      display: block;
-    }
-
-    pre {
-      margin: 0;
-      padding: 18px;
-      overflow-x: auto;
-      background: #17201b;
-      color: #eaf1ec;
-      font-family: var(--mono);
-      font-size: 0.88rem;
-      line-height: 1.55;
-    }
-
-    .module-grid {
+    .example-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
     }
 
-    .module {
-      min-height: 170px;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-top: 5px solid var(--green);
-      border-radius: 8px;
-      background: var(--panel);
-    }
-
-    .module:nth-child(3n + 2) {
-      border-top-color: var(--red);
-    }
-
-    .module:nth-child(3n) {
-      border-top-color: #9a7414;
-    }
-
-    .module h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-    }
-
-    .module .path {
-      display: block;
-      margin-bottom: 10px;
-      color: #435049;
-      font-size: 0.78rem;
-    }
-
-    .module p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.91rem;
-    }
-
-    .module-code-grid {
+    .code-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
 
-    .module-code {
+    article {
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--panel);
-      box-shadow: 0 8px 20px rgba(23, 32, 27, 0.05);
     }
 
-    .module-code header {
+    article header {
       display: flex;
-      align-items: baseline;
       justify-content: space-between;
       gap: 12px;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--line);
-      background: #f8faf6;
-    }
-
-    .module-code h3 {
       margin: 0;
-      font-size: 0.98rem;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfa;
     }
 
-    .module-code .path {
+    h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      letter-spacing: 0;
+    }
+
+    .path {
       color: var(--muted);
+      font-family: var(--mono);
       font-size: 0.76rem;
       text-align: right;
+      overflow-wrap: anywhere;
     }
 
-    .module-code pre {
-      box-shadow: none;
-      font-size: 0.8rem;
-      min-height: 172px;
-    }
-
-    .callout {
-      display: grid;
-      grid-template-columns: 12px minmax(0, 1fr);
-      gap: 14px;
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: white;
-    }
-
-    .callout::before {
-      content: "";
-      width: 12px;
-      border-radius: 8px;
-      background: linear-gradient(var(--green), var(--gold), var(--red));
-    }
-
-    .callout h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-    }
-
-    .callout p {
+    pre {
       margin: 0;
-      color: var(--muted);
+      padding: 14px;
+      overflow-x: auto;
+      background: #17201b;
+      color: #edf3ef;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.5;
     }
 
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+    code {
+      font-family: var(--mono);
     }
 
-    .status {
-      padding: 16px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-    }
-
-    .status.good {
-      border-top: 5px solid var(--green);
-    }
-
-    .status.weak {
-      border-top: 5px solid var(--red);
-    }
-
-    .status h3 {
-      margin: 0 0 10px;
-      font-size: 1rem;
-    }
-
-    ul {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-    }
-
-    li + li {
-      margin-top: 7px;
-    }
-
-    .footer {
-      padding: 30px 0 52px;
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 940px) {
-      .facts,
-      .split,
-      .module-grid,
-      .status-grid {
+    @media (max-width: 820px) {
+      .diagram-row,
+      .diagram-row.two,
+      .diagram-row.three {
         grid-template-columns: 1fr;
       }
 
-      .file-row {
-        grid-template-columns: 1fr;
-        gap: 5px;
+      .connector {
+        min-height: 30px;
       }
 
-      .flow {
-        grid-template-columns: repeat(8, 180px);
-      }
-    }
-
-    @media (max-width: 560px) {
-      .wrap {
-        width: min(100% - 24px, 1180px);
-      }
-
-      .hero .wrap {
-        padding-top: 34px;
-      }
-
-      section {
-        padding: 32px 0;
-      }
-
-      pre {
+      .connector::before {
+        content: "down";
         font-size: 0.8rem;
+      }
+
+      .example-grid,
+      .code-grid {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        width: min(100% - 22px, 1160px);
+        padding-top: 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <header class="hero">
-      <div class="wrap">
-        <p class="eyebrow">PuzzleScript-interface / client</p>
-        <h1>How the current LLM client actually works</h1>
-        <p class="subtitle">
-          A code-grounded map of the current agent: what starts it, what owns each
-          decision, where the LLM is called, and how observations become stored rules.
-        </p>
-        <div class="facts" aria-label="Current architecture summary">
-          <div class="fact">
-            <strong>Entry point</strong>
-            <span><code>client/run_arc_agent.py</code> builds config, env, LLM, dashboard, architecture, and loop.</span>
-          </div>
-          <div class="fact">
-            <strong>Truth source</strong>
-            <span>The environment is always stepped for real. Rules are judged against observed transitions.</span>
-          </div>
-          <div class="fact">
-            <strong>LLM role today</strong>
-            <span>It proposes exploratory plans and generalized rule candidates. It does not own the whole loop.</span>
-          </div>
-          <div class="fact">
-            <strong>Modularity</strong>
-            <span>Module boundaries now match the diagram; <code>agent.py</code> remains only as a compatibility shim.</span>
-          </div>
-        </div>
-      </div>
+  <main>
+    <header>
+      <h1>Current Client Architecture</h1>
+      <p class="note">Diagram and pseudocode only. Updated against the live source split: <code>client/engine</code> reasons, <code>client/runtime</code> executes, <code>client/arc</code> adapts ARC data.</p>
     </header>
 
-    <nav class="nav" aria-label="Page sections">
-      <div class="wrap">
-        <a href="#flow">Flow</a>
-        <a href="#simple-diagram">Simple Diagram</a>
-        <a href="#module-pseudocode">Module Pseudocode</a>
+    <section aria-labelledby="diagram-title">
+      <h2 id="diagram-title">Diagram</h2>
+      <div class="architecture-diagram">
+        <svg viewBox="0 0 980 700" role="img" aria-labelledby="architecture-svg-title architecture-svg-desc">
+          <title id="architecture-svg-title">Engine-focused client architecture</title>
+          <desc id="architecture-svg-desc">Planner-first engine architecture. Observe writes EngineState into memory, planner starts act, and learning revises the rulebook from memory evidence.</desc>
+          <defs>
+            <marker id="svg-arrow-head" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+              <path d="M2,2 L10,6 L2,10 Z" fill="#1c2520"></path>
+            </marker>
+          </defs>
+
+          <text class="svg-label" x="42" y="34">outside engine</text>
+          <text class="svg-label" x="42" y="192">observe path</text>
+          <text class="svg-label" x="42" y="374">act: planner first</text>
+          <text class="svg-label" x="42" y="548">learn / revise path</text>
+
+          <rect class="svg-box svg-runtime" x="58" y="54" width="230" height="96"></rect>
+          <text class="svg-title" x="173" y="86" text-anchor="middle">Runtime / ARC env</text>
+          <text class="svg-module" x="173" y="110" text-anchor="middle">client/runtime + client/arc</text>
+          <text class="svg-text" x="173" y="132" text-anchor="middle">returns frames, accepts actions</text>
+
+          <rect class="svg-box svg-runtime" x="710" y="54" width="220" height="96"></rect>
+          <text class="svg-title" x="820" y="86" text-anchor="middle">Action output</text>
+          <text class="svg-module" x="820" y="110" text-anchor="middle">GameAction</text>
+          <text class="svg-text" x="820" y="132" text-anchor="middle">engine returns next move</text>
+
+          <rect class="svg-box svg-engine" x="58" y="220" width="230" height="110"></rect>
+          <text class="svg-title" x="173" y="254" text-anchor="middle">Perception</text>
+          <text class="svg-module" x="173" y="278" text-anchor="middle">perception.py</text>
+          <text class="svg-text" x="173" y="302" text-anchor="middle">FrameData + image?</text>
+          <text class="svg-text" x="173" y="320" text-anchor="middle">to EngineState</text>
+
+          <rect class="svg-box svg-store" x="58" y="390" width="230" height="120"></rect>
+          <text class="svg-title" x="173" y="424" text-anchor="middle">Memory</text>
+          <text class="svg-module" x="173" y="448" text-anchor="middle">memory.py</text>
+          <text class="svg-text" x="173" y="474" text-anchor="middle">canonical timeline</text>
+          <text class="svg-text" x="173" y="492" text-anchor="middle">State -> Action -> State</text>
+
+          <rect class="svg-box svg-engine" x="380" y="220" width="230" height="110"></rect>
+          <text class="svg-title" x="495" y="254" text-anchor="middle">Goal manager</text>
+          <text class="svg-module" x="495" y="278" text-anchor="middle">goal_manager.py</text>
+          <text class="svg-text" x="495" y="302" text-anchor="middle">selects goal/subgoal</text>
+          <text class="svg-text" x="495" y="320" text-anchor="middle">when planner has none</text>
+
+          <rect class="svg-box svg-engine" x="380" y="390" width="230" height="130"></rect>
+          <text class="svg-title" x="495" y="424" text-anchor="middle">Planner / monitor</text>
+          <text class="svg-module" x="495" y="448" text-anchor="middle">planner.py</text>
+          <text class="svg-text" x="495" y="474" text-anchor="middle">checks active plan</text>
+          <text class="svg-text" x="495" y="492" text-anchor="middle">simulates toward goal</text>
+          <text class="svg-text" x="495" y="510" text-anchor="middle">routes action or revision</text>
+
+          <rect class="svg-box svg-store" x="710" y="390" width="220" height="130"></rect>
+          <text class="svg-title" x="820" y="424" text-anchor="middle">Rulebook</text>
+          <text class="svg-module" x="820" y="448" text-anchor="middle">rulebook.py</text>
+          <text class="svg-text" x="820" y="474" text-anchor="middle">predicts after-states</text>
+          <text class="svg-text" x="820" y="492" text-anchor="middle">tracks hits/failures</text>
+          <text class="svg-text" x="820" y="510" text-anchor="middle">stores verified rules</text>
+
+          <rect class="svg-box svg-engine" x="300" y="560" width="190" height="105"></rect>
+          <text class="svg-title" x="395" y="594" text-anchor="middle">Inducer</text>
+          <text class="svg-module" x="395" y="618" text-anchor="middle">induction.py</text>
+          <text class="svg-text" x="395" y="642" text-anchor="middle">proposes candidate</text>
+
+          <rect class="svg-box svg-engine" x="540" y="560" width="180" height="105"></rect>
+          <text class="svg-title" x="630" y="594" text-anchor="middle">Verifier</text>
+          <text class="svg-module" x="630" y="618" text-anchor="middle">verifier.py</text>
+          <text class="svg-text" x="630" y="642" text-anchor="middle">checks evidence</text>
+
+          <path class="svg-arrow" d="M710 102 L288 102"></path>
+          <text class="svg-label" x="455" y="86">runtime executes action</text>
+
+          <path class="svg-arrow" d="M173 150 L173 220"></path>
+          <text class="svg-label" x="190" y="188">FrameData + image?</text>
+
+          <path class="svg-arrow" d="M173 330 L173 390"></path>
+          <text class="svg-label" x="190" y="356">EngineState</text>
+
+          <path class="svg-arrow" d="M288 450 L380 450"></path>
+          <text class="svg-label" x="294" y="434">current state</text>
+          <text class="svg-label" x="294" y="466">first act step</text>
+
+          <path class="svg-arrow svg-soft" d="M455 390 L455 330"></path>
+          <text class="svg-label" x="374" y="364">if no goal</text>
+
+          <path class="svg-arrow svg-soft" d="M535 330 L535 390"></path>
+          <text class="svg-label" x="548" y="364">goal/subgoal</text>
+
+          <path class="svg-arrow" d="M610 430 L710 430"></path>
+          <text class="svg-label" x="626" y="414">simulate</text>
+
+          <path class="svg-arrow" d="M710 480 L610 480"></path>
+          <text class="svg-label" x="624" y="502">predictions</text>
+
+          <path class="svg-arrow" d="M610 410 L660 410 L660 176 L820 176 L820 150"></path>
+          <text class="svg-label" x="682" y="162">GameAction</text>
+
+          <path class="svg-arrow" d="M173 510 L173 612 L300 612"></path>
+          <text class="svg-label" x="190" y="592">timeline evidence</text>
+
+          <path class="svg-arrow svg-soft" d="M470 520 L470 560"></path>
+          <text class="svg-label" x="485" y="546">mismatch / explore</text>
+
+          <path class="svg-arrow" d="M490 612 L540 612"></path>
+          <text class="svg-label" x="497" y="596">candidate</text>
+
+          <path class="svg-arrow" d="M630 560 L630 540 L820 540 L820 520"></path>
+          <text class="svg-label" x="650" y="553">verified / rejected rules</text>
+        </svg>
       </div>
-    </nav>
+    </section>
 
-    <main>
-      <section id="flow">
-        <div class="wrap">
-          <h2>Small Abstract Flow</h2>
-          <p class="section-lede">
-            This is the useful level of abstraction: one loop, one environment, one
-            rule memory, and occasional LLM calls.
-          </p>
-          <div class="flow" aria-label="Client flow">
-            <div class="step">
-              <span class="num">1</span>
-              <h3>Start CLI</h3>
-              <p>Parse game, backend, max steps.</p>
-            </div>
-            <div class="step">
-              <span class="num">2</span>
-              <h3>Build runtime</h3>
-              <p>Create environment, LLM client, dashboard, and engine modules.</p>
-            </div>
-            <div class="step">
-              <span class="num">3</span>
-              <h3>Reset</h3>
-              <p>Ask ARC surface for the first frame.</p>
-            </div>
-            <div class="step">
-              <span class="num">4</span>
-              <h3>Perceive</h3>
-              <p>Convert raw frame data into stable engine state.</p>
-            </div>
-            <div class="step">
-              <span class="num">5</span>
-              <h3>Choose action</h3>
-              <p>Planner uses verified rules first, LLM fallback second.</p>
-            </div>
-            <div class="step">
-              <span class="num">6</span>
-              <h3>Act</h3>
-              <p>Step the real environment with the chosen action.</p>
-            </div>
-            <div class="step">
-              <span class="num">7</span>
-              <h3>Record truth</h3>
-              <p>Store before/action/after evidence and exact transition memory.</p>
-            </div>
-            <div class="step">
-              <span class="num">8</span>
-              <h3>Maybe induce</h3>
-              <p>Ask LLM for generalized rules, then verify them against evidence.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <section aria-labelledby="examples-title">
+      <h2 id="examples-title">Input Examples</h2>
+      <div class="example-grid">
+        <article>
+          <header>
+            <h3>FrameData entering the engine</h3>
+            <span class="path">client/arc/types.py</span>
+          </header>
+<pre><code>FrameData(
+    frame=[
+        [[1, 1, 1, 1, 1],
+         [1, 2, 0, 3, 1],
+         [1, 0, 4, 0, 1],
+         [1, 0, 0, 0, 1],
+         [1, 1, 1, 1, 1]]
+    ],
+    state=GameState.NOT_PLAYED,
+    game_id="ps_sokoban_basic-v1",
+    available_actions=[UP, DOWN, LEFT, RIGHT],
+    rendered_frame=RenderedFrame(
+        mime_type="image/png",
+        data_url="data:image/png;base64,...",
+    ),
+)</code></pre>
+        </article>
 
-      <section id="simple-diagram">
-        <div class="wrap">
-          <h2>Simple Module Diagram</h2>
-          <p class="section-lede">
-            Yes, the client is modular in this sense: environment, perception,
-            persistent memory, reasoning, and action are separate boxes. The main
-            caveat is that <code>rules.py</code> is still broad internally, but it is now behind <code>rulebook.py</code>.
-          </p>
-          <div class="simple-diagram" aria-label="Simple current client module diagram">
-            <svg viewBox="0 0 1120 610" role="img" aria-labelledby="diagram-title diagram-desc">
-              <title id="diagram-title">Current client module diagram</title>
-              <desc id="diagram-desc">
-                A simplified diagram showing environment state flowing through perception into memory and reasoning, then action returning to the environment.
-              </desc>
-              <defs>
-                <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
-                  <path d="M2,2 L10,6 L2,10 Z" fill="#17201b"></path>
-                </marker>
-              </defs>
+        <article>
+          <header>
+            <h3>EngineState after perception</h3>
+            <span class="path">client/engine/perception.py</span>
+          </header>
+<pre><code>EngineState(
+    grid=(
+        (1, 1, 1, 1, 1),
+        (1, 2, 0, 3, 1),
+        (1, 0, 4, 0, 1),
+        (1, 0, 0, 0, 1),
+        (1, 1, 1, 1, 1),
+    ),
+    state=GameState.NOT_PLAYED,
+    levels_completed=0,
+    win_levels=1,
+    game_id="ps_sokoban_basic-v1",
+    image=EngineImage(
+        mime_type="image/png",
+        data_url="data:image/png;base64,...",
+    ),
+    available_actions=(ACTION1, ACTION2, ACTION3, ACTION4),
+)</code></pre>
+        </article>
 
-              <rect class="diagram-box env" x="830" y="66" width="210" height="82"></rect>
-              <text class="diagram-title" x="935" y="104" text-anchor="middle">PuzzleScript / ARC env</text>
-              <text class="diagram-small" x="935" y="128" text-anchor="middle">truth source</text>
+        <article>
+          <header>
+            <h3>Memory timeline after action</h3>
+            <span class="path">client/engine/memory.py</span>
+          </header>
+<pre><code>EngineMemory.timeline = [
+    StateNode(id="S000001", state=S0),
+    ActionEdge(
+        id="A000001",
+        action=GameAction.ACTION4,
+        before="S000001",
+        after="S000002",
+    ),
+    StateNode(id="S000002", state=S1),
+]
 
-              <rect class="diagram-box" x="590" y="74" width="170" height="66"></rect>
-              <text class="diagram-title" x="675" y="102" text-anchor="middle">Receive state</text>
-              <text class="diagram-small" x="675" y="124" text-anchor="middle">ArcadeEnv + FrameData</text>
+visual prompt context, when needed:
+    S0.image
+    ACTION4
+    S1.image
 
-              <rect class="diagram-box" x="354" y="74" width="170" height="66"></rect>
-              <text class="diagram-title" x="439" y="102" text-anchor="middle">Perceive</text>
-              <text class="diagram-small" x="439" y="124" text-anchor="middle">FrameData -> EngineState</text>
+transition views are derived:
+    (S0, ACTION4, S1)</code></pre>
+        </article>
+      </div>
+    </section>
 
-              <rect class="diagram-box memory" x="98" y="54" width="190" height="106"></rect>
-              <text class="diagram-title" x="193" y="90" text-anchor="middle">Persistent memory</text>
-              <text class="diagram-text" x="193" y="118" text-anchor="middle">TransitionHistory</text>
-              <text class="diagram-text" x="193" y="140" text-anchor="middle">RuleLibrary</text>
+    <section aria-labelledby="pseudocode-title">
+      <h2 id="pseudocode-title">Pseudocode</h2>
+      <div class="code-grid">
+        <article>
+          <header>
+            <h3>Entrypoint</h3>
+            <span class="path">client/run_arc_agent.py</span>
+          </header>
+<pre><code>main():
+    args = parse_cli()
+    cfg = Config(game=args.game_id, ...)
+    dashboard = TerminalDashboard()
 
-              <rect class="diagram-box reason" x="388" y="256" width="260" height="134"></rect>
-              <text class="diagram-title" x="518" y="294" text-anchor="middle">Rule induction</text>
-              <text class="diagram-text" x="518" y="324" text-anchor="middle">LLM proposes rule hypothesis</text>
-              <text class="diagram-text" x="518" y="348" text-anchor="middle">Verifier checks evidence</text>
-              <text class="diagram-text" x="518" y="372" text-anchor="middle">RuleLibrary stores result</text>
+    env = ArcadeEnv(
+        game_id=args.game_id,
+        backend_url=args.backend_url,
+        api_key=args.api_key,
+    )
+    llm_adapter = create_llm_adapter(cfg, event_sink=dashboard.add_event)
+    engine = EngineArchitecture.from_config(cfg, llm_adapter, event_sink=...)
 
-              <rect class="diagram-box reason" x="120" y="420" width="235" height="106"></rect>
-              <text class="diagram-title" x="237" y="458" text-anchor="middle">Planning</text>
-              <text class="diagram-text" x="237" y="488" text-anchor="middle">verified plan</text>
-              <text class="diagram-text" x="237" y="510" text-anchor="middle">or LLM subgoal</text>
+    loop = RuleReasoningLoop(
+        env=env,
+        perception=engine.perception,
+        memory=engine.memory,
+        rulebook=engine.rulebook,
+        planner=engine.planner,
+        inducer=engine.inducer,
+        dashboard=dashboard,
+    )
 
-              <rect class="diagram-box action" x="492" y="440" width="150" height="66"></rect>
-              <text class="diagram-title" x="567" y="478" text-anchor="middle">ACT</text>
-              <text class="diagram-small" x="567" y="500" text-anchor="middle">one action step</text>
+    loop.run(max_steps=args.max_steps, mode=args.mode)</code></pre>
+        </article>
 
-              <rect class="diagram-box" x="760" y="416" width="240" height="122"></rect>
-              <text class="diagram-title" x="880" y="450" text-anchor="middle">RuleReasoningLoop</text>
-              <text class="diagram-text" x="880" y="480" text-anchor="middle">orchestrates modules</text>
-              <text class="diagram-text" x="880" y="504" text-anchor="middle">handles reset/stuck/win</text>
-              <text class="diagram-small" x="880" y="526" text-anchor="middle">client/engine/loop.py</text>
+        <article>
+          <header>
+            <h3>Architecture Wiring</h3>
+            <span class="path">client/engine/architecture.py</span>
+          </header>
+<pre><code>EngineArchitecture.from_config(config, llm_adapter):
+    memory = EngineMemory(base_path / "timeline.jsonl")
+    rulebook = Rulebook(base_path)
+    verifier = RuleVerifier(memory)
 
-              <path class="diagram-arrow" d="M830 107 L760 107"></path>
-              <text class="diagram-note" x="786" y="92">state</text>
+    return EngineArchitecture(
+        perception=Perception(),
+        memory=memory,
+        rulebook=rulebook,
+        inducer=RuleInducer(llm_adapter, rulebook, verifier),
+        planner=Planner(
+            memory=memory,
+            rulebook=rulebook,
+            llm_client=llm_adapter,
+        ),
+    )</code></pre>
+        </article>
 
-              <path class="diagram-arrow" d="M590 107 L524 107"></path>
-              <path class="diagram-arrow" d="M354 107 L288 107"></path>
-              <text class="diagram-note" x="306" y="92">evidence</text>
-
-              <path class="diagram-arrow" d="M288 132 C360 210 410 228 462 256"></path>
-              <text class="diagram-note" x="332" y="204">recent evidence</text>
-
-              <path class="diagram-arrow" d="M388 337 C300 352 230 376 211 420"></path>
-              <text class="diagram-note" x="273" y="376">known rules</text>
-
-              <path class="diagram-arrow" d="M193 420 L193 160"></path>
-              <text class="diagram-note" x="126" y="314" transform="rotate(-90 126 314)">read rules/history</text>
-
-              <path class="diagram-arrow soft" d="M648 323 C714 348 778 378 830 416"></path>
-              <text class="diagram-note" x="732" y="372">loop control</text>
-
-              <path class="diagram-arrow" d="M355 473 L492 473"></path>
-              <text class="diagram-note" x="398" y="456">chosen action</text>
-
-              <path class="diagram-arrow" d="M642 473 C758 458 866 338 910 148"></path>
-              <text class="diagram-note" x="770" y="326">action</text>
-
-              <path class="diagram-arrow soft" d="M760 477 L642 477"></path>
-              <text class="diagram-note" x="682" y="512">execute step</text>
-
-              <path class="diagram-arrow soft" d="M760 436 C690 404 650 382 621 367"></path>
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      <section id="module-pseudocode">
-        <div class="wrap">
-          <h2>Module Pseudocode</h2>
-          <p class="section-lede">
-            Each card describes one current module. This is code-shaped, but still
-            simplified to show ownership and flow instead of every implementation detail.
-          </p>
-          <div class="module-code-grid">
-            <article class="module-code">
-              <header>
-                <h3>Environment</h3>
-                <span class="path">environment.py / arcade_env.py</span>
-              </header>
-<pre><code>EnvironmentSurface.reset():
-    frame_data = wrapped_env.reset()
-    return frame_data
-
-EnvironmentSurface.step(action):
-    frame_data = wrapped_env.step(action)
-    return frame_data
+        <article>
+          <header>
+            <h3>ARC Adapter</h3>
+            <span class="path">client/arc/arcade_env.py + client/arc/types.py</span>
+          </header>
+<pre><code>ArcadeEnv.reset():
+    open scorecard/session if needed
+    raw = ARC RESET against backend
+    return convert_to_FrameData(raw)
 
 ArcadeEnv.step(action):
-    arc_action = ArcGameAction[action.name]
-    raw_frame = arc_env.step(arc_action)
-    return convert_to_FrameData(raw_frame)</code></pre>
-            </article>
+    raw = ARC ACTION&lt;n&gt; against backend
+    return convert_to_FrameData(raw)
 
-            <article class="module-code">
-              <header>
-                <h3>Perception</h3>
-                <span class="path">perception.py / perceiver.py</span>
-              </header>
+convert_to_FrameData(raw):
+    return FrameData(
+        frame=raw.frame,
+        state=raw.state,
+        game_id=raw.game_id,
+        available_actions=raw.available_actions,
+        rendered_frame=RenderedFrame(...) if supplied,
+    )</code></pre>
+        </article>
+
+        <article>
+          <header>
+            <h3>Runtime Loop</h3>
+            <span class="path">client/runtime/runner.py</span>
+          </header>
+<pre><code>RuleReasoningLoop.run(max_steps, game_id):
+    frame = env.reset()
+    state = perception.perceive(frame)
+    memory.append_state(state)
+
+    while steps &lt; max_steps:
+        decision = planner.choose_action(memory)
+
+        after_frame = env.step(decision.action)
+        after_state = perception.perceive(after_frame)
+        predictions = rulebook.predict(state, decision.action)
+        rulebook.record_prediction_result(state, decision.action, after_state, predictions)
+
+        record = memory.append_action_result(decision.action, after_state)
+        rulebook.record_transition(record)
+
+        unexplained = after_state not in predictions
+        if decision.exploratory or decision.revision_needed or unexplained:
+            inducer.propose_from_memory(game_id, memory)
+
+        handle wins, resets, game over, and unchanged boards</code></pre>
+        </article>
+
+        <article>
+          <header>
+            <h3>Perception</h3>
+            <span class="path">client/engine/perception.py</span>
+          </header>
 <pre><code>Perception.perceive(frame_data):
-    final_grid = last_grid(frame_data.frame)
     grid = tuple(tuple(int(cell) for cell in row)
-                 for row in final_grid)
+                 for row in last_grid(frame_data.frame))
 
     return EngineState(
         grid=grid,
@@ -844,168 +642,93 @@ ArcadeEnv.step(action):
         levels_completed=frame_data.levels_completed,
         win_levels=frame_data.win_levels,
         game_id=frame_data.game_id,
+        image=image_from(frame_data.rendered_frame),
+        available_actions=tuple(frame_data.available_actions),
     )</code></pre>
-            </article>
+        </article>
 
-            <article class="module-code">
-              <header>
-                <h3>Memory</h3>
-                <span class="path">memory.py / history.py</span>
-              </header>
-<pre><code>EngineMemory.record_transition(before, action, after):
-    record = TransitionRecord(
-        id=next_transition_id(),
-        before=before,
-        action=action,
-        after=after,
-    )
-    append_jsonl(record)
-    return record
+        <article>
+          <header>
+            <h3>Planner First</h3>
+            <span class="path">client/engine/planner.py</span>
+          </header>
+<pre><code>Planner.choose_action(memory):
+    current = memory.current_state()
 
-EngineMemory.recent(limit):
-    return last limit records from history</code></pre>
-            </article>
+    if active_plan exists:
+        if expected state exists and current != expected:
+            clear active_plan
+        else:
+            return next_action_from(active_plan)
 
-            <article class="module-code">
-              <header>
-                <h3>Rulebook</h3>
-                <span class="path">rulebook.py</span>
-              </header>
-<pre><code>EngineRulebook.predict(state, action):
-    predictions = verified_generalized_rules(state, action)
-    if predictions:
-        return predictions
+    if no active_goal:
+        active_goal = goal_manager.ensure_goal(memory)
 
-    return exact_transition_predictions(state, action)
-
-EngineRulebook.record_prediction_result(...):
-    if actual_after in predictions:
-        mark matching rule hit
-    else:
-        reject failing prediction rules
-
-EngineRulebook.record_observed_transition(record):
-    library.record_transition(record)</code></pre>
-            </article>
-
-            <article class="module-code">
-              <header>
-                <h3>Planning</h3>
-                <span class="path">planning.py</span>
-              </header>
-<pre><code>RuleFirstPlanner.choose_action(state, frame):
-    actions = available_actions(frame)
-
-    plan = plan_to_win_using_rulebook(state, actions)
+    plan = search_rulebook(current, active_goal)
     if plan:
-        clear_pending_llm_plan()
-        return verified plan action
+        active_plan = plan
+        return next_action_from(active_plan)
 
-    if pending LLM plan:
-        return next LLM action
-
-    response = ask_llm_for_subgoal(
-        board=state.rows(),
-        actions=actions,
-        known_rules=rulebook.known_rules_text(),
-        recent_events=memory.recent(5),
+    subgoal, action = ask_for_exploratory_step(
+        current_state=current,
+        recent_memory=memory.recent_context(),
+        images=memory.available_images(),
     )
-    return first action from response.plan</code></pre>
-            </article>
+    active_goal = subgoal
+    return PlanDecision(action, exploratory=True)</code></pre>
+        </article>
 
-            <article class="module-code">
-              <header>
-                <h3>Induction</h3>
-                <span class="path">induction.py</span>
-              </header>
-<pre><code>RuleInducer.propose_from_recent(game, records):
-    events = format records as before/action/after text
-    data = llm.call_json(rule_prompt(events))
+        <article>
+          <header>
+            <h3>Memory And Rulebook</h3>
+            <span class="path">client/engine/memory.py + client/engine/rulebook.py</span>
+          </header>
+<pre><code>EngineMemory.append_state(state):
+    if timeline is empty:
+        append StateNode(state)
+    else:
+        update current observed state
+
+EngineMemory.append_action_result(action, after_state):
+    append ActionEdge(previous_state, action, after_state)
+    append StateNode(after_state)
+
+EngineMemory.recent_transitions():
+    derive (before_state, action, after_state)
+    from adjacent timeline nodes
+
+Rulebook.predict(state, action):
+    return verified generalized predictions
+           plus exact predictions derived from evidence</code></pre>
+        </article>
+
+        <article>
+          <header>
+            <h3>Rule Induction And Verification</h3>
+            <span class="path">client/engine/induction.py + client/engine/verifier.py</span>
+          </header>
+<pre><code>RuleInducer.propose_from_memory(game_id, memory):
+    evidence = memory.recent_transitions()
+    events, images = memory.latest_visual_context()
+
+    data = llm.call_json(
+        induction_prompt(game_id, evidence, known_rules),
+        image_data_urls=images,
+    )
     candidates = parse GeneralizedRule objects
 
     for candidate in candidates:
-        verified = verifier.verify(candidate)
-        library.add_generalized_rule(verified)
+        checked = verifier.verify(candidate, memory)
+        rulebook.store(checked)
 
-RuleVerifier.verify(rule):
-    for evidence_id in rule.evidence_ids:
-        record = find transition by id
-        if record.after not in rule.predict(record.before):
-            return rejected rule
-    return verified rule</code></pre>
-            </article>
-
-            <article class="module-code">
-              <header>
-                <h3>Actions</h3>
-                <span class="path">actions.py</span>
-              </header>
-<pre><code>ActionExecutor.execute(frame, state, decision):
-    after_frame = env.step(decision.action)
-    after_state = perceiver.perceive(after_frame)
-
-    return StepOutcome(
-        before_frame=frame,
-        before_state=state,
-        decision=decision,
-        after_frame=after_frame,
-        after_state=after_state,
-    )</code></pre>
-            </article>
-
-            <article class="module-code">
-              <header>
-                <h3>Loop</h3>
-                <span class="path">loop.py</span>
-              </header>
-<pre><code>RuleReasoningLoop.run():
-    frame = env.reset()
-    state = perceiver.perceive(frame)
-
-    while steps < max_steps:
-        decision = planner.choose_action(state, frame)
-        predictions = rulebook.predict(state, decision.action)
-        outcome = actions.execute(frame, state, decision)
-
-        rulebook.record_prediction_result(outcome, predictions)
-        record = memory.record_transition(...)
-        rulebook.record_observed_transition(record)
-
-        if no rule explained the result:
-            inducer.propose_from_recent(game_id, memory.recent(5))
-
-        frame = outcome.after_frame
-        state = outcome.after_state</code></pre>
-            </article>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <div class="wrap">
-        Built as a static explanation page for the current client. Open directly from
-        <code>docs/architecture/current-client-explainer.html</code>.
+RuleVerifier.verify(candidate, memory):
+    for evidence in candidate.evidence_ids:
+        transition = memory.transition_by_id(evidence)
+        predicted = candidate.predict(transition.before)
+        require transition.after in predicted</code></pre>
+        </article>
       </div>
-    </footer>
-  </div>
-
-  <script>
-    const buttons = Array.from(document.querySelectorAll("[data-tab]"));
-    const tabs = Array.from(document.querySelectorAll(".tab"));
-
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const id = button.getAttribute("data-tab");
-        buttons.forEach((item) => {
-          item.setAttribute("aria-selected", String(item === button));
-        });
-        tabs.forEach((tab) => {
-          tab.classList.toggle("active", tab.id === id);
-        });
-      });
-    });
-  </script>
+    </section>
+  </main>
 </body>
 </html>
-

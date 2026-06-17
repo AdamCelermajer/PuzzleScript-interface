@@ -21,8 +21,7 @@ def goal_recognition_config(
     """Use the same OpenRouter config path as the main client engine."""
     return Config(
         server_url=backend_url,
-        flash_model=GOAL_RECOGNITION_MODEL,
-        pro_model=GOAL_RECOGNITION_MODEL,
+        model=GOAL_RECOGNITION_MODEL,
         game="goal_recognition",
         mode=mode,
     )

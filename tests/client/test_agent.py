@@ -1,4 +1,5 @@
-import os
+﻿import os
+import json
 import sys
 import tempfile
 import unittest
@@ -12,7 +13,7 @@ if ROOT not in sys.path:
 
 from client.engine.agent import Agent, run_learning_loop, run_solving_loop
 from client.engine.llm_client import Config
-from client.engine.types import ActionInput, FrameData, GameAction, GameState
+from client.arc.types import ActionInput, FrameData, GameAction, GameState
 
 
 def _frame(
@@ -74,13 +75,31 @@ class FakeLlmClient:
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         json_mode: bool = False,
+        image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> str:
-        self.calls.append((system, prompt, model_type, json_mode))
+        self.calls.append((system, prompt, json_mode, purpose))
         if not self.responses:
             raise AssertionError("Unexpected LLM call")
         return self.responses.pop(0)
+
+    def call_json(
+        self,
+        system: str,
+        prompt: str,
+        image_data_urls: list[str] | None = None,
+        purpose: str = "",
+    ) -> dict:
+        return json.loads(
+            self._call(
+                system,
+                prompt,
+                json_mode=True,
+                image_data_urls=image_data_urls,
+                purpose=purpose,
+            )
+        )
 
 
 class AgentLoopTests(unittest.TestCase):
@@ -119,7 +138,7 @@ class AgentLoopTests(unittest.TestCase):
         self.assertEqual(env.step_actions, [GameAction.ACTION1, GameAction.ACTION2])
         self.assertEqual(len(llm.calls), 4)
         self.assertTrue(
-            os.path.exists(os.path.join(cfg.rules_dir, cfg.game, "transitions.jsonl"))
+            os.path.exists(os.path.join(cfg.rules_dir, cfg.game, "timeline.jsonl"))
         )
         self.assertTrue(
             os.path.exists(os.path.join(cfg.rules_dir, cfg.game, "rules.json"))
@@ -137,7 +156,7 @@ class AgentLoopTests(unittest.TestCase):
 
         agent = Agent(cfg, FakeLlmClient([]))
 
-        self.assertEqual(agent.engine.library.rules, [])
+        self.assertEqual(agent.engine.rulebook.rules, [])
         self.assertTrue(str(agent.engine.base_path).endswith("ps_sokoban_basic-v1"))
 
     def test_solving_loop_explores_available_actions_without_reset(self) -> None:

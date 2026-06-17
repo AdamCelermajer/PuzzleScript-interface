@@ -18,12 +18,8 @@ class Config:
     """Runtime configuration for server and model clients."""
 
     server_url: str = "http://localhost:3543"
-    flash_model: str = "openai/gpt-5.5"
-    pro_model: str = "openai/gpt-5.5"
-    image_model: str = "openai/gpt-5.5"
-    flash_reasoning_effort: str = "low"
-    pro_reasoning_effort: str = "high"
-    image_reasoning_effort: str = "low"
+    model: str = "openai/gpt-5.5"
+    reasoning_effort: str = "low"
     game: str = "ps_sokoban_basic-v1"
     mode: str = "learn"
     max_steps: int = 20
@@ -42,7 +38,7 @@ class Config:
 
 
 class LlmClient:
-    """Wrapper around litellm with model-specific routing parameters."""
+    """Wrapper around litellm with a purpose label for future routing."""
 
     def __init__(
         self,
@@ -64,14 +60,14 @@ class LlmClient:
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         json_mode: bool = False,
         image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> str:
         """Call the configured OpenRouter model and return plain text output."""
         user_content: str | list[dict] = prompt
         images = [url for url in image_data_urls or [] if str(url).strip()]
-        litellm_model = self._litellm_model("image" if images else model_type)
+        litellm_model = self._litellm_model()
         if images:
             user_content = [
                 {"type": "text", "text": prompt},
@@ -88,12 +84,12 @@ class LlmClient:
         kwargs = {}
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
-        reasoning_effort = self._reasoning_effort("image" if images else model_type)
-        if reasoning_effort:
-            kwargs["reasoning_effort"] = reasoning_effort
+        if self.cfg.reasoning_effort:
+            kwargs["reasoning_effort"] = self.cfg.reasoning_effort
 
         kwargs["timeout"] = 45
-        self._log(f"Asking {litellm_model}...")
+        purpose_text = f" for {purpose}" if purpose else ""
+        self._log(f"Asking {litellm_model}{purpose_text}...")
         start = time.time()
         response = litellm.completion(
             model=litellm_model,
@@ -110,30 +106,30 @@ class LlmClient:
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> str:
         return self._call(
             system,
             prompt,
-            model_type=model_type,
             json_mode=False,
             image_data_urls=image_data_urls,
+            purpose=purpose,
         )
 
     def call_json(
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> dict:
         response = self._call(
             system,
             prompt,
-            model_type=model_type,
             json_mode=True,
             image_data_urls=image_data_urls,
+            purpose=purpose,
         )
         try:
             data = json.loads(extract_json(response))
@@ -143,20 +139,7 @@ class LlmClient:
             raise ValueError("LLM JSON response must be an object")
         return data
 
-    def _model_name(self, model_type: str) -> str:
-        if model_type == "image":
-            return self.cfg.image_model
-        return self.cfg.pro_model if model_type == "pro" else self.cfg.flash_model
-
-    def _reasoning_effort(self, model_type: str) -> str:
-        if model_type == "image":
-            return self.cfg.image_reasoning_effort
-        if model_type == "pro":
-            return self.cfg.pro_reasoning_effort
-        return self.cfg.flash_reasoning_effort
-
-    def _litellm_model(self, model_type: str) -> str:
-        model_name = self._model_name(model_type)
-        if model_name.startswith("openrouter/"):
-            return model_name
-        return f"openrouter/{model_name}"
+    def _litellm_model(self) -> str:
+        if self.cfg.model.startswith("openrouter/"):
+            return self.cfg.model
+        return f"openrouter/{self.cfg.model}"

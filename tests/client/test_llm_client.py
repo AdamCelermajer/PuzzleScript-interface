@@ -1,5 +1,6 @@
 import os
 import unittest
+from dataclasses import fields
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -20,17 +21,15 @@ class LlmClientConfigTests(unittest.TestCase):
             client = LlmClient(cfg)
             routed_key = os.environ["OPENROUTER_API_KEY"]
 
-        self.assertEqual(cfg.flash_model, "openai/gpt-5.5")
-        self.assertEqual(cfg.pro_model, "openai/gpt-5.5")
-        self.assertEqual(cfg.image_model, "openai/gpt-5.5")
-        self.assertEqual(cfg.flash_reasoning_effort, "low")
-        self.assertEqual(cfg.pro_reasoning_effort, "high")
-        self.assertEqual(cfg.image_reasoning_effort, "low")
+        self.assertEqual(cfg.model, "openai/gpt-5.5")
+        self.assertEqual(cfg.reasoning_effort, "low")
         self.assertEqual(cfg.openrouter_api_key, "test-openrouter-key")
         self.assertEqual(routed_key, "test-openrouter-key")
         self.assertFalse(hasattr(cfg, "api_key"))
+        self.assertIn("model", {field.name for field in fields(Config)})
+        self.assertIn("reasoning_effort", {field.name for field in fields(Config)})
         self.assertEqual(
-            client._litellm_model("flash"),
+            client._litellm_model(),
             "openrouter/openai/gpt-5.5",
         )
 
@@ -57,7 +56,27 @@ class LlmClientConfigTests(unittest.TestCase):
         self.assertIn("Asking openrouter/openai/gpt-5.5", events[0])
         self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "low")
 
-    def test_pro_calls_use_high_reasoning_effort(self) -> None:
+    def test_call_logs_purpose_when_supplied(self) -> None:
+        events: list[str] = []
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))]
+        )
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            cfg = Config()
+            client = LlmClient(cfg, event_sink=events.append)
+            with patch(
+                "client.engine.llm_client.litellm.completion",
+                return_value=response,
+            ):
+                result = client._call("system", "prompt", purpose="subgoal/action")
+
+        self.assertEqual(result, "ok")
+        self.assertEqual(
+            events[0],
+            "Asking openrouter/openai/gpt-5.5 for subgoal/action...",
+        )
+
+    def test_call_text_uses_single_low_reasoning_model(self) -> None:
         response = SimpleNamespace(
             choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))]
         )
@@ -68,14 +87,14 @@ class LlmClientConfigTests(unittest.TestCase):
                 "client.engine.llm_client.litellm.completion",
                 return_value=response,
             ) as completion:
-                result = client.call_text("system", "prompt", model_type="pro")
+                result = client.call_text("system", "prompt", purpose="rule creation")
 
         self.assertEqual(result, "ok")
         self.assertEqual(
             completion.call_args.kwargs["model"],
             "openrouter/openai/gpt-5.5",
         )
-        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "high")
+        self.assertEqual(completion.call_args.kwargs["reasoning_effort"], "low")
 
     def test_call_can_attach_image_data_urls_to_user_message(self) -> None:
         response = SimpleNamespace(

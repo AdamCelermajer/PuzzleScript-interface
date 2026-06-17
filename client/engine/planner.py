@@ -1,17 +1,13 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
-import json
-import inspect
 from collections import deque
 from dataclasses import dataclass
 
-from client.engine import prompts
-from client.engine.history import TransitionHistory
-from client.engine.rules import RuleLibrary
-from client.engine.state import EngineState
-from client.engine.types import FrameData, GameAction
-from client.engine.utils import extract_json
-from client.engine.visual_context import VisualTransition
+from client.engine.goal_manager import Goal, GoalManager
+from client.engine.memory import EngineMemory
+from client.engine.perception import EngineState
+from client.engine.rulebook import Rulebook
+from client.arc.types import FrameData, GameAction
 
 
 DEFAULT_ACTIONS = (
@@ -30,50 +26,91 @@ class PlanDecision:
     reason: str
     plan: list[GameAction]
     subgoal: str = ""
+    exploratory: bool = False
+
+
+@dataclass(frozen=True)
+class ActivePlan:
+    goal: Goal
+    actions: tuple[GameAction, ...]
+    index: int = 0
+
+    def next_action(self) -> GameAction | None:
+        if self.index >= len(self.actions):
+            return None
+        return self.actions[self.index]
+
+    def advance(self) -> "ActivePlan":
+        return ActivePlan(
+            goal=self.goal,
+            actions=self.actions,
+            index=self.index + 1,
+        )
 
 
 class Planner:
-    """Plans over verified transitions and explores when no plan is known."""
+    """Planner-first action router over memory, goals, and verified rules."""
 
     def __init__(
         self,
-        library: RuleLibrary,
-        history: TransitionHistory,
+        rulebook: Rulebook | None = None,
+        memory: EngineMemory | None = None,
         llm_client=None,
+        goal_manager: GoalManager | None = None,
         max_depth: int = 20,
         node_limit: int = 200,
     ) -> None:
-        self.library = library
-        self.history = history
+        if rulebook is None:
+            raise ValueError("Planner requires a rulebook")
+        self.rulebook = rulebook
+        self.memory = memory
         self.llm_client = llm_client
+        self.goal_manager = goal_manager or GoalManager()
         self.max_depth = max_depth
         self.node_limit = node_limit
-        self.pending_llm_plan: list[GameAction] = []
-        self.pending_llm_subgoal = ""
+        self.game_goal: Goal | None = None
+        self.active_plan: ActivePlan | None = None
 
     def choose_action(
         self,
-        current: EngineState,
-        frame_data: FrameData,
-        visual_transition: VisualTransition | None = None,
+        current: EngineState | None = None,
+        frame_data: FrameData | None = None,
     ) -> PlanDecision:
-        actions = self.available_actions(frame_data)
-        plan = self.plan_to_win(current, actions)
-        if plan:
-            self.clear_llm_plan()
-            return PlanDecision(plan[0], "verified_plan", plan)
+        memory = self.memory
+        if current is None:
+            if memory is None:
+                raise ValueError("Planner needs memory or an explicit current state")
+            current = memory.current_state()
+        actions = self.available_actions(current, frame_data)
 
-        self.clear_llm_plan()
+        continued = self._continue_active_plan(current)
+        if continued is not None:
+            return continued
+
+        if self.game_goal is None:
+            self.game_goal = self.goal_manager.ensure_goal(memory)
+
+        planned = self.plan_to_goal(current, actions)
+        if planned:
+            self.active_plan = ActivePlan(
+                goal=self.game_goal,
+                actions=tuple(planned),
+            )
+            return PlanDecision(planned[0], "verified_plan", planned)
+
         return self.ask_llm_for_subgoal(
-            current,
-            actions,
-            frame_data,
-            visual_transition=visual_transition,
+            current=current,
+            actions=actions,
+            frame_data=frame_data,
         )
 
     def clear_llm_plan(self) -> None:
-        self.pending_llm_plan = []
-        self.pending_llm_subgoal = ""
+        self.active_plan = None
+
+    def plan_to_goal(
+        self, current: EngineState, actions: list[GameAction]
+    ) -> list[GameAction] | None:
+        return self.plan_to_win(current, actions)
 
     def plan_to_win(
         self, current: EngineState, actions: list[GameAction]
@@ -92,149 +129,87 @@ class Planner:
             if len(path) >= self.max_depth:
                 continue
             for action in actions:
-                for predicted in self.library.predict(state, action):
+                for predicted in self.rulebook.predict(state, action):
                     if predicted in seen:
                         continue
                     seen.add(predicted)
                     queue.append((predicted, [*path, action]))
         return None
 
-    def available_actions(self, frame_data: FrameData) -> list[GameAction]:
-        available = list(getattr(frame_data, "available_actions", []) or [])
+    def available_actions(
+        self, current: EngineState, frame_data: FrameData | None = None
+    ) -> list[GameAction]:
+        available = list(current.available_actions)
+        if frame_data is not None:
+            available = list(getattr(frame_data, "available_actions", []) or available)
         actions = [
             action
             for action in DEFAULT_ACTIONS
             if action in available and action != GameAction.RESET
         ]
-        return actions or [
-            GameAction.ACTION1,
-            GameAction.ACTION2,
-            GameAction.ACTION3,
-            GameAction.ACTION4,
-        ]
+        if not actions:
+            raise ValueError("No available actions for planner")
+        return actions
 
     def ask_llm_for_subgoal(
         self,
         current: EngineState,
         actions: list[GameAction],
-        frame_data: FrameData,
-        visual_transition: VisualTransition | None = None,
+        frame_data: FrameData | None = None,
     ) -> PlanDecision:
         if self.llm_client is None:
             raise RuntimeError(
                 "Planner needs an LLM client when no verified plan exists"
             )
 
-        image_data_urls = (
-            visual_transition.image_data_urls()
-            if visual_transition is not None
-            else self._image_data_urls(frame_data)
-        )
-        recent_events = (
-            visual_transition.prompt_text()
-            if visual_transition is not None
-            else self._recent_events_text()
-        )
-        rendered_image_note = ""
-        if image_data_urls:
-            rendered_image_note = (
-                "attached as the last before/after visual transition."
-                if visual_transition is not None
-                else "attached as current visual observation."
-            )
-        system, prompt = prompts.get_explore_subgoal_prompt(
-            current_board="\n".join(current.rows()),
-            available_actions=", ".join(action.name for action in actions),
+        recent_events, image_data_urls = self._prompt_context(current, frame_data)
+        goal, plan = self.goal_manager.ask_for_subgoal_action(
+            llm_client=self.llm_client,
+            current=current,
+            actions=actions,
             recent_events=recent_events,
-            known_rules_text=self.library.known_rules_text(),
-            game_name=current.game_id,
-            rendered_image_note=rendered_image_note,
+            known_rules_text=self.rulebook.known_rules_text(),
+            image_data_urls=image_data_urls,
         )
-        data = self._call_json(system, prompt, image_data_urls=image_data_urls)
-        plan = self._parse_action_plan(data, actions)
-        self.pending_llm_plan = []
-        self.pending_llm_subgoal = ""
-        subgoal = str(data.get("subgoal", "")).strip()
+        self.active_plan = ActivePlan(goal, tuple(plan))
         return PlanDecision(
             plan[0],
-            "llm_subgoal",
+            "explore_subgoal",
             [plan[0]],
-            subgoal=subgoal,
+            subgoal=goal.description,
+            exploratory=True,
         )
 
-    def _call_json(
+    def _continue_active_plan(self, current: EngineState) -> PlanDecision | None:
+        if self.active_plan is None:
+            return None
+        action = self.active_plan.next_action()
+        if action is None:
+            self.active_plan = None
+            return None
+        self.active_plan = self.active_plan.advance()
+        return PlanDecision(action, "active_plan", [action])
+
+    def _prompt_context(
         self,
-        system: str,
-        prompt: str,
-        image_data_urls: list[str] | None = None,
-    ) -> dict:
-        if hasattr(self.llm_client, "call_json"):
-            call_json = self.llm_client.call_json
-            try:
-                signature = inspect.signature(call_json)
-            except (TypeError, ValueError):
-                signature = None
-            if signature is None or "image_data_urls" in signature.parameters:
-                return call_json(
-                    system,
-                    prompt,
-                    model_type="flash",
-                    image_data_urls=image_data_urls,
-                )
-            return call_json(system, prompt, model_type="flash")
-        call = self.llm_client._call
-        try:
-            signature = inspect.signature(call)
-        except (TypeError, ValueError):
-            signature = None
-        kwargs = {"model_type": "flash", "json_mode": True}
-        if signature is None or "image_data_urls" in signature.parameters:
-            kwargs["image_data_urls"] = image_data_urls
-        response = call(system, prompt, **kwargs)
-        return json.loads(extract_json(response))
-
-    def _image_data_urls(self, frame_data: FrameData) -> list[str]:
-        rendered_frame = getattr(frame_data, "rendered_frame", None)
-        data_url = getattr(rendered_frame, "data_url", "")
-        if not data_url:
-            return []
-        return [str(data_url)]
-
-    def _parse_action_plan(
-        self, data: dict, available_actions: list[GameAction]
-    ) -> list[GameAction]:
-        raw_plan = data.get("plan") or data.get("actions")
-        if raw_plan is None and data.get("action"):
-            raw_plan = [data["action"]]
-        if not isinstance(raw_plan, list):
-            raise ValueError(f"LLM exploration response has no action plan: {data}")
-
-        plan: list[GameAction] = []
-        for value in raw_plan:
-            name = str(value).strip().upper()
-            if name not in GameAction.__members__:
-                raise ValueError(f"LLM returned unknown action: {value}")
-            action = GameAction[name]
-            if action not in available_actions:
-                raise ValueError(
-                    f"LLM returned unavailable action {action.name}; "
-                    f"available: {', '.join(item.name for item in available_actions)}"
-                )
-            plan.append(action)
-
-        if not plan:
-            raise ValueError(f"LLM exploration response has empty plan: {data}")
-        return plan
+        current: EngineState,
+        frame_data: FrameData | None,
+    ) -> tuple[str, list[str]]:
+        if self.memory is not None:
+            text, images = self.memory.latest_visual_context()
+            if text or images:
+                return text, images
+        images = []
+        if current.image is not None:
+            images.append(current.image.data_url)
+        elif frame_data is not None:
+            rendered_frame = getattr(frame_data, "rendered_frame", None)
+            data_url = getattr(rendered_frame, "data_url", "")
+            if data_url:
+                images.append(str(data_url))
+        return self._recent_events_text(), images
 
     def _recent_events_text(self) -> str:
-        lines = []
-        for record in self.history.recent(1):
-            lines.append(
-                f"{record.id}: {record.action.name}\n"
-                f"Before:\n{self._rows(record.before)}\n"
-                f"After:\n{self._rows(record.after)}"
-            )
-        return "\n\n".join(lines)
-
-    def _rows(self, state: EngineState) -> str:
-        return "\n".join(state.rows())
+        if self.memory is None:
+            return ""
+        return self.memory.recent_context(limit=1)

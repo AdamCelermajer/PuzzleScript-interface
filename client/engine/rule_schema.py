@@ -1,10 +1,10 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from typing import Any
 
-from client.engine.state import EngineState
-from client.engine.types import GameAction, GameState
+from client.engine.perception import EngineState
+from client.arc.types import GameAction, GameState
 
 
 @dataclass(frozen=True)

@@ -2,7 +2,7 @@
 import unittest
 from pathlib import Path
 
-from client.engine.types import ActionInput, FrameData, GameAction, GameState
+from client.arc.types import ActionInput, FrameData, GameAction, GameState
 from studies.LIVE_framework.model import SymbolFrame, SymbolGoal
 from studies.LIVE_framework.rules import LiveRuleModel
 from studies.LIVE_framework.runner import LiveRunner

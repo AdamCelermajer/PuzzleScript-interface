@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
+﻿from abc import ABC, abstractmethod
 
-from client.engine.types import FrameData, GameAction
+from client.arc.types import FrameData, GameAction
 
 
 class BaseEnv(ABC):

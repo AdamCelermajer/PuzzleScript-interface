@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import time
 from collections import deque
@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Protocol
 
-from client.engine.types import FrameData, GameAction
+from client.arc.types import FrameData, GameAction
 
 from .model import DEFAULT_SYMBOL_MAP, SymbolFrame, SymbolGoal
 from .perceiver import SymbolPerceiver

@@ -2,12 +2,31 @@ from __future__ import annotations
 
 from typing import Callable
 
-from client.engine import prompts
-from client.engine.history import TransitionRecord
+from client.engine.memory import EngineMemory, TransitionRecord
 from client.engine.rule_schema import candidate_rules_from_llm_json
-from client.engine.rules import RuleLibrary
+from client.engine.rulebook import Rulebook
 from client.engine.verifier import RuleVerifier
-from client.engine.visual_context import VisualTransition
+
+
+RULE_FORMAT = """
+Executable rule JSON shape:
+  {
+    "summary": "ACTION4 moves the player one cell right into empty space.",
+    "action": "ACTION4",
+    "anchor": 2,
+    "conditions": [
+      {"dx": 0, "dy": 0, "value": 2},
+      {"dx": 1, "dy": 0, "value": 0}
+    ],
+    "effects": [
+      {"dx": 0, "dy": 0, "value": 0},
+      {"dx": 1, "dy": 0, "value": 2}
+    ],
+    "evidence_ids": ["T000001"]
+  }
+
+Offsets are relative to the anchor cell. Use only integer cell values from the boards.
+""".strip()
 
 
 class RuleInducer:
@@ -16,7 +35,7 @@ class RuleInducer:
     def __init__(
         self,
         llm_client,
-        library: RuleLibrary,
+        library: Rulebook,
         verifier: RuleVerifier,
         event_sink: Callable[[str], None] | None = None,
     ) -> None:
@@ -29,14 +48,15 @@ class RuleInducer:
         self,
         game_name: str,
         records: list[TransitionRecord],
-        visual_transition: VisualTransition | None = None,
+        image_data_urls: list[str] | None = None,
+        events_text: str | None = None,
     ) -> list[str]:
         if not records:
             return []
 
         events = (
-            visual_transition.prompt_text()
-            if visual_transition is not None
+            events_text
+            if events_text is not None
             else "\n\n".join(
                 [
                     f"Event {index}:\n"
@@ -47,12 +67,7 @@ class RuleInducer:
                 ]
             )
         )
-        image_data_urls = (
-            visual_transition.image_data_urls()
-            if visual_transition is not None
-            else []
-        )
-        sys_prompt, user_prompt = prompts.get_deduce_rules_prompt(
+        sys_prompt, user_prompt = self._deduce_rules_prompt(
             events,
             self.library.known_rules_text(),
             "",
@@ -73,6 +88,15 @@ class RuleInducer:
         stored = self.library.add_generalized_rules(verified)
         return [rule.id for rule in stored if rule.status == "verified"]
 
+    def propose_from_memory(self, game_name: str, memory: EngineMemory) -> list[str]:
+        events, images = memory.latest_visual_context()
+        return self.propose_from_recent(
+            game_name,
+            memory.recent_transitions(1),
+            image_data_urls=images,
+            events_text=events or None,
+        )
+
     def _call_rule_model(
         self,
         system: str,
@@ -83,27 +107,20 @@ class RuleInducer:
             return self.llm_client.call_json(
                 system,
                 prompt,
-                model_type="pro",
                 image_data_urls=image_data_urls,
+                purpose="rule creation",
             )
 
         import json
-        import inspect
 
         from client.engine.utils import extract_json
 
-        call = self.llm_client._call
-        try:
-            signature = inspect.signature(call)
-        except (TypeError, ValueError):
-            signature = None
-        kwargs = {"model_type": "pro", "json_mode": True}
-        if signature is None or "image_data_urls" in signature.parameters:
-            kwargs["image_data_urls"] = image_data_urls
         response = self.llm_client._call(
             system,
             prompt,
-            **kwargs,
+            json_mode=True,
+            image_data_urls=image_data_urls,
+            purpose="rule creation",
         )
         return json.loads(extract_json(response))
 
@@ -122,3 +139,30 @@ class RuleInducer:
 
     def _rows(self, state) -> str:
         return "\n".join(state.rows())
+
+    def _deduce_rules_prompt(
+        self,
+        events: str,
+        known_rules_text: str,
+        focus_prompt: str,
+        game_name: str = "Unknown",
+    ) -> tuple[str, str]:
+        system = (
+            "You are a physics engine reverse-engineer. "
+            f"You are observing a grid environment named '{game_name}'. "
+            "You observe action/state transitions and propose executable mechanical rules.\n\n"
+            f"{RULE_FORMAT}\n\n"
+            "Only propose rules directly supported by the event log. "
+            "Do not guess, do not duplicate known rules, and do not over-generalize from one direction. "
+            "Every rule must include a concise natural-language summary and cite the "
+            "transition ids that support it.\n\n"
+            'Output only JSON: {"rules": [<rule objects>]}\n'
+            'If no rule is supported, output: {"rules": []}'
+        )
+        prompt = (
+            f"{known_rules_text}\n\n"
+            f"Recent events:\n{events}\n\n"
+            f"{focus_prompt}"
+            "Identify new rule hypotheses. Output only JSON."
+        )
+        return system, prompt

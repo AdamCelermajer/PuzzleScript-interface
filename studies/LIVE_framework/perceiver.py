@@ -1,6 +1,6 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
-from client.engine.types import FrameData
+from client.arc.types import FrameData
 
 from .model import DEFAULT_SYMBOL_MAP, SymbolFrame
 

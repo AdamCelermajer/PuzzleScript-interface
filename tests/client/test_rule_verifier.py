@@ -1,11 +1,11 @@
-import tempfile
+﻿import tempfile
 import unittest
 from pathlib import Path
 
-from client.engine.history import TransitionHistory
+from client.engine.memory import EngineMemory
 from client.engine.rule_schema import CellCondition, CellEffect, GeneralizedRule
-from client.engine.state import EngineState
-from client.engine.types import GameAction, GameState
+from client.engine.perception import EngineState
+from client.arc.types import GameAction, GameState
 from client.engine.verifier import RuleVerifier
 
 
@@ -39,24 +39,24 @@ def _candidate(evidence_ids: tuple[str, ...]) -> GeneralizedRule:
 class RuleVerifierTests(unittest.TestCase):
     def test_candidate_is_verified_when_it_predicts_all_cited_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            record = history.add(
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            record = memory.record_transition(
                 _state([[2, 0, 1]]), GameAction.ACTION4, _state([[0, 2, 1]])
             )
 
-            result = RuleVerifier(history).verify(_candidate((record.id,)))
+            result = RuleVerifier(memory).verify(_candidate((record.id,)))
 
             self.assertEqual(result.status, "verified")
             self.assertEqual(result.failures, ())
 
     def test_candidate_is_rejected_and_records_counterexample(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            record = history.add(
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            record = memory.record_transition(
                 _state([[2, 0, 1]]), GameAction.ACTION4, _state([[2, 0, 1]])
             )
 
-            result = RuleVerifier(history).verify(_candidate((record.id,)))
+            result = RuleVerifier(memory).verify(_candidate((record.id,)))
 
             self.assertEqual(result.status, "rejected")
             self.assertIn(record.id, result.failures[0])

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from client.engine.history import TransitionHistory, TransitionRecord
+from client.engine.memory import EngineMemory, TransitionRecord
 from client.engine.rule_schema import GeneralizedRule
 
 
 class RuleVerifier:
     """Verifies executable candidate rules against transition evidence."""
 
-    def __init__(self, history: TransitionHistory) -> None:
-        self.history = history
+    def __init__(self, memory: EngineMemory) -> None:
+        self.memory = memory
 
     def verify(self, rule: GeneralizedRule) -> GeneralizedRule:
         failures: list[str] = []
@@ -32,7 +32,4 @@ class RuleVerifier:
         return rule.verified()
 
     def _record_by_id(self, record_id: str) -> TransitionRecord | None:
-        for record in self.history.all():
-            if record.id == record_id:
-                return record
-        return None
+        return self.memory.transition_by_id(record_id)

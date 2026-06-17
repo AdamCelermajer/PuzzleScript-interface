@@ -1,15 +1,15 @@
-import json
+﻿import json
 import tempfile
 import unittest
 from pathlib import Path
 
-from client.engine.history import TransitionHistory
 from client.engine.induction import RuleInducer
+from client.engine.memory import EngineMemory
+from client.engine.perception import EngineState, Perception
 from client.engine.planner import Planner
 from client.engine.rule_schema import CellCondition, CellEffect, GeneralizedRule
-from client.engine.rules import RuleLibrary
-from client.engine.state import EngineState
-from client.engine.types import (
+from client.engine.rulebook import Rulebook
+from client.arc.types import (
     ActionInput,
     FrameData,
     GameAction,
@@ -28,6 +28,7 @@ def _state(
         levels_completed=1 if state == GameState.WIN else 0,
         win_levels=1,
         game_id="test-grid",
+        available_actions=(GameAction.ACTION4,),
     )
 
 
@@ -58,15 +59,15 @@ class FakeJsonLlm:
         self,
         system: str,
         prompt: str,
-        model_type: str = "flash",
         image_data_urls: list[str] | None = None,
+        purpose: str = "",
     ) -> dict:
         self.calls.append(
             {
                 "system": system,
                 "prompt": prompt,
-                "model_type": model_type,
                 "image_data_urls": list(image_data_urls or []),
+                "purpose": purpose,
             }
         )
         if not self.payloads:
@@ -90,24 +91,24 @@ def _frame(grid: list[list[int]], image_url: str) -> FrameData:
 
 
 class EngineGeneralizedRuleTests(unittest.TestCase):
-    def test_rule_library_predicts_with_verified_generalized_rules_before_exact_memory(
+    def test_rulebook_predicts_with_verified_generalized_rules_before_exact_memory(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            library = RuleLibrary(Path(tmpdir))
-            library.add_generalized_rule(_verified_rule())
+            rulebook = Rulebook(Path(tmpdir))
+            rulebook.add_generalized_rule(_verified_rule())
 
-            predictions = library.predict(_state([[1, 2, 0]]), GameAction.ACTION4)
+            predictions = rulebook.predict(_state([[1, 2, 0]]), GameAction.ACTION4)
 
             self.assertEqual([state.grid for state in predictions], [((1, 0, 2),)])
 
     def test_inducer_verifies_and_persists_llm_candidate_rules(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            record = history.add(
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            record = memory.record_transition(
                 _state([[2, 0, 1]]), GameAction.ACTION4, _state([[0, 2, 1]])
             )
-            library = RuleLibrary(Path(tmpdir))
+            rulebook = Rulebook(Path(tmpdir))
             llm = FakeJsonLlm(
                 [
                     {
@@ -132,83 +133,69 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             )
 
             hypotheses = RuleInducer(
-                llm, library, RuleVerifier(history)
+                llm, rulebook, RuleVerifier(memory)
             ).propose_from_recent("test-grid", [record])
 
             self.assertEqual(len(hypotheses), 1)
-            self.assertEqual(library.generalized_rules[0].status, "verified")
+            self.assertEqual(rulebook.generalized_rules[0].status, "verified")
             self.assertEqual(
-                library.generalized_rules[0].summary,
+                rulebook.generalized_rules[0].summary,
                 "ACTION4 moves the player one cell right into empty space.",
             )
             self.assertIn(
                 "ACTION4 moves the player one cell right into empty space.",
-                library.known_rules_text(),
+                rulebook.known_rules_text(),
             )
             saved = json.loads((Path(tmpdir) / "rules_v2.json").read_text())
             self.assertEqual(saved["rules"][0]["status"], "verified")
-            self.assertEqual(
-                saved["rules"][0]["summary"],
-                "ACTION4 moves the player one cell right into empty space.",
-            )
 
     def test_inducer_logs_malformed_llm_output_without_crashing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            record = history.add(
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            record = memory.record_transition(
                 _state([[2, 0, 1]]), GameAction.ACTION4, _state([[0, 2, 1]])
             )
             events: list[str] = []
-            library = RuleLibrary(Path(tmpdir))
+            rulebook = Rulebook(Path(tmpdir))
             llm = FakeJsonLlm([{"rules": [{"action": "ACTION4"}]}])
 
             hypotheses = RuleInducer(
-                llm, library, RuleVerifier(history), event_sink=events.append
+                llm, rulebook, RuleVerifier(memory), event_sink=events.append
             ).propose_from_recent("test-grid", [record])
 
             self.assertEqual(hypotheses, [])
             self.assertIn("Rejected malformed rule candidate", events[0])
 
-    def test_inducer_sends_only_last_visual_transition_pair_to_llm(self) -> None:
-        from client.engine.visual_context import VisualTransition
-
+    def test_inducer_sends_latest_memory_transition_images_to_llm(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            record = history.add(
-                _state([[2, 0, 1]]), GameAction.ACTION4, _state([[0, 2, 1]])
-            )
-            library = RuleLibrary(Path(tmpdir))
-            llm = FakeJsonLlm([{"rules": []}])
             before_image = "data:image/png;base64,before"
             after_image = "data:image/png;base64,after"
-            visual_transition = VisualTransition(
-                before_frame=_frame([[2, 0, 1]], before_image),
-                action=GameAction.ACTION4,
-                after_frame=_frame([[0, 2, 1]], after_image),
+            perception = Perception()
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            memory.record_transition(
+                perception.perceive(_frame([[2, 0, 1]], before_image)),
+                GameAction.ACTION4,
+                perception.perceive(_frame([[0, 2, 1]], after_image)),
+            )
+            rulebook = Rulebook(Path(tmpdir))
+            llm = FakeJsonLlm([{"rules": []}])
+
+            RuleInducer(llm, rulebook, RuleVerifier(memory)).propose_from_memory(
+                "test-grid", memory
             )
 
-            RuleInducer(llm, library, RuleVerifier(history)).propose_from_recent(
-                "test-grid",
-                [record],
-                visual_transition=visual_transition,
-            )
-
-            self.assertEqual(
-                llm.calls[0]["image_data_urls"],
-                [before_image, after_image],
-            )
-            self.assertIn("Last visual transition", llm.calls[0]["prompt"])
-            self.assertIn("Action: ACTION4", llm.calls[0]["prompt"])
+            self.assertEqual(llm.calls[0]["image_data_urls"], [before_image, after_image])
+            self.assertEqual(llm.calls[0]["purpose"], "rule creation")
+            self.assertIn("Last memory transition", llm.calls[0]["prompt"])
+            self.assertIn("ACTION4", llm.calls[0]["prompt"])
 
     def test_planner_uses_generalized_rules_before_llm_probe(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
-            history = TransitionHistory(Path(tmpdir) / "transitions.jsonl")
-            library = RuleLibrary(Path(tmpdir))
-            library.add_generalized_rule(_verified_rule())
-            planner = Planner(library, history, llm_client=FakeJsonLlm([]))
-            current = _state([[2, 0]])
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            rulebook = Rulebook(Path(tmpdir))
+            rulebook.add_generalized_rule(_verified_rule())
             predicted_win = _state([[0, 2]], state=GameState.WIN)
-            library.add_generalized_rule(
+            rulebook.add_generalized_rule(
                 GeneralizedRule(
                     id="G000002",
                     action="ACTION4",
@@ -227,15 +214,12 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
                     levels_completed=1,
                 )
             )
-
-            decision = planner.choose_action(
-                current,
-                frame_data=type(
-                    "Frame",
-                    (),
-                    {"available_actions": [GameAction.ACTION4]},
-                )(),
+            memory.append_initial_state(_state([[2, 0]]))
+            planner = Planner(
+                rulebook=rulebook, memory=memory, llm_client=FakeJsonLlm([])
             )
+
+            decision = planner.choose_action()
 
             self.assertEqual(decision.reason, "verified_plan")
             self.assertEqual(decision.action, GameAction.ACTION4)
