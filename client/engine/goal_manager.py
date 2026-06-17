@@ -88,7 +88,7 @@ class GoalManager:
         prompt = (
             f"Current board:\n{self._rows(current)}\n\n"
             f"Available actions: {', '.join(action.name for action in actions)}\n\n"
-            f"Known rule hypotheses:\n{known_rules_text or '- none'}\n\n"
+            f"Known logical rules:\n{known_rules_text or '- none'}\n\n"
             f"Recent evidence:\n{recent_events or '- none'}\n\n"
             f"{image_note}"
             "Choose the next subgoal and one-action plan. Output only JSON."

@@ -37,7 +37,7 @@ def _candidate(evidence_ids: tuple[str, ...]) -> GeneralizedRule:
 
 
 class RuleVerifierTests(unittest.TestCase):
-    def test_candidate_is_verified_when_it_predicts_all_cited_evidence(self) -> None:
+    def test_candidate_records_no_contradictions_when_it_predicts_cited_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
             record = memory.record_transition(
@@ -46,10 +46,9 @@ class RuleVerifierTests(unittest.TestCase):
 
             result = RuleVerifier(memory).verify(_candidate((record.id,)))
 
-            self.assertEqual(result.status, "verified")
-            self.assertEqual(result.failures, ())
+            self.assertEqual(result.contradictions, ())
 
-    def test_candidate_is_rejected_and_records_counterexample(self) -> None:
+    def test_candidate_records_contradiction_without_rejecting_rule_record(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
             record = memory.record_transition(
@@ -58,8 +57,7 @@ class RuleVerifierTests(unittest.TestCase):
 
             result = RuleVerifier(memory).verify(_candidate((record.id,)))
 
-            self.assertEqual(result.status, "rejected")
-            self.assertIn(record.id, result.failures[0])
+            self.assertIn(record.id, result.contradictions[0])
 
 
 if __name__ == "__main__":

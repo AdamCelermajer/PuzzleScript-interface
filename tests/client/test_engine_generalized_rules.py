@@ -46,7 +46,6 @@ def _verified_rule() -> GeneralizedRule:
             CellEffect(dx=1, dy=0, value=2),
         ),
         evidence_ids=("T000001",),
-        status="verified",
     )
 
 
@@ -137,7 +136,6 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             ).propose_from_recent("test-grid", [record])
 
             self.assertEqual(len(hypotheses), 1)
-            self.assertEqual(rulebook.generalized_rules[0].status, "verified")
             self.assertEqual(
                 rulebook.generalized_rules[0].summary,
                 "ACTION4 moves the player one cell right into empty space.",
@@ -146,8 +144,16 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
                 "ACTION4 moves the player one cell right into empty space.",
                 rulebook.known_rules_text(),
             )
-            saved = json.loads((Path(tmpdir) / "rules_v2.json").read_text())
-            self.assertEqual(saved["rules"][0]["status"], "verified")
+            saved = json.loads((Path(tmpdir) / "rules.json").read_text())
+            self.assertEqual(saved["rules"][0]["ruleID"], "G000001")
+            self.assertNotIn("status", saved["rules"][0])
+            self.assertEqual(saved["rules"][0]["evidence"]["supports"], [record.id])
+            self.assertEqual(saved["rules"][0]["revision_count"], 0)
+            self.assertFalse((Path(tmpdir) / "rules_v2.json").exists())
+            self.assertFalse((Path(tmpdir) / "rules_v2.md").exists())
+            self.assertFalse((Path(tmpdir) / "journal.md").exists())
+            self.assertFalse((Path(tmpdir) / "journal_v2.md").exists())
+            self.assertFalse((Path(tmpdir) / "rules.md").exists())
 
     def test_inducer_logs_malformed_llm_output_without_crashing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -209,7 +215,6 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
                         CellEffect(dx=1, dy=0, value=2),
                     ),
                     evidence_ids=("T000002",),
-                    status="verified",
                     result_state=predicted_win.state.value,
                     levels_completed=1,
                 )
@@ -221,7 +226,7 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
 
             decision = planner.choose_action()
 
-            self.assertEqual(decision.reason, "verified_plan")
+            self.assertEqual(decision.reason, "rule_plan")
             self.assertEqual(decision.action, GameAction.ACTION4)
 
 

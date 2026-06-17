@@ -49,7 +49,7 @@ class ActivePlan:
 
 
 class Planner:
-    """Planner-first action router over memory, goals, and verified rules."""
+    """Planner-first action router over memory, goals, and logical rules."""
 
     def __init__(
         self,
@@ -96,7 +96,7 @@ class Planner:
                 goal=self.game_goal,
                 actions=tuple(planned),
             )
-            return PlanDecision(planned[0], "verified_plan", planned)
+            return PlanDecision(planned[0], "rule_plan", planned)
 
         return self.ask_llm_for_subgoal(
             current=current,
@@ -159,7 +159,7 @@ class Planner:
     ) -> PlanDecision:
         if self.llm_client is None:
             raise RuntimeError(
-                "Planner needs an LLM client when no verified plan exists"
+                "Planner needs an LLM client when no rule plan exists"
             )
 
         recent_events, image_data_urls = self._prompt_context(current, frame_data)

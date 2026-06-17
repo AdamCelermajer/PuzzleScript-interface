@@ -156,7 +156,7 @@ class AgentLoopTests(unittest.TestCase):
 
         agent = Agent(cfg, FakeLlmClient([]))
 
-        self.assertEqual(agent.engine.rulebook.rules, [])
+        self.assertEqual(agent.engine.rulebook.generalized_rules, [])
         self.assertTrue(str(agent.engine.base_path).endswith("ps_sokoban_basic-v1"))
 
     def test_solving_loop_explores_available_actions_without_reset(self) -> None:

@@ -11,8 +11,19 @@
 
 ## Rules Output
 
-During runs, the agent writes readable evidence and rule artifacts under `client/rules/<game-id>/`: `timeline.jsonl`, `rules.json`, `rules.md`, and `journal.md`.
+During runs, the agent writes two main artifacts under `client/rules/<game-id>/`:
 
-Action choice is engine-first, then LLM-guided: the planner uses verified executable rules when they can reach the goal, and otherwise asks the LLM for one exploratory action. The engine records the real transition afterward and immediately tries to induce rules for unexplained outcomes, so the LLM proposal becomes evidence instead of trusted truth.
+- `timeline.jsonl` is the chronological evidence stream: states, actions, and observed transitions.
+- `rules.json` is the structured rule source used for simulation.
+
+Each rule has a `ruleID`, a natural-language summary, a logical rule (`action`, `anchor`, `conditions`, `effects`), evidence statistics (`supports`, `contradictions`, `prediction_hits`, `prediction_failures`), and `revision_count`. The planner uses the logical rule directly: a rule applies when its action matches and its relative cell conditions match the current grid.
+
+Action choice is engine-first, then LLM-guided: the planner simulates with known logical rules when they can reach the goal, and otherwise asks the LLM for one exploratory action. The engine records the real transition afterward and immediately tries to induce or revise rules for unexplained outcomes, so the LLM proposal becomes evidence instead of trusted truth.
+
+For a readable debug view of rules plus timeline evidence, run:
+
+```bash
+uv run python -m client.inspect_rules --game-id ps_sokoban_basic-v1 --recent 5
+```
 
 LIVE-style experiments now live under `studies/LIVE_framework/`; goal-recognition experiments live under `studies/goal_recognition/`.

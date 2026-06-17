@@ -9,6 +9,7 @@ from client.engine.agent import Agent, run_solving_loop
 from client.engine.llm_client import Config
 from client.engine.memory import EngineMemory
 from client.engine.perception import Perception
+from client.engine.rule_schema import CellCondition, CellEffect, GeneralizedRule
 from client.engine.rulebook import Rulebook
 from client.arc.types import (
     ActionInput,
@@ -149,43 +150,51 @@ class EngineArchitectureTests(unittest.TestCase):
             self.assertIn('"before_id": "S000001"', text)
             self.assertIn('"after_id": "S000002"', text)
 
-    def test_rulebook_verifies_hits_and_rejects_failed_predictions(self) -> None:
+    def test_rulebook_records_rule_prediction_statistics_without_status_labels(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             perception = Perception()
-            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
             rulebook = Rulebook(Path(tmpdir))
             before = perception.perceive(_frame([[2, 0]]))
             after = perception.perceive(_frame([[0, 2]], action=GameAction.ACTION4))
             unexpected = perception.perceive(_frame([[2, 0]], action=GameAction.ACTION4))
 
-            first = memory.record_transition(before, GameAction.ACTION4, after)
-            rulebook.add_hypotheses(["moving right shifts the active object"], first)
-            rulebook.record_transition(first)
+            rulebook.add_generalized_rule(
+                GeneralizedRule(
+                    id="G000001",
+                    action="ACTION4",
+                    anchor=2,
+                    conditions=(
+                        CellCondition(dx=0, dy=0, value=2),
+                        CellCondition(dx=1, dy=0, value=0),
+                    ),
+                    effects=(
+                        CellEffect(dx=0, dy=0, value=0),
+                        CellEffect(dx=1, dy=0, value=2),
+                    ),
+                    evidence_ids=("T000001",),
+                    summary="ACTION4 moves the player right into empty space.",
+                )
+            )
 
-            self.assertNotIn("exact observed transition", rulebook.known_rules_text())
-            markdown = (Path(tmpdir) / "rules.md").read_text(encoding="utf-8")
-            self.assertIn("## Executable State Transitions", markdown)
-            self.assertIn("## LLM Rule Hypotheses", markdown)
+            self.assertIn("ACTION4 moves the player right", rulebook.known_rules_text())
+            self.assertFalse((Path(tmpdir) / "rules.md").exists())
 
             predictions = rulebook.predict(before, GameAction.ACTION4)
             rulebook.record_prediction_result(before, GameAction.ACTION4, after, predictions)
 
-            hypothesis = rulebook.hypotheses()[0]
-            self.assertEqual(hypothesis.status, "verified")
-            self.assertEqual(hypothesis.prediction_hits, 1)
+            rule = rulebook.generalized_rules[0]
+            self.assertEqual(rule.prediction_hits, 1)
 
             predictions = rulebook.predict(before, GameAction.ACTION4)
             rulebook.record_prediction_result(
                 before, GameAction.ACTION4, unexpected, predictions
             )
 
-            transition_rule = next(
-                rule for rule in rulebook.rules if rule.kind == "transition"
-            )
-            self.assertEqual(transition_rule.status, "rejected")
-            self.assertEqual(transition_rule.prediction_failures, 1)
+            rule = rulebook.generalized_rules[0]
+            self.assertEqual(rule.prediction_failures, 1)
+            self.assertIn("predicted wrong result", rule.contradictions[0])
 
-    def test_solving_loop_uses_verified_plan_instead_of_placeholder_cycle(self) -> None:
+    def test_solving_loop_uses_rule_plan_instead_of_placeholder_cycle(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             cfg = self._config(tmpdir, max_steps=2)
             agent = Agent(cfg, FakeLlmClient())
@@ -194,14 +203,43 @@ class EngineArchitectureTests(unittest.TestCase):
             win = Perception().perceive(
                 _frame([[0, 0, 2]], state=GameState.WIN, action=GameAction.ACTION4)
             )
-            first = agent.engine.memory.record_transition(
-                start, GameAction.ACTION4, middle
+            agent.engine.rulebook.add_generalized_rule(
+                GeneralizedRule(
+                    id="G000001",
+                    action="ACTION4",
+                    anchor=2,
+                    conditions=(
+                        CellCondition(dx=0, dy=0, value=2),
+                        CellCondition(dx=1, dy=0, value=0),
+                    ),
+                    effects=(
+                        CellEffect(dx=0, dy=0, value=0),
+                        CellEffect(dx=1, dy=0, value=2),
+                    ),
+                    evidence_ids=("T000001",),
+                    summary="ACTION4 moves the player right into empty space.",
+                )
             )
-            second = agent.engine.memory.record_transition(
-                middle, GameAction.ACTION4, win
+            agent.engine.rulebook.add_generalized_rule(
+                GeneralizedRule(
+                    id="G000002",
+                    action="ACTION4",
+                    anchor=2,
+                    conditions=(
+                        CellCondition(dx=0, dy=0, value=2),
+                        CellCondition(dx=-1, dy=0, value=0),
+                        CellCondition(dx=1, dy=0, value=0),
+                    ),
+                    effects=(
+                        CellEffect(dx=0, dy=0, value=0),
+                        CellEffect(dx=1, dy=0, value=2),
+                    ),
+                    evidence_ids=("T000002",),
+                    summary="ACTION4 completes the line when moving right from the middle.",
+                    result_state=GameState.WIN.value,
+                    levels_completed=1,
+                )
             )
-            agent.engine.rulebook.record_transition(first)
-            agent.engine.rulebook.record_transition(second)
 
             env = FakeEnv(
                 reset_frame=_frame([[2, 0, 0]]),
@@ -216,7 +254,7 @@ class EngineArchitectureTests(unittest.TestCase):
 
             self.assertEqual(env.step_actions, [GameAction.ACTION4, GameAction.ACTION4])
 
-    def test_solving_loop_asks_llm_for_subgoal_when_no_verified_plan_exists(self) -> None:
+    def test_solving_loop_asks_llm_for_subgoal_when_no_rule_plan_exists(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             cfg = self._config(tmpdir, max_steps=2)
             llm = FakeLlmClient(

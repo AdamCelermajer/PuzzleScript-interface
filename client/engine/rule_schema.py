@@ -49,15 +49,54 @@ class GeneralizedRule:
     effects: tuple[CellEffect, ...]
     evidence_ids: tuple[str, ...]
     summary: str = ""
-    status: str = "candidate"
-    failures: tuple[str, ...] = ()
+    contradictions: tuple[str, ...] = ()
     prediction_hits: int = 0
     prediction_failures: int = 0
+    revision_count: int = 0
     result_state: str | None = None
     levels_completed: int | None = None
 
     @classmethod
     def from_data(cls, data: dict[str, Any]) -> "GeneralizedRule":
+        if "logical_rule" in data:
+            logical_rule = data["logical_rule"]
+            _require_fields(data, ("ruleID", "logical_rule", "evidence"))
+            _require_fields(logical_rule, ("action", "anchor", "conditions", "effects"))
+            evidence = data.get("evidence", {})
+            anchor = logical_rule["anchor"]
+            anchor_value = anchor.get("value") if isinstance(anchor, dict) else anchor
+            return cls(
+                id=str(data["ruleID"]),
+                action=_action_name(logical_rule["action"]),
+                anchor=int(anchor_value),
+                conditions=tuple(
+                    CellCondition.from_data(_offset_item(item))
+                    for item in logical_rule.get("conditions", [])
+                ),
+                effects=tuple(
+                    CellEffect.from_data(_offset_item(item))
+                    for item in logical_rule.get("effects", [])
+                ),
+                evidence_ids=tuple(str(item) for item in evidence.get("supports", [])),
+                summary=str(data.get("natural_language", "")),
+                contradictions=tuple(
+                    str(item) for item in evidence.get("contradictions", [])
+                ),
+                prediction_hits=int(evidence.get("prediction_hits", 0)),
+                prediction_failures=int(evidence.get("prediction_failures", 0)),
+                revision_count=int(data.get("revision_count", 0)),
+                result_state=(
+                    str(logical_rule["result_state"])
+                    if logical_rule.get("result_state") is not None
+                    else None
+                ),
+                levels_completed=(
+                    int(logical_rule["levels_completed"])
+                    if logical_rule.get("levels_completed") is not None
+                    else None
+                ),
+            )
+
         _require_fields(data, ("id", "action", "anchor", "conditions", "effects"))
         action = _action_name(data["action"])
         return cls(
@@ -70,10 +109,13 @@ class GeneralizedRule:
             effects=tuple(CellEffect.from_data(item) for item in data.get("effects", [])),
             evidence_ids=tuple(str(item) for item in data.get("evidence_ids", [])),
             summary=str(data.get("summary", "")),
-            status=str(data.get("status", "candidate")),
-            failures=tuple(str(item) for item in data.get("failures", [])),
+            contradictions=tuple(
+                str(item)
+                for item in data.get("contradictions", data.get("failures", []))
+            ),
             prediction_hits=int(data.get("prediction_hits", 0)),
             prediction_failures=int(data.get("prediction_failures", 0)),
+            revision_count=int(data.get("revision_count", 0)),
             result_state=(
                 str(data["result_state"]) if data.get("result_state") is not None else None
             ),
@@ -85,20 +127,27 @@ class GeneralizedRule:
         )
 
     def to_data(self) -> dict[str, Any]:
-        return {
-            "id": self.id,
+        logical_rule: dict[str, Any] = {
             "action": self.action,
-            "anchor": self.anchor,
-            "conditions": [item.to_data() for item in self.conditions],
-            "effects": [item.to_data() for item in self.effects],
-            "evidence_ids": list(self.evidence_ids),
-            "summary": self.summary,
-            "status": self.status,
-            "failures": list(self.failures),
-            "prediction_hits": self.prediction_hits,
-            "prediction_failures": self.prediction_failures,
-            "result_state": self.result_state,
-            "levels_completed": self.levels_completed,
+            "anchor": {"value": self.anchor},
+            "conditions": [_logical_condition(item) for item in self.conditions],
+            "effects": [_logical_effect(item) for item in self.effects],
+        }
+        if self.result_state is not None:
+            logical_rule["result_state"] = self.result_state
+        if self.levels_completed is not None:
+            logical_rule["levels_completed"] = self.levels_completed
+        return {
+            "ruleID": self.id,
+            "natural_language": self.summary,
+            "logical_rule": logical_rule,
+            "evidence": {
+                "supports": list(self.evidence_ids),
+                "contradictions": list(self.contradictions),
+                "prediction_hits": self.prediction_hits,
+                "prediction_failures": self.prediction_failures,
+            },
+            "revision_count": self.revision_count,
         }
 
     def predict(self, state: EngineState) -> list[EngineState]:
@@ -117,15 +166,11 @@ class GeneralizedRule:
             seen.add(predicted)
         return predictions
 
-    def verified(self) -> "GeneralizedRule":
-        return replace(self, status="verified", failures=())
-
-    def rejected(self, failures: tuple[str, ...]) -> "GeneralizedRule":
+    def with_contradictions(self, contradictions: tuple[str, ...]) -> "GeneralizedRule":
         return replace(
             self,
-            status="rejected",
-            failures=failures,
-            prediction_failures=self.prediction_failures + len(failures),
+            contradictions=contradictions,
+            prediction_failures=self.prediction_failures + len(contradictions),
         )
 
     def with_id(self, rule_id: str) -> "GeneralizedRule":
@@ -134,12 +179,20 @@ class GeneralizedRule:
     def with_hit(self) -> "GeneralizedRule":
         return replace(self, prediction_hits=self.prediction_hits + 1)
 
-    def with_failure(self, failure: str) -> "GeneralizedRule":
+    def with_contradiction(self, contradiction: str) -> "GeneralizedRule":
         return replace(
             self,
-            status="rejected",
-            failures=(*self.failures, failure),
+            contradictions=(*self.contradictions, contradiction),
             prediction_failures=self.prediction_failures + 1,
+        )
+
+    def revised_from(self, previous: "GeneralizedRule") -> "GeneralizedRule":
+        return replace(
+            self,
+            id=previous.id,
+            prediction_hits=previous.prediction_hits,
+            prediction_failures=previous.prediction_failures,
+            revision_count=previous.revision_count + 1,
         )
 
     def _apply_effects(
@@ -230,3 +283,23 @@ def _action_name(value: Any) -> str:
     if name not in GameAction.__members__:
         raise ValueError(f"unknown action '{value}'")
     return name
+
+
+def _offset_item(data: dict[str, Any]) -> dict[str, Any]:
+    if "offset" not in data:
+        return data
+    dx, dy = data["offset"]
+    converted = {"dx": dx, "dy": dy}
+    if "equals" in data:
+        converted["value"] = data["equals"]
+    if "set" in data:
+        converted["value"] = data["set"]
+    return converted
+
+
+def _logical_condition(condition: CellCondition) -> dict[str, Any]:
+    return {"offset": [condition.dx, condition.dy], "equals": condition.value}
+
+
+def _logical_effect(effect: CellEffect) -> dict[str, Any]:
+    return {"offset": [effect.dx, effect.dy], "set": effect.value}

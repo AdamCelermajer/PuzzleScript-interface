@@ -15,6 +15,7 @@ if ROOT not in sys.path:
 from client.engine.memory import EngineMemory
 from client.engine.perception import Perception
 from client.engine.planner import PlanDecision
+from client.engine.rule_schema import CellCondition, CellEffect, GeneralizedRule
 from client.engine.rulebook import Rulebook
 from client.arc.types import ActionInput, FrameData, GameAction, GameState
 
@@ -114,7 +115,7 @@ class ModularEngineLoopTests(unittest.TestCase):
         self.assertIs(outcome.after_frame, after_frame)
         self.assertEqual(outcome.after_state.grid, ((0, 2), (0, 0)))
 
-    def test_memory_and_rulebook_record_transition(self) -> None:
+    def test_memory_records_transition_and_rulebook_uses_logical_rules(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             perception = Perception()
             before = perception.perceive(_frame([[2, 0]]))
@@ -124,11 +125,26 @@ class ModularEngineLoopTests(unittest.TestCase):
 
             record = memory.record_transition(before, GameAction.ACTION4, after)
             rulebook.record_prediction_result(before, GameAction.ACTION4, after, [])
-            rule = rulebook.record_transition(record)
+            rulebook.add_generalized_rule(
+                GeneralizedRule(
+                    id="G000001",
+                    action="ACTION4",
+                    anchor=2,
+                    conditions=(
+                        CellCondition(dx=0, dy=0, value=2),
+                        CellCondition(dx=1, dy=0, value=0),
+                    ),
+                    effects=(
+                        CellEffect(dx=0, dy=0, value=0),
+                        CellEffect(dx=1, dy=0, value=2),
+                    ),
+                    evidence_ids=(record.id,),
+                    summary="ACTION4 moves the player right into empty space.",
+                )
+            )
 
             self.assertEqual(record.id, "T000001")
             self.assertEqual(memory.recent(1), [record])
-            self.assertEqual(rule.status, "verified")
             self.assertTrue(rulebook.predict(before, GameAction.ACTION4))
 
     def test_named_architecture_modules_are_importable(self) -> None:
@@ -176,7 +192,7 @@ class ModularEngineLoopTests(unittest.TestCase):
 
             self.assertEqual(env.step_actions, [GameAction.ACTION4])
             self.assertEqual(memory.recent(1)[0].action, GameAction.ACTION4)
-            self.assertTrue(rulebook.predict(memory.recent(1)[0].before, GameAction.ACTION4))
+            self.assertEqual(rulebook.generalized_rules, [])
 
     def test_unified_loop_induces_rules_after_each_unexplained_llm_action(
         self,

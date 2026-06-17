@@ -102,9 +102,9 @@ uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 
 ## Agent Learning Loop
 
-- In **learn** mode: agent perceives `FrameData`, records `(before_state, action, after_state)` evidence, creates executable transition rules from verified observations, and periodically asks the LLM for non-executable rule hypotheses.
-- In **solve** mode: the planner searches over verified executable rules. If no verified plan exists, the LLM proposes a subgoal and short legal action plan; the engine executes it and records the real transition as evidence.
-- Rule artifacts are stored under `client/rules/<game-id>/` as `transitions.jsonl`, `rules.json`, `rules.md`, and `journal.md`.
+- In **learn** mode: agent perceives `FrameData`, records `(before_state, action, after_state)` evidence, and asks the LLM for executable logical rules that can be checked against the timeline.
+- In **solve** mode: the planner simulates with known logical rules. If no rule plan exists, the LLM proposes a subgoal and short legal action plan; the engine executes it and records the real transition as evidence.
+- Rule artifacts are stored under `client/rules/<game-id>/` as `timeline.jsonl` and `rules.json`. Use `client.inspect_rules` for a readable debug view.
 
 ## LLM Configuration
 

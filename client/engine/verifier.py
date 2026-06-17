@@ -27,9 +27,7 @@ class RuleVerifier:
             if record.after not in predictions:
                 failures.append(f"{evidence_id}: predicted states did not include after")
 
-        if failures:
-            return rule.rejected(tuple(failures))
-        return rule.verified()
+        return rule.with_contradictions(tuple(failures))
 
     def _record_by_id(self, record_id: str) -> TransitionRecord | None:
         return self.memory.transition_by_id(record_id)

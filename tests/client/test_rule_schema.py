@@ -34,7 +34,6 @@ def _move_right_rule() -> GeneralizedRule:
             CellEffect(dx=1, dy=0, value=2),
         ),
         evidence_ids=("T000001",),
-        status="verified",
     )
 
 
@@ -83,7 +82,8 @@ class RuleSchemaTests(unittest.TestCase):
             rules[0].summary,
             "ACTION4 moves the player one cell right into empty space.",
         )
-        self.assertEqual(rules[0].status, "candidate")
+        self.assertEqual(rules[0].contradictions, ())
+        self.assertEqual(rules[0].revision_count, 0)
 
     def test_malformed_llm_rule_json_raises_clear_error(self) -> None:
         with self.assertRaisesRegex(ValueError, "missing required field"):

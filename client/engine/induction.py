@@ -30,7 +30,7 @@ Offsets are relative to the anchor cell. Use only integer cell values from the b
 
 
 class RuleInducer:
-    """Asks the LLM for hypotheses, then stores them as non-executable text."""
+    """Asks the LLM for executable logical rules, then stores their evidence."""
 
     def __init__(
         self,
@@ -84,9 +84,9 @@ class RuleInducer:
             self.event_sink(f"Rejected malformed rule candidate: {e}")
             return []
 
-        verified = [self.verifier.verify(rule) for rule in candidates]
-        stored = self.library.add_generalized_rules(verified)
-        return [rule.id for rule in stored if rule.status == "verified"]
+        checked = [self.verifier.verify(rule) for rule in candidates]
+        stored = self.library.add_generalized_rules(checked)
+        return [rule.id for rule in stored]
 
     def propose_from_memory(self, game_name: str, memory: EngineMemory) -> list[str]:
         events, images = memory.latest_visual_context()
@@ -163,6 +163,6 @@ class RuleInducer:
             f"{known_rules_text}\n\n"
             f"Recent events:\n{events}\n\n"
             f"{focus_prompt}"
-            "Identify new rule hypotheses. Output only JSON."
+            "Identify new or revised logical rules. Output only JSON."
         )
         return system, prompt

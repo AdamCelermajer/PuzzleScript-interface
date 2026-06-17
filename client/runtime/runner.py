@@ -73,10 +73,10 @@ def format_action_event(
     predictions: int,
     subgoal: str = "",
 ) -> str:
-    if decision_reason == "verified_plan":
+    if decision_reason == "rule_plan":
         return (
             f"Action: {action.name} "
-            f"(verified plan, plan_steps={len(plan)}, predictions={predictions})"
+            f"(rule plan, plan_steps={len(plan)}, predictions={predictions})"
         )
     if decision_reason == "explore_subgoal":
         label = subgoal or "choose the next experiment"
@@ -232,7 +232,6 @@ class RuleReasoningLoop:
             predictions,
         )
         record = self.memory.append_action_result(outcome.action, outcome.after_state)
-        self.rulebook.record_transition(record)
         return record
 
     def _maybe_induce_rules(
@@ -243,12 +242,12 @@ class RuleReasoningLoop:
         if not recent:
             return
         try:
-            hypotheses = self.inducer.propose_from_memory(game_id, self.memory)
+            rule_ids = self.inducer.propose_from_memory(game_id, self.memory)
         except RuntimeError as e:
             emit(f"LLM failure during rule induction, skipping: {e}", self.event_sink)
             return
         except AssertionError as e:
             emit(f"Rule induction unavailable, skipping: {e}", self.event_sink)
             return
-        if hypotheses:
-            emit(f"Proposed {len(hypotheses)} rule hypotheses.", self.event_sink)
+        if rule_ids:
+            emit(f"Proposed {len(rule_ids)} logical rules.", self.event_sink)
