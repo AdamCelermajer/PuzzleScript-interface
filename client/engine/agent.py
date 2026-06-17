@@ -1,11 +1,10 @@
 ﻿import time
 from typing import Callable, Optional
 
-from client.runtime.runner import ActionExecutor
+from client.runtime.runner import ActionExecutor, RuleReasoningLoop
 from client.engine.architecture import EngineArchitecture
 from client.arc.base_env import BaseEnv
 from client.engine.llm_client import Config, LlmClient
-from client.engine.loop import RuleReasoningLoop
 
 
 class Agent:

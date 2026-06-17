@@ -84,11 +84,13 @@ python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 | `puzzlescript_interface/runtime/server.js` | Node.js PuzzleScript runtime — session management, game execution, internal REST API |
 | `puzzlescript_interface/api/app.py` | ARC-compatible PuzzleScript service — game catalog, scorecards, `/api/...` routes |
 | `client/engine/agent.py` | Main agent — rule learning, rule-based solving |
-| `client/engine/arcade_env.py` | ARC toolkit adapter used by the engine for both local PuzzleScript and official ARC |
+| `client/arc/arcade_env.py` | ARC toolkit adapter used by the engine for both local PuzzleScript and official ARC |
 | `client/engine/llm_client.py` | LLM abstraction via `litellm` and OpenRouter |
-| `client/engine/prompts.py` | Prompt template for LLM rule-hypothesis induction |
-| `client/engine/types.py` | Shared types: `GameAction`, `GameState`, `FrameData` |
-| `client/engine/base_env.py` | Abstract `BaseEnv` interface (`reset()` / `step()`) |
+| `client/engine/goal_manager.py` | Game goal and subgoal prompt ownership |
+| `client/engine/induction.py` | Rule-induction prompt and candidate verification entrypoint |
+| `client/arc/types.py` | Shared ARC types: `GameAction`, `GameState`, `FrameData` |
+| `client/arc/base_env.py` | Abstract `BaseEnv` interface (`reset()` / `step()`) |
+| `client/runtime/runner.py` | Runtime action execution and rule-reasoning loop |
 | `client/run_arc_agent.py` | Generic CLI runner for ARC-compatible backends |
 
 ## Data Flow

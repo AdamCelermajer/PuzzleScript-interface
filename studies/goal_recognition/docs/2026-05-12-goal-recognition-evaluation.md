@@ -6,7 +6,7 @@
 
 **Architecture:** Keep the experiment outside `client/` under `side_quests/`. Reuse the existing `ArcadeEnv`, `FrameData`, `LlmClient`, and terminal play helpers rather than adding a new ARC client. The two setup runners write the same `predictions.jsonl` shape so the review and report tools can stay simple.
 
-**Tech Stack:** Python standard library, `argparse`, `json/jsonl`, existing `arc_agi`, existing `client.engine` wrappers, optional `matplotlib` fallback-free SVG generation for the first graph.
+**Tech Stack:** Python standard library, `argparse`, `json/jsonl`, existing `arc_agi`, current `client.arc` types/env plus `client.engine.llm_client`, optional `matplotlib` fallback-free SVG generation for the first graph.
 
 ---
 

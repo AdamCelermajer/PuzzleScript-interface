@@ -142,9 +142,8 @@ class ModularEngineLoopTests(unittest.TestCase):
         self.assertIsNotNone(Planner)
 
     def test_rule_reasoning_loop_records_one_learning_step(self) -> None:
-        from client.runtime.runner import ActionExecutor
+        from client.runtime.runner import ActionExecutor, RuleReasoningLoop
         from client.engine.induction import RuleInducer
-        from client.engine.loop import RuleReasoningLoop
         from client.engine.planner import Planner
         from client.engine.verifier import RuleVerifier
 
@@ -182,9 +181,8 @@ class ModularEngineLoopTests(unittest.TestCase):
     def test_unified_loop_induces_rules_after_each_unexplained_llm_action(
         self,
     ) -> None:
-        from client.runtime.runner import ActionExecutor
+        from client.runtime.runner import ActionExecutor, RuleReasoningLoop
         from client.engine.induction import RuleInducer
-        from client.engine.loop import RuleReasoningLoop
         from client.engine.planner import Planner
         from client.engine.verifier import RuleVerifier
 

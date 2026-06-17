@@ -46,7 +46,7 @@ Contains the local PuzzleScript-backed ARC-compatible challenge surface.
 NotebookLM, when you answer questions about this codebase:
 1. **Focus on the Core Objective**: Always keep in mind that the Python code is an "Agent" attempting to act as a scientific explorer (learning and solving), while the Node JS code acts as an objective, strict "Environment".
 2. **Differentiate the Stacks**: Carefully distinguish between the deterministic environment logic in Node.js (parsing, physics execution, REST API) and the stochastic reasoning logic in Python (prompting, zero-shot/few-shot learning loops).
-3. **Prompting is Key**: Pay close attention to `client/engine/prompts.py` as it defines the Agent's observation formatting and reasoning capabilities. Adjustments to prompts often yield the biggest improvements in LLM performance for task solving.
+3. **Prompting is Key**: Pay close attention to `client/engine/goal_manager.py` for goal/subgoal prompts and `client/engine/induction.py` for rule-induction prompts. Adjustments to prompts often yield the biggest improvements in LLM performance for task solving.
 4. **State Representations**: A key technical challenge is rendering the 2D grid (which relies on color in raw PuzzleScript) into a character-based ASCII representation that the LLM can properly "see" and reason about.
 
 *Context created: March 2026*
