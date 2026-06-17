@@ -114,6 +114,9 @@ Thumbs.db
 .pytest_cache/
 .playwright-mcp/
 
+# uv virtual environment
+.venv/
+
 # Debug scripts
 debug_*.js
 

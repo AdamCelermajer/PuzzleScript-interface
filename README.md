@@ -20,8 +20,10 @@ Related docs:
 
 ```bash
 npm install
-pip install -r requirements.txt
+uv sync
 ```
+
+> Pip fallback: if you are not using uv, you can still run `pip install -r requirements.txt` and use `python` directly.
 
 Copy `.env.example` to `.env` and fill in the variables you need.
 
@@ -53,13 +55,13 @@ npm start
 Run the agent against the local service:
 
 ```bash
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
+uv run python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
 ```
 
 Play a local PuzzleScript game manually from the terminal:
 
 ```bash
-python -m client.play_arc_client --game-id ps_sokoban_basic-v1
+uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 ```
 
 ## Official ARC-AGI-3 Workflow
@@ -73,7 +75,7 @@ Required environment variables:
 Run the agent against the official ARC-AGI-3 backend:
 
 ```bash
-python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --max_steps 50
+uv run python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --max_steps 50
 ```
 
 ## Tests

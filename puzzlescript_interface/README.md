@@ -17,13 +17,13 @@ npm start
 Start the local ARC-compatible PuzzleScript service:
 
 ```bash
-python -m puzzlescript_interface.api.main
+uv run python -m puzzlescript_interface.api.main
 ```
 
 Then run the client from the repository root:
 
 ```bash
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
+uv run python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
 ```
 
 This agent command requires `OPENROUTER_API_KEY`.

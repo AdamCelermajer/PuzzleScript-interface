@@ -16,6 +16,15 @@ if ($env:ARC_PROXY_PORT) {
 }
 $children = New-Object System.Collections.Generic.List[System.Diagnostics.Process]
 
+# Prefer uv if it is available; otherwise fall back to a system Python install.
+$pythonFileName = "python"
+$pythonArguments = "-m puzzlescript_interface.api.main"
+$uvCmd = Get-Command uv -ErrorAction SilentlyContinue
+if ($uvCmd) {
+    $pythonFileName = "uv"
+    $pythonArguments = "run python -m puzzlescript_interface.api.main"
+}
+
 function Stop-PortOwnerIfRuntime {
     param(
         [int]$Port,
@@ -104,8 +113,8 @@ try {
 
     if ($WithArcService) {
         $arcService = Start-OwnedProcess `
-            -FileName "python" `
-            -Arguments "-m puzzlescript_interface.api.main" `
+            -FileName $pythonFileName `
+            -Arguments $pythonArguments `
             -Environment @{
                 ARC_PROXY_PORT = $arcPort
                 PUZZLESCRIPT_SERVER_URL = "http://127.0.0.1:$runtimePort"

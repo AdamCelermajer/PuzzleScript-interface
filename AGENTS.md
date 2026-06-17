@@ -34,7 +34,7 @@ For official ARC-AGI-3 tasks, the Python agent communicates directly with the re
 **Install dependencies (once):**
 ```bash
 npm install        # Node.js deps
-pip install -r requirements.txt   # Python deps
+uv sync            # Python deps (pip fallback: `pip install -r requirements.txt`)
 ```
 
 **Environment variables** — copy `.env.example` and fill in:
@@ -60,21 +60,21 @@ npm run dev        # dev mode with auto-restart (nodemon)
 
 **Start only the local PuzzleScript ARC service**:
 ```bash
-python -m puzzlescript_interface.api.main
+uv run python -m puzzlescript_interface.api.main
 ```
 
 **Run the Python agent:**
 ```bash
 # Local PuzzleScript via the ARC-compatible service
-python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --mode learn --max_steps 50
+uv run python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --mode learn --max_steps 50
 
 # Official ARC-AGI-3
-python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50
+uv run python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50
 ```
 
 **Interactive human play (CLI client):**
 ```bash
-python -m client.play_arc_client --game-id ps_sokoban_basic-v1
+uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 ```
 
 ## Key Source Files
