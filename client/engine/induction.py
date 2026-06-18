@@ -84,8 +84,17 @@ class RuleInducer:
             self.event_sink(f"Rejected malformed rule candidate: {e}")
             return []
 
-        checked = [self.verifier.verify(rule) for rule in candidates]
-        stored = self.library.add_generalized_rules(checked)
+        results = [self.verifier.verify(rule) for rule in candidates]
+        accepted = []
+        for result in results:
+            if result.accepted:
+                accepted.append(result.rule)
+                continue
+            self.event_sink(
+                "Rejected rule candidate: " + "; ".join(result.failures)
+            )
+
+        stored = self.library.add_generalized_rules(accepted)
         return [rule.id for rule in stored]
 
     def propose_from_memory(self, game_name: str, memory: EngineMemory) -> list[str]:
@@ -160,6 +169,7 @@ class RuleInducer:
             'If no rule is supported, output: {"rules": []}'
         )
         prompt = (
+            "Known natural-language rules:\n"
             f"{known_rules_text}\n\n"
             f"Recent events:\n{events}\n\n"
             f"{focus_prompt}"

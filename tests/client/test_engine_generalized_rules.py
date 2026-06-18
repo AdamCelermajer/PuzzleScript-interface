@@ -155,6 +155,47 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             self.assertFalse((Path(tmpdir) / "journal_v2.md").exists())
             self.assertFalse((Path(tmpdir) / "rules.md").exists())
 
+    def test_inducer_rejects_candidate_that_does_not_explain_timeline(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
+            record = memory.record_transition(
+                _state([[2, 0, 1]]), GameAction.ACTION4, _state([[2, 0, 1]])
+            )
+            events: list[str] = []
+            rulebook = Rulebook(Path(tmpdir))
+            llm = FakeJsonLlm(
+                [
+                    {
+                        "rules": [
+                            {
+                                "summary": "ACTION4 moves the player one cell right into empty space.",
+                                "action": "ACTION4",
+                                "anchor": {"value": 2},
+                                "conditions": [
+                                    {"offset": [0, 0], "equals": 2},
+                                    {"offset": [1, 0], "equals": 0},
+                                ],
+                                "effects": [
+                                    {"offset": [0, 0], "set": 0},
+                                    {"offset": [1, 0], "set": 2},
+                                ],
+                                "evidence_ids": [record.id],
+                            }
+                        ]
+                    }
+                ]
+            )
+
+            hypotheses = RuleInducer(
+                llm, rulebook, RuleVerifier(memory), event_sink=events.append
+            ).propose_from_recent("test-grid", [record])
+
+            self.assertEqual(hypotheses, [])
+            self.assertEqual(rulebook.generalized_rules, [])
+            self.assertEqual(len(llm.calls), 1)
+            self.assertIn("Rejected rule candidate", events[0])
+            self.assertIn(record.id, events[0])
+
     def test_inducer_logs_malformed_llm_output_without_crashing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
@@ -196,6 +237,25 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             self.assertIn("ACTION4", llm.calls[0]["prompt"])
             self.assertIn('"anchor": {"value": 2}', llm.calls[0]["system"])
             self.assertIn('"offset": [1, 0]', llm.calls[0]["system"])
+
+    def test_known_rules_context_for_inducer_is_natural_language_only(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            rulebook = Rulebook(Path(tmpdir))
+            rulebook.add_generalized_rule(
+                GeneralizedRule(
+                    id="G000001",
+                    action="ACTION4",
+                    anchor=2,
+                    conditions=(CellCondition(dx=0, dy=0, value=2),),
+                    effects=(CellEffect(dx=0, dy=0, value=0),),
+                    evidence_ids=("T000001",),
+                    summary="ACTION4 moves the player right.",
+                )
+            )
+
+            text = rulebook.known_rules_text()
+
+            self.assertEqual(text, "- ACTION4 moves the player right.")
 
     def test_planner_uses_generalized_rules_before_llm_probe(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

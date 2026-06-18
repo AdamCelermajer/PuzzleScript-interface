@@ -98,7 +98,11 @@ class Rulebook:
             self._save()
 
     def known_rules_text(self) -> str:
-        return "\n\n".join(self._rule_prompt_text(rule) for rule in self.generalized_rules)
+        return "\n".join(
+            f"- {rule.summary}"
+            for rule in self.generalized_rules
+            if rule.summary.strip()
+        )
 
     def _prediction_candidates(
         self, before: EngineState, action: GameAction
@@ -110,25 +114,6 @@ class Rulebook:
             for predicted in rule.predict(before):
                 candidates.append((rule, predicted))
         return candidates
-
-    def _rule_prompt_text(self, rule: GeneralizedRule) -> str:
-        conditions = ", ".join(
-            f"cell({condition.dx},{condition.dy})={condition.value}"
-            for condition in rule.conditions
-        )
-        effects = ", ".join(
-            f"set({effect.dx},{effect.dy})={effect.value}" for effect in rule.effects
-        )
-        return (
-            f"ruleID: {rule.id}\n"
-            f"natural_language: {rule.summary}\n"
-            f"logical_rule: {rule.action} anchored on {rule.anchor}: "
-            f"IF {conditions or 'true'} THEN {effects or 'no change'}\n"
-            f"evidence: supports={list(rule.evidence_ids)} "
-            f"contradictions={list(rule.contradictions)} "
-            f"hits={rule.prediction_hits} failures={rule.prediction_failures} "
-            f"revisions={rule.revision_count}"
-        )
 
     def _find_by_id(self, rule_id: str) -> GeneralizedRule | None:
         return next((rule for rule in self.generalized_rules if rule.id == rule_id), None)

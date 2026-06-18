@@ -16,9 +16,9 @@ During runs, the agent writes two main artifacts under `client/rules/<game-id>/`
 - `timeline.jsonl` is the chronological evidence stream: states, actions, and observed transitions.
 - `rules.json` is the structured rule source used for simulation.
 
-Each rule has a `ruleID`, a natural-language summary, a logical rule (`action`, `anchor`, `conditions`, `effects`), evidence statistics (`supports`, `contradictions`, `prediction_hits`, `prediction_failures`), and `revision_count`. The planner uses the logical rule directly: a rule applies when its action matches and its relative cell conditions match the current grid.
+Each accepted rule has a `ruleID`, a natural-language summary, a logical rule (`action`, `anchor`, `conditions`, `effects`), evidence statistics (`supports`, `contradictions`, `prediction_hits`, `prediction_failures`), and `revision_count`. The planner uses the logical rule directly: a rule applies when its action matches and its relative cell conditions match the current grid.
 
-Action choice is engine-first, then LLM-guided: the planner simulates with known logical rules when they can reach the goal, and otherwise asks the LLM for one exploratory action. The engine records the real transition afterward and immediately tries to induce or revise rules for unexplained outcomes, so the LLM proposal becomes evidence instead of trusted truth.
+Action choice is engine-first, then LLM-guided: the planner simulates with accepted logical rules when they can reach the goal, and otherwise asks the LLM for one exploratory action. The engine records the real transition afterward. If existing rules do not explain it, the inducer asks the LLM for candidate rules using only natural-language rule summaries as prior context; the verifier tests those candidates against the timeline and only accepted candidates are stored.
 
 For a readable debug view of rules plus timeline evidence, run:
 
