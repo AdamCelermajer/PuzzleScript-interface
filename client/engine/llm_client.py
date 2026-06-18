@@ -18,7 +18,7 @@ class Config:
     """Runtime configuration for server and model clients."""
 
     server_url: str = "http://localhost:3543"
-    model: str = "moonshotai/kimi-k2.7-code"
+    model: str = "anthropic/claude-opus-4.8"
     # reasoning_effort is sent to the model only when non-empty.
     # Use "low"/"medium"/"high" only if the chosen model supports it.
     reasoning_effort: str = ""
