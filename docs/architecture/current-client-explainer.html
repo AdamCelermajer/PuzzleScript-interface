@@ -378,14 +378,14 @@
           <text class="svg-module" x="495" y="448" text-anchor="middle">planner.py</text>
           <text class="svg-text" x="495" y="474" text-anchor="middle">checks active plan</text>
           <text class="svg-text" x="495" y="492" text-anchor="middle">simulates toward goal</text>
-          <text class="svg-text" x="495" y="510" text-anchor="middle">routes action or revision</text>
+          <text class="svg-text" x="495" y="510" text-anchor="middle">routes next action</text>
 
           <rect class="svg-box svg-store" x="710" y="390" width="220" height="130"></rect>
           <text class="svg-title" x="820" y="424" text-anchor="middle">Rulebook</text>
           <text class="svg-module" x="820" y="448" text-anchor="middle">rulebook.py</text>
           <text class="svg-text" x="820" y="474" text-anchor="middle">predicts after-states</text>
           <text class="svg-text" x="820" y="492" text-anchor="middle">tracks hits/failures</text>
-          <text class="svg-text" x="820" y="510" text-anchor="middle">stores verified rules</text>
+          <text class="svg-text" x="820" y="510" text-anchor="middle">stores accepted rules</text>
 
           <rect class="svg-box svg-engine" x="300" y="560" width="190" height="105"></rect>
           <text class="svg-title" x="395" y="594" text-anchor="middle">Inducer</text>
@@ -435,7 +435,7 @@
           <text class="svg-label" x="497" y="596">candidate</text>
 
           <path class="svg-arrow" d="M630 560 L630 540 L820 540 L820 520"></path>
-          <text class="svg-label" x="650" y="553">verified / rejected rules</text>
+          <text class="svg-label" x="650" y="553">accepted rules</text>
         </svg>
       </div>
     </section>
@@ -529,19 +529,19 @@ transition views are derived:
 <pre><code>main():
     args = parse_cli()
     cfg = Config(game=args.game_id, ...)
-    dashboard = TerminalDashboard()
+    dashboard = ScreenDashboard(game_id=args.game_id, mode="RUN", ...)
 
     env = ArcadeEnv(
         game_id=args.game_id,
         backend_url=args.backend_url,
-        api_key=args.api_key,
+        renderer=dashboard.render,
     )
-    llm_adapter = create_llm_adapter(cfg, event_sink=dashboard.add_event)
+    llm_adapter = LlmClient(cfg, event_sink=dashboard.push_event)
     engine = EngineArchitecture.from_config(cfg, llm_adapter, event_sink=...)
 
     loop = RuleReasoningLoop(
         env=env,
-        perception=engine.perception,
+        perception=engine.perceiver,
         memory=engine.memory,
         rulebook=engine.rulebook,
         planner=engine.planner,
@@ -549,7 +549,9 @@ transition views are derived:
         dashboard=dashboard,
     )
 
-    loop.run(max_steps=args.max_steps, mode=args.mode)</code></pre>
+    dashboard.run_engine(lambda:
+        loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
+    )</code></pre>
         </article>
 
         <article>
@@ -563,7 +565,7 @@ transition views are derived:
     verifier = RuleVerifier(memory)
 
     return EngineArchitecture(
-        perception=Perception(),
+        perceiver=Perception(),
         memory=memory,
         rulebook=rulebook,
         inducer=RuleInducer(llm_adapter, rulebook, verifier),
@@ -610,18 +612,20 @@ convert_to_FrameData(raw):
     memory.append_state(state)
 
     while steps &lt; max_steps:
-        decision = planner.choose_action(memory)
+        decision = planner.choose_action()
+        predictions = rulebook.predict(state, decision.action)
 
         after_frame = env.step(decision.action)
         after_state = perception.perceive(after_frame)
-        predictions = rulebook.predict(state, decision.action)
         rulebook.record_prediction_result(state, decision.action, after_state, predictions)
 
-        record = memory.append_action_result(decision.action, after_state)
-        rulebook.record_transition(record)
+        memory.append_action_result(decision.action, after_state)
 
-        unexplained = after_state not in predictions
-        if decision.exploratory or decision.revision_needed or unexplained:
+        unexplained = not predictions or after_state not in predictions
+        if unexplained:
+            planner.clear_llm_plan()
+
+        if decision.exploratory or unexplained:
             inducer.propose_from_memory(game_id, memory)
 
         handle wins, resets, game over, and unchanged boards</code></pre>
@@ -656,10 +660,7 @@ convert_to_FrameData(raw):
     current = memory.current_state()
 
     if active_plan exists:
-        if expected state exists and current != expected:
-            clear active_plan
-        else:
-            return next_action_from(active_plan)
+        return next_action_from(active_plan)
 
     if no active_goal:
         active_goal = goal_manager.ensure_goal(memory)
@@ -698,8 +699,9 @@ EngineMemory.recent_transitions():
     from adjacent timeline nodes
 
 Rulebook.predict(state, action):
-    return verified generalized predictions
-           plus exact predictions derived from evidence</code></pre>
+    for accepted rule matching action:
+        if rule conditions match state:
+            yield predicted next EngineState</code></pre>
         </article>
 
         <article>
@@ -708,8 +710,10 @@ Rulebook.predict(state, action):
             <span class="path">client/engine/induction.py + client/engine/verifier.py</span>
           </header>
 <pre><code>RuleInducer.propose_from_memory(game_id, memory):
-    evidence = memory.recent_transitions()
     events, images = memory.latest_visual_context()
+    evidence = memory.recent_transitions(1)
+    known_rules = rulebook.known_rules_text()
+    # known_rules is natural-language summaries only
 
     data = llm.call_json(
         induction_prompt(game_id, evidence, known_rules),
@@ -718,14 +722,20 @@ Rulebook.predict(state, action):
     candidates = parse GeneralizedRule objects
 
     for candidate in candidates:
-        checked = verifier.verify(candidate, memory)
-        rulebook.store(checked)
+        result = verifier.verify(candidate)
+        if result.accepted:
+            rulebook.add_generalized_rule(result.rule)
+        else:
+            log("Rejected rule candidate", result.failures)
 
-RuleVerifier.verify(candidate, memory):
+RuleVerifier.verify(candidate):
     for evidence in candidate.evidence_ids:
         transition = memory.transition_by_id(evidence)
         predicted = candidate.predict(transition.before)
-        require transition.after in predicted</code></pre>
+        if transition.after not in predicted:
+            return VerificationResult(candidate, failures=[...])
+
+    return VerificationResult(candidate, failures=[])</code></pre>
         </article>
       </div>
     </section>
