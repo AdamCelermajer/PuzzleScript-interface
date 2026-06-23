@@ -278,6 +278,91 @@
       overflow-wrap: anywhere;
     }
 
+    article.wide {
+      grid-column: 1 / -1;
+    }
+
+    .algorithm-card {
+      border-color: #1c2520;
+      background: #ffffff;
+    }
+
+    .algorithm-card header {
+      border-bottom: 0;
+      background: #ffffff;
+    }
+
+    .algorithm {
+      margin: 0 12px 12px;
+      border-top: 2px solid #1c2520;
+      border-bottom: 1px solid #1c2520;
+      background: #ffffff;
+      color: #111713;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .algorithm-title {
+      padding: 6px 0 5px;
+      border-bottom: 1px solid #1c2520;
+      font-size: 1.02rem;
+      font-variant: small-caps;
+      letter-spacing: 0;
+    }
+
+    .algorithm-title strong {
+      font-variant: normal;
+      font-weight: 800;
+    }
+
+    .algorithm-title code {
+      font-size: 0.82rem;
+    }
+
+    .algorithm-lines {
+      margin: 7px 0 9px 2.8rem;
+      padding: 0;
+    }
+
+    .algorithm-lines li {
+      padding-left: 0.45rem;
+      font-size: 0.95rem;
+      line-height: 1.42;
+    }
+
+    .algorithm-lines li::marker {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+    }
+
+    .indent-1,
+    .indent-2,
+    .indent-3 {
+      display: inline-block;
+    }
+
+    .indent-1 {
+      margin-left: 1.2rem;
+    }
+
+    .indent-2 {
+      margin-left: 2.4rem;
+    }
+
+    .indent-3 {
+      margin-left: 3.6rem;
+    }
+
+    .algo-note {
+      color: #5b6760;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      margin-left: 0.8rem;
+    }
+
+    var {
+      font-style: italic;
+    }
+
     pre {
       margin: 0;
       padding: 14px;
@@ -521,221 +606,120 @@ transition views are derived:
     <section aria-labelledby="pseudocode-title">
       <h2 id="pseudocode-title">Pseudocode</h2>
       <div class="code-grid">
-        <article>
+        <article class="algorithm-card wide">
+          <header>
+            <h3>Main Runtime Loop</h3>
+            <span class="path">client/runtime/runner.py</span>
+          </header>
+          <div class="algorithm">
+            <div class="algorithm-title"><strong>Main loop</strong> Runtime <-> engine modules <-> ARC/PuzzleScript engine</div>
+            <ol class="algorithm-lines">
+              <li><var>frame</var> &larr; env.reset() <span class="algo-note">ARC/PuzzleScript starts the game</span></li>
+              <li><var>state</var> &larr; perceiver.perceive(<var>frame</var>)</li>
+              <li>memory.append_state(<var>state</var>)</li>
+              <li><strong>while</strong> step count &lt; <var>max_steps</var> <strong>do</strong></li>
+              <li><span class="indent-1"><var>decision</var> &larr; planner.choose_action()</span></li>
+              <li><span class="indent-1"><var>P</var> &larr; rulebook.predict(<var>state</var>, <var>decision</var>.action)</span></li>
+              <li><span class="indent-1"><var>next_frame</var> &larr; env.step(<var>decision</var>.action) <span class="algo-note">runtime sends the action to the ARC/PuzzleScript engine</span></span></li>
+              <li><span class="indent-1"><var>next_state</var> &larr; perceiver.perceive(<var>next_frame</var>)</span></li>
+              <li><span class="indent-1">rulebook.record_prediction_result(<var>state</var>, action, <var>next_state</var>, <var>P</var>)</span></li>
+              <li><span class="indent-1">memory.append_action_result(action, <var>next_state</var>)</span></li>
+              <li><span class="indent-1"><var>unexplained</var> &larr; (<var>P</var> is empty) or (<var>next_state</var> not in <var>P</var>)</span></li>
+              <li><span class="indent-1"><strong>if</strong> <var>unexplained</var> <strong>then</strong> planner.clear_llm_plan()</span></li>
+              <li><span class="indent-1"><strong>if</strong> decision is exploratory or <var>unexplained</var> <strong>then</strong> inducer.propose_from_memory(memory)</span></li>
+              <li><span class="indent-1"><strong>if</strong> board is stuck, won, or game-over <strong>then</strong> handle reset/stop</span></li>
+              <li><span class="indent-1"><var>state</var> &larr; <var>next_state</var></span></li>
+            </ol>
+          </div>
+        </article>
+
+        <article class="algorithm-card">
           <header>
             <h3>Entrypoint</h3>
             <span class="path">client/run_arc_agent.py</span>
           </header>
-<pre><code>main():
-    args = parse_cli()
-    cfg = Config(game=args.game_id, ...)
-    dashboard = ScreenDashboard(game_id=args.game_id, mode="RUN", ...)
-
-    env = ArcadeEnv(
-        game_id=args.game_id,
-        backend_url=args.backend_url,
-        renderer=dashboard.render,
-    )
-    llm_adapter = LlmClient(cfg, event_sink=dashboard.push_event)
-    engine = EngineArchitecture.from_config(cfg, llm_adapter, event_sink=...)
-
-    loop = RuleReasoningLoop(
-        env=env,
-        perception=engine.perceiver,
-        memory=engine.memory,
-        rulebook=engine.rulebook,
-        planner=engine.planner,
-        inducer=engine.inducer,
-        dashboard=dashboard,
-    )
-
-    dashboard.run_engine(lambda:
-        loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
-    )</code></pre>
+          <div class="algorithm">
+            <div class="algorithm-title"><strong>File role</strong> Wire one runnable session</div>
+            <ol class="algorithm-lines">
+              <li><var>cfg</var> &larr; Config(game id, backend URL, max steps)</li>
+              <li><var>dashboard</var> &larr; ScreenDashboard(game id)</li>
+              <li><var>env</var> &larr; ArcadeEnv(game id, backend URL, dashboard renderer)</li>
+              <li><var>llm</var> &larr; LlmClient(<var>cfg</var>, dashboard event sink)</li>
+              <li><var>engine</var> &larr; EngineArchitecture.from_config(<var>cfg</var>, <var>llm</var>)</li>
+              <li><var>loop</var> &larr; RuleReasoningLoop(<var>env</var>, perceiver, memory, rulebook, planner, inducer)</li>
+              <li>dashboard.run_engine(<var>loop</var>.run)</li>
+            </ol>
+          </div>
         </article>
 
-        <article>
+        <article class="algorithm-card">
           <header>
-            <h3>Architecture Wiring</h3>
+            <h3>Engine Wiring</h3>
             <span class="path">client/engine/architecture.py</span>
           </header>
-<pre><code>EngineArchitecture.from_config(config, llm_adapter):
-    memory = EngineMemory(base_path / "timeline.jsonl")
-    rulebook = Rulebook(base_path)
-    verifier = RuleVerifier(memory)
-
-    return EngineArchitecture(
-        perceiver=Perception(),
-        memory=memory,
-        rulebook=rulebook,
-        inducer=RuleInducer(llm_adapter, rulebook, verifier),
-        planner=Planner(
-            memory=memory,
-            rulebook=rulebook,
-            llm_client=llm_adapter,
-        ),
-    )</code></pre>
+          <div class="algorithm">
+            <div class="algorithm-title"><strong>File role</strong> Build the reasoning modules</div>
+            <ol class="algorithm-lines">
+              <li><var>base_path</var> &larr; rules directory for the current game</li>
+              <li><var>memory</var> &larr; EngineMemory(<var>base_path</var> / timeline.jsonl)</li>
+              <li><var>rulebook</var> &larr; Rulebook(<var>base_path</var>)</li>
+              <li><var>verifier</var> &larr; RuleVerifier(<var>memory</var>)</li>
+              <li><var>inducer</var> &larr; RuleInducer(<var>llm</var>, <var>rulebook</var>, <var>verifier</var>)</li>
+              <li><var>planner</var> &larr; Planner(<var>rulebook</var>, <var>memory</var>, <var>llm</var>)</li>
+              <li>return EngineArchitecture(perceiver, memory, rulebook, inducer, planner)</li>
+            </ol>
+          </div>
         </article>
 
-        <article>
+        <article class="algorithm-card">
           <header>
-            <h3>ARC Adapter</h3>
-            <span class="path">client/arc/arcade_env.py + client/arc/types.py</span>
-          </header>
-<pre><code>ArcadeEnv.reset():
-    open scorecard/session if needed
-    raw = ARC RESET against backend
-    return convert_to_FrameData(raw)
-
-ArcadeEnv.step(action):
-    raw = ARC ACTION&lt;n&gt; against backend
-    return convert_to_FrameData(raw)
-
-convert_to_FrameData(raw):
-    return FrameData(
-        frame=raw.frame,
-        state=raw.state,
-        game_id=raw.game_id,
-        available_actions=raw.available_actions,
-        rendered_frame=RenderedFrame(...) if supplied,
-    )</code></pre>
-        </article>
-
-        <article>
-          <header>
-            <h3>Runtime Loop</h3>
-            <span class="path">client/runtime/runner.py</span>
-          </header>
-<pre><code>RuleReasoningLoop.run(max_steps, game_id):
-    frame = env.reset()
-    state = perception.perceive(frame)
-    memory.append_state(state)
-
-    while steps &lt; max_steps:
-        decision = planner.choose_action()
-        predictions = rulebook.predict(state, decision.action)
-
-        after_frame = env.step(decision.action)
-        after_state = perception.perceive(after_frame)
-        rulebook.record_prediction_result(state, decision.action, after_state, predictions)
-
-        memory.append_action_result(decision.action, after_state)
-
-        unexplained = not predictions or after_state not in predictions
-        if unexplained:
-            planner.clear_llm_plan()
-
-        if decision.exploratory or unexplained:
-            inducer.propose_from_memory(game_id, memory)
-
-        handle wins, resets, game over, and unchanged boards</code></pre>
-        </article>
-
-        <article>
-          <header>
-            <h3>Perception</h3>
-            <span class="path">client/engine/perception.py</span>
-          </header>
-<pre><code>Perception.perceive(frame_data):
-    grid = tuple(tuple(int(cell) for cell in row)
-                 for row in last_grid(frame_data.frame))
-
-    return EngineState(
-        grid=grid,
-        state=frame_data.state,
-        levels_completed=frame_data.levels_completed,
-        win_levels=frame_data.win_levels,
-        game_id=frame_data.game_id,
-        image=image_from(frame_data.rendered_frame),
-        available_actions=tuple(frame_data.available_actions),
-    )</code></pre>
-        </article>
-
-        <article>
-          <header>
-            <h3>Planner First</h3>
+            <h3>Planner</h3>
             <span class="path">client/engine/planner.py</span>
           </header>
-<pre><code>Planner.choose_action(memory):
-    current = memory.current_state()
-
-    if active_plan exists:
-        return next_action_from(active_plan)
-
-    if no active_goal:
-        active_goal = goal_manager.ensure_goal(memory)
-
-    plan = search_rulebook(current, active_goal)
-    if plan:
-        active_plan = plan
-        return next_action_from(active_plan)
-
-    subgoal, action = ask_for_exploratory_step(
-        current_state=current,
-        recent_memory=memory.recent_context(),
-        images=memory.available_images(),
-    )
-    active_goal = subgoal
-    return PlanDecision(action, exploratory=True)</code></pre>
+          <div class="algorithm">
+            <div class="algorithm-title"><strong>File role</strong> Choose the next action</div>
+            <ol class="algorithm-lines">
+              <li><var>s</var> &larr; memory.current_state()</li>
+              <li><var>A</var> &larr; available non-reset actions from <var>s</var></li>
+              <li><strong>if</strong> active plan has a next action <strong>then</strong></li>
+              <li><span class="indent-1">return PlanDecision(next action, reason = active_plan)</span></li>
+              <li><strong>if</strong> no game goal exists <strong>then</strong></li>
+              <li><span class="indent-1">game goal &larr; goal_manager.ensure_goal(<var>memory</var>)</span></li>
+              <li><var>plan</var> &larr; BreadthFirstRuleSearch(<var>s</var>, <var>A</var>, <var>rulebook</var>)</li>
+              <li><strong>if</strong> <var>plan</var> reaches a win state <strong>then</strong></li>
+              <li><span class="indent-1">store <var>plan</var> as the active plan</span></li>
+              <li><span class="indent-1">return PlanDecision(first action in <var>plan</var>, reason = rule_plan)</span></li>
+              <li><var>context</var> &larr; latest transition text and images from <var>memory</var></li>
+              <li>(<var>subgoal</var>, <var>probe</var>) &larr; llm.ask_for_subgoal_action(<var>s</var>, <var>A</var>, known rule summaries, <var>context</var>)</li>
+              <li>store <var>probe</var> as the active plan for <var>subgoal</var></li>
+              <li>return PlanDecision(first action in <var>probe</var>, reason = explore_subgoal, exploratory = true)</li>
+            </ol>
+          </div>
         </article>
 
-        <article>
+        <article class="algorithm-card wide">
           <header>
-            <h3>Memory And Rulebook</h3>
-            <span class="path">client/engine/memory.py + client/engine/rulebook.py</span>
-          </header>
-<pre><code>EngineMemory.append_state(state):
-    if timeline is empty:
-        append StateNode(state)
-    else:
-        update current observed state
-
-EngineMemory.append_action_result(action, after_state):
-    append ActionEdge(previous_state, action, after_state)
-    append StateNode(after_state)
-
-EngineMemory.recent_transitions():
-    derive (before_state, action, after_state)
-    from adjacent timeline nodes
-
-Rulebook.predict(state, action):
-    for accepted rule matching action:
-        if rule conditions match state:
-            yield predicted next EngineState</code></pre>
-        </article>
-
-        <article>
-          <header>
-            <h3>Rule Induction And Verification</h3>
+            <h3>Rule Learning</h3>
             <span class="path">client/engine/induction.py + client/engine/verifier.py</span>
           </header>
-<pre><code>RuleInducer.propose_from_memory(game_id, memory):
-    events, images = memory.latest_visual_context()
-    evidence = memory.recent_transitions(1)
-    known_rules = rulebook.known_rules_text()
-    # known_rules is natural-language summaries only
-
-    data = llm.call_json(
-        induction_prompt(game_id, evidence, known_rules),
-        image_data_urls=images,
-    )
-    candidates = parse GeneralizedRule objects
-
-    for candidate in candidates:
-        result = verifier.verify(candidate)
-        if result.accepted:
-            rulebook.add_generalized_rule(result.rule)
-        else:
-            log("Rejected rule candidate", result.failures)
-
-RuleVerifier.verify(candidate):
-    for evidence in candidate.evidence_ids:
-        transition = memory.transition_by_id(evidence)
-        predicted = candidate.predict(transition.before)
-        if transition.after not in predicted:
-            return VerificationResult(candidate, failures=[...])
-
-    return VerificationResult(candidate, failures=[])</code></pre>
+          <div class="algorithm">
+            <div class="algorithm-title"><strong>File role</strong> Turn fresh transitions into accepted executable rules</div>
+            <ol class="algorithm-lines">
+              <li><var>E</var> &larr; memory.recent_transitions(1)</li>
+              <li><strong>if</strong> <var>E</var> is empty <strong>then</strong> return</li>
+              <li>(<var>events</var>, <var>images</var>) &larr; memory.latest_visual_context()</li>
+              <li><var>K</var> &larr; rulebook.known_rules_text() <span class="algo-note">accepted summaries only</span></li>
+              <li><var>C</var> &larr; llm.call_json(rule prompt(<var>events</var>, <var>K</var>), images)</li>
+              <li><strong>for all</strong> candidate rules <var>c</var> in parse(<var>C</var>) <strong>do</strong></li>
+              <li><span class="indent-1"><var>failures</var> &larr; empty list</span></li>
+              <li><span class="indent-1"><strong>for all</strong> evidence id <var>e</var> cited by <var>c</var> <strong>do</strong></span></li>
+              <li><span class="indent-2"><var>t</var> &larr; memory.transition_by_id(<var>e</var>)</span></li>
+              <li><span class="indent-2"><strong>if</strong> <var>t</var> is missing or <var>c</var>.action != <var>t</var>.action <strong>then</strong> record failure</span></li>
+              <li><span class="indent-2"><strong>else if</strong> <var>t</var>.after not in c.predict(<var>t</var>.before) <strong>then</strong> record failure</span></li>
+              <li><span class="indent-1"><strong>if</strong> <var>failures</var> is empty <strong>then</strong> rulebook.add_generalized_rule(<var>c</var>)</span></li>
+              <li><span class="indent-1"><strong>else</strong> log rejected candidate and continue</span></li>
+            </ol>
+          </div>
         </article>
       </div>
     </section>
