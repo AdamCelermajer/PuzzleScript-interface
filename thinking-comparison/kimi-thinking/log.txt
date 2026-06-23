@@ -1,0 +1,32 @@
+Asking moonshotai/kimi-k2.6 for subgoal/action...
+[moonshotai/kimi-k2.6] Response time: 278.1s
+Recorded thinking for subgoal/action (51075 chars) -> C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\rules\ps_sokoban_basic-v1\thinking_20260622T124354.json
+Asking moonshotai/kimi-k2.6 for rule creation...
+[moonshotai/kimi-k2.6] Response time: 59.8s
+Asking moonshotai/kimi-k2.6 for subgoal/action...
+[moonshotai/kimi-k2.6] Response time: 144.6s
+Traceback (most recent call last):
+  File "<stdin>", line 38, in <module>
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\engine\agent.py", line 56, in run_learning_loop
+    loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\runtime\runner.py", line 150, in run
+    decision = self.planner.choose_action()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\engine\planner.py", line 101, in choose_action
+    return self.ask_llm_for_subgoal(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\engine\planner.py", line 166, in ask_llm_for_subgoal
+    goal, plan = self.goal_manager.ask_for_subgoal_action(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\engine\goal_manager.py", line 53, in ask_for_subgoal_action
+    data = self._call_json(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\engine\goal_manager.py", line 105, in _call_json
+    return llm_client.call_json(
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\engine\llm_client.py", line 194, in call_json
+    response = self._call(
+               ^^^^^^^^^^^
+  File "C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\engine\llm_client.py", line 156, in _call
+    raise ValueError("LLM returned empty content")
+ValueError: LLM returned empty content

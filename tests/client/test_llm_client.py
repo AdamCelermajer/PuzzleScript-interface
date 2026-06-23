@@ -29,7 +29,7 @@ class LlmClientConfigTests(unittest.TestCase):
             cfg = Config()
             client, _ = self._make_client(cfg)
 
-        self.assertEqual(cfg.model, "moonshotai/kimi-k2.7-code")
+        self.assertEqual(cfg.model, "anthropic/claude-opus-4.8")
         self.assertEqual(cfg.reasoning_effort, "")
         self.assertEqual(cfg.openrouter_api_key, "test-openrouter-key")
         self.assertFalse(hasattr(cfg, "api_key"))
@@ -37,7 +37,7 @@ class LlmClientConfigTests(unittest.TestCase):
         self.assertIn("reasoning_effort", {field.name for field in fields(Config)})
         self.assertEqual(
             client._openrouter_model(),
-            "moonshotai/kimi-k2.7-code",
+            "anthropic/claude-opus-4.8",
         )
 
     def test_openrouter_prefix_is_stripped_from_model(self) -> None:
@@ -67,7 +67,7 @@ class LlmClientConfigTests(unittest.TestCase):
 
         self.assertEqual(result, '{"plan": ["ACTION1"]}')
         self.assertEqual(mock_client.chat.completions.create.call_count, 1)
-        self.assertIn("Asking moonshotai/kimi-k2.7-code", events[0])
+        self.assertIn("Asking anthropic/claude-opus-4.8", events[0])
         self.assertNotIn(
             "reasoning_effort",
             mock_client.chat.completions.create.call_args.kwargs,
@@ -87,7 +87,7 @@ class LlmClientConfigTests(unittest.TestCase):
         self.assertEqual(result, "ok")
         self.assertEqual(
             events[0],
-            "Asking moonshotai/kimi-k2.7-code for subgoal/action...",
+            "Asking anthropic/claude-opus-4.8 for subgoal/action...",
         )
 
     def test_call_text_uses_configured_model(self) -> None:
@@ -103,7 +103,7 @@ class LlmClientConfigTests(unittest.TestCase):
         self.assertEqual(result, "ok")
         self.assertEqual(
             mock_client.chat.completions.create.call_args.kwargs["model"],
-            "moonshotai/kimi-k2.7-code",
+            "anthropic/claude-opus-4.8",
         )
 
     def test_call_can_attach_image_data_urls_to_user_message(self) -> None:
@@ -125,7 +125,7 @@ class LlmClientConfigTests(unittest.TestCase):
         self.assertEqual(result, '{"plan": []}')
         create_kwargs = mock_client.chat.completions.create.call_args.kwargs
         messages = create_kwargs["messages"]
-        self.assertEqual(create_kwargs["model"], "moonshotai/kimi-k2.7-code")
+        self.assertEqual(create_kwargs["model"], "anthropic/claude-opus-4.8")
         self.assertEqual(messages[0], {"role": "system", "content": "system"})
         self.assertEqual(messages[1]["role"], "user")
         self.assertEqual(

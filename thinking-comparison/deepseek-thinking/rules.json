@@ -1,0 +1,107 @@
+{
+  "next_id": 3,
+  "rules": [
+    {
+      "ruleID": "G000001",
+      "natural_language": "ACTION1 moves the player one cell up into empty space.",
+      "logical_rule": {
+        "action": "ACTION1",
+        "anchor": {
+          "value": 2
+        },
+        "conditions": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "equals": 2
+          },
+          {
+            "offset": [
+              0,
+              -1
+            ],
+            "equals": 0
+          }
+        ],
+        "effects": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "set": 0
+          },
+          {
+            "offset": [
+              0,
+              -1
+            ],
+            "set": 2
+          }
+        ]
+      },
+      "evidence": {
+        "supports": [
+          "T000004"
+        ],
+        "contradictions": [],
+        "prediction_hits": 0,
+        "prediction_failures": 0
+      },
+      "revision_count": 0
+    },
+    {
+      "ruleID": "G000002",
+      "natural_language": "ACTION3 moves the player one cell left into empty space.",
+      "logical_rule": {
+        "action": "ACTION3",
+        "anchor": {
+          "value": 2
+        },
+        "conditions": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "equals": 2
+          },
+          {
+            "offset": [
+              -1,
+              0
+            ],
+            "equals": 0
+          }
+        ],
+        "effects": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "set": 0
+          },
+          {
+            "offset": [
+              -1,
+              0
+            ],
+            "set": 2
+          }
+        ]
+      },
+      "evidence": {
+        "supports": [
+          "T000005"
+        ],
+        "contradictions": [],
+        "prediction_hits": 0,
+        "prediction_failures": 0
+      },
+      "revision_count": 0
+    }
+  ]
+}

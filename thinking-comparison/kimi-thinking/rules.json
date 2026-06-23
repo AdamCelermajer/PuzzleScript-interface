@@ -1,0 +1,56 @@
+{
+  "next_id": 2,
+  "rules": [
+    {
+      "ruleID": "G000001",
+      "natural_language": "ACTION1 moves the player one cell up into empty space.",
+      "logical_rule": {
+        "action": "ACTION1",
+        "anchor": {
+          "value": 2
+        },
+        "conditions": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "equals": 2
+          },
+          {
+            "offset": [
+              0,
+              -1
+            ],
+            "equals": 0
+          }
+        ],
+        "effects": [
+          {
+            "offset": [
+              0,
+              0
+            ],
+            "set": 0
+          },
+          {
+            "offset": [
+              0,
+              -1
+            ],
+            "set": 2
+          }
+        ]
+      },
+      "evidence": {
+        "supports": [
+          "T000001"
+        ],
+        "contradictions": [],
+        "prediction_hits": 0,
+        "prediction_failures": 0
+      },
+      "revision_count": 0
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+Started session ps_sokoban_basic-v1 in unified rule loop
+Legend mapping from env: {}
+Asking deepseek/deepseek-v4-pro for subgoal/action...
+[deepseek/deepseek-v4-pro] Response time: 70.8s
+Recorded thinking for subgoal/action (11573 chars) -> C:\Users\adamc\Desktop\syncall\uni\adam_project\PuzzleScript-interface\client\rules\ps_sokoban_basic-v1\thinking_20260622T121610.json
+Action: ACTION3 (LLM subgoal: Move player to the right side of the box at (4,3) to prepare for pushing it left toward the target, predictions=0)
+Asking deepseek/deepseek-v4-pro for rule creation...
+[deepseek/deepseek-v4-pro] Response time: 1.2s
+Asking deepseek/deepseek-v4-pro for subgoal/action...
+[deepseek/deepseek-v4-pro] Response time: 67.5s
+Action: ACTION1 (LLM subgoal: Learn the effect of ACTION1, likely moving up to approach the box from above, predictions=0)
+Asking deepseek/deepseek-v4-pro for rule creation...
+[deepseek/deepseek-v4-pro] Response time: 93.8s
+Rejected rule candidate: T000002: predicted states did not include after
+Asking deepseek/deepseek-v4-pro for subgoal/action...
+[deepseek/deepseek-v4-pro] Response time: 5.9s
+Action: ACTION2 (LLM subgoal: Push the box (2) to the right to align with the target (3), predictions=0)
+Asking deepseek/deepseek-v4-pro for rule creation...
+[deepseek/deepseek-v4-pro] Response time: 13.1s
+Rejected rule candidate: T000003: predicted states did not include after
+Asking deepseek/deepseek-v4-pro for subgoal/action...
+[deepseek/deepseek-v4-pro] Response time: 206.6s
+Action: ACTION1 (LLM subgoal: Verify that ACTION1 moves the player up, predictions=0)
+Asking deepseek/deepseek-v4-pro for rule creation...
+[deepseek/deepseek-v4-pro] Response time: 43.3s
+Proposed 1 logical rules.
+Asking deepseek/deepseek-v4-pro for subgoal/action...
+[deepseek/deepseek-v4-pro] Response time: 2.5s
+Action: ACTION3 (LLM subgoal: Push the box (2) left to free the path, predictions=0)
+Asking deepseek/deepseek-v4-pro for rule creation...
+[deepseek/deepseek-v4-pro] Response time: 15.6s
+Proposed 1 logical rules.
+Max steps reached.

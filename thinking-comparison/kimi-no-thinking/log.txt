@@ -1,0 +1,33 @@
+Started session ps_sokoban_basic-v1 in unified rule loop
+Legend mapping from env: {}
+Asking moonshotai/kimi-k2.6 for subgoal/action...
+[moonshotai/kimi-k2.6] Response time: 1.6s
+Action: ACTION1 (LLM subgoal: Identify which action controls movement in which direction, predictions=0)
+Asking moonshotai/kimi-k2.6 for rule creation...
+[moonshotai/kimi-k2.6] Response time: 2.0s
+Proposed 1 logical rules.
+Asking moonshotai/kimi-k2.6 for subgoal/action...
+[moonshotai/kimi-k2.6] Response time: 1.4s
+Action: ACTION3 (LLM subgoal: Understand how to interact with the box (2) by trying a different action., predictions=0)
+Asking moonshotai/kimi-k2.6 for rule creation...
+[moonshotai/kimi-k2.6] Response time: 1.1s
+Proposed 1 logical rules.
+Asking moonshotai/kimi-k2.6 for subgoal/action...
+[moonshotai/kimi-k2.6] Response time: 4.1s
+Action: ACTION2 (LLM subgoal: Determine what ACTION2 does by testing it., predictions=0)
+Asking moonshotai/kimi-k2.6 for rule creation...
+[moonshotai/kimi-k2.6] Response time: 2.2s
+Rejected rule candidate: T000003: predicted states did not include after
+Asking moonshotai/kimi-k2.6 for subgoal/action...
+[moonshotai/kimi-k2.6] Response time: 12.6s
+Action: ACTION2 (LLM subgoal: Learn what ACTION2 does by observing its effect on the player position., predictions=0)
+Asking moonshotai/kimi-k2.6 for rule creation...
+[moonshotai/kimi-k2.6] Response time: 176.4s
+Rejected malformed rule candidate: LLM returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Asking moonshotai/kimi-k2.6 for subgoal/action...
+[moonshotai/kimi-k2.6] Response time: 1.0s
+Action: ACTION1 (LLM subgoal: Determine what ACTION2 does by observing its effect on pushing the box downward., predictions=0)
+Asking moonshotai/kimi-k2.6 for rule creation...
+[moonshotai/kimi-k2.6] Response time: 2.5s
+Rejected rule candidate: T000005: predicted states did not include after
+Max steps reached.
