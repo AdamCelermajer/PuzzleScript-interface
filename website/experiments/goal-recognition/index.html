@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goal Recognition Results - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="goal-recognition-page" data-section="goal-recognition">
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>Goal Recognition Results</h1>
+          <p id="run-summary">Loading experiment results...</p>
+        </div>
+        <div class="summary-grid" aria-label="Result counts">
+          <div><span>Games</span><strong id="total-games">0</strong></div>
+          <div><span>Human</span><strong id="total-human">0</strong></div>
+          <div><span>LLM</span><strong id="total-llm">0</strong></div>
+        </div>
+      </header>
+
+      <section class="toolbar" aria-label="Filters">
+        <label>
+          Search
+          <input id="search-input" type="search" autocomplete="off" placeholder="game id or answer text">
+        </label>
+        <label>
+          Model
+          <select id="model-filter"></select>
+        </label>
+        <label>
+          Evidence
+          <select id="evidence-filter"></select>
+        </label>
+        <label>
+          Input
+          <select id="input-filter"></select>
+        </label>
+      </section>
+
+      <div class="workspace">
+        <aside class="game-list-panel" aria-label="Games">
+          <div class="list-heading">
+            <strong id="visible-count">0 games</strong>
+            <span>selected from the run</span>
+          </div>
+          <div id="game-list" class="game-list"></div>
+        </aside>
+
+        <section id="game-detail" class="game-detail" aria-live="polite"></section>
+      </div>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/goal-recognition-viewer.js"></script>
+  </body>
+</html>

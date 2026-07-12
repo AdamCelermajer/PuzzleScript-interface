@@ -1,0 +1,88 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thinking Comparison - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="thinking-comparison">
+    <main class="content-page trace-page">
+      <section class="page-intro compact">
+        <p class="eyebrow">Research trace</p>
+        <h1>Thinking traces: Kimi, Kimi no-thinking, DeepSeek.</h1>
+        <p>
+          This page is for reading the actual run traces first: reasoning text, final JSON output, logs,
+          timelines, and rule artifacts from the same <code>ps_sokoban_basic-v1</code> starting state.
+        </p>
+        <div class="status-row">
+          <span class="chip">Run date 2026-06-22</span>
+          <span class="chip gold">Kimi thinking selected by default</span>
+          <span class="chip red">Kimi thinking crashed on the second move-selection call</span>
+        </div>
+      </section>
+
+      <section class="trace-viewer" aria-label="Thinking comparison trace viewer">
+        <aside class="trace-condition-list" aria-label="Conditions">
+          <button class="trace-condition active" type="button" data-condition="kimi-thinking">
+            <strong>Kimi thinking</strong>
+            <span>51,075-char reasoning trace, 1 / 5 steps, then empty-content crash.</span>
+          </button>
+          <button class="trace-condition" type="button" data-condition="kimi-no-thinking">
+            <strong>Kimi no-thinking</strong>
+            <span>No reasoning trace, completed 5 / 5 steps.</span>
+          </button>
+          <button class="trace-condition" type="button" data-condition="deepseek-thinking">
+            <strong>DeepSeek thinking</strong>
+            <span>11,573-char reasoning trace, completed 5 / 5 steps.</span>
+          </button>
+        </aside>
+
+        <section class="trace-main" aria-live="polite">
+          <header class="trace-header">
+            <div>
+              <p class="eyebrow" id="trace-label">Kimi thinking</p>
+              <h2 id="trace-title">Loading trace...</h2>
+            </div>
+            <div class="trace-meta" id="trace-meta"></div>
+          </header>
+
+          <div class="trace-tabs" role="tablist" aria-label="Trace views">
+            <button class="active" type="button" data-panel="reasoning">Reasoning</button>
+            <button type="button" data-panel="final">Final output</button>
+            <button type="button" data-panel="log">Run log</button>
+            <button type="button" data-panel="timeline">Timeline</button>
+            <button type="button" data-panel="rules">Rules</button>
+          </div>
+
+          <article class="trace-panel active" data-panel="reasoning">
+            <pre id="trace-reasoning"><code>Loading...</code></pre>
+          </article>
+          <article class="trace-panel" data-panel="final">
+            <pre id="trace-final"><code>Loading...</code></pre>
+          </article>
+          <article class="trace-panel" data-panel="log">
+            <pre id="trace-log"><code>Loading...</code></pre>
+          </article>
+          <article class="trace-panel" data-panel="timeline">
+            <pre id="trace-timeline"><code>Loading...</code></pre>
+          </article>
+          <article class="trace-panel" data-panel="rules">
+            <pre id="trace-rules"><code>Loading...</code></pre>
+          </article>
+        </section>
+      </section>
+
+      <section class="panel trace-notes">
+        <h2>Reading notes</h2>
+        <ul>
+          <li>Kimi thinking is the most important trace here because it exposes the long internal puzzle interpretation before the failure.</li>
+          <li>Kimi no-thinking is useful as a control: same model family, reasoning disabled, completed the short run.</li>
+          <li>DeepSeek thinking is the comparison point: shorter recorded reasoning and completed all five steps.</li>
+        </ul>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="./thinking-traces.js"></script>
+  </body>
+</html>

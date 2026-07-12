@@ -1,0 +1,45 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiments - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="experiments">
+    <main class="content-page">
+      <section class="page-intro compact">
+        <p class="eyebrow">Experiments</p>
+        <h1>Finished studies and active research threads.</h1>
+        <p>Each page is editable under <code>website/</code> and links to the evidence needed to explain the work.</p>
+      </section>
+
+      <div class="card-grid">
+        <a class="card" href="/experiments/goal-recognition/">
+          <h3>Goal Recognition</h3>
+          <p>Curated PuzzleScript game pool, human answers, LLM predictions, screenshots, filters, and errors.</p>
+          <span class="tag">finished static viewer</span>
+        </a>
+        <a class="card" href="/experiments/thinking-comparison.html">
+          <h3>Thinking Comparison</h3>
+          <p>DeepSeek thinking vs Kimi thinking vs Kimi no-thinking on the same Sokoban starting state.</p>
+          <span class="tag">finished comparison</span>
+        </a>
+        <a class="card" href="/experiments/live-framework.html">
+          <h3>LIVE Framework</h3>
+          <p>The rule-learning loop: observe transitions, induce rules, verify against timelines, and plan.</p>
+          <span class="tag">active framework</span>
+        </a>
+      </div>
+
+      <section class="panel">
+        <h2>Future live runner</h2>
+        <p>
+          The next phase can add a local FastAPI backend for launchable presets, streamed logs, and run history.
+          This pass keeps the website static so the finished artifacts are easy to document, edit, and publish.
+        </p>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

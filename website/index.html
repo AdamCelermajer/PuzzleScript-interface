@@ -1,0 +1,70 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="overview">
+    <main class="content-page">
+      <section class="page-intro">
+        <p class="eyebrow">PuzzleScript Interface</p>
+        <h1>Research workbench for learning puzzle-game mechanics.</h1>
+        <p>
+          This site is the editable public surface for the PuzzleScript/ARC project: finished experiments,
+          architecture notes, result viewers, and comparison artifacts collected in one place.
+        </p>
+        <div class="status-row">
+          <span class="chip">Static v1</span>
+          <span class="chip gold">Finished artifacts</span>
+          <span class="chip gray">Python runner deferred</span>
+        </div>
+      </section>
+
+      <section class="card-grid" aria-label="Primary research surfaces">
+        <a class="card" href="/docs/architecture.html">
+          <h3>Architecture</h3>
+          <p>Current client flow, runtime boundaries, and pseudocode maintained as a static architecture page.</p>
+          <span class="tag">explainer</span>
+        </a>
+        <a class="card" href="/experiments/goal-recognition/">
+          <h3>Goal recognition</h3>
+          <p>Static results viewer for the curated 50-game goal-recognition matrix.</p>
+          <span class="tag">results viewer</span>
+        </a>
+        <a class="card" href="/experiments/thinking-comparison.html">
+          <h3>Thinking comparison</h3>
+          <p>Kimi thinking, Kimi no-thinking, and DeepSeek thinking compared on Sokoban.</p>
+          <span class="tag">model comparison</span>
+        </a>
+        <a class="card" href="/experiments/live-framework.html">
+          <h3>LIVE framework</h3>
+          <p>Rule-learning pipeline for observing transitions and inducing executable rules.</p>
+          <span class="tag">rule learning</span>
+        </a>
+      </section>
+
+      <section class="two-column">
+        <div class="panel">
+          <h2>What this site communicates</h2>
+          <ul>
+            <li>The system shape: Python agent, ARC-compatible service, Node PuzzleScript runtime.</li>
+            <li>The finished static experiments and where their evidence lives inside the website.</li>
+            <li>The model-comparison evidence around reasoning traces, latency, and failure modes.</li>
+            <li>The next step: a local Python backend that can launch runs and stream logs later.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h2>Runtime boundary</h2>
+          <p>
+            V1 is intentionally static. The browser reads local website assets only. A future live runner
+            should be a separate local backend that starts explicit Python commands, captures logs, and writes
+            run artifacts for the site to inspect.
+          </p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

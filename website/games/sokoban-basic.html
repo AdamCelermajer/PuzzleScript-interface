@@ -1,0 +1,31 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sokoban Basic - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="games">
+    <main class="content-page">
+      <section class="page-intro compact">
+        <p class="eyebrow">Game</p>
+        <h1>Sokoban Basic</h1>
+        <p><code>ps_sokoban_basic-v1</code> is the shared baseline for the local ARC service, LIVE rule-learning runs, and the thinking comparison.</p>
+      </section>
+      <section class="panel">
+        <h2>Why it matters</h2>
+        <p>
+          Sokoban gives the agent a small deterministic world where movement, collision, pushing, targets,
+          and win conditions can be observed through state transitions.
+        </p>
+      </section>
+      <section class="panel">
+        <h2>Run manually</h2>
+        <pre><code>npm run local
+uv run python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50</code></pre>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

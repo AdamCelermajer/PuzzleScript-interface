@@ -1,0 +1,42 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="api">
+    <main class="content-page">
+      <section class="page-intro compact">
+        <p class="eyebrow">Reference</p>
+        <h1>ARC-compatible API</h1>
+        <p>The Python service exposes an ARC-style surface and forwards runtime actions to the Node PuzzleScript server.</p>
+      </section>
+      <section class="two-column">
+        <div class="panel">
+          <h2>Internal runtime</h2>
+          <pre><code>POST /init
+POST /action
+GET  /observe?sessionId=...</code></pre>
+        </div>
+        <div class="panel">
+          <h2>ARC adapter</h2>
+          <pre><code>GET  /api/games
+GET  /api/games/{game_id}
+POST /api/scorecard/open
+GET  /api/scorecard/{card_id}
+POST /api/scorecard/close
+POST /api/cmd/RESET
+POST /api/cmd/ACTION1..5
+POST /api/cmd/ACTION7</code></pre>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Action mapping</h2>
+        <p><code>ACTION1</code> up, <code>ACTION2</code> down, <code>ACTION3</code> left, <code>ACTION4</code> right, <code>ACTION5</code> space/action, <code>ACTION7</code> undo.</p>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

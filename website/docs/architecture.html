@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Architecture - PuzzleScript Interface</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <style>
+
+    :root {
+      --bg: #f7f8f5;
+      --ink: #1c2520;
+      --muted: #5b6760;
+      --line: #cfd6ce;
+      --panel: #ffffff;
+      --engine: #dcefe5;
+      --runtime: #dce8f8;
+      --llm: #fff0c9;
+      --store: #ffe0d3;
+      --mono: Consolas, "SFMono-Regular", "Liberation Mono", monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.45;
+    }
+
+    main {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 42px;
+    }
+
+    header {
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 2rem;
+      letter-spacing: 0;
+    }
+
+    .note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    section {
+      margin-top: 18px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+      letter-spacing: 0;
+    }
+
+    .engine-diagram {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .diagram-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .diagram-row.two {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    .diagram-row.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .diagram-card {
+      min-height: 118px;
+      padding: 12px;
+      border: 1px solid #1c2520;
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .diagram-card.engine {
+      background: var(--engine);
+    }
+
+    .diagram-card.runtime {
+      background: var(--runtime);
+    }
+
+    .diagram-card.store {
+      background: var(--store);
+    }
+
+    .diagram-card.llm {
+      background: var(--llm);
+    }
+
+    .diagram-card h3 {
+      margin-bottom: 6px;
+    }
+
+    .diagram-card .module {
+      display: block;
+      margin-bottom: 8px;
+      color: #435049;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      overflow-wrap: anywhere;
+    }
+
+    .diagram-card p {
+      margin: 0;
+      color: #354039;
+      font-size: 0.9rem;
+    }
+
+    .connector {
+      display: grid;
+      min-width: 82px;
+      place-items: center;
+      color: #27312c;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      text-align: center;
+    }
+
+    .connector::before {
+      content: "->";
+      display: block;
+      font-weight: 800;
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    .lane-label {
+      margin: 4px 0 -4px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .architecture-diagram {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .architecture-diagram svg {
+      display: block;
+      min-width: 0;
+      width: 100%;
+      height: auto;
+    }
+
+    .svg-box {
+      stroke: #1c2520;
+      stroke-width: 1.6;
+      rx: 8;
+    }
+
+    .svg-runtime {
+      fill: var(--runtime);
+    }
+
+    .svg-engine {
+      fill: var(--engine);
+    }
+
+    .svg-store {
+      fill: var(--store);
+    }
+
+    .svg-llm {
+      fill: var(--llm);
+    }
+
+    .svg-title {
+      fill: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .svg-module {
+      fill: #435049;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0;
+    }
+
+    .svg-text {
+      fill: #354039;
+      font-family: var(--sans);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .svg-label {
+      fill: #27312c;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0;
+    }
+
+    .svg-arrow {
+      fill: none;
+      stroke: #1c2520;
+      stroke-width: 2;
+      marker-end: url(#svg-arrow-head);
+    }
+
+    .svg-soft {
+      stroke: #657269;
+      stroke-dasharray: 6 5;
+      opacity: 0.68;
+    }
+
+    .example-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .code-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    article {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    article header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #fbfcfa;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      letter-spacing: 0;
+    }
+
+    .path {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      text-align: right;
+      overflow-wrap: anywhere;
+    }
+
+    article.wide {
+      grid-column: 1 / -1;
+    }
+
+    .algorithm-card {
+      border-color: #1c2520;
+      background: #ffffff;
+    }
+
+    .algorithm-card header {
+      border-bottom: 0;
+      background: #ffffff;
+    }
+
+    .algorithm-card .pseudocode {
+      margin: 0 12px 12px;
+      border-top: 2px solid #1c2520;
+      border-bottom: 1px solid #1c2520;
+      background: #ffffff;
+      color: #111713;
+      font-family: Georgia, "Cambria Math", "Segoe UI Symbol", "Noto Serif Math", "Latin Modern Math", "Times New Roman", serif;
+      counter-reset: line;
+      padding: 8px 0 10px;
+    }
+
+    .algorithm-card .pseudocode-title {
+      padding: 4px 12px 6px;
+      border-bottom: 1px solid #1c2520;
+      font-size: 1.02rem;
+      font-variant: small-caps;
+      letter-spacing: 0;
+    }
+
+    .algorithm-card .pseudocode-title strong {
+      font-variant: normal;
+      font-weight: 800;
+    }
+
+    .algorithm-card .pseudocode-title code {
+      font-size: 0.82rem;
+    }
+
+    .algorithm-card .pseudocode-line {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding: 2px 12px;
+      counter-increment: line;
+      font-size: 1rem;
+      line-height: 1.55;
+    }
+
+    .algorithm-card .pseudocode-line::before {
+      content: counter(line);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: #888;
+      width: 1.5rem;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .algorithm-card .pseudocode-stmt {
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: pre-wrap;
+      word-break: normal;
+      overflow-wrap: anywhere;
+      tab-size: 4;
+      font-family: Georgia, "Cambria Math", "Segoe UI Symbol", "Noto Serif Math", "Latin Modern Math", "Times New Roman", serif;
+    }
+
+    .algorithm-card .pseudocode-comment {
+      flex: 0 0 auto;
+      max-width: 46%;
+      color: #5b6760;
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      text-align: right;
+    }
+
+    @media (max-width: 820px) {
+      .algorithm-card .pseudocode-line {
+        flex-wrap: wrap;
+        gap: 0.1rem 0.5rem;
+      }
+
+      .algorithm-card .pseudocode-comment {
+        max-width: 100%;
+        width: 100%;
+        text-align: left;
+        padding-left: 2rem;
+      }
+    }
+
+    var {
+      font-style: italic;
+    }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      overflow-x: auto;
+      background: #17201b;
+      color: #edf3ef;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: var(--mono);
+    }
+
+    @media (max-width: 820px) {
+      .diagram-row,
+      .diagram-row.two,
+      .diagram-row.three {
+        grid-template-columns: 1fr;
+      }
+
+      .connector {
+        min-height: 30px;
+      }
+
+      .connector::before {
+        content: "down";
+        font-size: 0.8rem;
+      }
+
+      .example-grid,
+      .code-grid {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        width: min(100% - 22px, 1160px);
+        padding-top: 20px;
+      }
+    }
+  
+      body { background: var(--site-bg, #f6f8fb); }
+      .architecture-copy main, .architecture-copy .page { max-width: none; }
+      .architecture-copy .site-content main { padding: 0; }
+    </style>
+  </head>
+  <body class="architecture-copy" data-section="architecture">
+    <main class="content-page architecture-page">
+      <section class="page-intro compact">
+        <p class="eyebrow">Architecture</p>
+        <h1>Current Client Architecture</h1>
+        <p>The live client flow, runtime boundaries, and pseudocode are maintained as a website-owned architecture page while experiment evidence stays in its source folders.</p>
+      </section>
+
+    <header>
+      <h1>Current Client Architecture</h1>
+      <p class="note">Diagram and pseudocode only. Updated against the live source split: <code>client/engine</code> reasons, <code>client/runtime</code> executes, <code>client/arc</code> adapts ARC data.</p>
+    </header>
+
+    <section aria-labelledby="diagram-title">
+      <h2 id="diagram-title">Diagram</h2>
+      <div class="architecture-diagram">
+        <svg viewBox="0 0 980 700" role="img" aria-labelledby="architecture-svg-title architecture-svg-desc">
+          <title id="architecture-svg-title">Engine-focused client architecture</title>
+          <desc id="architecture-svg-desc">Planner-first engine architecture. Observe writes EngineState into memory, planner starts act, and learning revises the rulebook from memory evidence.</desc>
+          <defs>
+            <marker id="svg-arrow-head" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+              <path d="M2,2 L10,6 L2,10 Z" fill="#1c2520"></path>
+            </marker>
+          </defs>
+
+          <text class="svg-label" x="42" y="34">outside engine</text>
+          <text class="svg-label" x="42" y="192">observe path</text>
+          <text class="svg-label" x="42" y="374">act: planner first</text>
+          <text class="svg-label" x="42" y="548">learn / revise path</text>
+
+          <rect class="svg-box svg-runtime" x="58" y="54" width="230" height="96"></rect>
+          <text class="svg-title" x="173" y="86" text-anchor="middle">Runtime / ARC env</text>
+          <text class="svg-module" x="173" y="110" text-anchor="middle">client/runtime + client/arc</text>
+          <text class="svg-text" x="173" y="132" text-anchor="middle">returns frames, accepts actions</text>
+
+          <rect class="svg-box svg-runtime" x="710" y="54" width="220" height="96"></rect>
+          <text class="svg-title" x="820" y="86" text-anchor="middle">Action output</text>
+          <text class="svg-module" x="820" y="110" text-anchor="middle">GameAction</text>
+          <text class="svg-text" x="820" y="132" text-anchor="middle">engine returns next move</text>
+
+          <rect class="svg-box svg-engine" x="58" y="220" width="230" height="110"></rect>
+          <text class="svg-title" x="173" y="254" text-anchor="middle">Perception</text>
+          <text class="svg-module" x="173" y="278" text-anchor="middle">perception.py</text>
+          <text class="svg-text" x="173" y="302" text-anchor="middle">FrameData + image?</text>
+          <text class="svg-text" x="173" y="320" text-anchor="middle">to EngineState</text>
+
+          <rect class="svg-box svg-store" x="58" y="390" width="230" height="120"></rect>
+          <text class="svg-title" x="173" y="424" text-anchor="middle">Memory</text>
+          <text class="svg-module" x="173" y="448" text-anchor="middle">memory.py</text>
+          <text class="svg-text" x="173" y="474" text-anchor="middle">canonical timeline</text>
+          <text class="svg-text" x="173" y="492" text-anchor="middle">State -> Action -> State</text>
+
+          <rect class="svg-box svg-engine" x="380" y="220" width="230" height="110"></rect>
+          <text class="svg-title" x="495" y="254" text-anchor="middle">Goal manager</text>
+          <text class="svg-module" x="495" y="278" text-anchor="middle">goal_manager.py</text>
+          <text class="svg-text" x="495" y="302" text-anchor="middle">selects goal/subgoal</text>
+          <text class="svg-text" x="495" y="320" text-anchor="middle">when planner has none</text>
+
+          <rect class="svg-box svg-engine" x="380" y="390" width="230" height="130"></rect>
+          <text class="svg-title" x="495" y="424" text-anchor="middle">Planner / monitor</text>
+          <text class="svg-module" x="495" y="448" text-anchor="middle">planner.py</text>
+          <text class="svg-text" x="495" y="474" text-anchor="middle">checks active plan</text>
+          <text class="svg-text" x="495" y="492" text-anchor="middle">simulates toward goal</text>
+          <text class="svg-text" x="495" y="510" text-anchor="middle">routes next action</text>
+
+          <rect class="svg-box svg-store" x="710" y="390" width="220" height="130"></rect>
+          <text class="svg-title" x="820" y="424" text-anchor="middle">Rulebook</text>
+          <text class="svg-module" x="820" y="448" text-anchor="middle">rulebook.py</text>
+          <text class="svg-text" x="820" y="474" text-anchor="middle">predicts after-states</text>
+          <text class="svg-text" x="820" y="492" text-anchor="middle">tracks hits/failures</text>
+          <text class="svg-text" x="820" y="510" text-anchor="middle">stores accepted rules</text>
+
+          <rect class="svg-box svg-engine" x="300" y="560" width="190" height="105"></rect>
+          <text class="svg-title" x="395" y="594" text-anchor="middle">Inducer</text>
+          <text class="svg-module" x="395" y="618" text-anchor="middle">induction.py</text>
+          <text class="svg-text" x="395" y="642" text-anchor="middle">proposes candidate</text>
+
+          <rect class="svg-box svg-engine" x="540" y="560" width="180" height="105"></rect>
+          <text class="svg-title" x="630" y="594" text-anchor="middle">Verifier</text>
+          <text class="svg-module" x="630" y="618" text-anchor="middle">verifier.py</text>
+          <text class="svg-text" x="630" y="642" text-anchor="middle">checks evidence</text>
+
+          <path class="svg-arrow" d="M710 102 L288 102"></path>
+          <text class="svg-label" x="455" y="86">runtime executes action</text>
+
+          <path class="svg-arrow" d="M173 150 L173 220"></path>
+          <text class="svg-label" x="190" y="188">FrameData + image?</text>
+
+          <path class="svg-arrow" d="M173 330 L173 390"></path>
+          <text class="svg-label" x="190" y="356">EngineState</text>
+
+          <path class="svg-arrow" d="M288 450 L380 450"></path>
+          <text class="svg-label" x="294" y="434">current state</text>
+          <text class="svg-label" x="294" y="466">first act step</text>
+
+          <path class="svg-arrow svg-soft" d="M455 390 L455 330"></path>
+          <text class="svg-label" x="374" y="364">if no goal</text>
+
+          <path class="svg-arrow svg-soft" d="M535 330 L535 390"></path>
+          <text class="svg-label" x="548" y="364">goal/subgoal</text>
+
+          <path class="svg-arrow" d="M610 430 L710 430"></path>
+          <text class="svg-label" x="626" y="414">simulate</text>
+
+          <path class="svg-arrow" d="M710 480 L610 480"></path>
+          <text class="svg-label" x="624" y="502">predictions</text>
+
+          <path class="svg-arrow" d="M610 410 L660 410 L660 176 L820 176 L820 150"></path>
+          <text class="svg-label" x="682" y="162">GameAction</text>
+
+          <path class="svg-arrow" d="M173 510 L173 612 L300 612"></path>
+          <text class="svg-label" x="190" y="592">timeline evidence</text>
+
+          <path class="svg-arrow svg-soft" d="M470 520 L470 560"></path>
+          <text class="svg-label" x="485" y="546">mismatch / explore</text>
+
+          <path class="svg-arrow" d="M490 612 L540 612"></path>
+          <text class="svg-label" x="497" y="596">candidate</text>
+
+          <path class="svg-arrow" d="M630 560 L630 540 L820 540 L820 520"></path>
+          <text class="svg-label" x="650" y="553">accepted rules</text>
+        </svg>
+      </div>
+    </section>
+
+    <section aria-labelledby="examples-title">
+      <h2 id="examples-title">Input Examples</h2>
+      <div class="example-grid">
+        <article>
+          <header>
+            <h3>FrameData entering the engine</h3>
+            <span class="path">client/arc/types.py</span>
+          </header>
+<pre><code>FrameData(
+    frame=[
+        [[1, 1, 1, 1, 1],
+         [1, 2, 0, 3, 1],
+         [1, 0, 4, 0, 1],
+         [1, 0, 0, 0, 1],
+         [1, 1, 1, 1, 1]]
+    ],
+    state=GameState.NOT_PLAYED,
+    game_id="ps_sokoban_basic-v1",
+    available_actions=[UP, DOWN, LEFT, RIGHT],
+    rendered_frame=RenderedFrame(
+        mime_type="image/png",
+        data_url="data:image/png;base64,...",
+    ),
+)</code></pre>
+        </article>
+
+        <article>
+          <header>
+            <h3>EngineState after perception</h3>
+            <span class="path">client/engine/perception.py</span>
+          </header>
+<pre><code>EngineState(
+    grid=(
+        (1, 1, 1, 1, 1),
+        (1, 2, 0, 3, 1),
+        (1, 0, 4, 0, 1),
+        (1, 0, 0, 0, 1),
+        (1, 1, 1, 1, 1),
+    ),
+    state=GameState.NOT_PLAYED,
+    levels_completed=0,
+    win_levels=1,
+    game_id="ps_sokoban_basic-v1",
+    image=EngineImage(
+        mime_type="image/png",
+        data_url="data:image/png;base64,...",
+    ),
+    available_actions=(ACTION1, ACTION2, ACTION3, ACTION4),
+)</code></pre>
+        </article>
+
+        <article>
+          <header>
+            <h3>Memory timeline after action</h3>
+            <span class="path">client/engine/memory.py</span>
+          </header>
+<pre><code>EngineMemory.timeline = [
+    StateNode(id="S000001", state=S0),
+    ActionEdge(
+        id="A000001",
+        action=GameAction.ACTION4,
+        before="S000001",
+        after="S000002",
+    ),
+    StateNode(id="S000002", state=S1),
+]
+
+visual prompt context, when needed:
+    S0.image
+    ACTION4
+    S1.image
+
+transition views are derived:
+    (S0, ACTION4, S1)</code></pre>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="pseudocode-title">
+      <h2 id="pseudocode-title">Pseudocode - ordered by runtime importance</h2>
+      <div class="code-grid" data-pseudocode-grid>
+        <article class="algorithm-card wide">
+          <header>
+            <h3>Loading pseudocode</h3>
+            <span class="path">docs/pseudocode/manifest.json</span>
+          </header>
+          <div class="pseudocode">
+            <div class="pseudocode-line">
+              <span class="pseudocode-stmt">Loading Markdown pseudocode...</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

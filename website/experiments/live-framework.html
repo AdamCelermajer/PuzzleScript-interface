@@ -1,0 +1,40 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LIVE Framework - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="live-framework">
+    <main class="content-page">
+      <section class="page-intro compact">
+        <p class="eyebrow">Experiment / active framework</p>
+        <h1>LIVE Framework</h1>
+        <p>Learning interpretable visual rules from PuzzleScript state transitions.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Goal</h2>
+        <p>
+          The agent observes <code>before-state, action, after-state</code> triples and induces executable logical
+          rules that can be verified against the recorded timeline and used for planning.
+        </p>
+      </section>
+
+      <section class="card-grid">
+        <article class="card"><h3>Observe</h3><p>Collect ARC-compatible <code>FrameData</code> episodes from the local runtime.</p></article>
+        <article class="card"><h3>Induce</h3><p>Ask an LLM to propose structured rules from the accumulated transitions.</p></article>
+        <article class="card"><h3>Verify</h3><p>Check candidate rules against the timeline before relying on them.</p></article>
+        <article class="card"><h3>Plan</h3><p>Use verified rules in the runtime action loop.</p></article>
+      </section>
+
+      <section class="panel">
+        <h2>Command</h2>
+        <pre><code>python -m studies.LIVE_framework.run --help</code></pre>
+        <p class="muted">Live execution is documented here, but launch controls are deferred until the future local backend.</p>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

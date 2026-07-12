@@ -1,0 +1,24 @@
+[
+  {
+    "file": "runtime_loop.md",
+    "path": "client/runtime/runner.py",
+    "wide": true
+  },
+  {
+    "file": "planner.md",
+    "path": "client/engine/planner.py"
+  },
+  {
+    "file": "rule_learning.md",
+    "path": "client/engine/induction.py + client/engine/verifier.py",
+    "wide": true
+  },
+  {
+    "file": "engine_wiring.md",
+    "path": "client/engine/architecture.py"
+  },
+  {
+    "file": "entrypoint.md",
+    "path": "client/run_arc_agent.py"
+  }
+]
