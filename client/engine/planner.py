@@ -34,6 +34,7 @@ class ActivePlan:
     goal: Goal
     actions: tuple[GameAction, ...]
     index: int = 0
+    exploratory: bool = False
 
     def next_action(self) -> GameAction | None:
         if self.index >= len(self.actions):
@@ -45,6 +46,7 @@ class ActivePlan:
             goal=self.goal,
             actions=self.actions,
             index=self.index + 1,
+            exploratory=self.exploratory,
         )
 
 
@@ -95,6 +97,7 @@ class Planner:
             self.active_plan = ActivePlan(
                 goal=self.game_goal,
                 actions=tuple(planned),
+                index=1,
             )
             return PlanDecision(planned[0], "rule_plan", planned)
 
@@ -163,19 +166,29 @@ class Planner:
             )
 
         recent_events, image_data_urls = self._prompt_context(current, frame_data)
-        goal, plan = self.goal_manager.ask_for_subgoal_action(
+        known_rules_text = self.rulebook.known_rules_text()
+        goal = self.goal_manager.ask_for_subgoal(
             llm_client=self.llm_client,
             current=current,
             actions=actions,
             recent_events=recent_events,
-            known_rules_text=self.rulebook.known_rules_text(),
+            known_rules_text=known_rules_text,
             image_data_urls=image_data_urls,
         )
-        self.active_plan = ActivePlan(goal, tuple(plan))
+        plan = self.goal_manager.ask_for_action_plan(
+            llm_client=self.llm_client,
+            current=current,
+            actions=actions,
+            subgoal=goal,
+            recent_events=recent_events,
+            known_rules_text=known_rules_text,
+            image_data_urls=image_data_urls,
+        )
+        self.active_plan = ActivePlan(goal, tuple(plan), index=1, exploratory=True)
         return PlanDecision(
             plan[0],
             "explore_subgoal",
-            [plan[0]],
+            plan,
             subgoal=goal.description,
             exploratory=True,
         )
@@ -188,7 +201,13 @@ class Planner:
             self.active_plan = None
             return None
         self.active_plan = self.active_plan.advance()
-        return PlanDecision(action, "active_plan", [action])
+        return PlanDecision(
+            action,
+            "active_plan",
+            [action],
+            subgoal=self.active_plan.goal.description,
+            exploratory=self.active_plan.exploratory,
+        )
 
     def _prompt_context(
         self,

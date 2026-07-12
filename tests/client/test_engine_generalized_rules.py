@@ -114,6 +114,14 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
                         "rules": [
                             {
                                 "summary": "ACTION4 moves the player one cell right into empty space.",
+                                "evidence_ids": [record.id],
+                            }
+                        ]
+                    },
+                    {
+                        "rules": [
+                            {
+                                "summary": "ACTION4 moves the player one cell right into empty space.",
                                 "action": "ACTION4",
                                 "anchor": 2,
                                 "conditions": [
@@ -136,6 +144,12 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             ).propose_from_recent("test-grid", [record])
 
             self.assertEqual(len(hypotheses), 1)
+            self.assertEqual(
+                [call["purpose"] for call in llm.calls],
+                ["rule hypothesis", "rule schema"],
+            )
+            self.assertNotIn('"anchor"', llm.calls[0]["system"])
+            self.assertIn('"anchor": {"value": 2}', llm.calls[1]["system"])
             self.assertEqual(
                 rulebook.generalized_rules[0].summary,
                 "ACTION4 moves the player one cell right into empty space.",
@@ -169,6 +183,14 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
                         "rules": [
                             {
                                 "summary": "ACTION4 moves the player one cell right into empty space.",
+                                "evidence_ids": [record.id],
+                            }
+                        ]
+                    },
+                    {
+                        "rules": [
+                            {
+                                "summary": "ACTION4 moves the player one cell right into empty space.",
                                 "action": "ACTION4",
                                 "anchor": {"value": 2},
                                 "conditions": [
@@ -192,11 +214,11 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
 
             self.assertEqual(hypotheses, [])
             self.assertEqual(rulebook.generalized_rules, [])
-            self.assertEqual(len(llm.calls), 1)
+            self.assertEqual(len(llm.calls), 2)
             self.assertIn("Rejected rule candidate", events[0])
             self.assertIn(record.id, events[0])
 
-    def test_inducer_logs_malformed_llm_output_without_crashing(self) -> None:
+    def test_inducer_logs_malformed_natural_output_without_crashing(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
             record = memory.record_transition(
@@ -211,7 +233,7 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             ).propose_from_recent("test-grid", [record])
 
             self.assertEqual(hypotheses, [])
-            self.assertIn("Rejected malformed rule candidate", events[0])
+            self.assertIn("Rejected malformed natural rule hypothesis", events[0])
 
     def test_inducer_sends_latest_memory_transition_images_to_llm(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -232,11 +254,11 @@ class EngineGeneralizedRuleTests(unittest.TestCase):
             )
 
             self.assertEqual(llm.calls[0]["image_data_urls"], [before_image, after_image])
-            self.assertEqual(llm.calls[0]["purpose"], "rule creation")
+            self.assertEqual(llm.calls[0]["purpose"], "rule hypothesis")
             self.assertIn("Last memory transition", llm.calls[0]["prompt"])
             self.assertIn("ACTION4", llm.calls[0]["prompt"])
-            self.assertIn('"anchor": {"value": 2}', llm.calls[0]["system"])
-            self.assertIn('"offset": [1, 0]', llm.calls[0]["system"])
+            self.assertNotIn('"anchor": {"value": 2}', llm.calls[0]["system"])
+            self.assertNotIn('"offset": [1, 0]', llm.calls[0]["system"])
 
     def test_known_rules_context_for_inducer_is_natural_language_only(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

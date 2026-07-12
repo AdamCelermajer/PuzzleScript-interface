@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Optional
 
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 from dotenv import load_dotenv
 
 from client.engine.utils import extract_json
@@ -22,6 +22,7 @@ class Config:
     # reasoning_effort is sent to the model only when non-empty.
     # Use "low"/"medium"/"high" only if the chosen model supports it.
     reasoning_effort: str = ""
+    max_tokens: int = 4096
     game: str = "ps_sokoban_basic-v1"
     mode: str = "learn"
     max_steps: int = 20
@@ -89,16 +90,21 @@ class LlmClient:
             kwargs["response_format"] = {"type": "json_object"}
         if self.cfg.reasoning_effort:
             kwargs["reasoning_effort"] = self.cfg.reasoning_effort
+        if self.cfg.max_tokens:
+            kwargs["max_tokens"] = self.cfg.max_tokens
 
         model = self._openrouter_model()
         purpose_text = f" for {purpose}" if purpose else ""
         self._log(f"Asking {model}{purpose_text}...")
         start = time.time()
-        response = self.client.chat.completions.create(
-            model=model,
-            messages=messages,
-            **kwargs,
-        )
+        try:
+            response = self.client.chat.completions.create(
+                model=model,
+                messages=messages,
+                **kwargs,
+            )
+        except OpenAIError as exc:
+            raise ValueError(f"LLM provider error: {exc}") from exc
         self._log(f"[{model}] Response time: {time.time() - start:.1f}s")
         content = response.choices[0].message.content
         if not content or not content.strip():

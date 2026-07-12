@@ -18,7 +18,9 @@ During runs, the agent writes two main artifacts under `client/rules/<game-id>/`
 
 Each accepted rule has a `ruleID`, a natural-language summary, a logical rule (`action`, `anchor`, `conditions`, `effects`), evidence statistics (`supports`, `contradictions`, `prediction_hits`, `prediction_failures`), and `revision_count`. The planner uses the logical rule directly: a rule applies when its action matches and its relative cell conditions match the current grid.
 
-Action choice is engine-first, then LLM-guided: the planner simulates with accepted logical rules when they can reach the goal, and otherwise asks the LLM for one exploratory action. The engine records the real transition afterward. If existing rules do not explain it, the inducer asks the LLM for candidate rules using only natural-language rule summaries as prior context; the verifier tests those candidates against the timeline and only accepted candidates are stored.
+Action choice is engine-first, then LLM-guided: the planner simulates with accepted logical rules when they can reach the goal. If no rule plan exists, it asks the LLM for a subgoal first, then makes a separate LLM call for the next action plan. The engine records the real transition afterward.
+
+Rule learning is also split into two LLM steps. First, the inducer asks for natural-language rule hypotheses using only previous natural-language rule summaries as prior context; that prompt does not include the executable rule schema. Second, supported hypotheses are compiled into executable rule candidates. The verifier tests those candidates against the timeline and only accepted candidates are stored.
 
 For a readable debug view of rules plus timeline evidence, run:
 
@@ -26,4 +28,4 @@ For a readable debug view of rules plus timeline evidence, run:
 uv run python -m client.inspect_rules --game-id ps_sokoban_basic-v1 --recent 5
 ```
 
-LIVE-style experiments now live under `studies/LIVE_framework/`; goal-recognition experiments live under `studies/goal_recognition/`.
+LIVE-style experiments now live under `studies/LIVE_framework/`; goal-recognition experiments live under `studies/goal_recognition/`; the experimental ReAct agent lives under `studies/react_agent/`.

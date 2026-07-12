@@ -171,7 +171,8 @@ class ModularEngineLoopTests(unittest.TestCase):
             rulebook = Rulebook(Path(tmpdir))
             llm = FakeLlmClient(
                 [
-                    '{"subgoal": "move right to test empty space", "plan": ["ACTION4"]}',
+                    '{"subgoal": "move right to test empty space"}',
+                    '{"plan": ["ACTION4"]}',
                     '{"rules": []}',
                 ]
             )
@@ -211,9 +212,9 @@ class ModularEngineLoopTests(unittest.TestCase):
             rulebook = Rulebook(Path(tmpdir))
             llm = FakeLlmClient(
                 [
-                    '{"subgoal": "try moving right twice", "plan": ["ACTION4", "ACTION4"]}',
+                    '{"subgoal": "try moving right twice"}',
+                    '{"plan": ["ACTION4", "ACTION4"]}',
                     '{"rules": []}',
-                    '{"subgoal": "re-plan after the observed move", "plan": ["ACTION4"]}',
                     '{"rules": []}',
                 ]
             )
@@ -234,10 +235,19 @@ class ModularEngineLoopTests(unittest.TestCase):
 
             self.assertEqual(env.step_actions, [GameAction.ACTION4, GameAction.ACTION4])
             self.assertEqual(len(llm.calls), 4)
-            self.assertIn("choose a small useful subgoal", llm.calls[0][0])
-            self.assertIn("propose executable mechanical rules", llm.calls[1][0])
-            self.assertIn("choose a small useful subgoal", llm.calls[2][0])
-            self.assertIn("propose executable mechanical rules", llm.calls[3][0])
+            self.assertEqual(
+                [call[3] for call in llm.calls],
+                [
+                    "subgoal",
+                    "action plan",
+                    "rule hypothesis",
+                    "rule hypothesis",
+                ],
+            )
+            self.assertIn("choose one small useful", llm.calls[0][0])
+            self.assertIn("choose a short action plan", llm.calls[1][0])
+            self.assertIn("plain-language", llm.calls[2][0])
+            self.assertIn("plain-language", llm.calls[3][0])
 
     def test_runtime_runner_executes_engine_decisions_outside_engine(self) -> None:
         from client.runtime.runner import ActionExecutor

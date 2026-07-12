@@ -164,8 +164,9 @@ class RuleReasoningLoop:
                 frame_data, current_state, decision
             )
             self._record_outcome(outcome, predictions)
-            unexplained = not predictions or outcome.after_state not in predictions
-            if unexplained:
+            contradicted = bool(predictions) and outcome.after_state not in predictions
+            unexplained = not predictions or contradicted
+            if contradicted or (not predictions and not decision.exploratory):
                 self.planner.clear_llm_plan()
             if decision.exploratory or unexplained:
                 self._maybe_induce_rules(actual_game_id)

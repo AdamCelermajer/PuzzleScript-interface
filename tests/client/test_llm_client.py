@@ -4,6 +4,8 @@ from dataclasses import fields
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
+from openai import OpenAIError
+
 from client.engine.llm_client import Config, LlmClient
 
 
@@ -31,6 +33,7 @@ class LlmClientConfigTests(unittest.TestCase):
 
         self.assertEqual(cfg.model, "anthropic/claude-opus-4.8")
         self.assertEqual(cfg.reasoning_effort, "")
+        self.assertEqual(cfg.max_tokens, 4096)
         self.assertEqual(cfg.openrouter_api_key, "test-openrouter-key")
         self.assertFalse(hasattr(cfg, "api_key"))
         self.assertIn("model", {field.name for field in fields(Config)})
@@ -72,6 +75,25 @@ class LlmClientConfigTests(unittest.TestCase):
             "reasoning_effort",
             mock_client.chat.completions.create.call_args.kwargs,
         )
+        self.assertEqual(
+            mock_client.chat.completions.create.call_args.kwargs["max_tokens"],
+            4096,
+        )
+
+    def test_call_can_disable_max_tokens_when_configured_zero(self) -> None:
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))]
+        )
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            cfg = Config(max_tokens=0)
+            client, mock_client = self._make_client(cfg)
+            mock_client.chat.completions.create.return_value = response
+            client._call("system", "prompt")
+
+        self.assertNotIn(
+            "max_tokens",
+            mock_client.chat.completions.create.call_args.kwargs,
+        )
 
     def test_call_logs_purpose_when_supplied(self) -> None:
         events: list[str] = []
@@ -82,12 +104,12 @@ class LlmClientConfigTests(unittest.TestCase):
             cfg = Config()
             client, mock_client = self._make_client(cfg, event_sink=events.append)
             mock_client.chat.completions.create.return_value = response
-            result = client._call("system", "prompt", purpose="subgoal/action")
+            result = client._call("system", "prompt", purpose="action plan")
 
         self.assertEqual(result, "ok")
         self.assertEqual(
             events[0],
-            "Asking anthropic/claude-opus-4.8 for subgoal/action...",
+            "Asking anthropic/claude-opus-4.8 for action plan...",
         )
 
     def test_call_text_uses_configured_model(self) -> None:
@@ -98,13 +120,24 @@ class LlmClientConfigTests(unittest.TestCase):
             cfg = Config()
             client, mock_client = self._make_client(cfg)
             mock_client.chat.completions.create.return_value = response
-            result = client.call_text("system", "prompt", purpose="rule creation")
+            result = client.call_text("system", "prompt", purpose="rule schema")
 
         self.assertEqual(result, "ok")
         self.assertEqual(
             mock_client.chat.completions.create.call_args.kwargs["model"],
             "anthropic/claude-opus-4.8",
         )
+
+    def test_provider_errors_are_reported_as_value_errors(self) -> None:
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            cfg = Config(model="moonshotai/kimi-k2.6")
+            client, mock_client = self._make_client(cfg)
+            mock_client.chat.completions.create.side_effect = OpenAIError(
+                "provider rejected request"
+            )
+
+            with self.assertRaisesRegex(ValueError, "LLM provider error"):
+                client.call_text("system", "prompt", purpose="react agent")
 
     def test_call_can_attach_image_data_urls_to_user_message(self) -> None:
         response = SimpleNamespace(

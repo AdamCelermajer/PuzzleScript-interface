@@ -99,8 +99,8 @@ class FakeLlmClient:
 
 
 class FakeImageLlmClient:
-    def __init__(self, response: dict) -> None:
-        self.response = response
+    def __init__(self, responses: list[dict]) -> None:
+        self.responses = list(responses)
         self.calls: list[dict] = []
 
     def call_json(
@@ -118,7 +118,9 @@ class FakeImageLlmClient:
                 "purpose": purpose,
             }
         )
-        return self.response
+        if not self.responses:
+            raise AssertionError("Unexpected LLM call")
+        return self.responses.pop(0)
 
 
 class EngineArchitectureTests(unittest.TestCase):
@@ -259,9 +261,11 @@ class EngineArchitectureTests(unittest.TestCase):
             cfg = self._config(tmpdir, max_steps=2)
             llm = FakeLlmClient(
                 [
-                    '{"subgoal": "move right to test empty space", "plan": ["ACTION4"]}',
+                    '{"subgoal": "move right to test empty space"}',
+                    '{"plan": ["ACTION4"]}',
                     '{"rules": []}',
-                    '{"subgoal": "move left to compare the reverse", "plan": ["ACTION3"]}',
+                    '{"subgoal": "move left to compare the reverse"}',
+                    '{"plan": ["ACTION3"]}',
                     '{"rules": []}',
                 ]
             )
@@ -278,7 +282,7 @@ class EngineArchitectureTests(unittest.TestCase):
                 run_solving_loop(cfg, env, agent)
 
             self.assertEqual(env.step_actions, [GameAction.ACTION4, GameAction.ACTION3])
-            self.assertEqual(len(llm.calls), 4)
+            self.assertEqual(len(llm.calls), 6)
             self.assertIn("Available actions: ACTION3, ACTION4", llm.calls[0][1])
             self.assertNotIn("expected_observation", llm.calls[0][0] + llm.calls[0][1])
 
@@ -287,7 +291,8 @@ class EngineArchitectureTests(unittest.TestCase):
             cfg = self._config(tmpdir, max_steps=1)
             llm = FakeLlmClient(
                 [
-                    '{"subgoal": "test undo behavior", "plan": ["ACTION7"]}',
+                    '{"subgoal": "test undo behavior"}',
+                    '{"plan": ["ACTION7"]}',
                     '{"rules": []}',
                 ]
             )
@@ -318,14 +323,17 @@ class EngineArchitectureTests(unittest.TestCase):
                 run_solving_loop(cfg, env, agent)
 
             self.assertEqual(env.step_actions, [GameAction.ACTION7])
-            self.assertEqual(len(llm.calls), 2)
+            self.assertEqual(len(llm.calls), 3)
             self.assertIn("Available actions: ACTION4, ACTION7", llm.calls[0][1])
 
     def test_planner_attaches_state_image_to_llm_subgoal_request(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
             image_url = "data:image/png;base64,iVBORw0KGgo="
             llm = FakeImageLlmClient(
-                {"subgoal": "inspect rendered board", "plan": ["ACTION4"]}
+                [
+                    {"subgoal": "inspect rendered board"},
+                    {"plan": ["ACTION4"]},
+                ]
             )
             memory = EngineMemory(Path(tmpdir) / "timeline.jsonl")
             rulebook = Rulebook(Path(tmpdir))
@@ -347,6 +355,9 @@ class EngineArchitectureTests(unittest.TestCase):
 
             self.assertEqual(decision.action, GameAction.ACTION4)
             self.assertEqual(llm.calls[0]["image_data_urls"], [image_url])
+            self.assertEqual(llm.calls[1]["image_data_urls"], [image_url])
+            self.assertEqual(llm.calls[0]["purpose"], "subgoal")
+            self.assertEqual(llm.calls[1]["purpose"], "action plan")
             self.assertIn("Rendered image context is attached.", llm.calls[0]["prompt"])
 
 
