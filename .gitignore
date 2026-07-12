@@ -126,6 +126,7 @@ debug_*.js
 puzzlescript_interface/.runtime/
 client/rules/
 studies/LIVE_framework/output/
+studies/react_agent/output/
 studies/goal_recognition/experiment/artifacts/*
 !studies/goal_recognition/experiment/artifacts/.gitkeep
 studies/goal_recognition/experiment/node_modules/
