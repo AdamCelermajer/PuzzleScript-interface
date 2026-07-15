@@ -149,3 +149,4 @@ test/
 
 __pycache__
 .worktrees/
+.local-logs/

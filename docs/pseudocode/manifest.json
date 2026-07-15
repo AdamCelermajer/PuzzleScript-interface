@@ -5,6 +5,11 @@
     "wide": true
   },
   {
+    "file": "action_selector.md",
+    "path": "client/engine/action_selector.py",
+    "wide": true
+  },
+  {
     "file": "planner.md",
     "path": "client/engine/planner.py"
   },
