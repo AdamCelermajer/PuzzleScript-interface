@@ -101,6 +101,26 @@ test("sidebar promotes architecture and groups experiment pages", () => {
   assert.match(shell, /<details class="nav-group"/);
 });
 
+test("local pseudocode editor buffers Markdown and saves only manifest files", () => {
+  const shell = read("website/src/main.js");
+  const config = read("website/vite.config.js");
+  const architecture = read("website/docs/architecture.html");
+
+  assert.match(shell, /import\.meta\.env\.DEV/);
+  assert.match(shell, /dblclick/);
+  assert.match(shell, /data-pseudocode-draft/);
+  assert.match(shell, /data-pseudocode-save/);
+  assert.match(shell, /data-pseudocode-cancel/);
+  assert.match(shell, /markdownByFile/);
+  assert.match(shell, /pseudocodeSavePath/);
+  assert.match(config, /pseudocodeSaveRoute/);
+  assert.match(config, /manifest\.some\(\(item\) => item\.file === file\)/);
+  assert.match(config, /extname\(filePath\).*\.md/);
+  assert.match(config, /fsp\.writeFile\(filePath, markdown, ['"]utf8['"]\)/);
+  assert.match(architecture, /\.pseudocode-editor textarea/);
+  assert.match(architecture, /\.pseudocode-editor-actions/);
+});
+
 test("thinking comparison is trace-first and loads source artifacts through routes", () => {
   const html = read("website/experiments/thinking-comparison.html");
   const traces = read("website/experiments/thinking-traces.js");

@@ -9,6 +9,9 @@ const repoRoot = resolve(__dirname, '..')
 const goalRecognitionSource = resolve(repoRoot, 'studies/goal_recognition/website')
 const thinkingComparisonSource = resolve(repoRoot, 'thinking-comparison')
 const pseudocodeSource = resolve(repoRoot, 'docs/pseudocode')
+const pseudocodeManifest = resolve(pseudocodeSource, 'manifest.json')
+const pseudocodeSaveRoute = '/__pseudocode/save'
+const maxPseudocodeBytes = 1024 * 1024
 
 const sourceRoutes = [
   {
@@ -44,6 +47,63 @@ function safeResolve(base, requestPath) {
   return target
 }
 
+function sendJson(res, statusCode, payload) {
+  res.statusCode = statusCode
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
+  res.setHeader('Cache-Control', 'no-store')
+  res.end(JSON.stringify(payload))
+}
+
+function readJsonBody(req) {
+  return new Promise((resolveBody, rejectBody) => {
+    let body = ''
+    let byteLength = 0
+    let tooLarge = false
+
+    req.setEncoding('utf8')
+    req.on('data', (chunk) => {
+      byteLength += Buffer.byteLength(chunk, 'utf8')
+      if (byteLength > maxPseudocodeBytes) {
+        tooLarge = true
+        return
+      }
+      body += chunk
+    })
+    req.on('end', () => {
+      if (tooLarge) {
+        rejectBody(Object.assign(new Error('Markdown exceeds the 1 MB limit'), { statusCode: 413 }))
+        return
+      }
+      try {
+        resolveBody(JSON.parse(body))
+      } catch {
+        rejectBody(Object.assign(new Error('Request body must be valid JSON'), { statusCode: 400 }))
+      }
+    })
+    req.on('error', rejectBody)
+  })
+}
+
+async function savePseudocodeMarkdown(payload) {
+  const file = payload?.file
+  const markdown = payload?.markdown
+  if (typeof file !== 'string' || typeof markdown !== 'string') {
+    throw Object.assign(new Error('Both file and markdown are required'), { statusCode: 400 })
+  }
+
+  const manifest = JSON.parse(await fsp.readFile(pseudocodeManifest, 'utf8'))
+  if (!manifest.some((item) => item.file === file)) {
+    throw Object.assign(new Error('Only pseudocode files listed in the manifest can be saved'), { statusCode: 403 })
+  }
+
+  const filePath = safeResolve(pseudocodeSource, file)
+  if (!filePath || extname(filePath).toLowerCase() !== '.md') {
+    throw Object.assign(new Error('Invalid pseudocode Markdown path'), { statusCode: 400 })
+  }
+
+  await fsp.writeFile(filePath, markdown, 'utf8')
+}
+
 async function copySourceRoutes(outDir) {
   await Promise.all(
     sourceRoutes.map(async ({ source, buildTarget }) => {
@@ -70,6 +130,25 @@ function experimentSourceRoutes() {
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         const pathname = (req.url || '').split('?')[0]
+
+        if (pathname === pseudocodeSaveRoute) {
+          if (req.method !== 'POST') {
+            res.setHeader('Allow', 'POST')
+            sendJson(res, 405, { error: 'Method not allowed' })
+            return
+          }
+
+          readJsonBody(req)
+            .then(async (payload) => {
+              await savePseudocodeMarkdown(payload)
+              sendJson(res, 200, { saved: true, file: payload.file })
+            })
+            .catch((error) => {
+              sendJson(res, error.statusCode || 500, { error: error.message || 'Could not save Markdown' })
+            })
+          return
+        }
+
         const mapping = sourceRoutes.find(({ route }) => pathname.startsWith(route))
         if (!mapping) {
           next()

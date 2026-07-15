@@ -36,6 +36,8 @@ function navGroup(title, items, pathname) {
 }
 
 const pseudocodeBasePath = '/docs/pseudocode/'
+const pseudocodeSavePath = '/__pseudocode/save'
+const pseudocodeEditingEnabled = import.meta.env.DEV
 const pseudocodeVarNames = new Set([
   'A',
   'H',
@@ -152,8 +154,10 @@ function renderPseudocodeCard(item, markdown) {
   const title = markdownHeading(markdown)
   const cardTitle = markdownSection(markdown, 'Card Title').split(/\n\s*\n/)[0] || '**File role** Pseudocode'
   const code = firstCodeBlock(markdownSection(markdown, 'Pseudocode'))
+  const editableClass = pseudocodeEditingEnabled ? ' is-editable' : ''
+  const editHint = pseudocodeEditingEnabled ? ' title="Double-click to edit Markdown"' : ''
   return `
-    <article class="algorithm-card${item.wide ? ' wide' : ''}">
+    <article class="algorithm-card${item.wide ? ' wide' : ''}${editableClass}" data-pseudocode-file="${escapeHtml(item.file)}"${editHint}>
       <header>
         <h3>${escapeHtml(title)}</h3>
         <span class="path">${escapeHtml(item.path || item.file)}</span>
@@ -164,6 +168,128 @@ function renderPseudocodeCard(item, markdown) {
       </div>
     </article>
   `
+}
+
+function renderPseudocodeEditor(item, markdown) {
+  return `
+    <article class="algorithm-card pseudocode-editor-card${item.wide ? ' wide' : ''}" data-pseudocode-file="${escapeHtml(item.file)}" data-pseudocode-editor>
+      <header>
+        <h3>Edit ${escapeHtml(markdownHeading(markdown))}</h3>
+        <span class="path">docs/pseudocode/${escapeHtml(item.file)}</span>
+      </header>
+      <div class="pseudocode-editor">
+        <label for="pseudocode-editor-${escapeHtml(item.file)}">Markdown source</label>
+        <textarea id="pseudocode-editor-${escapeHtml(item.file)}" data-pseudocode-draft spellcheck="false">${escapeHtml(markdown)}</textarea>
+        <div class="pseudocode-editor-actions">
+          <span class="pseudocode-editor-status" data-pseudocode-status aria-live="polite">No changes yet</span>
+          <button type="button" class="secondary" data-pseudocode-cancel>Cancel</button>
+          <button type="button" data-pseudocode-save disabled>Save</button>
+        </div>
+      </div>
+    </article>
+  `
+}
+
+function replacePseudocodeCard(card, html) {
+  const template = document.createElement('template')
+  template.innerHTML = html.trim()
+  const replacement = template.content.firstElementChild
+  card.replaceWith(replacement)
+  return replacement
+}
+
+function setPseudocodeEditorBusy(editor, busy) {
+  const textarea = editor.querySelector('[data-pseudocode-draft]')
+  const cancelButton = editor.querySelector('[data-pseudocode-cancel]')
+  const saveButton = editor.querySelector('[data-pseudocode-save]')
+  textarea.disabled = busy
+  cancelButton.disabled = busy
+  saveButton.disabled = busy
+}
+
+async function savePseudocodeDraft(editor, item, markdownByFile) {
+  const textarea = editor.querySelector('[data-pseudocode-draft]')
+  const status = editor.querySelector('[data-pseudocode-status]')
+  const draftMarkdown = textarea.value
+
+  setPseudocodeEditorBusy(editor, true)
+  status.textContent = 'Saving...'
+  status.classList.remove('error')
+
+  try {
+    const response = await fetch(pseudocodeSavePath, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: item.file, markdown: draftMarkdown }),
+    })
+    const result = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(result.error || `${response.status} ${response.statusText}`)
+
+    const savedMarkdown = await (await fetchFresh(`${pseudocodeBasePath}${item.file}`)).text()
+    markdownByFile.set(item.file, savedMarkdown)
+    replacePseudocodeCard(editor, renderPseudocodeCard(item, savedMarkdown))
+  } catch (error) {
+    setPseudocodeEditorBusy(editor, false)
+    status.textContent = `Save failed: ${error.message}`
+    status.classList.add('error')
+  }
+}
+
+function installPseudocodeEditor(grid, manifest, markdownByFile) {
+  if (!pseudocodeEditingEnabled) return
+
+  const itemsByFile = new Map(manifest.map((item) => [item.file, item]))
+
+  grid.addEventListener('dblclick', (event) => {
+    const card = event.target.closest('[data-pseudocode-file]')
+    if (!card || card.matches('[data-pseudocode-editor]')) return
+
+    const item = itemsByFile.get(card.dataset.pseudocodeFile)
+    const markdown = item && markdownByFile.get(item.file)
+    if (!item || markdown === undefined) return
+
+    const editor = replacePseudocodeCard(card, renderPseudocodeEditor(item, markdown))
+    editor.querySelector('[data-pseudocode-draft]').focus()
+  })
+
+  grid.addEventListener('input', (event) => {
+    if (!event.target.matches('[data-pseudocode-draft]')) return
+    const editor = event.target.closest('[data-pseudocode-editor]')
+    const savedMarkdown = markdownByFile.get(editor.dataset.pseudocodeFile)
+    const changed = event.target.value !== savedMarkdown
+    editor.querySelector('[data-pseudocode-save]').disabled = !changed
+    const status = editor.querySelector('[data-pseudocode-status]')
+    status.textContent = changed ? 'Unsaved changes' : 'No changes yet'
+    status.classList.remove('error')
+  })
+
+  grid.addEventListener('click', (event) => {
+    const button = event.target.closest('button')
+    if (!button) return
+    const editor = button.closest('[data-pseudocode-editor]')
+    if (!editor) return
+
+    const item = itemsByFile.get(editor.dataset.pseudocodeFile)
+    if (button.matches('[data-pseudocode-cancel]')) {
+      replacePseudocodeCard(editor, renderPseudocodeCard(item, markdownByFile.get(item.file)))
+      return
+    }
+    if (button.matches('[data-pseudocode-save]') && !button.disabled) {
+      savePseudocodeDraft(editor, item, markdownByFile)
+    }
+  })
+
+  grid.addEventListener('keydown', (event) => {
+    if (!event.target.matches('[data-pseudocode-draft]')) return
+    const editor = event.target.closest('[data-pseudocode-editor]')
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      editor.querySelector('[data-pseudocode-cancel]').click()
+    } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+      event.preventDefault()
+      editor.querySelector('[data-pseudocode-save]').click()
+    }
+  })
 }
 
 function renderPseudocodeLoadError(title, message) {
@@ -194,15 +320,18 @@ async function installPseudocodeRenderer() {
 
   try {
     const manifest = await (await fetchFresh(`${pseudocodeBasePath}manifest.json`)).json()
+    const markdownByFile = new Map()
     const cards = await Promise.all(manifest.map(async (item) => {
       try {
         const markdown = await (await fetchFresh(`${pseudocodeBasePath}${item.file}`)).text()
+        markdownByFile.set(item.file, markdown)
         return renderPseudocodeCard(item, markdown)
       } catch (error) {
         return renderPseudocodeLoadError(item.file, `Could not load Markdown: ${error.message}`)
       }
     }))
     grid.innerHTML = cards.join('')
+    installPseudocodeEditor(grid, manifest, markdownByFile)
   } catch (error) {
     grid.innerHTML = renderPseudocodeLoadError('Pseudocode Manifest', `Could not load manifest: ${error.message}`)
   }

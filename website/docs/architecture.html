@@ -289,6 +289,16 @@
       background: #ffffff;
     }
 
+    .algorithm-card.is-editable {
+      cursor: pointer;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .algorithm-card.is-editable:hover {
+      border-color: #35664b;
+      box-shadow: 0 4px 14px rgba(28, 37, 32, 0.1);
+    }
+
     .algorithm-card header {
       border-bottom: 0;
       background: #ffffff;
@@ -359,6 +369,82 @@
       font-family: var(--sans);
       font-size: 0.82rem;
       text-align: right;
+    }
+
+    .pseudocode-editor {
+      margin: 0 12px 12px;
+      padding: 12px;
+      border-top: 2px solid #1c2520;
+      background: #f8faf8;
+    }
+
+    .pseudocode-editor label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #35423a;
+    }
+
+    .pseudocode-editor textarea {
+      display: block;
+      width: 100%;
+      min-height: 360px;
+      resize: vertical;
+      padding: 12px;
+      border: 1px solid #aeb9b1;
+      border-radius: 5px;
+      background: #ffffff;
+      color: #111713;
+      font-family: var(--mono);
+      font-size: 0.86rem;
+      line-height: 1.5;
+      tab-size: 4;
+    }
+
+    .pseudocode-editor textarea:focus {
+      outline: 2px solid #35664b;
+      outline-offset: 1px;
+      border-color: #35664b;
+    }
+
+    .pseudocode-editor-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pseudocode-editor-actions button {
+      padding: 7px 14px;
+      border: 1px solid #1c2520;
+      border-radius: 5px;
+      background: #1c2520;
+      color: #ffffff;
+      font: 700 0.82rem var(--sans);
+      cursor: pointer;
+    }
+
+    .pseudocode-editor-actions button.secondary {
+      background: #ffffff;
+      color: #1c2520;
+    }
+
+    .pseudocode-editor-actions button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .pseudocode-editor-status {
+      margin-right: auto;
+      color: #5b6760;
+      font: 0.8rem var(--sans);
+    }
+
+    .pseudocode-editor-status.error {
+      color: #9b2c2c;
+      font-weight: 700;
     }
 
     @media (max-width: 820px) {
