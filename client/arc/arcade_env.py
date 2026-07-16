@@ -29,6 +29,26 @@ def _is_official_arc_url(url: str) -> bool:
     return "three.arcprize.org" in str(url or "").strip().lower()
 
 
+def _normalize_legend(value) -> dict[int, str]:
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        try:
+            value = vars(value)
+        except TypeError:
+            return {}
+    legend: dict[int, str] = {}
+    for raw_key, raw_name in value.items():
+        try:
+            key = int(raw_key)
+        except (TypeError, ValueError):
+            continue
+        name = str(raw_name).strip()
+        if name:
+            legend[key] = name
+    return legend
+
+
 class LocalArcEnvironmentWrapper:
     """Direct local ARC-compatible HTTP wrapper that preserves extension fields."""
 
@@ -198,7 +218,7 @@ class ArcadeEnv(BaseEnv):
             full_reset=bool(getattr(frame_data, "full_reset", False)),
             available_actions=available_actions,
             action_input=action_input,
-            legend={},
+            legend=_normalize_legend(getattr(frame_data, "legend", {})),
             projection=getattr(frame_data, "projection", {}) or {},
             rendered_frame=self._convert_rendered_frame(
                 getattr(frame_data, "rendered_frame", None)

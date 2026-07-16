@@ -9,7 +9,6 @@ from client.engine.architecture import EngineArchitecture
 from client.engine.llm_client import Config, LlmClient
 from client.arc.arcade_env import ArcadeEnv
 from client.runtime.runner import RuleReasoningLoop
-from client.screen_dashboard import ScreenDashboard
 
 
 def main():
@@ -24,16 +23,10 @@ def main():
         max_steps=args.max_steps,
         server_url=args.backend_url,
     )
-    dashboard = ScreenDashboard(
-        game_id=args.game_id,
-        mode="RUN",
-        controls="Engine dashboard. Close the window or press Ctrl+C to stop.",
-    )
-    event_sink = dashboard.push_event
+    event_sink = print
     env = ArcadeEnv(
         game_id=args.game_id,
         backend_url=args.backend_url,
-        renderer=dashboard.render,
     )
     llm_client = LlmClient(cfg, event_sink=event_sink)
     engine = EngineArchitecture.from_config(
@@ -41,22 +34,12 @@ def main():
     )
     loop = RuleReasoningLoop(
         env,
-        engine.perceiver,
-        engine.memory,
-        engine.rulebook,
-        engine.planner,
-        engine.inducer,
-        dashboard=dashboard,
+        engine,
         event_sink=event_sink,
     )
-
-    def run_engine() -> None:
-        loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
-
-    try:
-        dashboard.run_engine(run_engine)
-    finally:
-        dashboard.close()
+    result = loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
+    print(f"run_status={result.status}")
+    print(f"run_reason={result.reason}")
 
 
 if __name__ == "__main__":

@@ -11,7 +11,11 @@ const thinkingComparisonSource = resolve(repoRoot, 'thinking-comparison')
 const pseudocodeSource = resolve(repoRoot, 'docs/pseudocode')
 const pseudocodeManifest = resolve(pseudocodeSource, 'manifest.json')
 const pseudocodeSaveRoute = '/__pseudocode/save'
+const notesSource = resolve(repoRoot, 'docs/notes')
+const notesFile = resolve(notesSource, 'workbench-notes.md')
+const notesSaveRoute = '/__notes/save'
 const maxPseudocodeBytes = 1024 * 1024
+const workbenchApiPort = process.env.WORKBENCH_API_PORT || '8010'
 
 const sourceRoutes = [
   {
@@ -28,6 +32,11 @@ const sourceRoutes = [
     route: '/docs/pseudocode/',
     source: pseudocodeSource,
     buildTarget: 'docs/pseudocode',
+  },
+  {
+    route: '/docs/notes/',
+    source: notesSource,
+    buildTarget: 'docs/notes',
   },
 ]
 
@@ -104,6 +113,13 @@ async function savePseudocodeMarkdown(payload) {
   await fsp.writeFile(filePath, markdown, 'utf8')
 }
 
+async function saveNotesMarkdown(payload) {
+  if (typeof payload?.markdown !== 'string') {
+    throw Object.assign(new Error('Markdown is required'), { statusCode: 400 })
+  }
+  await fsp.writeFile(notesFile, payload.markdown, 'utf8')
+}
+
 async function copySourceRoutes(outDir) {
   await Promise.all(
     sourceRoutes.map(async ({ source, buildTarget }) => {
@@ -145,6 +161,24 @@ function experimentSourceRoutes() {
             })
             .catch((error) => {
               sendJson(res, error.statusCode || 500, { error: error.message || 'Could not save Markdown' })
+            })
+          return
+        }
+
+        if (pathname === notesSaveRoute) {
+          if (req.method !== 'POST') {
+            res.setHeader('Allow', 'POST')
+            sendJson(res, 405, { error: 'Method not allowed' })
+            return
+          }
+
+          readJsonBody(req)
+            .then(async (payload) => {
+              await saveNotesMarkdown(payload)
+              sendJson(res, 200, { saved: true })
+            })
+            .catch((error) => {
+              sendJson(res, error.statusCode || 500, { error: error.message || 'Could not save notes' })
             })
           return
         }
@@ -194,6 +228,9 @@ export default defineConfig({
     },
   },
   server: {
+    proxy: {
+      '/api/workbench': `http://127.0.0.1:${workbenchApiPort}`,
+    },
     fs: {
       allow: [repoRoot],
     },
@@ -204,6 +241,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
+        notes: resolve(__dirname, 'notes.html'),
         experiments: resolve(__dirname, 'experiments/index.html'),
         goalRecognition: resolve(__dirname, 'experiments/goal-recognition.html'),
         goalRecognitionViewer: resolve(__dirname, 'experiments/goal-recognition/index.html'),

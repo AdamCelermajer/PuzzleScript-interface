@@ -46,6 +46,22 @@ npm run local
 This starts both the PuzzleScript runtime and the ARC-compatible Python service.
 Closing the terminal or pressing Ctrl+C stops both owned child processes.
 
+Start the professor demo workbench and all local services:
+
+```bash
+npm run workbench
+```
+
+Open `http://127.0.0.1:5173`. The home page runs the main client agent with
+Fresh/Resume controls, local PuzzleScript or official ARC selection, and live
+views of frames, plans, natural hypotheses, verified rules, failures, and logs.
+The Settings tab identifies OpenRouter as the LLM provider and offers Claude
+Opus 4.8 (default), GPT-5.6 Luna, Grok 4.5, and MiMo-V2.5. A reasoning-effort
+selector appears only for models that expose supported effort levels. It also
+checks the current OpenRouter key, displays its usage and remaining limit, and
+can validate and replace `OPENROUTER_API_KEY` in the local `.env`. The key is
+shown as plain text in this local-only workbench.
+
 If you only need the PuzzleScript runtime:
 
 ```bash
@@ -57,6 +73,9 @@ Run the agent against the local service:
 ```bash
 uv run python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
 ```
+
+The CLI runner is headless and prints ordinary progress logs. The browser
+workbench is the primary agent interface.
 
 Play a local PuzzleScript game manually from the terminal:
 

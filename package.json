@@ -7,10 +7,11 @@
     "start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1",
     "local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1 -WithArcService",
     "dev": "nodemon puzzlescript_interface/runtime/server.js",
-    "test": "node --test tests/puzzlescript_interface/*.test.js && uv run python -m unittest discover -s tests/puzzlescript_interface -p \"test_*.py\" && uv run python -m unittest discover -s tests/client -p \"test_*.py\"",
+    "test": "node --test tests/puzzlescript_interface/*.test.js && uv run python -m unittest discover -s tests/puzzlescript_interface -p \"test_*.py\" && uv run python -m unittest discover -s tests/client -p \"test_*.py\" && uv run python -m unittest discover -s tests/workbench -p \"test_*.py\"",
     "website:dev": "vite --config website/vite.config.js",
     "website:build": "vite build --config website/vite.config.js",
-    "website:preview": "vite preview --config website/vite.config.js"
+    "website:preview": "vite preview --config website/vite.config.js",
+    "workbench": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-workbench.ps1"
   },
   "keywords": [
     "puzzlescript",

@@ -29,6 +29,10 @@ class ActionEdge:
     action: GameAction
     before_id: str
     after_id: str
+    predictions: tuple[EngineState, ...] = ()
+    prediction_rule_ids: tuple[str, ...] = ()
+    decision_source: str = ""
+    prediction_recorded: bool = False
     kind: str = "action"
 
     @classmethod
@@ -38,16 +42,34 @@ class ActionEdge:
             action=GameAction[str(data["action"])],
             before_id=str(data["before_id"]),
             after_id=str(data["after_id"]),
+            predictions=tuple(
+                EngineState.from_data(item) for item in data.get("predictions", [])
+            ),
+            prediction_rule_ids=tuple(
+                str(item) for item in data.get("prediction_rule_ids", [])
+            ),
+            decision_source=str(data.get("decision_source", "")),
+            prediction_recorded=bool(data.get("prediction_recorded", False)),
         )
 
     def to_data(self) -> dict[str, Any]:
-        return {
+        data: dict[str, Any] = {
             "kind": self.kind,
             "id": self.id,
             "action": self.action.name,
             "before_id": self.before_id,
             "after_id": self.after_id,
         }
+        if self.prediction_recorded:
+            data.update(
+                {
+                    "predictions": [item.to_data() for item in self.predictions],
+                    "prediction_rule_ids": list(self.prediction_rule_ids),
+                    "decision_source": self.decision_source,
+                    "prediction_recorded": True,
+                }
+            )
+        return data
 
 
 TimelineItem = StateNode | ActionEdge
@@ -101,7 +123,14 @@ class EngineMemory:
         return node
 
     def append_action_result(
-        self, action: GameAction, after_state: EngineState
+        self,
+        action: GameAction,
+        after_state: EngineState,
+        *,
+        predictions: list[EngineState] | tuple[EngineState, ...] = (),
+        prediction_rule_ids: list[str] | tuple[str, ...] = (),
+        decision_source: str = "",
+        prediction_recorded: bool = False,
     ) -> TransitionRecord:
         if not self.timeline:
             raise ValueError("Cannot append action result before initial state")
@@ -113,6 +142,10 @@ class EngineMemory:
             action=action,
             before_id=before_node.id,
             after_id=after_node.id,
+            predictions=tuple(predictions),
+            prediction_rule_ids=tuple(prediction_rule_ids),
+            decision_source=str(decision_source),
+            prediction_recorded=bool(prediction_recorded),
         )
         self.timeline.extend([edge, after_node])
         self._append_jsonl(edge.to_data())

@@ -49,10 +49,19 @@ class Rulebook:
     ) -> list[GeneralizedRule]:
         return [self.add_generalized_rule(rule) for rule in rules]
 
+    def active_rules(self) -> list[GeneralizedRule]:
+        return [rule for rule in self.generalized_rules if rule.is_active]
+
+    def rules_by_id(
+        self, rule_ids: list[str] | tuple[str, ...]
+    ) -> list[GeneralizedRule]:
+        wanted = set(rule_ids)
+        return [rule for rule in self.generalized_rules if rule.id in wanted]
+
     def predict(self, before: EngineState, action: GameAction) -> list[EngineState]:
         predictions: list[EngineState] = []
         seen: set[EngineState] = set()
-        for rule in self.generalized_rules:
+        for rule in self.active_rules():
             if rule.action != action.name:
                 continue
             for predicted in rule.predict(before):
@@ -62,19 +71,42 @@ class Rulebook:
                 seen.add(predicted)
         return predictions
 
+    def predicting_rule_ids(
+        self,
+        before: EngineState,
+        action: GameAction,
+        predictions: list[EngineState] | tuple[EngineState, ...],
+    ) -> list[str]:
+        predicted_states = set(predictions)
+        if not predicted_states:
+            return []
+        rule_ids = []
+        for rule in self.active_rules():
+            if rule.action != action.name:
+                continue
+            if any(state in predicted_states for state in rule.predict(before)):
+                rule_ids.append(rule.id)
+        return rule_ids
+
     def record_prediction_result(
         self,
         before: EngineState,
         action: GameAction,
         actual_after: EngineState,
         predictions: list[EngineState],
-    ) -> None:
+        *,
+        prediction_rule_ids: list[str] | tuple[str, ...] | None = None,
+        contradiction_id: str = "",
+    ) -> list[str]:
         if not predictions:
-            return
+            return []
 
         candidates = self._prediction_candidates(before, action)
+        if prediction_rule_ids is not None:
+            wanted = set(prediction_rule_ids)
+            candidates = [item for item in candidates if item[0].id in wanted]
         if not candidates:
-            return
+            return []
 
         if actual_after in predictions:
             changed = False
@@ -85,22 +117,55 @@ class Rulebook:
                 changed = True
             if changed:
                 self._save()
-            return
+            return []
 
         changed = False
+        contradicted_ids: list[str] = []
+        reason = f"{contradiction_id}: predicted wrong result for {action.name}"
+        reason = reason.lstrip(": ")
         for rule, _predicted in candidates:
             self._replace_rule(
                 rule.id,
-                rule.with_contradiction(f"predicted wrong result for {action.name}"),
+                rule.with_contradiction(reason),
             )
+            contradicted_ids.append(rule.id)
             changed = True
         if changed:
             self._save()
+        return list(dict.fromkeys(contradicted_ids))
+
+    def commit_revision(
+        self,
+        contradicted_rule_ids: list[str] | tuple[str, ...],
+        replacements: list[GeneralizedRule],
+    ) -> list[GeneralizedRule]:
+        old_ids = tuple(dict.fromkeys(contradicted_rule_ids))
+        stored = [
+            replace(
+                rule,
+                id=self._new_id(),
+                lifecycle="active",
+                supersedes=old_ids,
+                superseded_by=(),
+            )
+            for rule in replacements
+        ]
+        new_ids = tuple(rule.id for rule in stored)
+        for old_id in old_ids:
+            old = self._find_by_id(old_id)
+            if old is not None:
+                self._replace_rule(
+                    old_id,
+                    replace(old, lifecycle="superseded", superseded_by=new_ids),
+                )
+        self.generalized_rules.extend(stored)
+        self._save()
+        return stored
 
     def known_rules_text(self) -> str:
         return "\n".join(
             f"- {rule.summary}"
-            for rule in self.generalized_rules
+            for rule in self.active_rules()
             if rule.summary.strip()
         )
 
@@ -108,7 +173,7 @@ class Rulebook:
         self, before: EngineState, action: GameAction
     ) -> list[tuple[GeneralizedRule, EngineState]]:
         candidates: list[tuple[GeneralizedRule, EngineState]] = []
-        for rule in self.generalized_rules:
+        for rule in self.active_rules():
             if rule.action != action.name:
                 continue
             for predicted in rule.predict(before):
@@ -119,7 +184,7 @@ class Rulebook:
         return next((rule for rule in self.generalized_rules if rule.id == rule_id), None)
 
     def _find_equivalent(self, candidate: GeneralizedRule) -> GeneralizedRule | None:
-        for rule in self.generalized_rules:
+        for rule in self.active_rules():
             if (
                 rule.action == candidate.action
                 and rule.anchor == candidate.anchor

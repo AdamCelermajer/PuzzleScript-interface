@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="notes">
+    <main class="content-page notes-page" data-notes>
+      <header class="notes-toolbar">
+        <div>
+          <p class="eyebrow">Project notebook</p>
+          <h1>Notes</h1>
+        </div>
+        <div class="notes-actions">
+          <div class="segment-control" aria-label="Notes view">
+            <button type="button" class="active" data-notes-view="preview">Preview</button>
+            <button type="button" data-notes-view="edit">Edit</button>
+          </div>
+          <button type="button" class="command-button" data-notes-reload>Reload</button>
+          <button type="button" class="command-button primary" data-notes-save disabled>Save</button>
+        </div>
+      </header>
+
+      <div class="notes-statusbar" role="status" aria-live="polite">
+        <span data-notes-status>Loading notes...</span>
+        <code>docs/notes/workbench-notes.md</code>
+      </div>
+
+      <article class="notes-preview" data-notes-preview></article>
+      <section class="notes-editor" data-notes-editor hidden>
+        <label for="notes-markdown">Markdown</label>
+        <textarea id="notes-markdown" spellcheck="true" data-notes-draft></textarea>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/notes.js"></script>
+  </body>
+</html>

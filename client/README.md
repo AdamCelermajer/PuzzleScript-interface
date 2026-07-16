@@ -5,16 +5,19 @@
 ## Main Scripts
 
 - `run_arc_agent.py` runs the unified rule-learning and solving agent against an ARC-compatible backend, including the local PuzzleScript service and the official ARC-AGI-3 endpoint.
-- `screen_dashboard.py` renders the engine run in a window with the real PuzzleScript PNG and the ARC/ascii frame.
+- `run_arc_agent.py` runs headlessly and prints progress logs; the website home page is the primary agent interface.
+- `screen_dashboard.py` is retained temporarily as a legacy window while the browser workflow is validated.
 - `play_arc_client.py` lets a human play a local ARC-compatible PuzzleScript game from the terminal with keyboard controls.
 - `terminal_dashboard.py` is retained only for the manual terminal play client.
 
 ## Rules Output
 
-During runs, the agent writes two main artifacts under `client/rules/<game-id>/`:
+During runs, the agent writes four main artifacts under `client/rules/<game-id>/`:
 
 - `timeline.jsonl` is the chronological evidence stream: states, actions, and observed transitions.
 - `rules.json` is the structured rule source used for simulation.
+- `natural_rules.json` stores natural-language hypotheses independently of executable rules.
+- `rule_failures.jsonl` records each compact compile/verification failure and process stop.
 
 Each accepted rule has a `ruleID`, a natural-language summary, a logical rule (`action`, `anchor`, `conditions`, `effects`), evidence statistics (`supports`, `contradictions`, `prediction_hits`, `prediction_failures`), and `revision_count`. The planner uses the logical rule directly: a rule applies when its action matches and its relative cell conditions match the current grid.
 

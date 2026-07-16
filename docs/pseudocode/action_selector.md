@@ -7,7 +7,7 @@
 ## Pseudocode
 
 ```text
-choose_action(state, task_goal, A):
+choose_action(state, task_goal, legend, A):
     if active_plan has next action then
         action <- active_plan.next_action()
         active_plan.advance()
@@ -19,8 +19,8 @@ choose_action(state, task_goal, A):
         action <- rule_plan.first_action
         P <- logical_rulebook.predict(state, action)
         return Decision(action, rule_plan, P, exploratory = false)
-    subgoal <- goal_manager.choose_subgoal(state, task_goal, A, memory, logical_rulebook)
-    probe_plan <- probe_planner.create_plan(state, subgoal, A, memory, logical_rulebook)
+    subgoal <- goal_manager.choose_subgoal(state, task_goal, legend, A, memory, logical_rulebook)
+    probe_plan <- probe_planner.create_plan(state, subgoal, legend, A, memory, logical_rulebook)
     active_plan <- ActivePlan(probe_plan, next_index = 1, exploratory = true, subgoal)
     action <- probe_plan.first_action
     P <- logical_rulebook.predict(state, action)

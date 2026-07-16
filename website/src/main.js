@@ -1,6 +1,7 @@
 ﻿const primaryNavItems = [
-  { href: '/', label: 'Overview', match: /^\/$/ },
+  { href: '/', label: 'Client Agent', match: /^\/$/ },
   { href: '/docs/architecture.html', label: 'Architecture', match: /^\/docs\/architecture\.html$/ },
+  { href: '/notes.html', label: 'Notes', match: /^\/notes\.html$/ },
 ]
 
 const traceNavItems = [
@@ -42,6 +43,8 @@ const pseudocodeVarNames = new Set([
   'A',
   'H',
   'P',
+  'action_selector',
+  'active_plan',
   'base_path',
   'c',
   'candidates',
@@ -57,18 +60,28 @@ const pseudocodeVarNames = new Set([
   'goal',
   'images',
   'inducer',
+  'legend',
+  'legend_inferer',
+  'legend_store',
   'llm',
   'loop',
   'memory',
+  'natural_rule_library',
   'outcome',
   'plan',
   'planner',
+  'probe_planner',
   'probe',
   'records',
   'response',
+  'raw_response',
+  'rule_attempt_log',
   'rulebook',
+  'rule_learner',
+  'rule_planner',
   's',
   'state',
+  'task_goal',
   'unexplained',
   'verifier',
 ])
@@ -354,7 +367,7 @@ function buildSidebar(pathname) {
       ${navGroup('Reference', referenceNavItems, pathname)}
     </nav>
     <div class="site-note">
-      Static v1: finished artifacts, architecture notes, and experiment evidence. Live Python runner deferred.
+      Local workbench, architecture notes, and experiment evidence.
     </div>
   `
   return sidebar

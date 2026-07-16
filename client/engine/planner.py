@@ -27,6 +27,12 @@ class PlanDecision:
     plan: list[GameAction]
     subgoal: str = ""
     exploratory: bool = False
+    predictions: tuple[EngineState, ...] = ()
+    remaining_actions: tuple[GameAction, ...] = ()
+
+    @property
+    def source(self) -> str:
+        return self.reason
 
 
 @dataclass(frozen=True)
@@ -99,7 +105,12 @@ class Planner:
                 actions=tuple(planned),
                 index=1,
             )
-            return PlanDecision(planned[0], "rule_plan", planned)
+            return PlanDecision(
+                planned[0],
+                "rule_plan",
+                planned,
+                remaining_actions=tuple(planned[1:]),
+            )
 
         return self.ask_llm_for_subgoal(
             current=current,
@@ -191,6 +202,7 @@ class Planner:
             plan,
             subgoal=goal.description,
             exploratory=True,
+            remaining_actions=tuple(plan[1:]),
         )
 
     def _continue_active_plan(self, current: EngineState) -> PlanDecision | None:
@@ -200,13 +212,15 @@ class Planner:
         if action is None:
             self.active_plan = None
             return None
-        self.active_plan = self.active_plan.advance()
+        current_plan = self.active_plan
+        self.active_plan = current_plan.advance()
         return PlanDecision(
             action,
             "active_plan",
-            [action],
+            list(current_plan.actions[current_plan.index :]),
             subgoal=self.active_plan.goal.description,
             exploratory=self.active_plan.exploratory,
+            remaining_actions=tuple(current_plan.actions[current_plan.index + 1 :]),
         )
 
     def _prompt_context(
@@ -232,3 +246,43 @@ class Planner:
         if self.memory is None:
             return ""
         return self.memory.recent_context(limit=1)
+
+
+class RulePlanner:
+    """Searches predicted states using verified logical rules only."""
+
+    def __init__(
+        self,
+        logical_rulebook: Rulebook,
+        max_depth: int = 20,
+        node_limit: int = 200,
+    ) -> None:
+        self.logical_rulebook = logical_rulebook
+        self.max_depth = max_depth
+        self.node_limit = node_limit
+
+    def plan_to_goal(
+        self,
+        state: EngineState,
+        task_goal: Goal,
+        actions: list[GameAction],
+    ) -> list[GameAction] | None:
+        queue: deque[tuple[EngineState, list[GameAction]]] = deque([(state, [])])
+        seen = {state}
+        nodes = 0
+        while queue:
+            predicted_state, plan = queue.popleft()
+            nodes += 1
+            if nodes > self.node_limit:
+                return None
+            if plan and task_goal.reached_by(predicted_state):
+                return plan
+            if len(plan) >= self.max_depth:
+                continue
+            for action in actions:
+                for next_state in self.logical_rulebook.predict(predicted_state, action):
+                    if next_state in seen:
+                        continue
+                    seen.add(next_state)
+                    queue.append((next_state, [*plan, action]))
+        return None

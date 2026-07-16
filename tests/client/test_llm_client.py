@@ -1,6 +1,9 @@
 import os
+import json
+import tempfile
 import unittest
 from dataclasses import fields
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
@@ -75,9 +78,28 @@ class LlmClientConfigTests(unittest.TestCase):
             "reasoning_effort",
             mock_client.chat.completions.create.call_args.kwargs,
         )
+        self.assertNotIn(
+            "extra_body",
+            mock_client.chat.completions.create.call_args.kwargs,
+        )
         self.assertEqual(
             mock_client.chat.completions.create.call_args.kwargs["max_tokens"],
             4096,
+        )
+
+    def test_call_sends_openrouter_reasoning_effort(self) -> None:
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))]
+        )
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            cfg = Config(reasoning_effort="high")
+            client, mock_client = self._make_client(cfg)
+            mock_client.chat.completions.create.return_value = response
+            client._call("system", "prompt")
+
+        self.assertEqual(
+            mock_client.chat.completions.create.call_args.kwargs["extra_body"],
+            {"reasoning": {"effort": "high"}},
         )
 
     def test_call_can_disable_max_tokens_when_configured_zero(self) -> None:
@@ -183,6 +205,50 @@ class LlmClientConfigTests(unittest.TestCase):
             self.assertEqual(client.call_json("system", "prompt"), {"rules": []})
             with self.assertRaisesRegex(ValueError, "invalid JSON"):
                 client.call_json("system", "prompt")
+
+    def test_call_json_extracts_json_after_prose_and_fence(self) -> None:
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(
+                content='Here is the result:\n```json\n{"plan": ["ACTION1"]}\n```'
+            ))]
+        )
+        with patch.dict(os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True):
+            client, mock_client = self._make_client(Config())
+            mock_client.chat.completions.create.return_value = response
+
+            self.assertEqual(
+                client.call_json("system", "prompt"),
+                {"plan": ["ACTION1"]},
+            )
+
+    def test_json_attempt_log_keeps_raw_response_and_purpose(self) -> None:
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="not json"))]
+        )
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(
+            os.environ, {"OPENROUTER_API_KEY": "test-key"}, clear=True
+        ):
+            cfg = Config(
+                game="demo",
+                rules_dir=tmpdir,
+                persist_llm_attempts=True,
+            )
+            client, mock_client = self._make_client(cfg)
+            mock_client.chat.completions.create.return_value = response
+
+            with self.assertRaisesRegex(ValueError, "invalid JSON"):
+                client.call_json(
+                    "system instructions", "user evidence", purpose="action plan"
+                )
+
+            record = json.loads(
+                (Path(tmpdir) / "demo" / "llm_attempt.jsonl")
+                .read_text(encoding="utf-8")
+                .strip()
+            )
+            self.assertEqual(record["purpose"], "action plan")
+            self.assertEqual(record["raw_response"], "not json")
+            self.assertIn("invalid JSON", record["error"])
 
 
 if __name__ == "__main__":

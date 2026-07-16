@@ -530,7 +530,7 @@
       <div class="architecture-diagram">
         <svg viewBox="0 0 980 700" role="img" aria-labelledby="architecture-svg-title architecture-svg-desc">
           <title id="architecture-svg-title">Engine-focused client architecture</title>
-          <desc id="architecture-svg-desc">Planner-first engine architecture. Observe writes EngineState into memory, planner starts act, and learning revises the rulebook from memory evidence.</desc>
+          <desc id="architecture-svg-desc">Goal-first engine architecture. Observe writes EngineState into memory, the action selector routes decisions, and learning compiles and verifies natural hypotheses.</desc>
           <defs>
             <marker id="svg-arrow-head" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
               <path d="M2,2 L10,6 L2,10 Z" fill="#1c2520"></path>
@@ -539,7 +539,7 @@
 
           <text class="svg-label" x="42" y="34">outside engine</text>
           <text class="svg-label" x="42" y="192">observe path</text>
-          <text class="svg-label" x="42" y="374">act: planner first</text>
+          <text class="svg-label" x="42" y="374">act: selector routing</text>
           <text class="svg-label" x="42" y="548">learn / revise path</text>
 
           <rect class="svg-box svg-runtime" x="58" y="54" width="230" height="96"></rect>
@@ -568,11 +568,11 @@
           <text class="svg-title" x="495" y="254" text-anchor="middle">Goal manager</text>
           <text class="svg-module" x="495" y="278" text-anchor="middle">goal_manager.py</text>
           <text class="svg-text" x="495" y="302" text-anchor="middle">selects goal/subgoal</text>
-          <text class="svg-text" x="495" y="320" text-anchor="middle">when planner has none</text>
+          <text class="svg-text" x="495" y="320" text-anchor="middle">owns task goal + subgoal</text>
 
           <rect class="svg-box svg-engine" x="380" y="390" width="230" height="130"></rect>
-          <text class="svg-title" x="495" y="424" text-anchor="middle">Planner / monitor</text>
-          <text class="svg-module" x="495" y="448" text-anchor="middle">planner.py</text>
+          <text class="svg-title" x="495" y="424" text-anchor="middle">Action selector</text>
+          <text class="svg-module" x="495" y="448" text-anchor="middle">action_selector.py</text>
           <text class="svg-text" x="495" y="474" text-anchor="middle">checks active plan</text>
           <text class="svg-text" x="495" y="492" text-anchor="middle">simulates toward goal</text>
           <text class="svg-text" x="495" y="510" text-anchor="middle">routes next action</text>

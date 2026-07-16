@@ -2,6 +2,7 @@
 import sys
 import unittest
 from dataclasses import dataclass
+from types import SimpleNamespace
 
 from arcengine import GameAction as ArcGameAction, GameState as ArcGameState
 import numpy as np
@@ -228,6 +229,31 @@ class ArcadeEnvTests(unittest.TestCase):
         )
         self.assertEqual(converted.rendered_frame.width, 10)
         self.assertEqual(converted.rendered_frame.height, 10)
+
+    def test_convert_frame_preserves_numeric_legend(self) -> None:
+        env = ArcadeEnv.__new__(ArcadeEnv)
+        env.game_id = "demo"
+        converted = env._convert_frame(
+            SimpleNamespace(
+                frame=[[[0, 2, 4]]],
+                state=ArcGameState.NOT_FINISHED,
+                levels_completed=0,
+                game_id="demo",
+                win_levels=1,
+                guid="guid",
+                full_reset=False,
+                available_actions=[1],
+                action_input=SimpleNamespace(id=0, data={}),
+                legend=SimpleNamespace(**{"0": "Background", "2": "Player", "4": "Crate + Target"}),
+                projection={},
+                rendered_frame=None,
+            )
+        )
+
+        self.assertEqual(
+            converted.legend,
+            {0: "Background", 2: "Player", 4: "Crate + Target"},
+        )
 
     def test_local_backend_preserves_rendered_frame_without_arc_toolkit(self) -> None:
         session = FakeHttpSession()

@@ -5,6 +5,7 @@ from typing import Any
 
 from client.arc.types import FrameData, GameAction, GameState, RenderedFrame
 from client.engine.utils import last_grid
+from client.engine.legend import LegendStore, normalize_legend
 
 
 Grid = tuple[tuple[int, ...], ...]
@@ -146,7 +147,18 @@ class EngineState:
 class Perception:
     """Converts ARC/PuzzleScript observations into stable engine state."""
 
-    def perceive(self, frame_data: FrameData) -> EngineState:
+    def __init__(
+        self,
+        legend_inferer=None,
+        legend_store: LegendStore | None = None,
+        provide_legend: bool = True,
+    ) -> None:
+        self.legend_inferer = legend_inferer
+        self.legend_store = legend_store
+        self.provide_legend = provide_legend
+        self.legend: dict[int, str] = {}
+
+    def perceive_state(self, frame_data: FrameData) -> EngineState:
         grid = tuple(tuple(int(value) for value in row) for row in last_grid(frame_data.frame))
         return EngineState(
             grid=grid,
@@ -157,3 +169,27 @@ class Perception:
             image=EngineImage.from_rendered_frame(frame_data.rendered_frame),
             available_actions=tuple(frame_data.available_actions or ()),
         )
+
+    def perceive(self, frame_data: FrameData) -> EngineState:
+        return self.perceive_state(frame_data)
+
+    def initial_perception(
+        self, frame_data: FrameData
+    ) -> tuple[EngineState, dict[int, str]]:
+        state = self.perceive_state(frame_data)
+        provided = normalize_legend(frame_data.legend)
+        persisted = self.legend_store.all() if self.legend_store is not None else {}
+
+        if self.provide_legend and provided:
+            legend = provided
+        elif persisted:
+            legend = persisted
+        elif self.legend_inferer is not None and state.image is not None:
+            legend = self.legend_inferer.infer(state)
+        else:
+            legend = {value: f"Tile {value}" for value in sorted(state.symbols())}
+
+        self.legend = normalize_legend(legend)
+        if self.legend_store is not None:
+            self.legend_store.save(self.legend)
+        return state, dict(self.legend)

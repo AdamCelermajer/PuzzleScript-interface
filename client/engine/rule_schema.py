@@ -55,6 +55,9 @@ class GeneralizedRule:
     revision_count: int = 0
     result_state: str | None = None
     levels_completed: int | None = None
+    lifecycle: str = "active"
+    supersedes: tuple[str, ...] = ()
+    superseded_by: tuple[str, ...] = ()
 
     @classmethod
     def from_data(cls, data: dict[str, Any]) -> "GeneralizedRule":
@@ -95,6 +98,11 @@ class GeneralizedRule:
                     if logical_rule.get("levels_completed") is not None
                     else None
                 ),
+                lifecycle=str(data.get("lifecycle", "active")),
+                supersedes=tuple(str(item) for item in data.get("supersedes", [])),
+                superseded_by=tuple(
+                    str(item) for item in data.get("superseded_by", [])
+                ),
             )
 
         _require_fields(data, ("id", "action", "anchor", "conditions", "effects"))
@@ -128,6 +136,11 @@ class GeneralizedRule:
                 if data.get("levels_completed") is not None
                 else None
             ),
+            lifecycle=str(data.get("lifecycle", "active")),
+            supersedes=tuple(str(item) for item in data.get("supersedes", [])),
+            superseded_by=tuple(
+                str(item) for item in data.get("superseded_by", [])
+            ),
         )
 
     def to_data(self) -> dict[str, Any]:
@@ -152,6 +165,9 @@ class GeneralizedRule:
                 "prediction_failures": self.prediction_failures,
             },
             "revision_count": self.revision_count,
+            "lifecycle": self.lifecycle,
+            "supersedes": list(self.supersedes),
+            "superseded_by": list(self.superseded_by),
         }
 
     def predict(self, state: EngineState) -> list[EngineState]:
@@ -188,7 +204,12 @@ class GeneralizedRule:
             self,
             contradictions=(*self.contradictions, contradiction),
             prediction_failures=self.prediction_failures + 1,
+            lifecycle="contradicted",
         )
+
+    @property
+    def is_active(self) -> bool:
+        return self.lifecycle == "active"
 
     def revised_from(self, previous: "GeneralizedRule") -> "GeneralizedRule":
         return replace(

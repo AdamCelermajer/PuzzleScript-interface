@@ -96,6 +96,26 @@ class FakeLlmClient:
 
 
 class ModularEngineLoopTests(unittest.TestCase):
+    def test_exploratory_action_does_not_relearn_an_explained_transition(self) -> None:
+        from client.runtime.runner import RuleReasoningLoop
+
+        loop = object.__new__(RuleReasoningLoop)
+        decision = PlanDecision(
+            GameAction.ACTION4,
+            "exploratory_probe",
+            [GameAction.ACTION4],
+            exploratory=True,
+        )
+
+        result = loop._maybe_learn(
+            "modular-world",
+            decision=decision,
+            contradicted=False,
+            unexplained=False,
+        )
+
+        self.assertEqual(result, "not_needed")
+
     def test_action_executor_returns_before_after_outcome(self) -> None:
         from client.runtime.runner import ActionExecutor
 

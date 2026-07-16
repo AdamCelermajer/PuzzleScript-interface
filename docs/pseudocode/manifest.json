@@ -24,6 +24,11 @@
   },
   {
     "file": "entrypoint.md",
-    "path": "client/run_arc_agent.py"
+    "path": "workbench/run_manager.py + website/src/workbench.js"
+  },
+  {
+    "file": "perception.md",
+    "path": "client/engine/perception.py",
+    "wide": true
   }
 ]

@@ -9,10 +9,14 @@
 ```text
 base_path <- game_rules_path(cfg.rules_dir, cfg.game)
 memory <- EngineMemory(base_path / "timeline.jsonl")
+legend_store <- LegendStore(base_path / "legend.json")
 natural_rule_library <- NaturalRuleLibrary(base_path / "natural_rules.json")
 logical_rulebook <- LogicalRulebook(base_path / "rules.json")
 failure_log <- RuleFailureLog(base_path / "rule_failures.jsonl")
+rule_attempt_log <- RuleAttemptLog(base_path / "rule_attempt.jsonl")
 verifier <- RuleVerifier(memory)
+legend_inferer <- LegendInferer(llm)
+perceiver <- Perceiver(legend_inferer, legend_store)
 natural_rule_inducer <- NaturalRuleInducer(llm)
 logic_rule_compiler <- LogicRuleCompiler(llm)
 rule_learner <- RuleLearner(
@@ -22,6 +26,7 @@ rule_learner <- RuleLearner(
     logical_rulebook,
     verifier,
     failure_log,
+    rule_attempt_log,
     max_logic_attempts = 3,
     allowed_exhausted_hypotheses = 3
 )
@@ -32,6 +37,7 @@ action_selector <- ActionSelector(planner, goal_manager, probe_planner, logical_
 return EngineArchitecture(
     perceiver,
     memory,
+    legend_store,
     natural_rule_library,
     logical_rulebook,
     rule_learner,

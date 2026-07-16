@@ -41,6 +41,7 @@ class FakePuzzleScriptClient:
             "state": "PLAYING",
             "levels_completed": 0,
             "win_levels": 2,
+            "legend": {0: "Background", 2: "Player", 4: "Crate + Target"},
             "available_actions": [
                 "ACTION1",
                 "ACTION2",
@@ -57,6 +58,7 @@ class FakePuzzleScriptClient:
             "state": "PLAYING",
             "levels_completed": 0,
             "win_levels": 2,
+            "legend": {0: "Background", 2: "Player", 4: "Crate + Target"},
             "available_actions": [
                 "ACTION1",
                 "ACTION2",
@@ -74,6 +76,7 @@ class FakePuzzleScriptClient:
             "state": "PLAYING",
             "levels_completed": 1,
             "win_levels": 2,
+            "legend": {0: "Background", 2: "Player", 4: "Crate + Target"},
             "available_actions": [
                 "ACTION1",
                 "ACTION2",
@@ -90,6 +93,7 @@ class FakePuzzleScriptClient:
             "state": "PLAYING",
             "levels_completed": 1,
             "win_levels": 2,
+            "legend": {0: "Background", 2: "Player", 4: "Crate + Target"},
             "available_actions": [
                 "ACTION1",
                 "ACTION2",
@@ -192,6 +196,8 @@ class ArcServiceTests(unittest.TestCase):
         self.assertEqual(self.fake_client.started_games, ["ps_sokoban_basic-v1"])
         self.assertEqual(reset_body["game_id"], "ps_sokoban_basic-v1")
         self.assertEqual(reset_body["available_actions"], [1, 2, 3, 4, 5, 7])
+        self.assertEqual(reset_body["legend"]["2"], "Player")
+        self.assertEqual(reset_body["legend"]["4"], "Crate + Target")
         self.assertEqual(reset_body["rendered_frame"]["mime_type"], "image/png")
         self.assertTrue(
             reset_body["rendered_frame"]["data_url"].startswith(

@@ -1,5 +1,7 @@
 """Utility helpers shared across learning and solving pipelines."""
 
+import json
+import re
 from typing import Any, List
 
 
@@ -45,12 +47,32 @@ def format_frames(frames: List[Any]) -> str:
 
 
 def extract_json(text: str) -> str:
-    """Extract JSON content from markdown-fenced model responses."""
+    """Extract the first valid JSON object or array from a model response."""
     cleaned = text.strip()
-    if cleaned.startswith("```json"):
-        cleaned = cleaned[7:]
-        if cleaned.endswith("```"):
-            cleaned = cleaned[:-3]
-    elif cleaned.startswith("```") and cleaned.endswith("```"):
-        cleaned = cleaned[3:-3]
-    return cleaned.strip()
+    candidates = [cleaned]
+    candidates.extend(
+        match.group(1).strip()
+        for match in re.finditer(
+            r"```(?:json)?\s*([\s\S]*?)```",
+            cleaned,
+            flags=re.IGNORECASE,
+        )
+    )
+    for candidate in candidates:
+        try:
+            json.loads(candidate)
+            return candidate
+        except json.JSONDecodeError:
+            pass
+
+    decoder = json.JSONDecoder()
+    for index, character in enumerate(cleaned):
+        if character not in "[{":
+            continue
+        try:
+            value, end = decoder.raw_decode(cleaned[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, (dict, list)):
+            return cleaned[index : index + end]
+    return cleaned

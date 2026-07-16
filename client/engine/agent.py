@@ -33,12 +33,8 @@ def _make_loop(
 ) -> RuleReasoningLoop:
     return RuleReasoningLoop(
         env,
-        agent.engine.perceiver,
-        agent.engine.memory,
-        agent.engine.rulebook,
-        agent.engine.planner,
-        agent.engine.inducer,
-        ActionExecutor(env, agent.engine.perceiver),
+        agent.engine,
+        action_executor=ActionExecutor(env, agent.engine.perceiver),
         dashboard=dashboard,
         event_sink=event_sink,
         sleep_fn=time.sleep,
@@ -51,9 +47,9 @@ def run_learning_loop(
     agent: Agent,
     dashboard=None,
     event_sink: Optional[Callable[[str], None]] = None,
-) -> None:
+) -> object:
     loop = _make_loop(env, agent, dashboard=dashboard, event_sink=event_sink)
-    loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
+    return loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
 
 
 def run_solving_loop(
@@ -62,6 +58,6 @@ def run_solving_loop(
     agent: Agent,
     dashboard=None,
     event_sink: Optional[Callable[[str], None]] = None,
-) -> None:
+) -> object:
     loop = _make_loop(env, agent, dashboard=dashboard, event_sink=event_sink)
-    loop.run(max_steps=cfg.max_steps, game_id=cfg.game)
+    return loop.run(max_steps=cfg.max_steps, game_id=cfg.game)

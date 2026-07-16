@@ -16,12 +16,15 @@ function exists(relativePath) {
 test("website shell pages and route templates are present", () => {
   const requiredFiles = [
     "website/index.html",
+    "website/notes.html",
     "website/experiments/index.html",
     "website/experiments/goal-recognition/index.html",
     "website/experiments/thinking-comparison.html",
     "website/experiments/thinking-traces.js",
     "website/docs/architecture.html",
     "website/src/main.js",
+    "website/src/notes.js",
+    "website/src/workbench.js",
     "website/src/style.css",
     "website/src/goal-recognition-viewer.js",
   ];
@@ -105,6 +108,7 @@ test("local pseudocode editor buffers Markdown and saves only manifest files", (
   const shell = read("website/src/main.js");
   const config = read("website/vite.config.js");
   const architecture = read("website/docs/architecture.html");
+  const manifest = JSON.parse(read("docs/pseudocode/manifest.json"));
 
   assert.match(shell, /import\.meta\.env\.DEV/);
   assert.match(shell, /dblclick/);
@@ -113,12 +117,82 @@ test("local pseudocode editor buffers Markdown and saves only manifest files", (
   assert.match(shell, /data-pseudocode-cancel/);
   assert.match(shell, /markdownByFile/);
   assert.match(shell, /pseudocodeSavePath/);
+  assert.equal(manifest.at(-1).file, "perception.md");
+  assert.match(read("docs/pseudocode/perception.md"), /legend_inferer\.infer/);
   assert.match(config, /pseudocodeSaveRoute/);
   assert.match(config, /manifest\.some\(\(item\) => item\.file === file\)/);
   assert.match(config, /extname\(filePath\).*\.md/);
   assert.match(config, /fsp\.writeFile\(filePath, markdown, ['"]utf8['"]\)/);
   assert.match(architecture, /\.pseudocode-editor textarea/);
   assert.match(architecture, /\.pseudocode-editor-actions/);
+});
+
+test("notes page loads and persists its repository Markdown source", () => {
+  const html = read("website/notes.html");
+  const notes = read("website/src/notes.js");
+  const config = read("website/vite.config.js");
+  const markdown = read("docs/notes/workbench-notes.md");
+
+  assert.match(html, /<title>Notes/);
+  assert.match(html, /data-notes-editor/);
+  assert.match(html, /data-notes-save/);
+  assert.match(notes, /\/docs\/notes\/workbench-notes\.md/);
+  assert.match(notes, /\/__notes\/save/);
+  assert.match(notes, /import\.meta\.env\.DEV/);
+  assert.match(config, /notesSaveRoute/);
+  assert.match(config, /saveNotesMarkdown/);
+  assert.match(config, /notes:\s*resolve\(__dirname, 'notes\.html'\)/);
+  assert.match(markdown, /# Project Notes/);
+  assert.match(markdown, /## Next Week/);
+});
+
+test("home page provides the live main-client workbench", () => {
+  const html = read("website/index.html");
+  const workbench = read("website/src/workbench.js");
+  const config = read("website/vite.config.js");
+
+  assert.match(html, /<title>Workbench<\/title>/);
+  assert.match(html, /<h1>Workbench<\/h1>/);
+  assert.doesNotMatch(html, /Professor Demo Workbench/);
+  assert.match(html, /data-run-start/);
+  assert.match(html, /data-run-stop/);
+  assert.match(html, /name="memory-mode"/);
+  assert.match(html, /data-view-tab="settings"/);
+  assert.match(html, /data-view-tab="prompts"/);
+  assert.match(html, /data-prompt-editor/);
+  assert.match(html, /data-prompt-save/);
+  assert.match(html, /name="backend"/);
+  assert.match(html, /data-max-steps/);
+  assert.match(html, /LLM provider/);
+  assert.match(html, /OpenRouter/);
+  assert.match(html, /data-model/);
+  assert.match(html, /anthropic\/claude-opus-4\.8/);
+  assert.match(html, /openai\/gpt-5\.6-luna/);
+  assert.match(html, /x-ai\/grok-4\.5/);
+  assert.match(html, /xiaomi\/mimo-v2\.5/);
+  assert.match(html, /data-reasoning-effort/);
+  assert.match(html, /data-openrouter-state/);
+  assert.match(html, /type="text"[^>]*data-openrouter-key/);
+  assert.match(html, /data-openrouter-save/);
+  assert.match(workbench, /\/api\/workbench/);
+  assert.match(workbench, /setInterval\(poll, 500\)/);
+  assert.match(workbench, /request\('\/runs\/current'/);
+  assert.match(workbench, /restoreCurrentRun/);
+  assert.match(workbench, /request\('\/models'\)/);
+  assert.match(workbench, /request\('\/prompts'/);
+  assert.match(workbench, /method: 'PUT'/);
+  assert.match(workbench, /request\('\/openrouter\/status'/);
+  assert.match(workbench, /request\('\/openrouter\/key'/);
+  assert.match(workbench, /natural_rules/);
+  assert.match(workbench, /logical_rules/);
+  assert.match(workbench, /renderReplayRules/);
+  assert.match(workbench, /renderReplayPrediction/);
+  assert.match(workbench, /transitionNumber/);
+  assert.match(html, /Rules at this point/);
+  assert.match(html, /Prediction vs observed/);
+  assert.match(html, /data-replay-rule-tab="logical"/);
+  assert.match(config, /workbenchApiPort/);
+  assert.match(config, /'\/api\/workbench'/);
 });
 
 test("thinking comparison is trace-first and loads source artifacts through routes", () => {

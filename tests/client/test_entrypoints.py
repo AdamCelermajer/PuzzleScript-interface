@@ -54,7 +54,7 @@ class ClientEntrypointTests(unittest.TestCase):
 
         self.assertIn("from client.arc.arcade_env import ArcadeEnv", source)
         self.assertIn("from client.runtime.runner import RuleReasoningLoop", source)
-        self.assertIn("from client.screen_dashboard import ScreenDashboard", source)
+        self.assertNotIn("ScreenDashboard", source)
         self.assertNotIn("TerminalDashboard", source)
 
     def test_run_arc_agent_can_be_loaded_with_script_style_sys_path(self) -> None:
@@ -75,29 +75,11 @@ class ClientEntrypointTests(unittest.TestCase):
         captured: dict[str, object] = {}
         loop_calls: list[str] = []
 
-        class FakeDashboard:
-            def __init__(self, **kwargs) -> None:
-                self.render = lambda *args, **kwargs: None
-                self.push_event = lambda *args, **kwargs: None
-
-            def run_engine(self, target) -> None:
-                captured["run_engine_called"] = True
-                target()
-
-            def close(self) -> None:
-                return None
-
         class FakeArcadeEnv:
             def __init__(self, **kwargs) -> None:
                 captured.update(kwargs)
 
         class FakeArchitecture:
-            perceiver = object()
-            memory = object()
-            rulebook = object()
-            planner = object()
-            inducer = object()
-
             @classmethod
             def from_config(cls, cfg, llm_client, event_sink=None):
                 captured["architecture_game"] = cfg.game
@@ -107,24 +89,19 @@ class ClientEntrypointTests(unittest.TestCase):
             def __init__(
                 self,
                 env,
-                perceiver,
-                memory,
-                rulebook,
-                planner,
-                inducer,
+                engine,
                 *,
-                dashboard=None,
                 event_sink=None,
             ) -> None:
                 captured["loop_env"] = env
-                captured["loop_dashboard"] = dashboard
+                captured["loop_engine"] = engine
 
             def run(self, *, max_steps: int, game_id: str) -> None:
                 loop_calls.append(f"run:{game_id}:{max_steps}")
+                return SimpleNamespace(status="completed", reason="test")
 
         with (
             patch.object(sys, "argv", [RUN_AGENT_PATH]),
-            patch.object(run_arc_agent, "ScreenDashboard", FakeDashboard),
             patch.object(run_arc_agent, "ArcadeEnv", FakeArcadeEnv),
             patch.object(run_arc_agent, "LlmClient", lambda *args, **kwargs: object()),
             patch.object(
@@ -136,7 +113,6 @@ class ClientEntrypointTests(unittest.TestCase):
 
         self.assertEqual(captured["game_id"], "ps_sokoban_basic-v1")
         self.assertEqual(captured["architecture_game"], "ps_sokoban_basic-v1")
-        self.assertEqual(captured["run_engine_called"], True)
         self.assertEqual(loop_calls, ["run:ps_sokoban_basic-v1:50"])
 
     def test_play_arc_client_defaults_to_public_sokoban_id(self) -> None:
