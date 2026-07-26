@@ -268,6 +268,21 @@ class ModularEngineLoopTests(unittest.TestCase):
             self.assertIn("choose a short action plan", llm.calls[1][0])
             self.assertIn("plain-language", llm.calls[2][0])
             self.assertIn("plain-language", llm.calls[3][0])
+            plan_history = json.loads(
+                (Path(tmpdir) / "plan.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                plan_history["changes"],
+                [
+                    {
+                        "transition_id": "T000001",
+                        "subgoal": "try moving right twice",
+                        "actions": ["ACTION4", "ACTION4"],
+                        "source": "explore_subgoal",
+                        "origin": "runtime",
+                    }
+                ],
+            )
 
     def test_runtime_runner_executes_engine_decisions_outside_engine(self) -> None:
         from client.runtime.runner import ActionExecutor

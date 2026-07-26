@@ -8,6 +8,7 @@ from typing import Callable, Optional
 from client.arc.base_env import BaseEnv
 from client.arc.types import FrameData, GameAction, GameState
 from client.engine.memory import EngineMemory
+from client.engine.plan_history import backfill_plan_history
 from client.engine.perception import EngineState
 from client.engine.planner import DEFAULT_ACTIONS, PlanDecision
 from client.engine.rulebook import Rulebook
@@ -147,6 +148,13 @@ class RuleReasoningLoop:
             self.inducer = inducer
             self.action_selector = None
             self.goal_manager = None
+        plan_base = self.memory.path.parent
+        self.plan_history = backfill_plan_history(
+            plan_base / "plan.json",
+            plan_base / "llm_attempt.jsonl",
+            self.memory,
+            create=True,
+        )
         self.action_executor = action_executor or ActionExecutor(env, self.perceiver)
 
     def request_stop(self) -> None:
@@ -382,6 +390,17 @@ class RuleReasoningLoop:
             decision_source=decision.source,
             prediction_recorded=True,
         )
+        if (
+            decision.reason == "explore_subgoal"
+            and decision.exploratory
+            and decision.subgoal
+        ):
+            self.plan_history.record_change(
+                transition.id,
+                decision.subgoal,
+                [action.name for action in decision.plan],
+                source=decision.source,
+            )
         contradicted_rule_ids = self.rulebook.record_prediction_result(
             outcome.before_state,
             outcome.action,
