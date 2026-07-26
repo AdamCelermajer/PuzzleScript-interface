@@ -5,6 +5,7 @@
 ]
 
 const traceNavItems = [
+  { href: '/experiments/optimal-path.html', label: 'Optimal path', match: /^\/experiments\/optimal-path\.html$/ },
   { href: '/experiments/goal-recognition/', label: 'Goal recognition', match: /^\/experiments\/goal-recognition\/?/ },
   { href: '/experiments/thinking-comparison.html', label: 'Thinking comparison', match: /^\/experiments\/thinking-comparison\.html$/ },
   { href: '/experiments/live-framework.html', label: 'LIVE framework', match: /^\/experiments\/live-framework\.html$/ },

@@ -1,11 +1,13 @@
 # PuzzleScript Interface
 
-This repository has two core runtime workflows and two research studies:
+This repository has two core runtime workflows and three research studies:
 
 - Local PuzzleScript: run the bundled PuzzleScript games through the local Node.js runtime and ARC-compatible Python service.
 - Official ARC-AGI-3: run the same `client/` agent directly against the hosted ARC backend.
 - Goal recognition study: see `studies/goal_recognition/` for the dataset, prompts, model outputs, review tools, and static results website.
 - LIVE framework study: see `studies/LIVE_framework/` for the LIVE-style Sokoban rule-learning POC.
+- Codex SDK agent: see `studies/codex_agent/` for the one-session, one-action-per-frame puzzle solver.
+- Archived custom ReAct experiment: see `studies/old_react/` for the previous tool-based Kimi loop.
 
 Related docs:
 
@@ -15,6 +17,8 @@ Related docs:
 - [`examples/basic_client.py`](examples/basic_client.py) for a small standalone client example.
 - [`studies/goal_recognition/README.md`](studies/goal_recognition/README.md) for goal-recognition study commands and artifacts.
 - [`studies/LIVE_framework/README.md`](studies/LIVE_framework/README.md) for LIVE framework study commands and artifacts.
+- [`studies/codex_agent/README.md`](studies/codex_agent/README.md) for the persistent Codex SDK game loop.
+- [`studies/old_react/README.md`](studies/old_react/README.md) for the archived custom ReAct implementation.
 
 ## Install
 
@@ -53,8 +57,10 @@ npm run workbench
 ```
 
 Open `http://127.0.0.1:5173`. The home page runs the main client agent with
-Fresh/Resume controls, local PuzzleScript or official ARC selection, and live
-views of frames, plans, natural hypotheses, verified rules, failures, and logs.
+Fresh/Resume controls, or switches to Codex Live for one persistent
+OAuth-authenticated Codex session that chooses one action per observed frame.
+Both modes support local PuzzleScript or official ARC selection and live frame,
+decision, timeline, and log views.
 The Settings tab identifies OpenRouter as the LLM provider and offers Claude
 Opus 4.8 (default), GPT-5.6 Luna, Grok 4.5, and MiMo-V2.5. A reasoning-effort
 selector appears only for models that expose supported effort levels. It also

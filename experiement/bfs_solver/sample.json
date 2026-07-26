@@ -1,0 +1,426 @@
+{
+  "config": {
+    "sampleSize": 30,
+    "seed": "3838",
+    "maxStates": 100000,
+    "timeoutMs": 10000,
+    "maxAgainTicks": 100
+  },
+  "counts": {
+    "directories": 206,
+    "scripts": 193,
+    "parseErrors": 0,
+    "noFormalGoal": 14,
+    "noPlayableLevel": 0,
+    "unsupported": 42,
+    "eligible": 137
+  },
+  "sample": [
+    {
+      "gameId": "ps_fire_in_winter-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_fire_in_winter-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_coin_counter-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_coin_counter-v1\\script.txt",
+      "levelIndex": 0,
+      "formalGoalCount": 3
+    },
+    {
+      "gameId": "ps_enqueue-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_enqueue-v1\\script.txt",
+      "levelIndex": 0,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_punt_mazes-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_punt_mazes-v1\\script.txt",
+      "levelIndex": 1,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_compressed-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_compressed-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_spacekoban-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_spacekoban-v1\\script.txt",
+      "levelIndex": 0,
+      "formalGoalCount": 3
+    },
+    {
+      "gameId": "ps_fatigued_square_maze-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_fatigued_square_maze-v1\\script.txt",
+      "levelIndex": 1,
+      "formalGoalCount": 2
+    },
+    {
+      "gameId": "ps_self_alteration-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_self_alteration-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_wall_shuffle-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_wall_shuffle-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 3
+    },
+    {
+      "gameId": "ps_knightoban-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_knightoban-v1\\script.txt",
+      "levelIndex": 1,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_icecrates-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_icecrates-v1\\script.txt",
+      "levelIndex": 1,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_atlas_shrank-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_atlas_shrank-v1\\script.txt",
+      "levelIndex": 1,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_collapsing_tiles-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_collapsing_tiles-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 2
+    },
+    {
+      "gameId": "ps_sokoban_basic-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_sokoban_basic-v1\\script.txt",
+      "levelIndex": 0,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_fuse_to_green-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_fuse_to_green-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_dark_pellets-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_dark_pellets-v1\\script.txt",
+      "levelIndex": 3,
+      "formalGoalCount": 3
+    },
+    {
+      "gameId": "ps_wall_virus-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_wall_virus-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 3
+    },
+    {
+      "gameId": "ps_maera_public_works-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_maera_public_works-v1\\script.txt",
+      "levelIndex": 0,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_extra_step-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_extra_step-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 3
+    },
+    {
+      "gameId": "ps_moving_target-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_moving_target-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_infected-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_infected-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_extra_push-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_extra_push-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 2
+    },
+    {
+      "gameId": "ps_the_art_of_storage-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_the_art_of_storage-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_side_painting-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_side_painting-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 2
+    },
+    {
+      "gameId": "ps_on_and_off-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_on_and_off-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_take_heart_lass-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_take_heart_lass-v1\\script.txt",
+      "levelIndex": 1,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_midas-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_midas-v1\\script.txt",
+      "levelIndex": 0,
+      "formalGoalCount": 1
+    },
+    {
+      "gameId": "ps_rotaters_cause-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_rotaters_cause-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 2
+    },
+    {
+      "gameId": "ps_the_switch-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_the_switch-v1\\script.txt",
+      "levelIndex": 2,
+      "formalGoalCount": 2
+    },
+    {
+      "gameId": "ps_some_pits-v1",
+      "gamePath": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\puzzlescript_interface\\games\\ps_some_pits-v1\\script.txt",
+      "levelIndex": 1,
+      "formalGoalCount": 1
+    }
+  ],
+  "excluded": [
+    {
+      "gameId": "ps_9x9_go-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_a_sneeze_a_day-v1",
+      "reason": "realtime"
+    },
+    {
+      "gameId": "ps_aaaah_i_m_being_attacked-v1",
+      "reason": "random_rules,realtime"
+    },
+    {
+      "gameId": "ps_alien_disco-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_always_magnets-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_baba_is_you-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_bal_ru_s_curse-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_beam_islands-v1",
+      "reason": "realtime"
+    },
+    {
+      "gameId": "ps_boxes_and_balloons-v1",
+      "reason": "realtime"
+    },
+    {
+      "gameId": "ps_closure_demake-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_collapse-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_colour_chained-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_crate_cables-v1",
+      "reason": "random_rules,checkpoint_hidden_state"
+    },
+    {
+      "gameId": "ps_cratopia-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_cyber_lasso-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_dharma_dojo_demake-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_dungeon_janitor-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_easy_enigma-v1",
+      "reason": "random_rules,realtime"
+    },
+    {
+      "gameId": "ps_fish_friend-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_flower_dance-v1",
+      "reason": "checkpoint_hidden_state"
+    },
+    {
+      "gameId": "ps_flying_kick-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_freeform_bal_ru_s_curse-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_garten_der_medusen-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_i_herd_u_liek_water_templs-v1",
+      "reason": "random_rules,realtime"
+    },
+    {
+      "gameId": "ps_jam3_game-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_life_is_hard-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_liquid_war_alpha-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_magik-v1",
+      "reason": "realtime"
+    },
+    {
+      "gameId": "ps_marble_shoot-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_matchpub-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_mirror_isles-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_movement_garden-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_n_little_indians-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_oskars_maze-v1",
+      "reason": "realtime"
+    },
+    {
+      "gameId": "ps_pants_shirt_cap-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_pretender_to_the_crown-v1",
+      "reason": "random_rules,realtime"
+    },
+    {
+      "gameId": "ps_pushcat_jr-v1",
+      "reason": "realtime"
+    },
+    {
+      "gameId": "ps_season_finale-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_singleton_traffic-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_skipping_stones-v1",
+      "reason": "no_formal_win_condition"
+    },
+    {
+      "gameId": "ps_slime_swap-v1",
+      "reason": "random_rules,realtime"
+    },
+    {
+      "gameId": "ps_snakehole-v1",
+      "reason": "random_rules,checkpoint_hidden_state"
+    },
+    {
+      "gameId": "ps_sok7-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_sokofun_clone-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_some_lines_crossed-v1",
+      "reason": "realtime"
+    },
+    {
+      "gameId": "ps_spikes_n_stuff-v1",
+      "reason": "random_rules,realtime,checkpoint_hidden_state"
+    },
+    {
+      "gameId": "ps_spooky_pumpkin_game-v1",
+      "reason": "random_rules,realtime"
+    },
+    {
+      "gameId": "ps_stand_off-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_sumoban-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_telefrag-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_tidy_the_cafe-v1",
+      "reason": "random_rules,realtime"
+    },
+    {
+      "gameId": "ps_tiny_treasure_hunt-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_train-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_tunnel_rat-v1",
+      "reason": "random_rules"
+    },
+    {
+      "gameId": "ps_vines-v1",
+      "reason": "realtime,checkpoint_hidden_state"
+    },
+    {
+      "gameId": "ps_world_generation-v1",
+      "reason": "no_formal_win_condition"
+    }
+  ]
+}

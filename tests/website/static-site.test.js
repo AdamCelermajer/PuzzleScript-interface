@@ -136,14 +136,26 @@ test("notes page loads and persists its repository Markdown source", () => {
   assert.match(html, /<title>Notes/);
   assert.match(html, /data-notes-editor/);
   assert.match(html, /data-notes-save/);
+  assert.match(html, /data-notes-document="todo"/);
+  assert.match(html, /data-notes-document="benchmark"/);
   assert.match(notes, /\/docs\/notes\/workbench-notes\.md/);
+  assert.match(notes, /\/docs\/notes\/todo\.md/);
+  assert.match(notes, /\/docs\/notes\/benchmark-positioning\.md/);
   assert.match(notes, /\/__notes\/save/);
   assert.match(notes, /import\.meta\.env\.DEV/);
+  assert.match(notes, /makeSectionsCollapsible/);
   assert.match(config, /notesSaveRoute/);
   assert.match(config, /saveNotesMarkdown/);
+  assert.match(config, /allowedNotesFiles/);
   assert.match(config, /notes:\s*resolve\(__dirname, 'notes\.html'\)/);
   assert.match(markdown, /# Project Notes/);
-  assert.match(markdown, /## Next Week/);
+  assert.match(markdown, /## Rule Induction/);
+  assert.match(markdown, /## Demo Flow/);
+  assert.match(read("docs/notes/todo.md"), /# Todo/);
+  assert.match(read("docs/notes/benchmark-positioning.md"), /# PuzzleScript World Benchmark/);
+  assert.match(read("docs/notes/benchmark-positioning.md"), /Comparison with ARC-AGI-3/);
+  assert.match(read("docs/notes/benchmark-positioning.md"), /complete model-plus-harness system/);
+  assert.match(read("docs/notes/benchmark-positioning.md"), /Comparison with PuzzleJAX/);
 });
 
 test("home page provides the live main-client workbench", () => {
@@ -193,6 +205,29 @@ test("home page provides the live main-client workbench", () => {
   assert.match(html, /data-replay-rule-tab="logical"/);
   assert.match(config, /workbenchApiPort/);
   assert.match(config, /'\/api\/workbench'/);
+});
+
+test("optimal path experiment exposes live BFS progress and rendered replay", () => {
+  const html = read("website/experiments/optimal-path.html");
+  const client = read("website/src/optimal-path.js");
+  const config = read("website/vite.config.js");
+  const shell = read("website/src/main.js");
+
+  assert.match(html, /<h1>Optimal Path<\/h1>/);
+  assert.match(html, /data-optimal-game/);
+  assert.match(html, /data-time-progress/);
+  assert.match(html, /data-depth/);
+  assert.match(html, /data-level-progress/);
+  assert.match(html, /whole-game path found/);
+  assert.match(html, /data-result-failure/);
+  assert.match(html, /data-replay-image/);
+  assert.match(client, /\/api\/optimal-path/);
+  assert.match(client, /setInterval\(poll, 500\)/);
+  assert.match(client, /restoreCurrentRun/);
+  assert.match(client, /renderedFrame/);
+  assert.match(config, /'\/api\/optimal-path'/);
+  assert.match(config, /optimalPath: resolve/);
+  assert.match(shell, /label: 'Optimal path'/);
 });
 
 test("thinking comparison is trace-first and loads source artifacts through routes", () => {

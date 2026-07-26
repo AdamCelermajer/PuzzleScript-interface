@@ -82,13 +82,69 @@ class ProviderFailureLoop:
         )
 
 
-def manager(tmpdir, loop_factory=ImmediateLoop, prompt_store=None):
+class FakeCodexSession:
+    configs = []
+
+    def __init__(self, config, working_directory):
+        self.config = config
+        self.working_directory = Path(working_directory)
+        self.__class__.configs.append(config)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_args):
+        return None
+
+
+class FakeCodexRunner:
+    calls = []
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+        self.__class__.calls.append(kwargs)
+
+    def run(self):
+        frame = SimpleNamespace(
+            frame=[[[2, 0]]],
+            state=GameState.PLAYING,
+            levels_completed=0,
+            win_levels=1,
+            action_input=SimpleNamespace(action=GameAction.RESET),
+            rendered_frame=None,
+        )
+        self.kwargs["env"].renderer(1, frame)
+        self.kwargs["decision_sink"](
+            {"action": "ACTION4", "note": "move right", "decision": 1}
+        )
+        self.kwargs["transition_sink"](
+            {
+                "id": "T000001",
+                "action": "ACTION4",
+                "before": {"grid": [[2, 0]]},
+                "after": {"grid": [[0, 2]]},
+            }
+        )
+        self.kwargs["event_sink"]("Decision 1: ACTION4 | move right")
+        return SimpleNamespace(status="completed", reason="step_budget_exhausted")
+
+
+def manager(
+    tmpdir,
+    loop_factory=ImmediateLoop,
+    prompt_store=None,
+    codex_session_factory=FakeCodexSession,
+    codex_runner_factory=FakeCodexRunner,
+):
     return RunManager(
         rules_dir=tmpdir,
         env_factory=FakeEnv,
         llm_factory=lambda *args, **kwargs: object(),
         engine_factory=lambda *args, **kwargs: fake_engine(),
         loop_factory=loop_factory,
+        codex_session_factory=codex_session_factory,
+        codex_runner_factory=codex_runner_factory,
+        codex_runs_dir=Path(tmpdir) / "codex-output",
         prompt_store=prompt_store,
     )
 
@@ -214,6 +270,62 @@ class WorkbenchApiTests(unittest.TestCase):
                 ["high", "medium", "low"],
             )
             self.assertEqual(models["xiaomi/mimo-v2.5"]["supported_efforts"], [])
+            self.assertEqual(
+                payload["codex"]["default_model"],
+                "gpt-5.6-sol",
+            )
+
+    def test_codex_live_run_uses_oauth_session_and_exposes_live_decision(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            FakeCodexSession.configs.clear()
+            FakeCodexRunner.calls.clear()
+            run_manager = manager(tmpdir)
+            client = TestClient(create_app(run_manager))
+            response = client.post(
+                "/api/workbench/runs",
+                json={
+                    "agent_mode": "codex",
+                    "backend": "puzzlescript",
+                    "game_id": "ps_sokoban_basic-v1",
+                    "model": "gpt-5.6-sol",
+                    "reasoning_effort": "low",
+                    "max_steps": 2,
+                },
+            )
+
+            self.assertEqual(response.status_code, 202)
+            run_id = response.json()["run_id"]
+            run = run_manager.get(run_id)
+            wait_finished(run)
+            snapshot = run.snapshot()
+            self.assertEqual(snapshot["config"]["provider"], "codex_oauth")
+            self.assertEqual(snapshot["config"]["model"], "gpt-5.6-sol")
+            self.assertEqual(snapshot["reasoning"]["decision"]["action"], "ACTION4")
+            self.assertEqual(snapshot["reasoning"]["decision"]["note"], "move right")
+            self.assertEqual(snapshot["timeline"][0]["id"], "T000001")
+            self.assertIn("Decision 1: ACTION4", snapshot["events"][-1])
+            self.assertEqual(FakeCodexSession.configs[-1].effort, "low")
+            self.assertIs(
+                FakeCodexRunner.calls[-1]["stop_event"],
+                run.stop_event,
+            )
+
+    def test_codex_status_endpoint_reports_desktop_oauth_state(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            run_manager = manager(tmpdir)
+            run_manager.codex_status = lambda: {
+                "available": True,
+                "logged_in": True,
+                "state": "ready",
+                "version": "codex-cli test",
+                "message": "Logged in using ChatGPT",
+            }
+            response = TestClient(create_app(run_manager)).get(
+                "/api/workbench/codex/status"
+            )
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(response.json()["logged_in"])
+            self.assertEqual(response.headers["cache-control"], "no-store")
 
     def test_openrouter_status_returns_visible_key_without_caching(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -345,6 +457,15 @@ class WorkbenchApiTests(unittest.TestCase):
                 decision_source="exploratory_probe",
                 prediction_recorded=True,
             )
+            (base / "llm_attempt.jsonl").write_text(
+                '{"purpose":"subgoal","parsed_response":'
+                '{"subgoal":"move right to inspect the empty cell"},'
+                '"raw_response":"{\\"subgoal\\":\\"move right to inspect the empty cell\\"}"}\n'
+                '{"purpose":"action plan","parsed_response":'
+                '{"plan":["ACTION4"]},'
+                '"raw_response":"{\\"plan\\":[\\"ACTION4\\"]}"}\n',
+                encoding="utf-8",
+            )
             (base / "legend.json").write_text(
                 '{"0":"Background","2":"Player"}', encoding="utf-8"
             )
@@ -382,6 +503,19 @@ class WorkbenchApiTests(unittest.TestCase):
             self.assertEqual(prediction["rule_ids"], ["G000001"])
             self.assertEqual(prediction["decision_source"], "exploratory_probe")
             self.assertEqual(prediction["closest_cell_differences"], [])
+            self.assertEqual(
+                replay["frames"][1]["plan"],
+                {
+                    "transition_id": "T000001",
+                    "subgoal": "move right to inspect the empty cell",
+                    "actions": ["ACTION4"],
+                    "source": "exploratory_probe",
+                    "origin": "raw_log_backfill",
+                    "step_index": 1,
+                    "total_steps": 1,
+                },
+            )
+            self.assertTrue((base / "plan.json").exists())
             self.assertEqual(replay["natural_rules"][0]["id"], "N000001")
             self.assertEqual(replay["logical_rules"][0]["ruleID"], "G000001")
             deleted = client.delete(

@@ -1,41 +1,46 @@
 # Project Notes
 
-## Ready
+## Main Demo
 
-- Natural rule = readable hypothesis. Logical rule = executable version used by the planner.
-- Compiler asks the LLM for logical JSON. Verifier checks it against real transitions. Failed rules never reach planning.
-- Each transition proposes at most one temporary NL candidate; it appears as a rule only after logical verification, and equivalent verified rules reuse one NL entry.
-- Prompts are editable in the Workbench and snapshotted with each run. Raw JSON responses are saved for diagnosis.
-- If a rule predicts incorrectly, its NL and logical versions become inactive. Revision replaces or splits them, then verifies the replacement against old and new evidence.
-- Example split: moving into an empty cell versus moving in the same direction while pushing a crate.
+- Workbench settings and control
+- Live agent play
+- Replay of the promising Sokoban run
+- Editable architecture pseudocode
 
-## Demo
+## Rule Induction
 
-1. Check OpenRouter and the 12-step local settings.
-2. Start Fresh and show the frame, action, goal, plan, legend, and rules advancing.
-3. Open rule attempts and explain compilation and verification.
-4. Use Replay to show frames, predictions, and rules appearing over time.
-5. Open Architecture and follow the pseudocode flow.
+The main change is that the LLM no longer creates trusted rules directly.
 
-Fallback: use the saved rehearsal artifacts if the live provider is unavailable.
+Rule learning is now a controlled process:
 
-## Status
+```text
+Observe a transition
+    -> propose a natural-language rule
+    -> compile it into a logical rule
+    -> verify it against real evidence
+    -> use it for prediction and planning
+```
 
-- Full Python and Node suite passes: 152 passed, 2 skipped.
-- Website tests: 10 passed.
-- Website build and desktop/mobile checks pass.
-- Full level completion is useful, but learning progress is enough for the demo.
-- Terminal and Tkinter still exist only as fallback code.
+### Major Points
 
-## Next Week
+- Natural-language rules explain the learned mechanic.
+- Logical rules are executable and are used by the agent.
+- A rule is stored only after deterministic verification.
+- Failed rules never reach prediction or planning.
+- Contradicted rules are deactivated and revised.
+- Rule-learning attempts and failures are saved and visible in the Workbench.
+- Retries are bounded so the agent cannot loop forever.
 
-- Analyze real rule_attempts.jsonl failures and improve the prompts.
-- Measure hypothesis-to-verification success.
-- Test revision and rule splitting on more mechanics.
-- Compare OpenRouter models, cost, and reasoning effort.
-- Run more PuzzleScript games and official ARC tasks.
-- Revisit rule families or merging later.
+## Main Message
 
-## Scratch
+The LLM proposes an explanation, but the system decides whether that explanation
+is trustworthy. Only rules supported by the real game history become part of
+the agent's model of the environment.
 
--
+## Demo Flow
+
+- Show the Workbench controls.
+- Run or replay the promising Sokoban game.
+- Show the agent's actions, plans, predictions, and learned rules.
+- Open one rule-learning attempt to show the verification process.
+- Finish with the editable pseudocode view.

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Optimal Path - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="optimal-path">
+    <main class="content-page optimal-path-page" data-optimal-path>
+      <section class="page-intro compact">
+        <p class="eyebrow">Experiment</p>
+        <h1>Optimal Path</h1>
+        <p>Run breadth-first search through every playable level in a PuzzleScript game, then replay the complete solution.</p>
+      </section>
+
+      <section class="panel optimal-path-config">
+        <div class="optimal-path-fields">
+          <label class="field optimal-game-field">
+            <span>Game</span>
+            <select data-optimal-game>
+              <option>Loading games…</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Timeout (seconds)</span>
+            <input data-optimal-timeout type="number" min="1" max="600" value="60" />
+          </label>
+          <label class="field">
+            <span>State limit</span>
+            <input data-optimal-states type="number" min="1000" max="1000000" step="1000" value="100000" />
+          </label>
+        </div>
+        <div class="optimal-path-actions">
+          <button class="command-button primary" type="button" data-optimal-start>Search</button>
+          <button class="command-button danger" type="button" data-optimal-stop disabled>Stop</button>
+          <span data-optimal-error role="alert"></span>
+        </div>
+      </section>
+
+      <section class="panel optimal-progress-panel" aria-live="polite">
+        <div class="surface-header">
+          <h2>Search progress</h2>
+          <span class="run-state" data-optimal-status data-status="idle">idle</span>
+        </div>
+        <div class="optimal-time-row">
+          <span data-level-progress>Waiting to start</span>
+          <strong><span data-elapsed-time>0.0s</span> / <span data-time-limit>60s</span></strong>
+        </div>
+        <progress class="optimal-time-progress" data-time-progress max="1" value="0">0%</progress>
+        <div class="optimal-metrics">
+          <div><span>Deepest depth</span><strong data-depth>0</strong></div>
+          <div><span>Expanded</span><strong data-expanded>0</strong></div>
+          <div><span>Visited</span><strong data-visited>1</strong></div>
+          <div><span>Frontier</span><strong data-frontier>1</strong></div>
+          <div><span>Transitions</span><strong data-transitions>0</strong></div>
+          <div><span>Speed</span><strong data-speed>0/s</strong></div>
+        </div>
+        <p class="optimal-progress-note">Depth is a live counter, not a percentage: the solution depth is unknown until the search reaches a win.</p>
+      </section>
+
+      <section class="panel optimal-result-panel" data-result-panel>
+        <div class="optimal-idle" data-result-idle>
+          <div class="optimal-idle-mark" aria-hidden="true">↗</div>
+          <h2>Ready to search</h2>
+          <p>Choose a game and time budget. Each level gets a shared-state BFS tree, while the budget covers the whole game.</p>
+        </div>
+
+        <div class="optimal-no-path" data-result-failure hidden>
+          <svg viewBox="0 0 220 150" role="img" aria-label="No path found">
+            <path class="failure-maze" d="M24 25h72v28H61v29h76V53h57v72h-70v-27H82v27H24z" />
+            <path class="failure-cross" d="M72 37l76 76m0-76l-76 76" />
+          </svg>
+          <h2>No winning path found</h2>
+          <p data-failure-message>The search reached its limit before a win.</p>
+        </div>
+
+        <div class="optimal-solved" data-result-solved hidden>
+          <div class="optimal-result-heading">
+            <div>
+              <p class="eyebrow">Replay verified</p>
+              <h2><span data-solution-depth>0</span>-action whole-game path found</h2>
+              <p class="optimal-level-summary"><span data-levels-solved>0</span> playable levels solved</p>
+            </div>
+            <span class="tag">shortest semantic path</span>
+          </div>
+          <div class="optimal-replay-layout">
+            <div>
+              <div class="game-frame optimal-replay-frame">
+                <img data-replay-image alt="PuzzleScript replay frame" />
+                <span class="frame-empty" data-replay-empty hidden>Rendered frame unavailable</span>
+              </div>
+              <div class="replay-controls">
+                <button class="command-button" type="button" data-replay-previous aria-label="Previous frame">←</button>
+                <button class="command-button primary" type="button" data-replay-play>Play</button>
+                <button class="command-button" type="button" data-replay-next aria-label="Next frame">→</button>
+              </div>
+            </div>
+            <aside class="optimal-replay-details">
+              <div><span>Frame</span><strong data-replay-position>0 / 0</strong></div>
+              <div><span>Action</span><strong data-replay-action>RESET</strong></div>
+              <div><span>Level</span><strong data-replay-level>0 / 0</strong></div>
+              <div><span>Search time</span><strong data-result-time>0s</strong></div>
+              <div><span>States visited</span><strong data-result-states>0</strong></div>
+            </aside>
+          </div>
+          <div class="optimal-action-path" data-action-path aria-label="Solution actions"></div>
+          <p class="optimal-proof-note">This fast mode solves every playable level in order using semantic state equivalence. Each level path is shortest in its merged state graph, and every displayed action sequence is replay-verified in the real engine.</p>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/optimal-path.js"></script>
+  </body>
+</html>

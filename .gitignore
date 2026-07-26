@@ -126,10 +126,12 @@ debug_*.js
 puzzlescript_interface/.runtime/
 client/rules/
 studies/LIVE_framework/output/
-studies/react_agent/output/
+studies/codex_agent/output/
+studies/old_react/output/
 studies/goal_recognition/experiment/artifacts/*
 !studies/goal_recognition/experiment/artifacts/.gitkeep
 studies/goal_recognition/experiment/node_modules/
+outputs/
 
 # Local experiment inputs, exports, and scratch drops
 _local/

@@ -6,17 +6,23 @@ from fastapi import FastAPI, HTTPException, Query, Response
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 from workbench.models import (
+    CODEX_PROVIDER_ID,
+    DEFAULT_CODEX_MODEL,
     DEFAULT_MODEL,
     PROVIDER_ID,
     public_model_catalog,
+    validate_codex_model_selection,
     validate_model_selection,
 )
 from workbench import openrouter_account
 from workbench.run_manager import RunManager
+from experiement.bfs_solver.web_api import create_optimal_path_router
+from experiement.bfs_solver.web_manager import OptimalPathManager
 
 
 class StartRunRequest(BaseModel):
-    provider: Literal["openrouter"] = PROVIDER_ID
+    agent_mode: Literal["rule", "codex"] = "rule"
+    provider: Literal["openrouter", "codex_oauth"] = PROVIDER_ID
     model: str = DEFAULT_MODEL
     reasoning_effort: str = ""
     backend: Literal["puzzlescript", "arc"] = "puzzlescript"
@@ -45,7 +51,16 @@ class StartRunRequest(BaseModel):
 
     @model_validator(mode="after")
     def model_and_effort_must_match(self) -> "StartRunRequest":
-        validate_model_selection(self.model, self.reasoning_effort)
+        if self.agent_mode == "codex":
+            self.provider = CODEX_PROVIDER_ID
+            if self.model == DEFAULT_MODEL:
+                self.model = DEFAULT_CODEX_MODEL
+            if not self.reasoning_effort:
+                self.reasoning_effort = "low"
+            validate_codex_model_selection(self.model, self.reasoning_effort)
+        else:
+            self.provider = PROVIDER_ID
+            validate_model_selection(self.model, self.reasoning_effort)
         return self
 
 
@@ -65,13 +80,19 @@ class PromptUpdateRequest(BaseModel):
     content: str = Field(min_length=1, max_length=100_000)
 
 
-def create_app(manager: RunManager | None = None) -> FastAPI:
+def create_app(
+    manager: RunManager | None = None,
+    optimal_path_manager: OptimalPathManager | None = None,
+) -> FastAPI:
     run_manager = manager or RunManager()
+    path_manager = optimal_path_manager or OptimalPathManager()
     app = FastAPI(
         title="PuzzleScript Workbench",
         version="1.0.0",
     )
     app.state.run_manager = run_manager
+    app.state.optimal_path_manager = path_manager
+    app.include_router(create_optimal_path_router(path_manager))
 
     @app.get("/api/workbench/health")
     def health() -> dict:
@@ -93,6 +114,11 @@ def create_app(manager: RunManager | None = None) -> FastAPI:
     @app.get("/api/workbench/models")
     def models() -> dict:
         return public_model_catalog()
+
+    @app.get("/api/workbench/codex/status")
+    def codex_status(response: Response) -> dict:
+        response.headers["Cache-Control"] = "no-store"
+        return run_manager.codex_status()
 
     @app.get("/api/workbench/prompts")
     def prompts(response: Response) -> dict:

@@ -16,7 +16,7 @@ load_dotenv()
 
 @dataclass
 class ReactLlmConfig:
-    """Kimi configuration scoped to the ReAct experiment."""
+    """Kimi configuration scoped to the archived ReAct experiment."""
 
     model: str = "kimi-k2.6"
     base_url: str = field(
@@ -42,7 +42,7 @@ class ReactLlmConfig:
 
 
 class ReactLlmClient:
-    """Small Kimi client owned by the ReAct experiment."""
+    """Small Kimi client owned by the archived ReAct experiment."""
 
     def __init__(
         self,

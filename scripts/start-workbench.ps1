@@ -9,6 +9,15 @@ $arcPort = if ($env:ARC_PROXY_PORT) { [int]$env:ARC_PROXY_PORT } else { 8000 }
 $apiPort = if ($env:WORKBENCH_API_PORT) { [int]$env:WORKBENCH_API_PORT } else { 8010 }
 $webPort = if ($env:WORKBENCH_WEB_PORT) { [int]$env:WORKBENCH_WEB_PORT } else { 5173 }
 $children = New-Object System.Collections.Generic.List[System.Diagnostics.Process]
+$tailscaleDnsName = ""
+
+try {
+    $tailscale = Get-Command tailscale -ErrorAction Stop
+    $tailscaleStatus = (& $tailscale.Source status --json | ConvertFrom-Json)
+    $tailscaleDnsName = ([string]$tailscaleStatus.Self.DNSName).TrimEnd(".")
+} catch {
+    $tailscaleDnsName = ""
+}
 
 $pythonFileName = "python"
 $pythonPrefix = ""
@@ -106,6 +115,7 @@ try {
     Wait-HttpReady -Url "http://127.0.0.1:$apiPort/api/workbench/health"
     Start-OwnedProcess -FileName "node" -Arguments "node_modules/vite/bin/vite.js --config website/vite.config.js --host 127.0.0.1 --port $webPort --strictPort" -Environment @{
         WORKBENCH_API_PORT = $apiPort
+        WORKBENCH_ALLOWED_HOSTS = $tailscaleDnsName
     }
     Wait-HttpReady -Url "http://127.0.0.1:$webPort/"
 

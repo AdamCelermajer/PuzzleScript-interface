@@ -1,0 +1,134 @@
+{
+  "generatedAt": "2026-07-22T20:24:20.394Z",
+  "solvedCount": 21,
+  "verifiedCount": 21,
+  "allVerified": true,
+  "verification": [
+    {
+      "gameId": "ps_coin_counter-v1",
+      "verified": true,
+      "wonAtAction": 9,
+      "expectedActions": 9
+    },
+    {
+      "gameId": "ps_enqueue-v1",
+      "verified": true,
+      "wonAtAction": 7,
+      "expectedActions": 7
+    },
+    {
+      "gameId": "ps_punt_mazes-v1",
+      "verified": true,
+      "wonAtAction": 11,
+      "expectedActions": 11
+    },
+    {
+      "gameId": "ps_compressed-v1",
+      "verified": true,
+      "wonAtAction": 12,
+      "expectedActions": 12
+    },
+    {
+      "gameId": "ps_spacekoban-v1",
+      "verified": true,
+      "wonAtAction": 1,
+      "expectedActions": 1
+    },
+    {
+      "gameId": "ps_fatigued_square_maze-v1",
+      "verified": true,
+      "wonAtAction": 12,
+      "expectedActions": 12
+    },
+    {
+      "gameId": "ps_wall_shuffle-v1",
+      "verified": true,
+      "wonAtAction": 11,
+      "expectedActions": 11
+    },
+    {
+      "gameId": "ps_knightoban-v1",
+      "verified": true,
+      "wonAtAction": 20,
+      "expectedActions": 20
+    },
+    {
+      "gameId": "ps_icecrates-v1",
+      "verified": true,
+      "wonAtAction": 4,
+      "expectedActions": 4
+    },
+    {
+      "gameId": "ps_atlas_shrank-v1",
+      "verified": true,
+      "wonAtAction": 6,
+      "expectedActions": 6
+    },
+    {
+      "gameId": "ps_sokoban_basic-v1",
+      "verified": true,
+      "wonAtAction": 33,
+      "expectedActions": 33
+    },
+    {
+      "gameId": "ps_wall_virus-v1",
+      "verified": true,
+      "wonAtAction": 30,
+      "expectedActions": 30
+    },
+    {
+      "gameId": "ps_maera_public_works-v1",
+      "verified": true,
+      "wonAtAction": 1,
+      "expectedActions": 1
+    },
+    {
+      "gameId": "ps_extra_step-v1",
+      "verified": true,
+      "wonAtAction": 9,
+      "expectedActions": 9
+    },
+    {
+      "gameId": "ps_moving_target-v1",
+      "verified": true,
+      "wonAtAction": 5,
+      "expectedActions": 5
+    },
+    {
+      "gameId": "ps_on_and_off-v1",
+      "verified": true,
+      "wonAtAction": 10,
+      "expectedActions": 10
+    },
+    {
+      "gameId": "ps_take_heart_lass-v1",
+      "verified": true,
+      "wonAtAction": 3,
+      "expectedActions": 3
+    },
+    {
+      "gameId": "ps_midas-v1",
+      "verified": true,
+      "wonAtAction": 7,
+      "expectedActions": 7
+    },
+    {
+      "gameId": "ps_rotaters_cause-v1",
+      "verified": true,
+      "wonAtAction": 12,
+      "expectedActions": 12
+    },
+    {
+      "gameId": "ps_the_switch-v1",
+      "verified": true,
+      "wonAtAction": 16,
+      "expectedActions": 16
+    },
+    {
+      "gameId": "ps_some_pits-v1",
+      "verified": true,
+      "wonAtAction": 23,
+      "expectedActions": 23
+    }
+  ]
+}

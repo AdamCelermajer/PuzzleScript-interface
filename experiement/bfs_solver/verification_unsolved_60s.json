@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-07-22T17:00:59.265Z",
+  "solvedCount": 3,
+  "verifiedCount": 3,
+  "allVerified": true,
+  "verification": [
+    {
+      "gameId": "ps_punt_mazes-v1",
+      "verified": true,
+      "wonAtAction": 11,
+      "expectedActions": 11
+    },
+    {
+      "gameId": "ps_wall_shuffle-v1",
+      "verified": true,
+      "wonAtAction": 11,
+      "expectedActions": 11
+    },
+    {
+      "gameId": "ps_on_and_off-v1",
+      "verified": true,
+      "wonAtAction": 10,
+      "expectedActions": 10
+    }
+  ]
+}

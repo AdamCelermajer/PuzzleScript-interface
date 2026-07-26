@@ -31,4 +31,7 @@ For a readable debug view of rules plus timeline evidence, run:
 uv run python -m client.inspect_rules --game-id ps_sokoban_basic-v1 --recent 5
 ```
 
-LIVE-style experiments now live under `studies/LIVE_framework/`; goal-recognition experiments live under `studies/goal_recognition/`; the experimental ReAct agent lives under `studies/react_agent/`.
+LIVE-style experiments live under `studies/LIVE_framework/`; goal-recognition
+experiments live under `studies/goal_recognition/`; the simple persistent Codex
+SDK game agent lives under `studies/codex_agent/`; the previous custom ReAct
+implementation is archived under `studies/old_react/`.

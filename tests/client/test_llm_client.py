@@ -159,7 +159,7 @@ class LlmClientConfigTests(unittest.TestCase):
             )
 
             with self.assertRaisesRegex(ValueError, "LLM provider error"):
-                client.call_text("system", "prompt", purpose="react agent")
+                client.call_text("system", "prompt", purpose="provider error test")
 
     def test_call_can_attach_image_data_urls_to_user_message(self) -> None:
         response = SimpleNamespace(

@@ -23,14 +23,20 @@
         </div>
       </header>
 
+      <nav class="notes-document-tabs" aria-label="Project notebook documents">
+        <button type="button" class="active" data-notes-document="notes">Notes</button>
+        <button type="button" data-notes-document="todo">Todo</button>
+        <button type="button" data-notes-document="benchmark">Benchmark Positioning</button>
+      </nav>
+
       <div class="notes-statusbar" role="status" aria-live="polite">
         <span data-notes-status>Loading notes...</span>
-        <code>docs/notes/workbench-notes.md</code>
+        <code data-notes-path>docs/notes/workbench-notes.md</code>
       </div>
 
       <article class="notes-preview" data-notes-preview></article>
       <section class="notes-editor" data-notes-editor hidden>
-        <label for="notes-markdown">Markdown</label>
+        <label for="notes-markdown" data-notes-editor-label>Notes Markdown</label>
         <textarea id="notes-markdown" spellcheck="true" data-notes-draft></textarea>
       </section>
     </main>

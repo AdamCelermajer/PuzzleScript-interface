@@ -17,10 +17,24 @@ from client.arc.arcade_env import ArcadeEnv
 from client.engine.architecture import EngineArchitecture, game_rules_path
 from client.engine.llm_client import Config, LlmClient
 from client.engine.memory import ActionEdge, EngineMemory, StateNode
+from client.engine.plan_history import backfill_plan_history
 from client.engine.prompts import PromptStore
 from client.engine.utils import last_grid
 from client.runtime.runner import RuleReasoningLoop
-from workbench.models import DEFAULT_MODEL, PROVIDER_ID, validate_model_selection
+from studies.codex_agent.runner import CodexAgentRunner
+from studies.codex_agent.session import (
+    CodexGameSession,
+    CodexSessionConfig,
+    codex_oauth_status,
+)
+from workbench.models import (
+    CODEX_PROVIDER_ID,
+    DEFAULT_CODEX_MODEL,
+    DEFAULT_MODEL,
+    PROVIDER_ID,
+    validate_codex_model_selection,
+    validate_model_selection,
+)
 
 
 ACTIVE_STATUSES = {"starting", "running", "stopping"}
@@ -31,6 +45,7 @@ ARTIFACT_NAMES = (
     "rule_failures.jsonl",
     "rule_attempt.jsonl",
     "llm_attempt.jsonl",
+    "plan.json",
     "legend.json",
     "run_config.json",
     "prompts.json",
@@ -66,6 +81,8 @@ class WorkbenchRun:
         self.frame_data: Any | None = None
         self.render_step = 0
         self.engine: EngineArchitecture | None = None
+        self.codex_decision: dict[str, Any] | None = None
+        self.codex_timeline: list[dict[str, Any]] = []
         self.stop_event = threading.Event()
         self.thread: threading.Thread | None = None
         self._lock = threading.RLock()
@@ -82,6 +99,15 @@ class WorkbenchRun:
         with self._lock:
             self.render_step = int(steps)
             self.frame_data = frame_data
+
+    def set_codex_decision(self, decision: dict[str, Any]) -> None:
+        with self._lock:
+            self.codex_decision = dict(decision)
+
+    def append_codex_transition(self, transition: dict[str, Any]) -> None:
+        with self._lock:
+            self.codex_timeline.append(dict(transition))
+            self.codex_timeline = self.codex_timeline[-250:]
 
     def snapshot(self) -> dict[str, Any]:
         with self._lock:
@@ -147,6 +173,27 @@ class WorkbenchRun:
                         "exploratory": item.exploratory,
                         "prediction_count": len(item.predictions),
                     }
+            elif self.config.get("agent_mode") == "codex":
+                task_goal = "Solve the game"
+                subgoal = "Continue in one persistent Codex session"
+                active_plan = {
+                    "actions": [],
+                    "next_index": 0,
+                    "remaining": [],
+                    "exploratory": True,
+                    "goal": "Choose one action from each observed frame",
+                }
+                if self.codex_decision is not None:
+                    decision = {
+                        **self.codex_decision,
+                        "source": "codex_session",
+                        "plan": [self.codex_decision.get("action", "")],
+                        "remaining_actions": [],
+                        "subgoal": self.codex_decision.get("note", ""),
+                        "exploratory": True,
+                        "prediction_count": 0,
+                    }
+                timeline = list(self.codex_timeline)
             return {
                 "run_id": self.run_id,
                 "status": self.status,
@@ -240,6 +287,9 @@ class RunManager:
         llm_factory: Callable[..., object] = LlmClient,
         engine_factory: Callable[..., EngineArchitecture] = EngineArchitecture.from_config,
         loop_factory: Callable[..., RuleReasoningLoop] = RuleReasoningLoop,
+        codex_session_factory: Callable[..., object] = CodexGameSession,
+        codex_runner_factory: Callable[..., object] = CodexAgentRunner,
+        codex_runs_dir: str | Path | None = None,
         prompt_store: PromptStore | None = None,
     ) -> None:
         self.rules_dir = Path(rules_dir or default_rules_dir())
@@ -247,6 +297,15 @@ class RunManager:
         self.llm_factory = llm_factory
         self.engine_factory = engine_factory
         self.loop_factory = loop_factory
+        self.codex_session_factory = codex_session_factory
+        self.codex_runner_factory = codex_runner_factory
+        self.codex_runs_dir = Path(
+            codex_runs_dir
+            or Path(__file__).resolve().parents[1]
+            / "studies"
+            / "codex_agent"
+            / "output"
+        )
         self.prompt_store = prompt_store or PromptStore()
         self.runs: dict[str, WorkbenchRun] = {}
         self.current_run_id = ""
@@ -254,20 +313,29 @@ class RunManager:
 
     def start(self, config: dict[str, Any]) -> WorkbenchRun:
         config = {
+            "agent_mode": "rule",
             "provider": PROVIDER_ID,
             "model": DEFAULT_MODEL,
             "reasoning_effort": "",
             **config,
         }
         config["prompt_versions"] = self.prompt_store.snapshot()["versions"]
-        if config["provider"] != PROVIDER_ID:
-            raise ValueError("provider must be openrouter")
-        validate_model_selection(config["model"], config["reasoning_effort"])
+        if config["agent_mode"] == "codex":
+            config["provider"] = CODEX_PROVIDER_ID
+            if not config.get("model") or config["model"] == DEFAULT_MODEL:
+                config["model"] = DEFAULT_CODEX_MODEL
+            config["reasoning_effort"] = config.get("reasoning_effort") or "low"
+            validate_codex_model_selection(
+                config["model"], config["reasoning_effort"]
+            )
+        else:
+            config["provider"] = PROVIDER_ID
+            validate_model_selection(config["model"], config["reasoning_effort"])
         with self._lock:
             current = self.runs.get(self.current_run_id)
             if current is not None and current.status in ACTIVE_STATUSES:
                 raise RuntimeError("A workbench run is already active")
-            if config["memory_mode"] == "fresh":
+            if config["agent_mode"] == "rule" and config["memory_mode"] == "fresh":
                 self._archive_current(config["game_id"])
             run_id = (
                 datetime.now().strftime("%Y%m%dT%H%M%S")
@@ -323,6 +391,9 @@ class RunManager:
                 if run.config["backend"] == "puzzlescript"
                 else "https://three.arcprize.org"
             )
+            if run.config.get("agent_mode") == "codex":
+                self._execute_codex(run, backend_url)
+                return
             cfg = Config(
                 game=run.config["game_id"],
                 model=run.config["model"],
@@ -374,6 +445,49 @@ class RunManager:
         finally:
             run.finished_at = datetime.now().isoformat(timespec="seconds")
 
+    def _execute_codex(self, run: WorkbenchRun, backend_url: str) -> None:
+        output_dir = self.codex_runs_dir / f"{run.run_id}-{run.config['game_id']}"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "run_config.json").write_text(
+            json.dumps(run.config, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        env = self.env_factory(
+            game_id=run.config["game_id"],
+            backend_url=backend_url,
+            renderer=run.render,
+        )
+        config = CodexSessionConfig(
+            model=run.config["model"],
+            effort=run.config["reasoning_effort"],
+        )
+        run.push_event(
+            f"Starting one Codex OAuth session with {config.model} "
+            f"at {config.effort} effort."
+        )
+        run.status = "running"
+        with self.codex_session_factory(
+            config,
+            output_dir / "codex_workspace",
+        ) as session:
+            runner = self.codex_runner_factory(
+                env=env,
+                session=session,
+                output_dir=output_dir,
+                max_steps=run.config["max_steps"],
+                max_decisions=max(
+                    run.config["max_steps"] + 5,
+                    run.config["max_steps"] * 2,
+                ),
+                event_sink=run.push_event,
+                decision_sink=run.set_codex_decision,
+                transition_sink=run.append_codex_transition,
+                stop_event=run.stop_event,
+            )
+            result = runner.run()
+        run.status = result.status
+        run.reason = result.reason
+
     def _archive_current(self, game_id: str) -> Path | None:
         base_path = game_rules_path(self.rules_dir, game_id)
         existing = [base_path / name for name in ARTIFACT_NAMES if (base_path / name).exists()]
@@ -412,6 +526,12 @@ class RunManager:
         if not path.exists():
             raise KeyError("Artifact run not found")
         memory = EngineMemory(path / "timeline.jsonl")
+        plan_history = backfill_plan_history(
+            path / "plan.json",
+            path / "llm_attempt.jsonl",
+            memory,
+        )
+        replay_plan_steps = plan_history.replay_steps(memory)
         inbound_edges = {
             item.after_id: item
             for item in memory.timeline
@@ -466,6 +586,7 @@ class RunManager:
                 "transition_id": inbound_transitions.get(item.id, ""),
                 "state": item.state.to_data(),
                 "prediction": prediction_payload(item.state, inbound_edges.get(item.id)),
+                "plan": replay_plan_steps.get(item.id),
             }
             for item in memory.timeline
             if isinstance(item, StateNode)
@@ -482,6 +603,9 @@ class RunManager:
             "logical_rules": logical_rule_data.get("rules", []),
             "rule_attempts": self._read_jsonl(path / "rule_attempt.jsonl"),
             "failures": self._read_jsonl(path / "rule_failures.jsonl"),
+            "plan_changes": [
+                item.to_data() for item in plan_history.changes
+            ],
         }
 
     def delete_artifact(self, game_id: str, artifact_id: str) -> None:
@@ -547,3 +671,6 @@ class RunManager:
             "openrouter_configured": bool(os.getenv("OPENROUTER_API_KEY")),
             "arc_configured": bool(os.getenv("ARC_API_KEY")),
         }
+
+    def codex_status(self) -> dict[str, object]:
+        return codex_oauth_status()

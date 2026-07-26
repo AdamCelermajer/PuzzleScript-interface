@@ -136,12 +136,14 @@ function installWorkbench(root) {
   let replayIndex = 0
   let replayPayload = null
   let runBusy = false
-  let providerBlocked = false
+  let openRouterBlocked = false
+  let codexBlocked = false
   const startButton = root.querySelector('[data-run-start]')
   const stopButton = root.querySelector('[data-run-stop]')
   const status = root.querySelector('[data-run-status]')
   const summary = root.querySelector('[data-run-summary]')
   const error = root.querySelector('[data-run-error]')
+  const agentModeInputs = root.querySelectorAll('input[name="agent-mode"]')
   const backendInputs = root.querySelectorAll('input[name="backend"]')
   const localGame = root.querySelector('[data-local-game]')
   const arcGame = root.querySelector('[data-arc-game]')
@@ -153,6 +155,13 @@ function installWorkbench(root) {
   const modelSelect = root.querySelector('[data-model]')
   const reasoningField = root.querySelector('[data-reasoning-field]')
   const reasoningEffort = root.querySelector('[data-reasoning-effort]')
+  const codexModel = root.querySelector('[data-codex-model]')
+  const codexEffort = root.querySelector('[data-codex-effort]')
+  const codexState = root.querySelector('[data-codex-state]')
+  const codexVersion = root.querySelector('[data-codex-version]')
+  const codexAuth = root.querySelector('[data-codex-auth]')
+  const codexRefresh = root.querySelector('[data-codex-refresh]')
+  const codexMessage = root.querySelector('[data-codex-message]')
   const openRouterState = root.querySelector('[data-openrouter-state]')
   const openRouterLabel = root.querySelector('[data-openrouter-label]')
   const openRouterUsage = root.querySelector('[data-openrouter-usage]')
@@ -176,12 +185,24 @@ function installWorkbench(root) {
   let modelCatalog = []
   let promptCatalog = []
 
+  function agentMode() {
+    return selectedValue(root, 'agent-mode') || 'rule'
+  }
+
+  function activeProviderBlocked() {
+    return agentMode() === 'codex' ? codexBlocked : openRouterBlocked
+  }
+
   function currentConfig() {
     const backend = selectedValue(root, 'backend') || 'puzzlescript'
+    const mode = agentMode()
     return {
-      provider: 'openrouter',
-      model: modelSelect.value,
-      reasoning_effort: reasoningField.hidden ? '' : reasoningEffort.value,
+      agent_mode: mode,
+      provider: mode === 'codex' ? 'codex_oauth' : 'openrouter',
+      model: mode === 'codex' ? codexModel.value : modelSelect.value,
+      reasoning_effort: mode === 'codex'
+        ? codexEffort.value
+        : reasoningField.hidden ? '' : reasoningEffort.value,
       backend,
       game_id: backend === 'puzzlescript' ? localGame.value : arcGame.value.trim(),
       max_steps: Number(maxSteps.value),
@@ -194,7 +215,28 @@ function installWorkbench(root) {
 
   function refreshSummary() {
     const config = currentConfig()
-    summary.textContent = `OpenRouter | ${config.backend === 'puzzlescript' ? 'Local PuzzleScript' : 'Official ARC'} | ${config.game_id || 'No game'} | ${config.model} | ${config.max_steps} steps`
+    const provider = config.agent_mode === 'codex' ? 'Codex OAuth session' : 'OpenRouter rule agent'
+    const effort = config.agent_mode === 'codex' ? ` | ${config.reasoning_effort === 'low' ? 'Light' : config.reasoning_effort}` : ''
+    summary.textContent = `${provider} | ${config.backend === 'puzzlescript' ? 'Local PuzzleScript' : 'Official ARC'} | ${config.game_id || 'No game'} | ${config.model}${effort} | ${config.max_steps} steps`
+  }
+
+  function refreshAgentMode() {
+    const codex = agentMode() === 'codex'
+    root.querySelectorAll('[data-rule-only]').forEach((item) => { item.hidden = codex })
+    root.querySelectorAll('[data-rule-settings]').forEach((item) => { item.hidden = codex })
+    root.querySelectorAll('[data-codex-settings]').forEach((item) => { item.hidden = !codex })
+    if (codex) {
+      const activeView = root.querySelector('[data-view-tab].active')
+      if (activeView?.dataset.viewTab !== 'run' && activeView?.dataset.viewTab !== 'settings') {
+        root.querySelector('[data-view-tab="run"]').click()
+      }
+      root.querySelector('[data-evidence-tab="timeline"]').click()
+      loadCodexStatus()
+    } else {
+      refreshReasoningEfforts()
+    }
+    startButton.disabled = runBusy || activeProviderBlocked()
+    refreshSummary()
   }
 
   function refreshReasoningEfforts() {
@@ -217,11 +259,12 @@ function installWorkbench(root) {
 
   function setBusy(value) {
     runBusy = value
-    startButton.disabled = value || providerBlocked
+    startButton.disabled = value || activeProviderBlocked()
     stopButton.disabled = !value
     root.querySelectorAll('input:not([data-openrouter-key]), select:not([data-replay-artifact])').forEach((input) => { input.disabled = value })
     openRouterSave.disabled = value
     openRouterRefresh.disabled = value
+    codexRefresh.disabled = value
     promptEditor.disabled = value
     promptSave.disabled = value
     promptReset.disabled = value
@@ -251,9 +294,9 @@ function installWorkbench(root) {
       unreachable: 'Status unreachable',
       unavailable: 'Status unavailable',
     }
-    providerBlocked = blockedStates.has(payload.state)
+    openRouterBlocked = blockedStates.has(payload.state)
     openRouterState.textContent = labels[payload.state] || payload.state || 'Unknown'
-    openRouterState.dataset.state = providerBlocked ? 'blocked' : 'usable'
+    openRouterState.dataset.state = openRouterBlocked ? 'blocked' : 'usable'
     openRouterLabel.textContent = payload.label || '--'
     openRouterUsage.textContent = formatCredits(payload.usage)
     openRouterMonthly.textContent = formatCredits(payload.usage_monthly)
@@ -262,7 +305,7 @@ function installWorkbench(root) {
       : formatCredits(payload.limit_remaining)
     openRouterReset.textContent = payload.limit_reset || 'Never'
     openRouterKey.value = payload.api_key || ''
-    startButton.disabled = runBusy || providerBlocked
+    startButton.disabled = runBusy || activeProviderBlocked()
   }
 
   async function loadOpenRouterStatus() {
@@ -283,7 +326,46 @@ function installWorkbench(root) {
     }
   }
 
+  function renderCodexStatus(payload) {
+    codexBlocked = !payload.available || !payload.logged_in
+    const labels = {
+      ready: 'Ready',
+      login_required: 'Login required',
+      runtime_missing: 'Runtime missing',
+      unavailable: 'Unavailable',
+    }
+    codexState.textContent = labels[payload.state] || payload.state || 'Unknown'
+    codexState.dataset.state = codexBlocked ? 'blocked' : 'usable'
+    codexVersion.textContent = payload.version || '--'
+    codexAuth.textContent = payload.logged_in ? 'Logged in with ChatGPT' : 'Not logged in'
+    codexMessage.textContent = payload.message || 'Uses the Codex desktop login on this machine.'
+    startButton.disabled = runBusy || activeProviderBlocked()
+  }
+
+  async function loadCodexStatus() {
+    codexRefresh.disabled = true
+    codexMessage.classList.remove('error')
+    codexMessage.textContent = 'Checking the local Codex session...'
+    try {
+      renderCodexStatus(await request('/codex/status', { cache: 'no-store' }))
+    } catch (statusError) {
+      codexBlocked = true
+      codexMessage.classList.add('error')
+      codexMessage.textContent = statusError.message
+      startButton.disabled = runBusy || activeProviderBlocked()
+    } finally {
+      codexRefresh.disabled = runBusy
+    }
+  }
+
   function update(snapshot) {
+    if (
+      snapshot.config?.agent_mode
+      && snapshot.config.agent_mode !== agentMode()
+    ) {
+      setSelected(root, 'agent-mode', snapshot.config.agent_mode)
+      refreshAgentMode()
+    }
     const running = activeStatuses.has(snapshot.status)
     setBusy(running)
     status.textContent = snapshot.status || 'idle'
@@ -304,14 +386,23 @@ function installWorkbench(root) {
     }
 
     const reasoning = snapshot.reasoning || {}
+    const codex = snapshot.config?.agent_mode === 'codex'
     root.querySelector('[data-task-goal]').textContent = reasoning.task_goal || 'Not defined'
     root.querySelector('[data-subgoal]').textContent = reasoning.subgoal || 'None'
     const decision = reasoning.decision
-    root.querySelector('[data-decision]').textContent = decision ? `${decision.action} | ${decision.source} | ${decision.prediction_count} predictions` : 'None'
+    root.querySelector('[data-decision]').textContent = decision
+      ? codex
+        ? `${decision.action} | ${decision.note || 'no note'} | decision ${decision.decision || ''}`.replace(/\s+\| decision\s*$/, '')
+        : `${decision.action} | ${decision.source} | ${decision.prediction_count} predictions`
+      : 'None'
     const plan = reasoning.active_plan
-    root.querySelector('[data-active-plan]').textContent = plan ? `${plan.remaining.join(' > ') || 'Complete'}${plan.exploratory ? ' | exploratory' : ''}` : 'None'
+    root.querySelector('[data-active-plan]').textContent = codex
+      ? 'One action per observed frame'
+      : plan ? `${plan.remaining.join(' > ') || 'Complete'}${plan.exploratory ? ' | exploratory' : ''}` : 'None'
     const legend = snapshot.legend || {}
-    root.querySelector('[data-legend]').textContent = Object.entries(legend).map(([value, description]) => `${value} = ${description}`).join(' | ') || 'Not available'
+    root.querySelector('[data-legend]').textContent = codex
+      ? 'Not supplied; Codex sees the rendered frame and integer grid'
+      : Object.entries(legend).map(([value, description]) => `${value} = ${description}`).join(' | ') || 'Not available'
 
     const collections = {
       natural: snapshot.natural_rules || [], logical: snapshot.logical_rules || [], failures: snapshot.failures || [], attempts: snapshot.rule_attempts || [], timeline: snapshot.timeline || [], logs: snapshot.events || [],
@@ -389,6 +480,8 @@ function installWorkbench(root) {
     if (!replayFrames.length) {
       container.innerHTML = '<div class="frame-empty">No frames recorded</div>'
       root.querySelector('[data-replay-position]').textContent = '0 / 0'
+      root.querySelector('[data-replay-subgoal]').textContent = 'Subgoal: Unavailable'
+      root.querySelector('[data-replay-plan]').textContent = 'Plan: Unavailable'
       renderReplayPrediction(null)
       renderReplayRules('')
       return
@@ -403,6 +496,13 @@ function installWorkbench(root) {
     root.querySelector('[data-replay-position]').textContent = `${replayIndex + 1} / ${replayFrames.length}`
     root.querySelector('[data-replay-state]').textContent = state.state || 'UNKNOWN'
     root.querySelector('[data-replay-action]').textContent = `Action: ${frame.action || 'None'}`
+    const plan = frame.plan
+    root.querySelector('[data-replay-subgoal]').textContent = plan
+      ? `Subgoal: ${plan.subgoal}`
+      : 'Subgoal: Unavailable'
+    root.querySelector('[data-replay-plan]').textContent = plan
+      ? `Plan ${plan.step_index} / ${plan.total_steps}: ${plan.actions.map((action, index) => index + 1 === plan.step_index ? `[${action}]` : action).join(' > ')}`
+      : 'Plan: Unavailable'
     const legend = replayPayload?.legend || {}
     root.querySelector('[data-replay-legend]').textContent = Object.entries(legend).map(([value, description]) => `${value} = ${description}`).join(' | ') || 'Legend unavailable'
     renderReplayPrediction(frame)
@@ -549,6 +649,7 @@ function installWorkbench(root) {
   })
 
   openRouterRefresh.addEventListener('click', loadOpenRouterStatus)
+  codexRefresh.addEventListener('click', loadCodexStatus)
   openRouterSave.addEventListener('click', async () => {
     const apiKey = openRouterKey.value.trim()
     if (!apiKey) {
@@ -660,6 +761,7 @@ function installWorkbench(root) {
     root.querySelector('[data-arc-game-field]').hidden = local
     refreshSummary()
   }))
+  agentModeInputs.forEach((input) => input.addEventListener('change', refreshAgentMode))
   provideEndGoal.addEventListener('change', () => {
     endGoalField.hidden = !provideEndGoal.checked
     refreshSummary()
@@ -693,6 +795,12 @@ function installWorkbench(root) {
     modelSelect.innerHTML = modelCatalog.map((model) => `<option value="${escapeHtml(model.id)}">${escapeHtml(model.label)}</option>`).join('')
     if ([...modelSelect.options].some((option) => option.value === defaultModel)) modelSelect.value = defaultModel
     refreshReasoningEfforts()
+    const codexCatalog = payload.codex || {}
+    const codexModels = codexCatalog.models || []
+    codexModel.innerHTML = codexModels.map((model) => `<option value="${escapeHtml(model.id)}">${escapeHtml(model.label)}</option>`).join('')
+    if (codexCatalog.default_model && [...codexModel.options].some((option) => option.value === codexCatalog.default_model)) {
+      codexModel.value = codexCatalog.default_model
+    }
     refreshSummary()
   }).catch((modelError) => { error.textContent = modelError.message })
   request('/health').then((health) => {
@@ -701,7 +809,8 @@ function installWorkbench(root) {
   restoreCurrentRun().catch((restoreError) => { error.textContent = restoreError.message })
   loadOpenRouterStatus()
   setSelected(root, 'backend', 'puzzlescript')
-  refreshSummary()
+  setSelected(root, 'agent-mode', 'rule')
+  refreshAgentMode()
 }
 
 const root = document.querySelector('[data-workbench]')

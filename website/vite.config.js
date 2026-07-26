@@ -12,10 +12,14 @@ const pseudocodeSource = resolve(repoRoot, 'docs/pseudocode')
 const pseudocodeManifest = resolve(pseudocodeSource, 'manifest.json')
 const pseudocodeSaveRoute = '/__pseudocode/save'
 const notesSource = resolve(repoRoot, 'docs/notes')
-const notesFile = resolve(notesSource, 'workbench-notes.md')
+const allowedNotesFiles = new Set(['workbench-notes.md', 'todo.md', 'benchmark-positioning.md'])
 const notesSaveRoute = '/__notes/save'
 const maxPseudocodeBytes = 1024 * 1024
 const workbenchApiPort = process.env.WORKBENCH_API_PORT || '8010'
+const allowedHosts = (process.env.WORKBENCH_ALLOWED_HOSTS || '')
+  .split(',')
+  .map((host) => host.trim())
+  .filter(Boolean)
 
 const sourceRoutes = [
   {
@@ -114,10 +118,19 @@ async function savePseudocodeMarkdown(payload) {
 }
 
 async function saveNotesMarkdown(payload) {
-  if (typeof payload?.markdown !== 'string') {
-    throw Object.assign(new Error('Markdown is required'), { statusCode: 400 })
+  const file = payload?.file
+  const markdown = payload?.markdown
+  if (typeof file !== 'string' || typeof markdown !== 'string') {
+    throw Object.assign(new Error('Both file and markdown are required'), { statusCode: 400 })
   }
-  await fsp.writeFile(notesFile, payload.markdown, 'utf8')
+  if (!allowedNotesFiles.has(file)) {
+    throw Object.assign(new Error('Only notebook files listed by the Notes page can be saved'), { statusCode: 403 })
+  }
+  const filePath = safeResolve(notesSource, file)
+  if (!filePath || extname(filePath).toLowerCase() !== '.md') {
+    throw Object.assign(new Error('Invalid notes Markdown path'), { statusCode: 400 })
+  }
+  await fsp.writeFile(filePath, markdown, 'utf8')
 }
 
 async function copySourceRoutes(outDir) {
@@ -228,8 +241,10 @@ export default defineConfig({
     },
   },
   server: {
+    allowedHosts,
     proxy: {
       '/api/workbench': `http://127.0.0.1:${workbenchApiPort}`,
+      '/api/optimal-path': `http://127.0.0.1:${workbenchApiPort}`,
     },
     fs: {
       allow: [repoRoot],
@@ -247,6 +262,7 @@ export default defineConfig({
         goalRecognitionViewer: resolve(__dirname, 'experiments/goal-recognition/index.html'),
         thinkingComparison: resolve(__dirname, 'experiments/thinking-comparison.html'),
         liveFramework: resolve(__dirname, 'experiments/live-framework.html'),
+        optimalPath: resolve(__dirname, 'experiments/optimal-path.html'),
         games: resolve(__dirname, 'games/index.html'),
         sokobanBasic: resolve(__dirname, 'games/sokoban-basic.html'),
         architecture: resolve(__dirname, 'docs/architecture.html'),

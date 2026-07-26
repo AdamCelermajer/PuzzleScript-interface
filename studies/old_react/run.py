@@ -11,8 +11,8 @@ if __package__ in {None, ""}:
 from client.arc.arcade_env import ArcadeEnv
 from client.screen_dashboard import ScreenDashboard
 
-from studies.react_agent.llm_client import ReactLlmClient, ReactLlmConfig
-from studies.react_agent.runner import ReactAgentRunner
+from studies.old_react.llm_client import ReactLlmClient, ReactLlmConfig
+from studies.old_react.runner import ReactAgentRunner
 
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
@@ -24,17 +24,17 @@ def _run_id() -> str:
 
 def _print_event(message: str) -> None:
     safe = str(message).encode("ascii", errors="replace").decode("ascii")
-    print(f"[react] {safe}")
+    print(f"[old-react] {safe}")
 
 
 def main() -> None:
-    parser = ArgumentParser(description="Experimental ReAct PuzzleScript agent")
+    parser = ArgumentParser(description="Archived experimental ReAct PuzzleScript agent")
     parser.add_argument("--backend-url", default="http://localhost:8000")
     parser.add_argument("--game-id", default="ps_sokoban_basic-v1")
     parser.add_argument(
         "--model",
         default="kimi-k2.6",
-        help="Moonshot/Kimi model id to use for the ReAct agent.",
+        help="Moonshot/Kimi model id to use for the archived ReAct agent.",
     )
     parser.add_argument("--max-steps", type=int, default=50)
     parser.add_argument("--max-tool-calls", type=int, default=None)
@@ -73,8 +73,8 @@ def main() -> None:
     if not args.no_window:
         dashboard = ScreenDashboard(
             game_id=args.game_id,
-            mode="REACT",
-            controls="ReAct agent dashboard. Close the window or press Ctrl+C to stop.",
+            mode="OLD REACT",
+            controls="Archived ReAct agent dashboard. Close or press Ctrl+C to stop.",
         )
         event_sink = dashboard.push_event
     else:
@@ -118,7 +118,7 @@ def main() -> None:
 
     result = result_holder.get("result")
     if result is None:
-        print("React agent run interrupted before completion.")
+        print("Old ReAct agent run interrupted before completion.")
         print(f"output_dir={output_dir}")
         return
 
