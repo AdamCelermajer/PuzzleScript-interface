@@ -559,9 +559,11 @@ from pathlib import Path
 
 def call(method, params=None):
     root = Path(__file__).resolve().parent / ".avo_rpc"
-    request_file = root / "request.json"
-    response_file = root / "response.json"
     request_id = uuid.uuid4().hex
+    request_file = root / "requests" / f"{request_id}.json"
+    response_file = root / "responses" / f"{request_id}.json"
+    request_file.parent.mkdir(parents=True, exist_ok=True)
+    response_file.parent.mkdir(parents=True, exist_ok=True)
     payload = {"id": request_id, "method": method, "params": params or {}}
     request_file.write_text(json.dumps(payload), encoding="utf-8")
     deadline = time.monotonic() + 180
@@ -572,6 +574,8 @@ def call(method, params=None):
             time.sleep(0.05)
             continue
         if data.get("id") == request_id:
+            response_file.unlink(missing_ok=True)
+            request_file.unlink(missing_ok=True)
             if not data.get("ok"):
                 raise SystemExit(data.get("error", "AVO tool failed"))
             print(json.dumps(data["result"], indent=2))
@@ -654,16 +658,15 @@ class FileToolServer:
         self.gateway = gateway
         self.workspace = Path(workspace).resolve()
         self.rpc_root = self.workspace / ".avo_rpc"
-        self.request_file = self.rpc_root / "request.json"
-        self.response_file = self.rpc_root / "response.json"
+        self.request_dir = self.rpc_root / "requests"
+        self.response_dir = self.rpc_root / "responses"
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
 
     def install(self) -> None:
         self.workspace.mkdir(parents=True, exist_ok=True)
-        self.rpc_root.mkdir(parents=True, exist_ok=True)
-        self.request_file.write_text("{}", encoding="utf-8")
-        self.response_file.write_text("{}", encoding="utf-8")
+        self.request_dir.mkdir(parents=True, exist_ok=True)
+        self.response_dir.mkdir(parents=True, exist_ok=True)
         (self.workspace / "avo_tool.py").write_text(AGENT_CLI, encoding="utf-8")
         (self.workspace / "AGENT_INTERFACE.md").write_text(
             AGENT_INTERFACE,
@@ -689,31 +692,38 @@ class FileToolServer:
             self._thread.join(timeout=5)
 
     def _serve(self) -> None:
-        last_request_id = ""
+        processed: set[str] = set()
         while not self._stop.is_set():
-            try:
-                request = json.loads(self.request_file.read_text(encoding="utf-8"))
-            except (json.JSONDecodeError, OSError):
+            pending = [
+                path
+                for path in sorted(self.request_dir.glob("*.json"))
+                if path.stem not in processed
+            ]
+            if not pending:
                 self._stop.wait(0.05)
                 continue
-            request_id = str(request.get("id", ""))
-            if not request_id or request_id == last_request_id:
-                self._stop.wait(0.05)
-                continue
-            last_request_id = request_id
-            try:
-                result = self.gateway.handle(
-                    str(request.get("method", "")),
-                    request.get("params", {}),
+            for request_file in pending:
+                try:
+                    request = json.loads(request_file.read_text(encoding="utf-8"))
+                except (json.JSONDecodeError, OSError):
+                    continue
+                request_id = str(request.get("id", ""))
+                if not request_id:
+                    continue
+                processed.add(request_id)
+                try:
+                    result = self.gateway.handle(
+                        str(request.get("method", "")),
+                        request.get("params", {}),
+                    )
+                    response = {"id": request_id, "ok": True, "result": result}
+                except Exception as exc:
+                    response = {
+                        "id": request_id,
+                        "ok": False,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                (self.response_dir / f"{request_id}.json").write_text(
+                    json.dumps(response, default=str),
+                    encoding="utf-8",
                 )
-                response = {"id": request_id, "ok": True, "result": result}
-            except Exception as exc:
-                response = {
-                    "id": request_id,
-                    "ok": False,
-                    "error": f"{type(exc).__name__}: {exc}",
-                }
-            self.response_file.write_text(
-                json.dumps(response, default=str),
-                encoding="utf-8",
-            )

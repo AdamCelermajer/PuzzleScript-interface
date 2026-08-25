@@ -4,6 +4,8 @@ import json
 import subprocess
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
@@ -146,6 +148,54 @@ class EvolutionTests(unittest.TestCase):
             self.assertIn("fork PARENT_ID CHILD_ID", OPTIMIZER_INTERFACE)
             self.assertNotIn(" probe ", OPTIMIZER_INTERFACE)
             self.assertNotIn("checkpoint", OPTIMIZER_INTERFACE)
+
+    def test_optimizer_rpc_keeps_concurrent_responses_separate(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            store = EvolutionStore.create(root / "evolution")
+            store.create_seed("x_0001", "fitness=1")
+            gateway = EvolutionGateway(
+                store,
+                DeterministicEvaluator(),
+                mission="Improve the player.",
+            )
+            population_started = threading.Event()
+            original_handle = gateway.handle
+
+            def delayed_handle(method: str, params=None):
+                if method == "population":
+                    population_started.set()
+                    time.sleep(0.25)
+                return original_handle(method, params)
+
+            gateway.handle = delayed_handle  # type: ignore[method-assign]
+            server = EvolutionFileToolServer(gateway, store.optimizer_workspace)
+            server.start()
+            try:
+                population = subprocess.Popen(
+                    [sys.executable, "avo_evolve_tool.py", "population"],
+                    cwd=store.optimizer_workspace,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                self.assertTrue(population_started.wait(timeout=5))
+                status = subprocess.Popen(
+                    [sys.executable, "avo_evolve_tool.py", "status"],
+                    cwd=store.optimizer_workspace,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                population_stdout, population_stderr = population.communicate(timeout=10)
+                status_stdout, status_stderr = status.communicate(timeout=10)
+            finally:
+                server.stop()
+
+            self.assertEqual(population.returncode, 0, population_stderr)
+            self.assertEqual(status.returncode, 0, status_stderr)
+            self.assertEqual(json.loads(population_stdout)["candidate_count"], 1)
+            self.assertFalse(json.loads(status_stdout)["finished"])
 
     def test_candidate_evaluator_reloads_profile_for_every_fresh_run(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
