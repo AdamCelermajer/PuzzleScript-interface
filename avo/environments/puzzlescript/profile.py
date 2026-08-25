@@ -28,6 +28,7 @@ class PuzzleScriptProfile:
         return TaskEvaluation(
             terminal=current.status in {"WIN", "GAME_OVER"},
             success=success,
+            fitness=float(levels_completed),
             score={
                 "success": int(success),
                 "levels_completed": levels_completed,

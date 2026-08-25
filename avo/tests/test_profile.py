@@ -11,7 +11,7 @@ class PuzzleScriptProfileTests(unittest.TestCase):
         self.assertEqual(manifest.name, "profile.toml")
         self.assertEqual(manifest.parent.name, "puzzlescript")
 
-    def test_fitness_is_success_then_action_cost(self) -> None:
+    def test_fitness_is_levels_completed(self) -> None:
         profile = PuzzleScriptProfile(environment=None)  # type: ignore[arg-type]
         before = Observation(payload={}, status="PLAYING")
         won = Observation(
@@ -24,6 +24,7 @@ class PuzzleScriptProfileTests(unittest.TestCase):
 
         self.assertTrue(result.terminal)
         self.assertTrue(result.success)
+        self.assertEqual(result.fitness, 2)
         self.assertEqual(result.score["success"], 1)
         self.assertEqual(result.score["levels_completed"], 2)
         self.assertEqual(result.score["environment_actions"], 1)
@@ -39,6 +40,7 @@ class PuzzleScriptProfileTests(unittest.TestCase):
 
         self.assertFalse(result.terminal)
         self.assertFalse(result.success)
+        self.assertEqual(result.fitness, 1)
         self.assertEqual(result.score["success"], 0)
 
 

@@ -5,11 +5,9 @@ import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
-
 from avo.analysis.run_trace import RunTraceRecorder
-from avo.core.agent_backend import AgentRunResult
-from avo.core.tool_gateway import AvoToolGateway, FileToolServer
+from avo.core.agent_backend import AgentGateway, AgentRunResult, AgentToolServer
+from avo.core.tool_gateway import FileToolServer
 from studies.codex_agent.session import _find_codex_bin
 
 
@@ -42,8 +40,10 @@ class CodexOAuthAgent:
 
     def run(
         self,
-        gateway: AvoToolGateway,
+        gateway: AgentGateway,
         workspace: str | Path,
+        *,
+        tool_server: AgentToolServer | None = None,
     ) -> AgentRunResult:
         try:
             from openai_codex import ApprovalMode, Codex, CodexConfig, Sandbox, TextInput
@@ -58,7 +58,7 @@ class CodexOAuthAgent:
             if self.config.analysis_dir
             else None
         )
-        server = FileToolServer(gateway, workspace_path)
+        server = tool_server or FileToolServer(gateway, workspace_path)  # type: ignore[arg-type]
         server.start()
         if trace is not None:
             trace.snapshot("workspace_initialized")
@@ -133,8 +133,9 @@ class CodexOAuthAgent:
                     if status["finished"]:
                         break
                     instruction = (
-                        "Continue the same AVO run. Check `python avo_tool.py status`, then "
-                        "keep using the tools. Do not return while the task remains active. "
+                        "Continue the same AVO run. Use the status command documented in "
+                        "AGENT_INTERFACE.md, then keep using the tools. Do not return while "
+                        "the task remains active. "
                         "Calling finish stops the run but does not make it successful."
                     )
                 else:

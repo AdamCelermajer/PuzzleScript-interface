@@ -2,9 +2,26 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Mapping, Protocol
 
-from avo.core.tool_gateway import AvoToolGateway
+
+class AgentGateway(Protocol):
+    finish_reason: str
+
+    @property
+    def terminal(self) -> bool: ...
+
+    def handle(
+        self,
+        method: str,
+        params: Mapping[str, Any] | None = None,
+    ) -> Any: ...
+
+
+class AgentToolServer(Protocol):
+    def start(self) -> None: ...
+
+    def stop(self) -> None: ...
 
 
 @dataclass(frozen=True)
@@ -21,6 +38,6 @@ class AgentBackend(Protocol):
 
     def run(
         self,
-        gateway: AvoToolGateway,
+        gateway: AgentGateway,
         workspace: str | Path,
     ) -> AgentRunResult: ...

@@ -28,7 +28,7 @@ class IdleProfile:
         self.environment = environment
 
     def evaluate(self, history, current):
-        return TaskEvaluation(False, False, {"success": 0})
+        return TaskEvaluation(False, False, 0.0, {"success": 0})
 
 
 class FakeTurn:
@@ -70,6 +70,18 @@ class FakeCodex:
         return self.thread
 
 
+class RecordingToolServer:
+    def __init__(self):
+        self.started = False
+        self.stopped = False
+
+    def start(self):
+        self.started = True
+
+    def stop(self):
+        self.stopped = True
+
+
 class CodexOAuthAgentTests(unittest.TestCase):
     def test_uses_one_persistent_workspace_write_thread(self):
         with tempfile.TemporaryDirectory() as root:
@@ -91,6 +103,24 @@ class CodexOAuthAgentTests(unittest.TestCase):
                 "workspace-write",
             )
             self.assertIn("unknown interactive environment", FakeCodex.instance.thread_settings["base_instructions"])
+
+    def test_accepts_a_custom_tool_server_for_the_outer_loop(self):
+        with tempfile.TemporaryDirectory() as root:
+            environment = IdleEnvironment()
+            lab = AvoLaboratory(environment, [], Path(root) / "evidence")
+            gateway = AvoToolGateway(lab, IdleProfile(environment), Path(root) / "trusted-candidates")
+            server = RecordingToolServer()
+            with patch("openai_codex.Codex", FakeCodex), patch(
+                "avo.client.codex_oauth_agent._find_codex_bin", return_value="codex"
+            ):
+                CodexOAuthAgent(CodexOAuthConfig(max_turns=1)).run(
+                    gateway,
+                    Path(root) / "workspace",
+                    tool_server=server,
+                )
+
+            self.assertTrue(server.started)
+            self.assertTrue(server.stopped)
 
 
 if __name__ == "__main__":

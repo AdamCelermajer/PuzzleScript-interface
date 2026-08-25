@@ -75,6 +75,7 @@ class AvoToolGateway:
             "objective": self.profile.objective,
             "terminal": evaluation.terminal,
             "success": evaluation.success,
+            "fitness": evaluation.fitness,
             "score": _jsonable(evaluation.score),
         }
 

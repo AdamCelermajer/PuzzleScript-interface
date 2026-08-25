@@ -14,6 +14,7 @@ from avo.core.framework import EnvironmentContract, JsonValue, Observation, Tran
 class TaskEvaluation:
     terminal: bool
     success: bool
+    fitness: float
     score: Mapping[str, JsonValue]
 
 

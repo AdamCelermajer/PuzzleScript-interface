@@ -55,6 +55,7 @@ class CounterProfile:
         return TaskEvaluation(
             terminal=success,
             success=success,
+            fitness=float(success),
             score={"success": int(success), "environment_actions": len(history)},
         )
 
@@ -78,6 +79,7 @@ class AvoToolGatewayTests(unittest.TestCase):
             self.assertEqual(result["evaluations"], [])
             self.assertTrue(result["task"]["terminal"])
             self.assertTrue(result["task"]["success"])
+            self.assertEqual(result["task"]["fitness"], 1)
 
     def test_file_rpc_exposes_the_same_generic_gateway(self) -> None:
         with tempfile.TemporaryDirectory() as root:
