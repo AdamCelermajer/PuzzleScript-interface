@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "complexity": 0.05,
+  "command": [
+    "$PYTHON",
+    "predict.py"
+  ],
+  "candidate_id": "x_static",
+  "parent_id": null,
+  "claim": "The selected action leaves the observation unchanged."
+}

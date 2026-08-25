@@ -1,0 +1,1 @@
+"""PuzzleScript specialization for AVO."""

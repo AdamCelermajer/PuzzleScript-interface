@@ -1,0 +1,19 @@
+{
+  "scenario_id": "fixed-partial-success-v1",
+  "seed": 3838,
+  "initial_correct_rule_predictions": 4,
+  "games": [
+    {
+      "game_id": "ps_sokoban_basic-v1",
+      "solution_fraction": 1.0
+    },
+    {
+      "game_id": "ps_coin_counter-v1",
+      "solution_fraction": 0.56
+    },
+    {
+      "game_id": "ps_wall_shuffle-v1",
+      "solution_fraction": 0.55
+    }
+  ]
+}

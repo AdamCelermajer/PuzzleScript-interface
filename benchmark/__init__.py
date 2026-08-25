@@ -1,0 +1,2 @@
+"""Runnable PuzzleScript benchmark package."""
+

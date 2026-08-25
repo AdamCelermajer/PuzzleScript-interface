@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_moving_target-v1",
+  "level_index": 2,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 5,
+  "actions": [
+    "UP",
+    "LEFT",
+    "LEFT",
+    "LEFT",
+    "UP"
+  ]
+}

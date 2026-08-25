@@ -1,0 +1,14 @@
+{
+  "client": "AVO-inspired",
+  "game_id": "ps_sokoban_basic-v1",
+  "backend_url": "http://localhost:8000",
+  "model": "gpt-5.6-sol",
+  "effort": "high",
+  "supervisor_effort": "medium",
+  "max_steps": 50,
+  "max_decisions": 20,
+  "max_batch_actions": 20,
+  "supervise_after_stalls": 3,
+  "visual": false,
+  "workspace_isolation": "external temporary directory"
+}

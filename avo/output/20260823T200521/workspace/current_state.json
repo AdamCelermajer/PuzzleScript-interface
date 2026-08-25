@@ -1,0 +1,119 @@
+{
+  "game": "unknown-game",
+  "state": "PLAYING",
+  "levels_completed": 0,
+  "win_levels": 2,
+  "available_actions": [
+    "ACTION1",
+    "ACTION2",
+    "ACTION3",
+    "ACTION4",
+    "ACTION5",
+    "ACTION7"
+  ],
+  "action_meanings": "RESET=restart current level, ACTION1=Up, ACTION2=Down, ACTION3=Left, ACTION4=Right, ACTION5=Space/Action, ACTION7=Undo",
+  "actions_used": 10,
+  "action_budget": 150,
+  "grid": [
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      5,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      4,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      3,
+      2,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ]
+  ],
+  "previous_batch": {
+    "requested_actions": [
+      "ACTION3"
+    ],
+    "prediction": "Player at (4,4) moves left. Most likely token 3 is a pushable box: (4,2)=3, (4,3)=2, (4,4)=0. Alternative: player walks onto 3 giving (4,3)=2,(4,4)=0, or no-op if solid.",
+    "transitions": [
+      {
+        "id": "T000010",
+        "action": "ACTION3",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 4,
+            "col": 2,
+            "before": 0,
+            "after": 3
+          },
+          {
+            "row": 4,
+            "col": 3,
+            "before": 3,
+            "after": 2
+          },
+          {
+            "row": 4,
+            "col": 4,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "Player at (4,4) moves left. Most likely token 3 is a pushable box: (4,2)=3, (4,3)=2, (4,4)=0. Alternative: player walks onto 3 giving (4,3)=2,(4,4)=0, or no-op if solid.",
+        "note": "Key learning: token 5 reappeared after player left it, so 5 is a target marker, not a collectible. Now determining if 3 is pushable."
+      }
+    ],
+    "error": ""
+  }
+}

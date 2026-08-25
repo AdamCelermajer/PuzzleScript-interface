@@ -1,0 +1,159 @@
+{
+  "benchmark_id": "puzzlescript-world",
+  "version": "0.4.0",
+  "generated_from": "benchmark/reference-source.json",
+  "game_count": 21,
+  "tracks": [
+    "rule_learning",
+    "closeness"
+  ],
+  "games": [
+    {
+      "game_id": "ps_coin_counter-v1",
+      "directory": "ps_coin_counter-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_enqueue-v1",
+      "directory": "ps_enqueue-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_punt_mazes-v1",
+      "directory": "ps_punt_mazes-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_compressed-v1",
+      "directory": "ps_compressed-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_spacekoban-v1",
+      "directory": "ps_spacekoban-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_fatigued_square_maze-v1",
+      "directory": "ps_fatigued_square_maze-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_wall_shuffle-v1",
+      "directory": "ps_wall_shuffle-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_knightoban-v1",
+      "directory": "ps_knightoban-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_icecrates-v1",
+      "directory": "ps_icecrates-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_atlas_shrank-v1",
+      "directory": "ps_atlas_shrank-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_sokoban_basic-v1",
+      "directory": "ps_sokoban_basic-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_wall_virus-v1",
+      "directory": "ps_wall_virus-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_maera_public_works-v1",
+      "directory": "ps_maera_public_works-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_extra_step-v1",
+      "directory": "ps_extra_step-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_moving_target-v1",
+      "directory": "ps_moving_target-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_on_and_off-v1",
+      "directory": "ps_on_and_off-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_take_heart_lass-v1",
+      "directory": "ps_take_heart_lass-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_midas-v1",
+      "directory": "ps_midas-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_rotaters_cause-v1",
+      "directory": "ps_rotaters_cause-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_the_switch-v1",
+      "directory": "ps_the_switch-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    },
+    {
+      "game_id": "ps_some_pits-v1",
+      "directory": "ps_some_pits-v1",
+      "artifact_status": "replay_verified",
+      "levels": 1,
+      "rule_probes": 10
+    }
+  ]
+}

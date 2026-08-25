@@ -1,0 +1,1 @@
+"""Environment-neutral AVO kernel."""

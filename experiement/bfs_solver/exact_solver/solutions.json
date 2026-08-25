@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "scope": "First playable map of each of the nine cases that timed out in semantic_all_60s_results.json.",
+  "actionCost": "One external directional input.",
+  "solutions": [
+    {
+      "gameId": "ps_fire_in_winter-v1",
+      "levelIndex": 2,
+      "depth": 65,
+      "actions": ["UP", "UP", "RIGHT", "RIGHT", "LEFT", "LEFT", "DOWN", "RIGHT", "DOWN", "RIGHT", "UP", "UP", "LEFT", "UP", "RIGHT", "RIGHT", "RIGHT", "LEFT", "LEFT", "LEFT", "LEFT", "LEFT", "UP", "UP", "RIGHT", "RIGHT", "RIGHT", "RIGHT", "RIGHT", "RIGHT", "UP", "LEFT", "LEFT", "RIGHT", "LEFT", "LEFT", "DOWN", "DOWN", "RIGHT", "RIGHT", "UP", "DOWN", "LEFT", "LEFT", "UP", "UP", "LEFT", "LEFT", "LEFT", "LEFT", "UP", "UP", "RIGHT", "RIGHT", "RIGHT", "UP", "RIGHT", "RIGHT", "RIGHT", "UP", "LEFT", "LEFT", "DOWN", "LEFT", "UP"],
+      "engine": "compiled_fire_in_winter_level_one",
+      "expandedStates": 1745207,
+      "uniqueStates": 1997303,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_self_alteration-v1",
+      "levelIndex": 2,
+      "depth": 22,
+      "actions": ["DOWN", "DOWN", "LEFT", "DOWN", "DOWN", "DOWN", "RIGHT", "DOWN", "RIGHT", "UP", "UP", "UP", "UP", "LEFT", "LEFT", "UP", "UP", "RIGHT", "RIGHT", "RIGHT", "DOWN", "LEFT"],
+      "engine": "compiled_self_alteration_level_one",
+      "expandedStates": 11497,
+      "uniqueStates": 20463,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_collapsing_tiles-v1",
+      "levelIndex": 2,
+      "depth": 14,
+      "actions": ["UP", "UP", "UP", "LEFT", "UP", "RIGHT", "RIGHT", "DOWN", "RIGHT", "DOWN", "DOWN", "DOWN", "LEFT", "LEFT"],
+      "engine": "machine_state_exact_a_star",
+      "expandedStates": 138,
+      "uniqueStates": 360,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_fuse_to_green-v1",
+      "levelIndex": 2,
+      "depth": 19,
+      "actions": ["UP", "LEFT", "LEFT", "LEFT", "UP", "RIGHT", "RIGHT", "RIGHT", "RIGHT", "DOWN", "RIGHT", "UP", "RIGHT", "UP", "LEFT", "LEFT", "DOWN", "LEFT", "UP"],
+      "engine": "compiled_fuse_to_green_level_one",
+      "expandedStates": 2547,
+      "uniqueStates": 2863,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_dark_pellets-v1",
+      "levelIndex": 3,
+      "depth": 21,
+      "actions": ["LEFT", "LEFT", "DOWN", "DOWN", "RIGHT", "UP", "RIGHT", "RIGHT", "RIGHT", "DOWN", "LEFT", "DOWN", "RIGHT", "DOWN", "DOWN", "DOWN", "LEFT", "LEFT", "UP", "UP", "UP"],
+      "engine": "compiled_dark_pellets_level_one",
+      "expandedStates": 59867,
+      "uniqueStates": 76134,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_infected-v1",
+      "levelIndex": 2,
+      "depth": 27,
+      "actions": ["UP", "RIGHT", "UP", "UP", "LEFT", "UP", "RIGHT", "RIGHT", "DOWN", "DOWN", "UP", "RIGHT", "UP", "RIGHT", "UP", "LEFT", "LEFT", "UP", "LEFT", "DOWN", "DOWN", "DOWN", "DOWN", "DOWN", "LEFT", "DOWN", "RIGHT"],
+      "engine": "compiled_infected",
+      "expandedStates": 807529,
+      "uniqueStates": 1100266,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_extra_push-v1",
+      "levelIndex": 2,
+      "depth": 42,
+      "actions": ["UP", "UP", "LEFT", "LEFT", "UP", "UP", "UP", "UP", "RIGHT", "RIGHT", "DOWN", "DOWN", "DOWN", "UP", "UP", "UP", "LEFT", "LEFT", "DOWN", "DOWN", "DOWN", "DOWN", "RIGHT", "RIGHT", "RIGHT", "DOWN", "RIGHT", "RIGHT", "UP", "UP", "LEFT", "DOWN", "DOWN", "RIGHT", "DOWN", "LEFT", "LEFT", "DOWN", "LEFT", "UP", "UP", "UP"],
+      "engine": "machine_state_exact_a_star",
+      "expandedStates": 8981,
+      "uniqueStates": 10131,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_the_art_of_storage-v1",
+      "levelIndex": 2,
+      "depth": 51,
+      "actions": ["DOWN", "LEFT", "DOWN", "RIGHT", "DOWN", "UP", "DOWN", "RIGHT", "UP", "UP", "LEFT", "DOWN", "RIGHT", "DOWN", "LEFT", "UP", "LEFT", "RIGHT", "UP", "UP", "DOWN", "RIGHT", "DOWN", "LEFT", "DOWN", "UP", "UP", "DOWN", "UP", "RIGHT", "UP", "RIGHT", "UP", "UP", "LEFT", "DOWN", "DOWN", "DOWN", "UP", "UP", "UP", "LEFT", "LEFT", "DOWN", "RIGHT", "DOWN", "UP", "UP", "RIGHT", "DOWN", "DOWN"],
+      "engine": "compiled_art_of_storage",
+      "expandedStates": 509678,
+      "uniqueStates": 565452,
+      "replayVerified": true,
+      "optimalityProven": true
+    },
+    {
+      "gameId": "ps_side_painting-v1",
+      "levelIndex": 2,
+      "depth": 34,
+      "actions": ["DOWN", "RIGHT", "RIGHT", "UP", "LEFT", "UP", "RIGHT", "DOWN", "RIGHT", "UP", "UP", "RIGHT", "UP", "LEFT", "LEFT", "LEFT", "UP", "UP", "DOWN", "DOWN", "RIGHT", "UP", "LEFT", "DOWN", "LEFT", "LEFT", "RIGHT", "DOWN", "LEFT", "UP", "RIGHT", "RIGHT", "RIGHT", "RIGHT"],
+      "engine": "compiled_side_painting_level_one",
+      "expandedStates": 7171,
+      "uniqueStates": 8403,
+      "replayVerified": true,
+      "optimalityProven": true
+    }
+  ]
+}

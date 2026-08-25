@@ -1,0 +1,19 @@
+{
+  "success": false,
+  "terminal": false,
+  "score": {
+    "success": 0,
+    "levels_completed": 4,
+    "win_levels": 15,
+    "environment_actions": 907
+  },
+  "finish_reason": "Environment action budget exhausted at 1000 steps; evaluator remained nonterminal failure with 4/15 levels completed.",
+  "agent_turns": 1,
+  "environment_steps": 1000,
+  "candidates": 0,
+  "final_status": "PLAYING",
+  "transcript": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\output\\midas-visible-patterns-v05-20260825\\workspace\\agent_transcript.jsonl",
+  "evidence": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\output\\midas-visible-patterns-v05-20260825\\evidence.jsonl",
+  "analysis": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\output\\midas-visible-patterns-v05-20260825\\analysis",
+  "output_dir": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\output\\midas-visible-patterns-v05-20260825"
+}

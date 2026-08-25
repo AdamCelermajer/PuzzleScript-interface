@@ -1,0 +1,581 @@
+{
+  "game": "unknown-game",
+  "state": "WIN",
+  "levels_completed": 1,
+  "win_levels": 2,
+  "available_actions": [
+    "ACTION1",
+    "ACTION2",
+    "ACTION3",
+    "ACTION4",
+    "ACTION5",
+    "ACTION7"
+  ],
+  "action_meanings": "RESET=restart current level, ACTION1=Up, ACTION2=Down, ACTION3=Left, ACTION4=Right, ACTION5=Space/Action, ACTION7=Undo",
+  "actions_used": 67,
+  "action_budget": 150,
+  "grid": [
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      1,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      2,
+      4,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      4,
+      4,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  ],
+  "previous_batch": {
+    "requested_actions": [
+      "ACTION4",
+      "ACTION2",
+      "ACTION2",
+      "ACTION3",
+      "ACTION4",
+      "ACTION1",
+      "ACTION1",
+      "ACTION3",
+      "ACTION2",
+      "ACTION1",
+      "ACTION1",
+      "ACTION3",
+      "ACTION3",
+      "ACTION2",
+      "ACTION2",
+      "ACTION4"
+    ],
+    "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+    "transitions": [
+      {
+        "id": "T000052",
+        "action": "ACTION4",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 3,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 2,
+            "col": 4,
+            "before": 0,
+            "after": 2
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000053",
+        "action": "ACTION2",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 4,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 3,
+            "col": 4,
+            "before": 0,
+            "after": 2
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000054",
+        "action": "ACTION2",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 3,
+            "col": 4,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 4,
+            "col": 4,
+            "before": 0,
+            "after": 2
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000055",
+        "action": "ACTION3",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 4,
+            "col": 2,
+            "before": 5,
+            "after": 4
+          },
+          {
+            "row": 4,
+            "col": 3,
+            "before": 4,
+            "after": 2
+          },
+          {
+            "row": 4,
+            "col": 4,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000056",
+        "action": "ACTION4",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 4,
+            "col": 3,
+            "before": 2,
+            "after": 5
+          },
+          {
+            "row": 4,
+            "col": 4,
+            "before": 0,
+            "after": 2
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000057",
+        "action": "ACTION1",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 3,
+            "col": 4,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 4,
+            "col": 4,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000058",
+        "action": "ACTION1",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 4,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 3,
+            "col": 4,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000059",
+        "action": "ACTION3",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 3,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 2,
+            "col": 4,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000060",
+        "action": "ACTION2",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 3,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 3,
+            "col": 3,
+            "before": 4,
+            "after": 2
+          },
+          {
+            "row": 4,
+            "col": 3,
+            "before": 5,
+            "after": 4
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000061",
+        "action": "ACTION1",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 3,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 3,
+            "col": 3,
+            "before": 2,
+            "after": 5
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000062",
+        "action": "ACTION1",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 1,
+            "col": 3,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 2,
+            "col": 3,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000063",
+        "action": "ACTION3",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 1,
+            "col": 2,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 1,
+            "col": 3,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000064",
+        "action": "ACTION3",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 1,
+            "col": 1,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 1,
+            "col": 2,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000065",
+        "action": "ACTION2",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 1,
+            "col": 1,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 2,
+            "col": 1,
+            "before": 0,
+            "after": 2
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000066",
+        "action": "ACTION2",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 1,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 3,
+            "col": 1,
+            "before": 0,
+            "after": 2
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      },
+      {
+        "id": "T000067",
+        "action": "ACTION4",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "WIN",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 3,
+            "col": 1,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 3,
+            "col": 2,
+            "before": 3,
+            "after": 2
+          },
+          {
+            "row": 3,
+            "col": 3,
+            "before": 5,
+            "after": 4
+          }
+        ],
+        "prediction": "The lower box-on-goal moves left onto goal (4,2); the upper box-on-goal moves down onto the vacated goal (4,3); then the ordinary box at (3,2) is pushed right onto goal (3,3). All three boxes will be on goals, completing level 2 and the game.",
+        "note": "Executes the 16-action BFS solution RDDLRUULDUULLDDR using mechanics confirmed by level 1."
+      }
+    ],
+    "error": ""
+  }
+}

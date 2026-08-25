@@ -5,6 +5,8 @@
 ]
 
 const traceNavItems = [
+  { href: '/experiments/avo-lab.html', label: 'AVO lab', match: /^\/experiments\/avo-lab\.html$/ },
+  { href: '/experiments/paper-investigation.html', label: 'Paper investigation', match: /^\/experiments\/paper-investigation\.html$/ },
   { href: '/experiments/optimal-path.html', label: 'Optimal path', match: /^\/experiments\/optimal-path\.html$/ },
   { href: '/experiments/goal-recognition/', label: 'Goal recognition', match: /^\/experiments\/goal-recognition\/?/ },
   { href: '/experiments/thinking-comparison.html', label: 'Thinking comparison', match: /^\/experiments\/thinking-comparison\.html$/ },

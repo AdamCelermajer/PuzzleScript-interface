@@ -107,6 +107,51 @@ function rgbaFromColor(color) {
     return [r, g, b, a === null ? 255 : Math.round(a * 255)];
 }
 
+function renderSessionVisualGrid(session) {
+    let cells;
+    try {
+        cells = session.engine.getCurrentLevelCells();
+    } catch (e) {
+        return [];
+    }
+    if (!cells || cells.length === 0 || !cells[0] || cells[0].length === 0) {
+        return [];
+    }
+
+    const ui = new HeadlessPixelUI();
+    ui.onGameChange(session.gameData);
+    const signatures = session.visualSignatureToInt;
+    const overflow = session.visualSignatureOverflow;
+
+    return cells.map(row => row.map(cell => {
+        const pixels = ui.getPixelsForCell(cell);
+        const signature = pixels.flat()
+            .map(color => rgbaFromColor(color).join(','))
+            .join('|');
+        if (signatures.has(signature)) {
+            return signatures.get(signature);
+        }
+        if (signatures.size < 16) {
+            const id = signatures.size;
+            signatures.set(signature, id);
+            session.intToName[id] = `Visible cell pattern ${id}`;
+            session.visualPatterns[id] = pixels.map(pixelRow => pixelRow.map(color => {
+                const colorKey = rgbaFromColor(color).join(',');
+                if (!session.visualColorToInt.has(colorKey)) {
+                    const colorId = Math.min(session.visualColorToInt.size, 15);
+                    session.visualColorToInt.set(colorKey, colorId);
+                }
+                return session.visualColorToInt.get(colorKey);
+            }));
+            return id;
+        }
+        overflow.add(signature);
+        session.projectionCompression.compressed = true;
+        session.projectionCompression.overflow_count = overflow.size;
+        return 15;
+    }));
+}
+
 function renderSessionFrame(session) {
     let cells;
     try {
@@ -157,4 +202,4 @@ function renderSessionFrame(session) {
     };
 }
 
-module.exports = { encodePng, renderSessionFrame };
+module.exports = { encodePng, renderSessionFrame, renderSessionVisualGrid };

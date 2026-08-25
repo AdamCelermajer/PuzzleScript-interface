@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_on_and_off-v1",
+  "level_index": 2,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 10,
+  "actions": [
+    "UP",
+    "UP",
+    "UP",
+    "LEFT",
+    "UP",
+    "RIGHT",
+    "UP",
+    "UP",
+    "UP",
+    "UP"
+  ]
+}

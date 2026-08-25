@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_icecrates-v1",
+  "level_index": 1,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 4,
+  "actions": [
+    "LEFT",
+    "UP",
+    "LEFT",
+    "UP"
+  ]
+}

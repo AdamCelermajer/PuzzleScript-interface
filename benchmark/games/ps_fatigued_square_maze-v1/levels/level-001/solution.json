@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_fatigued_square_maze-v1",
+  "level_index": 1,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 12,
+  "actions": [
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "UP",
+    "UP",
+    "UP",
+    "UP",
+    "LEFT",
+    "LEFT",
+    "LEFT",
+    "LEFT"
+  ]
+}

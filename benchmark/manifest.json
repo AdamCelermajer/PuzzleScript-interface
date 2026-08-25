@@ -1,0 +1,30 @@
+{
+  "benchmark_id": "puzzlescript-world-v0",
+  "version": "0.4.0",
+  "catalog": "games/index.json",
+  "default_sample_size": 5,
+  "protocol": {
+    "direction": "agent_queries_benchmark",
+    "primary_contract": "arc_agi_rest",
+    "run_model": "one_game_stream_two_learning_scores",
+    "game_identity": "opaque_to_agent_visible_to_monitor",
+    "goal_provided": false,
+    "rules_provided": false
+  },
+  "capabilities": {
+    "rule_learning": {
+      "mode": "periodic_hidden_transition_challenges",
+      "primary_metric": "latest_macro_exact_frame_accuracy"
+    },
+    "closeness": {
+      "mode": "replay_verified_solution_trace",
+      "primary_metric": "mean_level_closeness"
+    }
+  },
+  "representations": {
+    "arc_grid": "always",
+    "rendered_image": "optional",
+    "legend": "optional_ground_truth",
+    "action_semantics": "optional"
+  }
+}

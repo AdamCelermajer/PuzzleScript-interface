@@ -4,6 +4,7 @@ This repository has two core runtime workflows and three research studies:
 
 - Local PuzzleScript: run the bundled PuzzleScript games through the local Node.js runtime and ARC-compatible Python service.
 - Official ARC-AGI-3: run the same `client/` agent directly against the hosted ARC backend.
+- AVO-inspired client: run a persistent coding agent with durable memory, reusable world-model helpers, action batches, and stagnation supervision through the same ARC-compatible interface.
 - Goal recognition study: see `studies/goal_recognition/` for the dataset, prompts, model outputs, review tools, and static results website.
 - LIVE framework study: see `studies/LIVE_framework/` for the LIVE-style Sokoban rule-learning POC.
 - Codex SDK agent: see `studies/codex_agent/` for the one-session, one-action-per-frame puzzle solver.
@@ -11,6 +12,8 @@ This repository has two core runtime workflows and three research studies:
 
 Related docs:
 
+- [`benchmark/README.md`](benchmark/README.md) for the runnable 21-game
+  benchmark server, modular scoring tracks, web interface, and simple baselines.
 - [`client/README.md`](client/README.md) for the client entry points, dashboard, and rule outputs.
 - [`docs/architecture/arc-agi-architecture.svg`](docs/architecture/arc-agi-architecture.svg) for a research-oriented architecture sketch of the LLM-driven workflow.
 - [`docs/research/`](docs/research/) for supporting research and specification materials.
@@ -50,6 +53,14 @@ npm run local
 This starts both the PuzzleScript runtime and the ARC-compatible Python service.
 Closing the terminal or pressing Ctrl+C stops both owned child processes.
 
+Start that stack plus the benchmark server and web interface:
+
+```bash
+npm run benchmark:local
+```
+
+Open `http://127.0.0.1:9000`.
+
 Start the professor demo workbench and all local services:
 
 ```bash
@@ -59,6 +70,13 @@ npm run workbench
 Open `http://127.0.0.1:5173`. The home page runs the main client agent with
 Fresh/Resume controls, or switches to Codex Live for one persistent
 OAuth-authenticated Codex session that chooses one action per observed frame.
+
+The Paper Investigation page at
+`http://127.0.0.1:5173/experiments/paper-investigation.html` keeps a local
+research library. Import an arXiv/direct-PDF link or upload a PDF, track it as
+Unread/Reading/Finished, and link saved underlines and comments to Codex
+questions. Every source is stored under `paper_library/<paper-id>/` with its
+metadata, PDF and extracted text when available, annotations, and questions.
 Both modes support local PuzzleScript or official ARC selection and live frame,
 decision, timeline, and log views.
 The Settings tab identifies OpenRouter as the LLM provider and offers Claude
@@ -78,6 +96,15 @@ Run the agent against the local service:
 
 ```bash
 uv run python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --max_steps 50
+```
+
+Run the self-contained AVO framework through its PuzzleScript profile:
+
+```powershell
+uv run python -m avo.run `
+  --profile puzzlescript `
+  --set backend_url=http://localhost:8000 `
+  --set game_id=ps_sokoban_basic-v1
 ```
 
 The CLI runner is headless and prints ordinary progress logs. The browser

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_coin_counter-v1",
+  "level_index": 0,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 9,
+  "actions": [
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT"
+  ]
+}

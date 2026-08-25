@@ -1,0 +1,25 @@
+{
+  "copied": [
+    "AGENT_INTERFACE.md",
+    "agent_transcript.jsonl",
+    "avo_tool.py",
+    "MISSION.md"
+  ],
+  "preserved": [
+    "best_env.py",
+    "best_solution.txt",
+    "bfs_env.py",
+    "color_search.py",
+    "mine.py",
+    "pathpos.py",
+    "phase_env.py",
+    "play_level.py",
+    "return_left.py",
+    "summarize.py"
+  ],
+  "skipped": [
+    ".avo_rpc",
+    ".avo_rpc/request.json",
+    ".avo_rpc/response.json"
+  ]
+}

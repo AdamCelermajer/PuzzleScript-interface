@@ -1,0 +1,113 @@
+{
+  "game": "unknown-game",
+  "state": "PLAYING",
+  "levels_completed": 1,
+  "win_levels": 2,
+  "available_actions": [
+    "ACTION1",
+    "ACTION2",
+    "ACTION3",
+    "ACTION4",
+    "ACTION5",
+    "ACTION7"
+  ],
+  "action_meanings": "RESET=restart current level, ACTION1=Up, ACTION2=Down, ACTION3=Left, ACTION4=Right, ACTION5=Space/Action, ACTION7=Undo",
+  "actions_used": 50,
+  "action_budget": 50,
+  "grid": [
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      1,
+      0,
+      2,
+      1
+    ],
+    [
+      1,
+      0,
+      3,
+      4,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      5,
+      4,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  ],
+  "previous_batch": {
+    "requested_actions": [
+      "ACTION4"
+    ],
+    "prediction": "The actor moves Right from (2,3) to (2,4), beginning the BFS-shortest level-2 solution.",
+    "transitions": [
+      {
+        "id": "T000050",
+        "action": "ACTION4",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 1
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 2,
+            "col": 3,
+            "before": 2,
+            "after": 0
+          },
+          {
+            "row": 2,
+            "col": 4,
+            "before": 0,
+            "after": 2
+          }
+        ],
+        "prediction": "The actor moves Right from (2,3) to (2,4), beginning the BFS-shortest level-2 solution.",
+        "note": "Only one action remains in the global budget; the full shortest solution requires 16 moves."
+      }
+    ],
+    "error": ""
+  }
+}

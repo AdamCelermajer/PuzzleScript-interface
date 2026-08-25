@@ -127,11 +127,14 @@ puzzlescript_interface/.runtime/
 client/rules/
 studies/LIVE_framework/output/
 studies/codex_agent/output/
+client/avo/output/
 studies/old_react/output/
 studies/goal_recognition/experiment/artifacts/*
 !studies/goal_recognition/experiment/artifacts/.gitkeep
 studies/goal_recognition/experiment/node_modules/
 outputs/
+benchmark/results/*.json
+paper_library/
 
 # Local experiment inputs, exports, and scratch drops
 _local/

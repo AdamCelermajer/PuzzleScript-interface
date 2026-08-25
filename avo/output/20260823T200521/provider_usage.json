@@ -1,0 +1,9 @@
+{
+  "provider": "openrouter",
+  "model": "anthropic/claude-opus-5-fast",
+  "requests": 12,
+  "prompt_tokens": 131496,
+  "completion_tokens": 16513,
+  "total_tokens": 148009,
+  "wall_seconds": 110.193
+}

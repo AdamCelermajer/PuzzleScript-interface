@@ -1,0 +1,12 @@
+{
+  "copied": [
+    "agent_events.jsonl",
+    "current_state.json",
+    "KNOWLEDGE.md",
+    "prior_run_final_state.json",
+    "WORKING.md",
+    "helpers/scratch.py",
+    "helpers/solver.py"
+  ],
+  "skipped": []
+}

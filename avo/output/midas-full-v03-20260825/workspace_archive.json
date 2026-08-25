@@ -1,0 +1,20 @@
+{
+  "copied": [
+    "AGENT_INTERFACE.md",
+    "agent_transcript.jsonl",
+    "avo_tool.py",
+    "MISSION.md"
+  ],
+  "preserved": [
+    "ep.py",
+    "notes.md",
+    "search_barrier.py",
+    "search_random.py",
+    "summarize.py"
+  ],
+  "skipped": [
+    ".avo_rpc",
+    ".avo_rpc/request.json",
+    ".avo_rpc/response.json"
+  ]
+}

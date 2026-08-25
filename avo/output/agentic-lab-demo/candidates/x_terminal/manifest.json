@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "complexity": 0.05,
+  "command": [
+    "$PYTHON",
+    "predict.py"
+  ],
+  "candidate_id": "x_terminal",
+  "parent_id": "x_static",
+  "claim": "The selected action leaves the frame unchanged and reaches WIN."
+}

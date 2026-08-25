@@ -1,0 +1,18 @@
+{
+  "success": true,
+  "terminal": true,
+  "score": {
+    "success": 1,
+    "levels_completed": 1,
+    "win_levels": 2,
+    "environment_actions": 126
+  },
+  "finish_reason": "environment terminal",
+  "agent_turns": 1,
+  "environment_steps": 126,
+  "candidates": 0,
+  "final_status": "WIN",
+  "transcript": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\output\\sokoban-basic-full-20260824\\workspace\\agent_transcript.jsonl",
+  "evidence": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\output\\sokoban-basic-full-20260824\\evidence.jsonl",
+  "output_dir": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\output\\sokoban-basic-full-20260824"
+}

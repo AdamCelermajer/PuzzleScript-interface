@@ -35,3 +35,20 @@ LIVE-style experiments live under `studies/LIVE_framework/`; goal-recognition
 experiments live under `studies/goal_recognition/`; the simple persistent Codex
 SDK game agent lives under `studies/codex_agent/`; the previous custom ReAct
 implementation is archived under `studies/old_react/`.
+
+## AVO Framework
+
+The self-contained AVO implementation now lives under top-level `avo/`,
+including its Codex client, generic kernel, profiles, prompts, tests, and run
+artifacts.
+
+Start the local PuzzleScript stack, then run:
+
+```powershell
+npm run local
+uv run python -m avo.run --profile puzzlescript --set game_id=ps_sokoban_basic-v1
+```
+
+The PuzzleScript profile owns the ARC adapter, objective, prompt, terminal
+condition, and fitness. The generic AVO core and Codex OAuth client contain no
+PuzzleScript action meanings or game rules.

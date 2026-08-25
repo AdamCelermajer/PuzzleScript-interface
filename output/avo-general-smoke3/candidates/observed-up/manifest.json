@@ -1,0 +1,5 @@
+{
+  "protocol": "avo-theory-v1",
+  "candidate_id": "observed-up",
+  "command": ["python", "predict.py"]
+}

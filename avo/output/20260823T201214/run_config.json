@@ -1,0 +1,18 @@
+{
+  "client": "AVO-inspired",
+  "provider": "openrouter",
+  "game_id": "ps_sokoban_basic-v1",
+  "backend_url": "http://localhost:8000",
+  "model": "anthropic/claude-opus-5-fast",
+  "effort": "high",
+  "supervisor_effort": "medium",
+  "max_steps": 150,
+  "max_decisions": 20,
+  "max_batch_actions": 20,
+  "max_tool_rounds": 4,
+  "max_output_tokens": 1024,
+  "supervise_after_stalls": 3,
+  "visual": false,
+  "resume_from": "client/avo/output/20260823T200837",
+  "workspace_isolation": "external temporary directory"
+}

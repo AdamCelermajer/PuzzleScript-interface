@@ -262,6 +262,8 @@ export default defineConfig({
         goalRecognitionViewer: resolve(__dirname, 'experiments/goal-recognition/index.html'),
         thinkingComparison: resolve(__dirname, 'experiments/thinking-comparison.html'),
         liveFramework: resolve(__dirname, 'experiments/live-framework.html'),
+        avoLab: resolve(__dirname, 'experiments/avo-lab.html'),
+        paperInvestigation: resolve(__dirname, 'experiments/paper-investigation.html'),
         optimalPath: resolve(__dirname, 'experiments/optimal-path.html'),
         games: resolve(__dirname, 'games/index.html'),
         sokobanBasic: resolve(__dirname, 'games/sokoban-basic.html'),

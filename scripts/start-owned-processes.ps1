@@ -1,5 +1,6 @@
 param(
     [switch]$WithArcService,
+    [switch]$WithBenchmark,
     [int]$ExitAfterSeconds = 0
 )
 
@@ -13,6 +14,13 @@ if ($env:PORT) {
 $arcPort = 8000
 if ($env:ARC_PROXY_PORT) {
     $arcPort = [int]$env:ARC_PROXY_PORT
+}
+$benchmarkPort = 9000
+if ($env:BENCHMARK_PORT) {
+    $benchmarkPort = [int]$env:BENCHMARK_PORT
+}
+if ($WithBenchmark) {
+    $WithArcService = $true
 }
 $children = New-Object System.Collections.Generic.List[System.Diagnostics.Process]
 
@@ -104,6 +112,11 @@ if ($WithArcService) {
         -Port $arcPort `
         -AllowedCommandParts @("puzzlescript_interface.api.main", "puzzlescript_interface/api/main.py")
 }
+if ($WithBenchmark) {
+    Stop-PortOwnerIfRuntime `
+        -Port $benchmarkPort `
+        -AllowedCommandParts @("benchmark.server")
+}
 
 try {
     $runtime = Start-OwnedProcess `
@@ -120,11 +133,24 @@ try {
                 PUZZLESCRIPT_SERVER_URL = "http://127.0.0.1:$runtimePort"
             }
     }
+    if ($WithBenchmark) {
+        $benchmarkService = Start-OwnedProcess `
+            -FileName $pythonFileName `
+            -Arguments ($pythonArguments -replace "puzzlescript_interface.api.main", "benchmark.server") `
+            -Environment @{
+                BENCHMARK_PORT = $benchmarkPort
+                BENCHMARK_ARC_URL = "http://127.0.0.1:$arcPort"
+                PUZZLESCRIPT_SERVER_URL = "http://127.0.0.1:$runtimePort"
+            }
+    }
 
     Write-Host ""
     Write-Host "Runtime: http://127.0.0.1:$runtimePort"
     if ($WithArcService) {
         Write-Host "ARC service: http://127.0.0.1:$arcPort"
+    }
+    if ($WithBenchmark) {
+        Write-Host "Benchmark: http://127.0.0.1:$benchmarkPort"
     }
     Write-Host "Press Ctrl+C, or close this terminal, to stop owned processes."
     Write-Host ""

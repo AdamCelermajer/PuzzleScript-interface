@@ -57,6 +57,30 @@ test('init counts only playable PuzzleScript levels in win_levels', async () => 
     }
 });
 
+test('init can start directly at a raw reference level index', async () => {
+    const server = startServer();
+
+    try {
+        await waitForServer(`${SERVER_URL}/observe?sessionId=missing`);
+
+        const response = await fetch(`${SERVER_URL}/init`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                gameName: 'ps_fire_in_winter-v1',
+                levelIndex: 2,
+            }),
+        });
+
+        assert.equal(response.status, 200);
+        const body = await response.json();
+        assert.ok(body.frame.at(-1).length > 0);
+        assert.equal(body.levels_completed, 0);
+    } finally {
+        server.kill();
+    }
+});
+
 test('init and action include real rendered PNG data URLs', async () => {
     const server = startServer();
 
@@ -142,8 +166,83 @@ test('compound Sokoban cells render as their compound legend character', async (
         });
         const initBody = await initResponse.json();
 
-        assert.equal(initBody.legend[4], 'Crate + Target');
-        assert.equal(initBody.frame.at(-1)[3][1], 4);
+        const frame = initBody.frame.at(-1);
+        assert.equal(initBody.projection.mode, 'visible-cell-pixels-v1');
+        assert.notEqual(frame[3][1], frame[1][3]);
+    } finally {
+        server.kill();
+    }
+});
+
+test('snapshot restores an exact earlier visible state', async () => {
+    const server = startServer();
+
+    try {
+        await waitForServer(`${SERVER_URL}/observe?sessionId=missing`);
+        const initResponse = await fetch(`${SERVER_URL}/init`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameName: 'ps_midas-v1', levelIndex: 8 }),
+        });
+        const initial = await initResponse.json();
+        const snapshotResponse = await fetch(`${SERVER_URL}/snapshot`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: initial.sessionId }),
+        });
+        const snapshot = await snapshotResponse.json();
+
+        await fetch(`${SERVER_URL}/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: initial.sessionId, action: 'ACTION4' }),
+        });
+        const restoreResponse = await fetch(`${SERVER_URL}/restore`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sessionId: initial.sessionId,
+                snapshotId: snapshot.snapshotId,
+            }),
+        });
+        const restored = await restoreResponse.json();
+
+        assert.deepEqual(restored.frame.at(-1), initial.frame.at(-1));
+    } finally {
+        server.kill();
+    }
+});
+
+test('Midas exposes distinct rendered player states without object names', async () => {
+    const server = startServer();
+
+    try {
+        await waitForServer(`${SERVER_URL}/observe?sessionId=missing`);
+        const initResponse = await fetch(`${SERVER_URL}/init`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameName: 'ps_midas-v1' }),
+        });
+        const initBody = await initResponse.json();
+        const grounded = initBody.frame.at(-1)[3][2];
+
+        const jumpResponse = await fetch(`${SERVER_URL}/action`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId: initBody.sessionId, action: 'ACTION1' }),
+        });
+        const jumpBody = await jumpResponse.json();
+        const jumping = jumpBody.frame.at(-1)[2][2];
+
+        assert.notEqual(jumping, grounded);
+        assert.equal(jumpBody.projection.compressed, false);
+        assert.equal(jumpBody.projection.mode, 'visible-cell-pixels-v1');
+        assert.notDeepEqual(
+            jumpBody.projection.patterns[jumping],
+            jumpBody.projection.patterns[grounded]
+        );
+        assert.equal(jumpBody.projection.patterns[jumping].length, 5);
+        assert.equal(jumpBody.projection.patterns[jumping][0].length, 5);
     } finally {
         server.kill();
     }

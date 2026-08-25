@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_rotaters_cause-v1",
+  "level_index": 2,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 12,
+  "actions": [
+    "UP",
+    "LEFT",
+    "LEFT",
+    "RIGHT",
+    "RIGHT",
+    "UP",
+    "UP",
+    "UP",
+    "UP",
+    "UP",
+    "LEFT",
+    "LEFT"
+  ]
+}

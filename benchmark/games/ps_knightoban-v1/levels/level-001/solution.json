@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_knightoban-v1",
+  "level_index": 1,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 20,
+  "actions": [
+    "UP",
+    "RIGHT",
+    "RIGHT",
+    "DOWN",
+    "RIGHT",
+    "ACTION",
+    "DOWN",
+    "RIGHT",
+    "RIGHT",
+    "DOWN",
+    "LEFT",
+    "ACTION",
+    "LEFT",
+    "LEFT",
+    "UP",
+    "ACTION",
+    "UP",
+    "UP",
+    "RIGHT",
+    "ACTION"
+  ]
+}

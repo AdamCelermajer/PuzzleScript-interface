@@ -1,0 +1,9 @@
+{
+  "protocol": "avo-theory-v1",
+  "schema_version": 1,
+  "candidate_id": "observed-up-v2",
+  "claim": "ACTION1 moves the player one traversable cell upward; unsupported actions are predicted conservatively.",
+  "complexity": 1,
+  "command": ["python", "predict.py"]
+}
+

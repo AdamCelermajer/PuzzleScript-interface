@@ -1,0 +1,20 @@
+{
+  "environment_factory": "client.avo.puzzlescript_adapter:create_environment",
+  "environment_settings": {
+    "backend_url": "http://127.0.0.1:8000",
+    "game_id": "ps_sokoban_basic-v1"
+  },
+  "agent_backend": "CodexOAuthAgent",
+  "model": "gpt-5.6-sol",
+  "effort": "low",
+  "prompt_file": "client/avo/prompts/general_agent.txt",
+  "max_environment_steps": 1,
+  "max_candidates": 3,
+  "max_wall_seconds": 120.0,
+  "max_agent_turns": 1,
+  "terminal_statuses": [
+    "WIN",
+    "GAME_OVER"
+  ],
+  "workspace_isolation": "external temporary directory"
+}

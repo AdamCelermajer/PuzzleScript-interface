@@ -1,0 +1,21 @@
+{
+  "profile_id": "puzzlescript",
+  "profile_manifest": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\environments\\puzzlescript\\profile.toml",
+  "profile_manifest_hash": "3987620e9b94c88ab40445a5b759dafa903eebb98ace102704b8bdab9d64e7a0",
+  "profile_prompt": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\environments\\puzzlescript\\prompt.md",
+  "profile_prompt_hash": "7418e4d65e926cd466a23b5e11a0732f97dbd912316e3166d79daf0c3051894e",
+  "profile_settings": {
+    "backend_url": "http://127.0.0.1:8000",
+    "game_id": "ps_sokoban_basic-v1"
+  },
+  "objective": "Win the game.",
+  "agent_backend": "CodexOAuthAgent",
+  "model": "gpt-5.6-sol",
+  "effort": "high",
+  "base_prompt": "avo/prompts/base_agent.txt",
+  "max_environment_steps": 200,
+  "max_candidates": 50,
+  "max_wall_seconds": 3600.0,
+  "max_agent_turns": 4,
+  "workspace_isolation": "external temporary directory"
+}

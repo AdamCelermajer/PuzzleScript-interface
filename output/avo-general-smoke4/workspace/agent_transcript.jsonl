@@ -1,0 +1,1 @@
+{"recorded_at": "2026-08-24T17:12:09.593561+00:00", "response": "AVO run finished autonomously.\n\n- Used the single environment probe.\n- Published candidate `down_transition_v2`.\n- Evaluation: **valid**, **100% exact replay accuracy**, **100% coverage**.\n- Explicitly called `finish`.", "turn": 1}

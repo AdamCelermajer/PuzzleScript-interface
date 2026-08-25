@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PuzzleScript Benchmark</title>
+  <link rel="stylesheet" href="/benchmark-static/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>PuzzleScript Benchmark</h1>
+    <div class="header-right">
+      <a href="/docs">API</a>
+      <a href="/api/benchmark/artifacts">Artifacts JSON</a>
+      <div id="health" class="server-status"><i></i> Connecting</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel controls-panel">
+      <div class="panel-title">
+        <h2>Run benchmark</h2>
+        <span>Rule learning + closeness</span>
+      </div>
+      <form id="run-form">
+        <fieldset class="tracks">
+          <legend>Scores</legend>
+          <label>
+            <input name="capability" value="rule_learning" type="checkbox" checked>
+            Rule learning
+          </label>
+          <label>
+            <input name="capability" value="closeness" type="checkbox" checked>
+            Closeness
+          </label>
+        </fieldset>
+        <label class="field">
+          <span>Games</span>
+          <input id="sample-size" type="number" min="1" value="5">
+        </label>
+        <label class="field">
+          <span>Seed</span>
+          <input id="seed" type="number" value="0">
+        </label>
+        <details class="agent-inputs">
+          <summary>Agent inputs</summary>
+          <label><input id="rendered-image" type="checkbox"> Image</label>
+          <label><input id="legend" type="checkbox"> Legend</label>
+          <label title="Adds ACTION1=Up, ACTION2=Down, ACTION3=Left, ACTION4=Right, ACTION5=Action to each observation">
+            <input id="action-semantics" type="checkbox">
+            Action mapping
+          </label>
+        </details>
+        <div class="create-actions">
+          <button id="create-run" class="primary" type="submit">Create run</button>
+          <button id="run-random-agent" type="button">Watch random agent</button>
+          <button id="run-partial-agent" type="button">Watch partial agent</button>
+        </div>
+      </form>
+      <p id="form-error" class="error-message hidden"></p>
+    </section>
+
+    <section class="panel artifact-panel">
+      <div class="panel-title">
+        <h2>Artifacts</h2>
+        <span id="scope-note">Loading…</span>
+      </div>
+      <div class="stat-grid">
+        <div><strong id="artifact-games">—</strong><span>games</span></div>
+        <div><strong id="verified-games">—</strong><span>solutions</span></div>
+        <div><strong id="rule-probes">—</strong><span>rule probes</span></div>
+        <div><strong id="closeness-games">—</strong><span>closeness ready</span></div>
+      </div>
+      <details class="artifact-library">
+        <summary>Game artifacts <span id="artifact-count"></span></summary>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Game</th>
+                <th>Closeness level</th>
+                <th>Solution</th>
+                <th>Rule probes</th>
+                <th>Probe levels</th>
+                <th>Rule families</th>
+                <th>Trace states</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="artifact-rows"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section id="run-panel" class="panel run-panel hidden">
+      <div class="run-header">
+        <div>
+          <h2 id="run-title">Run</h2>
+          <span id="last-update" class="muted">Waiting for agent</span>
+        </div>
+        <div class="run-actions">
+          <span id="run-status" class="status-badge">Ready</span>
+          <button id="refresh-run" type="button">Refresh</button>
+          <button id="close-run" class="danger" type="button">Close</button>
+        </div>
+      </div>
+
+      <div class="connection-strip">
+        <div><span>Run ID</span><code id="run-id"></code></div>
+        <div><span>Agent token</span><code id="run-token"></code></div>
+        <button id="copy-config" type="button">Copy connection</button>
+      </div>
+
+      <div class="score-grid">
+        <article class="main-score">
+          <div class="score-label">Rule learning</div>
+          <strong id="rule-score-value">—</strong>
+          <div class="score-bar rule-bar"><i id="rule-score-bar"></i></div>
+          <dl>
+            <div><dt>Edit F1</dt><dd id="rule-edit-f1">—</dd></div>
+            <div><dt>Coverage</dt><dd id="rule-coverage">—</dd></div>
+            <div><dt>Challenges</dt><dd id="challenge-count">0 / 0</dd></div>
+          </dl>
+        </article>
+        <article class="main-score">
+          <div class="score-label">Closeness</div>
+          <strong id="closeness-score-value">—</strong>
+          <div class="score-bar closeness-bar"><i id="closeness-score-bar"></i></div>
+          <dl>
+            <div><dt>Coverage</dt><dd id="closeness-coverage">—</dd></div>
+            <div><dt>Scorable</dt><dd id="closeness-count">0 / 0</dd></div>
+            <div><dt>Completed</dt><dd id="completed-count">0</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <section class="run-section">
+        <h3>Games</h3>
+        <div id="environment-grid" class="environment-grid"></div>
+      </section>
+
+      <section class="run-section split">
+        <div>
+          <h3>Rule challenges</h3>
+          <div id="learning-curve" class="empty-state">No challenges submitted.</div>
+        </div>
+        <div>
+          <h3>Events</h3>
+          <div id="timeline" class="timeline"></div>
+        </div>
+      </section>
+
+      <details class="result-json">
+        <summary>Evaluator JSON</summary>
+        <pre id="monitor-json"></pre>
+      </details>
+    </section>
+  </main>
+
+  <script src="/benchmark-static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "copied": [
+    "AGENT_INTERFACE.md",
+    "agent_transcript.jsonl",
+    "avo_tool.py",
+    "MISSION.md"
+  ],
+  "skipped": [
+    ".avo_rpc",
+    "undo_until.py: [Errno 13] Permission denied: 'C:\\\\Users\\\\adamc\\\\AppData\\\\Local\\\\Temp\\\\avo-agent-run-zkbie4qk\\\\undo_until.py'",
+    ".avo_rpc/request.json",
+    ".avo_rpc/response.json"
+  ]
+}

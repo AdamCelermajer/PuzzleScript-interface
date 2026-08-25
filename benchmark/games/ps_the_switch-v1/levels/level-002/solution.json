@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_the_switch-v1",
+  "level_index": 2,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 16,
+  "actions": [
+    "UP",
+    "UP",
+    "LEFT",
+    "LEFT",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT",
+    "UP",
+    "UP",
+    "LEFT",
+    "DOWN",
+    "LEFT",
+    "DOWN",
+    "RIGHT",
+    "RIGHT",
+    "RIGHT"
+  ]
+}

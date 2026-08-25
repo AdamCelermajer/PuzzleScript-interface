@@ -69,6 +69,7 @@ class ResetRequest(BaseModel):
     game_id: str
     card_id: str
     guid: str | None = None
+    level_index: int | None = Field(default=None, ge=0)
 
 
 class ActionRequest(BaseModel):
@@ -77,6 +78,15 @@ class ActionRequest(BaseModel):
     reasoning: Any | None = None
     x: int | None = None
     y: int | None = None
+
+
+class StateSaveRequest(BaseModel):
+    game_id: str
+    guid: str
+
+
+class StateRestoreRequest(StateSaveRequest):
+    snapshot_id: str
 
 
 def _games_root() -> Path:
@@ -187,7 +197,13 @@ def create_app(
             )
             return _frame_response(payload, binding, "RESET")
 
-        payload = client.start_game(entry.source_name)
+        if request.level_index is None:
+            payload = client.start_game(entry.source_name)
+        else:
+            payload = client.start_game(
+                entry.source_name,
+                level_index=request.level_index,
+            )
         session_id = payload.get("sessionId")
         if not session_id:
             raise HTTPException(
@@ -255,6 +271,30 @@ def create_app(
             increment_actions=1,
         )
         return _frame_response(payload, binding, action)
+
+    @app.post("/api/state/save")
+    def save_state(request: StateSaveRequest) -> dict[str, str]:
+        binding = sessions_by_guid.get(request.guid)
+        if not binding or binding.game_id != request.game_id:
+            raise HTTPException(status_code=404, detail="Session guid not found")
+        try:
+            scorecards.require_open_for_guid(request.guid)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail="Scorecard not found") from exc
+        payload = client.save_state(binding.session_id)
+        return {"snapshot_id": str(payload["snapshotId"])}
+
+    @app.post("/api/state/restore")
+    def restore_state(request: StateRestoreRequest) -> dict[str, Any]:
+        binding = sessions_by_guid.get(request.guid)
+        if not binding or binding.game_id != request.game_id:
+            raise HTTPException(status_code=404, detail="Session guid not found")
+        try:
+            scorecards.require_open_for_guid(request.guid)
+        except KeyError as exc:
+            raise HTTPException(status_code=404, detail="Scorecard not found") from exc
+        payload = client.restore_state(binding.session_id, request.snapshot_id)
+        return _frame_response(payload, binding, "RESET")
 
     return app
 

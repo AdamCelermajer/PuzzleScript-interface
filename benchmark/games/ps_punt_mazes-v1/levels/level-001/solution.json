@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_punt_mazes-v1",
+  "level_index": 1,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 11,
+  "actions": [
+    "DOWN",
+    "RIGHT",
+    "DOWN",
+    "UP",
+    "LEFT",
+    "DOWN",
+    "UP",
+    "RIGHT",
+    "DOWN",
+    "RIGHT",
+    "DOWN"
+  ]
+}

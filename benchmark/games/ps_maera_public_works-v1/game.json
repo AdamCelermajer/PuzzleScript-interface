@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_maera_public_works-v1",
+  "source_game": "puzzlescript_interface/games/ps_maera_public_works-v1/script.txt",
+  "max_actions": 500,
+  "artifact_status": "replay_verified",
+  "level_artifacts": [
+    {
+      "level_index": 0,
+      "directory": "levels/level-000",
+      "solution_actions": 1,
+      "replay_verified": true,
+      "rule_probes": 10,
+      "requested_rule_probes": 10,
+      "closeness_mode": "replay_verified_solution_trace"
+    }
+  ]
+}

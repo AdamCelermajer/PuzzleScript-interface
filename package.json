@@ -6,8 +6,11 @@
   "scripts": {
     "start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1",
     "local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1 -WithArcService",
+    "benchmark:server": "uv run python -m benchmark.server",
+    "benchmark:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1 -WithBenchmark",
+    "benchmark:artifacts": "node scripts/build_benchmark_artifacts.js",
     "dev": "nodemon puzzlescript_interface/runtime/server.js",
-    "test": "node --test tests/puzzlescript_interface/*.test.js && uv run python -m unittest discover -s tests/puzzlescript_interface -p \"test_*.py\" && uv run python -m unittest discover -s tests/client -p \"test_*.py\" && uv run python -m unittest discover -s tests/workbench -p \"test_*.py\"",
+    "test": "node --test tests/puzzlescript_interface/*.test.js && uv run python -m unittest discover -s tests/puzzlescript_interface -p \"test_*.py\" && uv run python -m unittest discover -s tests/client -p \"test_*.py\" && uv run python -m unittest discover -s tests/workbench -p \"test_*.py\" && uv run python -m unittest discover -s tests/benchmark -p \"test_*.py\"",
     "website:dev": "vite --config website/vite.config.js",
     "website:build": "vite build --config website/vite.config.js",
     "website:preview": "vite preview --config website/vite.config.js",
@@ -26,7 +29,11 @@
     "puzzlescript": "^6.0.0-alpha.2"
   },
   "devDependencies": {
+    "dompurify": "^3.4.14",
+    "katex": "^0.18.4",
+    "marked": "^18.0.10",
     "nodemon": "^3.0.0",
+    "pdfjs-dist": "^6.2.108",
     "vite": "^6.0.0"
   }
 }

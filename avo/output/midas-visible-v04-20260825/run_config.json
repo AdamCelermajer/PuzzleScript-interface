@@ -1,0 +1,22 @@
+{
+  "profile_id": "puzzlescript",
+  "profile_manifest": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\environments\\puzzlescript\\profile.toml",
+  "profile_manifest_hash": "3987620e9b94c88ab40445a5b759dafa903eebb98ace102704b8bdab9d64e7a0",
+  "profile_prompt": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\environments\\puzzlescript\\prompt.md",
+  "profile_prompt_hash": "0ea21235619ad244cd04fc0786ee258006dd443daec9efa4238f60c49879caa9",
+  "profile_settings": {
+    "backend_url": "http://127.0.0.1:8000",
+    "game_id": "ps_midas-v1"
+  },
+  "objective": "Win the game.",
+  "agent_backend": "CodexOAuthAgent",
+  "model": "gpt-5.6-sol",
+  "effort": "high",
+  "base_prompt": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\avo\\prompts\\base_agent.txt",
+  "base_prompt_hash": "2afed9767ecd38c6d802d9c6284e41b834515453f15500f1eecbae5ea5853e38",
+  "max_environment_steps": 1000,
+  "max_candidates": 50,
+  "max_wall_seconds": 3600.0,
+  "max_agent_turns": 4,
+  "workspace_isolation": "external temporary directory"
+}

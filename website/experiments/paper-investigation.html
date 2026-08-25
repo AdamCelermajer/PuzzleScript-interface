@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A source-grounded investigation workspace for AVO, VISTA, and their impact on PuzzleScript-World."
+    />
+    <title>Paper Investigation - PuzzleScript Research Workbench</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="paper-investigation">
+    <main class="paper-investigation-page" data-paper-investigation>
+      <header class="investigation-header">
+        <div>
+          <p class="eyebrow">Paper investigation lab</p>
+          <h1>Understand the work. Save the thesis.</h1>
+          <p class="investigation-subtitle">
+            Read the source, mark what is unclear, interrogate the evidence, and decide exactly what your thesis must change.
+          </p>
+        </div>
+        <div class="paper-library-actions">
+          <button class="source-button" type="button" data-toggle-library>Paper library</button>
+          <button class="command-button primary" type="button" data-open-paper-import>Add paper</button>
+        </div>
+      </header>
+
+      <section class="paper-library" data-paper-library aria-label="Paper library">
+        <header>
+          <div>
+            <p class="eyebrow">Your research shelf</p>
+            <h2>Paper library</h2>
+            <p data-library-summary>Loading papers, underlines, and reading progress…</p>
+          </div>
+          <div class="paper-library-filters" role="group" aria-label="Filter papers">
+            <button class="active" type="button" data-paper-filter="all">All</button>
+            <button type="button" data-paper-filter="unread">Unread</button>
+            <button type="button" data-paper-filter="reading">Reading</button>
+            <button type="button" data-paper-filter="finished">Finished</button>
+          </div>
+        </header>
+        <div class="paper-library-list" data-paper-library-list>
+          <article class="paper-library-card active">
+            <span class="paper-status reading">Reading</span>
+            <strong>AVO: Agentic Variation Operators</strong>
+            <small>12 pages · local research folder</small>
+          </article>
+          <article class="paper-library-card">
+            <span class="paper-status reading">Reading</span>
+            <strong>VISTA</strong>
+            <small>Project report · local research folder</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="investigation-verdict" aria-label="Immediate research verdict">
+        <div>
+          <span class="verdict-label">Immediate verdict</span>
+          <strong data-paper-verdict>Threatens fixed search orchestration, not diagnostic evaluation.</strong>
+        </div>
+        <p data-paper-verdict-detail>
+          AVO is evidence that the agent itself can own variation, testing, repair, and strategy shifts. It does not test whether the resulting knowledge is correct, transferable, or diagnosable in unfamiliar interactive worlds.
+        </p>
+        <span class="source-snapshot">Source snapshot · 23 Aug 2026</span>
+      </section>
+
+      <div class="investigation-layout">
+        <section class="paper-reader" aria-label="Paper reader">
+          <header class="paper-reader-header">
+            <div>
+              <p class="eyebrow" data-paper-type>Preprint · 12 pages</p>
+              <h2 data-paper-title>AVO: Agentic Variation Operators for Autonomous Evolutionary Search</h2>
+              <p data-paper-authors>Terry Chen, Zhifan Ye, Bing Xu, Zihao Ye, and collaborators · NVIDIA</p>
+            </div>
+            <div class="paper-reader-actions">
+              <label>
+                Reading status
+                <select data-reading-status>
+                  <option value="unread">Unread</option>
+                  <option value="reading" selected>Reading</option>
+                  <option value="finished">Finished</option>
+                </select>
+              </label>
+              <a class="source-button" data-paper-source href="https://arxiv.org/pdf/2603.24517" target="_blank" rel="noreferrer">Open source</a>
+            </div>
+          </header>
+
+          <section class="reader-panel active" data-reader-panel="source">
+            <div class="source-loading" data-source-loading>
+              <span class="source-loading-mark">01</span>
+              <div>
+                <strong>Preparing the selectable paper</strong>
+                <p>AVO will render here page by page. Select any passage to underline it and send it to the research copilot.</p>
+              </div>
+            </div>
+            <div class="pdf-reader" data-pdf-reader hidden></div>
+            <div class="vista-source" data-vista-source hidden>
+              <span class="source-loading-mark">02</span>
+              <div>
+                <strong>VISTA is a project report, not a released paper.</strong>
+                <p>Open the saved project page here, or import a PDF when one becomes available.</p>
+                <a href="https://vista-research.github.io/" target="_blank" rel="noreferrer">Open the official VISTA report</a>
+              </div>
+            </div>
+          </section>
+
+        </section>
+
+        <aside class="investigation-copilot" aria-label="Research copilot">
+          <header>
+            <div>
+              <p class="eyebrow">Research copilot</p>
+              <h2>Interrogate this claim</h2>
+            </div>
+            <span class="copilot-status" data-copilot-status>Codex OAuth</span>
+          </header>
+
+          <div class="underline-guide" data-underline-guide aria-label="How to use underlines">
+            <div data-underline-step="select">
+              <b>1</b>
+              <span><strong>Select text</strong><small>Drag across a sentence in the paper.</small></span>
+            </div>
+            <div data-underline-step="save">
+              <b>2</b>
+              <span><strong>Underline it</strong><small>Save it and attach it to your next question.</small></span>
+            </div>
+            <div data-underline-step="ask">
+              <b>3</b>
+              <span><strong>Ask Codex</strong><small>Codex receives the exact attached passage.</small></span>
+            </div>
+          </div>
+
+          <div class="selected-passage" data-selected-passage>
+            <span>Selection preview</span>
+            <p>Drag across text in the paper. A button will appear beside your selection.</p>
+            <div class="selected-passage-actions">
+              <button type="button" data-save-annotation hidden>Save underline + attach</button>
+              <button type="button" data-clear-selection hidden>Clear</button>
+            </div>
+          </div>
+
+          <div class="linked-underlines" data-linked-underlines>
+            <span>Linked to next question</span>
+            <p>No passage attached yet. New underlines attach automatically; click an old gold underline to attach it.</p>
+          </div>
+
+          <div class="question-presets" aria-label="Question starters">
+            <button type="button" data-question-preset="Explain this in plain language and define every technical term I need.">Explain simply</button>
+            <button type="button" data-question-preset="What evidence actually supports this claim, and what evidence is missing?">Audit evidence</button>
+            <button type="button" data-question-preset="Does this invalidate my thesis contribution, or only force a narrower claim? Be precise.">Threat to thesis</button>
+            <button type="button" data-question-preset="Design the cleanest experiment that would distinguish this approach from mine.">Design experiment</button>
+          </div>
+
+          <div class="copilot-thread" data-copilot-thread aria-live="polite">
+            <article class="copilot-message assistant">
+              <span class="copilot-message-label">Investigation brief</span>
+              <p>
+                I know both sources and your benchmark position. Select a passage or ask directly; I will separate the claim, mechanism, evidence, missing control, and actual thesis consequence.
+              </p>
+            </article>
+          </div>
+
+          <form class="copilot-composer" data-copilot-form>
+            <label for="paper-question">Ask about the source or your thesis</label>
+            <textarea
+              id="paper-question"
+              data-paper-question
+              rows="4"
+              maxlength="6000"
+              placeholder="What exactly does ‘the agent becomes the variation operator’ mean?"
+            ></textarea>
+            <div>
+              <span data-copilot-message>Questions use your local Codex login.</span>
+              <button class="command-button primary" type="submit" data-ask-codex>Ask Codex</button>
+            </div>
+          </form>
+        </aside>
+      </div>
+
+      <div class="selection-toolbar" data-selection-toolbar hidden role="toolbar" aria-label="Selected passage actions">
+        <button type="button" data-save-annotation>Underline + attach to Codex</button>
+      </div>
+
+      <section class="investigation-map" aria-label="Research comparison map">
+        <header>
+          <div>
+            <p class="eyebrow">The three projects are not the same kind of contribution</p>
+            <h2>Put the collision in the correct place</h2>
+          </div>
+          <p>
+            VISTA is the real architecture challenge. AVO is a design lesson and baseline. PuzzleScript-World remains the instrument that can test both.
+          </p>
+        </header>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Question</th><th>AVO</th><th>VISTA</th><th>PuzzleScript-World</th></tr>
+            </thead>
+            <tbody>
+              <tr><th>Object of study</th><td>Search operator</td><td>Agent harness</td><td>Evaluation protocol</td></tr>
+              <tr><th>Knowledge substrate</th><td>Code lineage, docs, profiler feedback, persistent agent memory</td><td>Free-form notes plus lossless visual history</td><td>Model-agnostic; makes the substrate an experimental variable</td></tr>
+              <tr><th>Primary evidence</th><td>Attention throughput on B200</td><td>Public ARC-AGI-3 completion and action efficiency</td><td>Solving, goal, transition, transfer, and resource diagnostics</td></tr>
+              <tr><th>What it cannot tell us</th><td>Which agent component caused the gain or whether it generalizes broadly</td><td>Whether its world model is faithful or which harness component matters</td><td>It will not identify a winner until the controlled agent studies are run</td></tr>
+              <tr><th>Thesis consequence</th><td>Add agent-owned orchestration as a baseline</td><td>Stop claiming executable rules are necessary</td><td>Make the causal comparison itself the contribution</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="thesis-spine">
+          <span>Defensible thesis spine</span>
+          <strong>
+            High task score does not explain how a system acquired the skill. PuzzleScript-World measures which representations and harness components help, what the agent actually predicts, where it fails, and what transfers.
+          </strong>
+        </div>
+      </section>
+
+      <section class="investigation-notebook" aria-label="Saved underlines and notes">
+        <header>
+          <div>
+            <p class="eyebrow">Evidence notebook</p>
+            <h2>Underlines, comments, and linked questions</h2>
+          </div>
+          <span data-annotation-count>0 saved</span>
+        </header>
+        <div class="annotation-empty" data-annotation-empty>
+          Select text in the source or dossier. The underline, comment, and related Codex questions will be saved in this paper’s folder.
+        </div>
+        <div class="annotation-list" data-annotation-list></div>
+      </section>
+    </main>
+
+    <dialog class="paper-import-dialog" data-paper-import-dialog>
+      <form data-paper-import-form>
+        <header>
+          <div>
+            <p class="eyebrow">Add to the library</p>
+            <h2>Import a paper</h2>
+          </div>
+          <button type="button" data-close-paper-import aria-label="Close">×</button>
+        </header>
+        <label>
+          arXiv or direct PDF link
+          <input type="url" data-paper-url placeholder="https://arxiv.org/abs/… or https://…/paper.pdf" />
+        </label>
+        <div class="paper-import-divider"><span>or upload a PDF</span></div>
+        <label class="paper-file-drop">
+          <input type="file" data-paper-file accept="application/pdf,.pdf" />
+          <span>Choose a PDF from this computer</span>
+        </label>
+        <div class="paper-import-metadata">
+          <label>Title <input type="text" data-import-title maxlength="500" placeholder="Optional — read from the PDF when available" /></label>
+          <label>Authors <input type="text" data-import-authors maxlength="1000" placeholder="Optional" /></label>
+        </div>
+        <p class="paper-import-message" data-paper-import-message>Each paper gets its own folder with the PDF, extracted text, underlines, comments, and questions.</p>
+        <button class="command-button primary" type="submit" data-import-paper>Save paper</button>
+      </form>
+    </dialog>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/paper-investigation.js"></script>
+  </body>
+</html>

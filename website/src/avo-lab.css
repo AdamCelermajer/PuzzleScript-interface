@@ -1,0 +1,71 @@
+.avo-spec {
+  --spec-ink: #1f2933;
+  --spec-muted: #5f6b76;
+  --spec-line: #d5dce1;
+  --spec-soft: #f5f7f8;
+  --spec-blue: #165f83;
+  --spec-green: #20734f;
+  --spec-red: #a94132;
+  width: min(100% - 40px, 1040px);
+  margin: 0 auto;
+  padding: 36px 0 72px;
+  color: var(--spec-ink);
+  font-size: 15px;
+}
+
+.avo-spec h1, .avo-spec h2, .avo-spec h3, .avo-spec p { margin-top: 0; }
+.avo-spec code, .avo-spec pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+.spec-header { padding-bottom: 24px; border-bottom: 3px solid var(--spec-ink); }
+.spec-header > p { margin-bottom: 7px; color: var(--spec-blue); font-size: 0.72rem; font-weight: 900; letter-spacing: 0.08em; }
+.spec-header h1 { margin-bottom: 18px; font-size: clamp(2.3rem, 5vw, 4rem); line-height: 1; letter-spacing: -0.04em; }
+.status-line { display: flex; flex-wrap: wrap; gap: 10px 24px; color: var(--spec-muted); font-size: 0.82rem; }
+.status-line span:last-child b { color: var(--spec-red); }
+
+.spec-section { padding: 27px 0; border-bottom: 1px solid var(--spec-line); }
+.spec-section h2 { margin-bottom: 17px; font-size: 1.45rem; letter-spacing: -0.02em; }
+.spec-section h3 { margin-bottom: 10px; font-size: 0.95rem; }
+.spec-section > p { max-width: 880px; color: var(--spec-muted); }
+.spec-section.important { padding: 25px; border: 1px solid #9bb8c7; background: #f0f6f9; }
+.spec-section.important h2 { color: var(--spec-blue); }
+
+.comparison { display: grid; grid-template-columns: 1fr 1fr; margin: 20px 0; border: 1px solid var(--spec-line); background: white; }
+.comparison div { padding: 15px; }
+.comparison div + div { border-left: 1px solid var(--spec-line); }
+.comparison b { display: block; margin-bottom: 8px; color: var(--spec-blue); }
+.comparison code { display: block; color: var(--spec-ink); font-size: 0.78rem; line-height: 1.6; }
+.rule { margin: 17px 0 0; padding: 11px 13px; border-left: 3px solid var(--spec-blue); background: var(--spec-soft); color: var(--spec-ink) !important; font-size: 0.84rem; }
+
+.avo-spec table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.avo-spec th, .avo-spec td { padding: 10px 11px; border: 1px solid var(--spec-line); text-align: left; vertical-align: top; }
+.avo-spec th { background: #eef1f3; color: var(--spec-muted); font-size: 0.67rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.avo-spec td:first-child { font-weight: 700; }
+
+.avo-spec pre { margin: 0; padding: 18px; overflow-x: auto; border: 1px solid #253541; border-radius: 4px; background: #1d2b35; color: #e5edf1; font-size: 0.76rem; line-height: 1.62; }
+.two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.two-column > div { padding: 17px; border: 1px solid var(--spec-line); background: var(--spec-soft); }
+.two-column ul { margin: 0; padding-left: 20px; color: var(--spec-muted); }
+.two-column li { margin: 5px 0; }
+.package-format { align-items: start; }
+
+.event-order { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: event; }
+.event-order li { counter-increment: event; padding: 12px; border: 1px solid var(--spec-line); background: var(--spec-soft); font-size: 0.74rem; }
+.event-order li::before { content: counter(event); display: inline-grid; width: 21px; height: 21px; margin-right: 7px; place-items: center; border-radius: 50%; background: var(--spec-ink); color: white; font-size: 0.65rem; }
+
+.implementation-status .done { color: var(--spec-green); font-weight: 900; }
+.implementation-status .todo { color: var(--spec-red); font-weight: 900; }
+.final-note { max-width: none !important; margin: 18px 0 0; padding: 15px; border: 1px solid #d3a59c; background: #fff4f2; color: var(--spec-ink) !important; }
+
+@media (max-width: 1100px) {
+  .site-layout:has(.avo-spec) { display: block; }
+  .site-layout:has(.avo-spec) > .site-sidebar { display: none; }
+}
+
+@media (max-width: 700px) {
+  .avo-spec { width: min(100% - 24px, 1040px); padding-top: 20px; }
+  .comparison, .two-column { grid-template-columns: 1fr; }
+  .comparison div + div { border-left: 0; border-top: 1px solid var(--spec-line); }
+  .event-order { grid-template-columns: 1fr; }
+  .avo-spec table { display: block; overflow-x: auto; white-space: nowrap; }
+  .spec-section.important { padding: 18px; }
+}

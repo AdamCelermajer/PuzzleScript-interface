@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Exact implementation specification for the general AVO framework." />
+    <title>General AVO Framework — Implementation Specification</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/avo-lab.css" />
+  </head>
+  <body data-section="avo-lab">
+    <main class="avo-spec">
+      <header class="spec-header">
+        <p>IMPLEMENTATION SPECIFICATION · VERSION 0.4</p>
+        <h1>General AVO framework</h1>
+        <div class="status-line">
+          <span><b>Implemented:</b> self-contained AVO package, profile loader, evaluator, Codex agent</span>
+          <span><b>Backend:</b> existing Codex OAuth session</span>
+        </div>
+      </header>
+
+      <section class="spec-section important">
+        <h2>1. Exact definition</h2>
+        <p><strong>An AVO framework is a trusted execution kernel around a persistent autonomous agent.</strong></p>
+        <p>The agent—not the framework—chooses which candidate to create or revise, which tools to use, and which environment action to test.</p>
+        <div class="comparison">
+          <div><b>EVO</b><code>framework selects parent → LLM generates once → framework scores</code></div>
+          <div><b>AVO</b><code>agent researches freely → agent creates xᵢ → agent chooses probe → framework verifies</code></div>
+        </div>
+        <p class="rule"><b>Necessary condition:</b> if the outer framework tells the model when or how to generate each candidate, it is EVO—not AVO.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>2. Components</h2>
+        <table>
+          <thead><tr><th>Component</th><th>Receives</th><th>Controls</th><th>Produces</th></tr></thead>
+          <tbody>
+            <tr><td><code>EnvironmentAdapter</code></td><td>Action</td><td>Real environment call</td><td>Observation</td></tr>
+            <tr><td><code>EnvironmentProfile</code></td><td>History + observation</td><td>Objective, adapter construction, task evaluation</td><td>TaskEvaluation</td></tr>
+            <tr><td><code>AutonomousAgent</code></td><td>Context + workspace</td><td>Research, tools, candidates, probe</td><td>AgentDecision</td></tr>
+            <tr><td><code>TheoryPackageRegistry</code></td><td>Candidate directories</td><td>Schema admission only</td><td>Executable candidates</td></tr>
+            <tr><td><code>AvoToolGateway</code></td><td>Agent tool requests</td><td>Trust boundary and budgets</td><td>Observations, probes, scores</td></tr>
+            <tr><td><code>AvoLaboratory</code></td><td>Candidates + requested action</td><td>Freeze, execute, compare, record</td><td>CycleResult</td></tr>
+            <tr><td><code>Supervisor</code></td><td>Process history</td><td>Warnings and redirects</td><td>SupervisorEvent</td></tr>
+            <tr><td><code>CodexOAuthAgent</code></td><td>Prompt + tool workspace</td><td>One persistent research session</td><td>Agent-authored actions and packages</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="spec-section">
+        <h2>3. Complete run loop</h2>
+        <pre><code>profile = load_profile(profile_id, settings)
+observation = profile.environment.reset()
+task = profile.evaluate(history, observation)
+
+while budget_remains and not task.terminal:
+    # Agent has a persistent session and writable workspace.
+    context = build_context(
+        observation,
+        immutable_history,
+        admitted_candidates,
+        supervisor_events,
+        remaining_budgets,
+    )
+
+    decision = agent.decide(context)
+    # During decide(), the agent may inspect evidence, write tools,
+    # create several candidates, revise parents, or run local tests.
+
+    if decision.stop:
+        break
+
+    require_legal(decision.action)
+
+    predictions = freeze_before_execution(
+        candidate.predict(history, observation, decision.action)
+        for candidate in admitted_candidates
+    )
+
+    actual = profile.environment.step(decision.action) # exactly once
+    transition = append_immutable(before, action, actual)
+    evaluations = compare(predictions, actual)
+    task = profile.evaluate(history, actual)
+    supervisor_events = supervisor.inspect(history, evaluations)
+    observation = actual</code></pre>
+        <p class="rule">A probe is legal with zero candidates. The agent may collect evidence before it has a defensible hypothesis.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>4. Environment contract</h2>
+        <div class="two-column">
+          <pre><code>class EnvironmentAdapter:
+    reset() -> Observation
+    step(Action) -> Observation
+    compare(expected, actual) -> Comparison</code></pre>
+          <pre><code>class EnvironmentProfile:
+    objective: str
+    environment: EnvironmentAdapter
+    evaluate(history, current) -> TaskEvaluation
+
+TaskEvaluation:
+    terminal: bool
+    success: bool
+    score: JSON</code></pre>
+          <pre><code>Observation:
+    payload: opaque JSON
+    status: string
+    progress: opaque JSON
+    available_actions: string[]
+    metadata: JSON</code></pre>
+        </div>
+        <p>The adapter translates transport and data formats. The profile supplies the external objective and the authoritative task evaluator. Neither supplies object names, action meanings, mechanics, a legend, or a solution.</p>
+        <p class="rule">The generic kernel never checks for PuzzleScript values such as <code>WIN</code>. Only the selected profile interprets environment status.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>5. Agent contract</h2>
+        <div class="two-column">
+          <div>
+            <h3>Input: <code>AgentContext</code></h3>
+            <ul>
+              <li>current observation</li>
+              <li>profile objective and current task score</li>
+              <li>complete transition history</li>
+              <li>candidate summaries</li>
+              <li>available actions</li>
+              <li>supervisor events</li>
+              <li>remaining budgets</li>
+              <li>writable research workspace</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Output: <code>AgentDecision</code></h3>
+            <pre><code>{
+  "action": {"id": "ACTION3", "data": {}},
+  "rationale": "x_12 and x_17 disagree here"
+}
+
+# or
+{"stop_reason": "model is sufficient"}</code></pre>
+          </div>
+        </div>
+        <p class="rule">The session stays alive across tool calls. The framework does not restart the model after each probe.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>6. Candidate xᵢ format</h2>
+        <div class="two-column package-format">
+          <pre><code>drafts/x_017/       # agent-owned working copy
+  manifest.json
+  predict.py
+
+publish → trusted candidates/x_017/
+  manifest.json
+  predict.py
+  notes.md             # optional
+  tests/               # optional</code></pre>
+          <pre><code>{
+  "schema_version": 1,
+  "candidate_id": "x_017",
+  "parent_id": "x_012",
+  "claim": "ACTION5 changes traversability",
+  "complexity": 0.2,
+  "command": ["$PYTHON", "predict.py"]
+}</code></pre>
+        </div>
+        <p>The agent authors the package, then explicitly publishes it through the gateway. The command reads <code>{history, current, action}</code> as JSON and returns <code>{expected, confidence, rationale}</code>.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>7. Authoritative event order</h2>
+        <ol class="event-order">
+          <li><code>candidate_registered</code></li>
+          <li><code>agent_decision</code></li>
+          <li><code>prediction_frozen</code> for every candidate</li>
+          <li><code>transition</code> containing the real environment result</li>
+          <li><code>prediction_evaluated</code> for every candidate</li>
+          <li><code>supervisor_event</code> when triggered</li>
+        </ol>
+        <p>A prediction recorded after the transition is invalid and receives no prospective score.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>8. Two separate evaluations</h2>
+        <p><strong>Task fitness</strong> answers whether the agent solved the environment. It is defined by the selected environment profile and cannot be self-declared by the agent.</p>
+        <p><strong>Hypothesis evaluation</strong> answers whether an optional candidate <code>xᵢ</code> predicts observed transitions.</p>
+        <table>
+          <thead><tr><th>Metric</th><th>Calculated by</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>Contract validity</td><td>Framework</td><td>Candidate runs and returns valid data</td></tr>
+            <tr><td>Replay consistency</td><td>Framework</td><td>Explains previous transitions</td></tr>
+            <tr><td>Prospective accuracy</td><td>Environment comparator</td><td>Predicts unseen outcomes</td></tr>
+            <tr><td>Status/goal accuracy</td><td>Environment comparator</td><td>Predicts terminal and progress signals</td></tr>
+            <tr><td>Coverage</td><td>Framework</td><td>Penalizes constant abstention</td></tr>
+            <tr><td>Planning utility</td><td>Framework experiment</td><td>Measures whether the model supports successful plans</td></tr>
+            <tr><td>Complexity and cost</td><td>Framework</td><td>Prefers smaller, cheaper equivalent theories</td></tr>
+          </tbody>
+        </table>
+        <p class="rule">Keep the vector visible. Do not hide all tradeoffs inside one unexplained scalar score.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>9. Supervisor and termination</h2>
+        <div class="two-column">
+          <div><h3>Supervisor triggers</h3><ul><li>repeated no-change actions</li><li>repeated probes without information gain</li><li>collective prospective failure</li><li>ignored contradictions</li><li>budget exhaustion risk</li></ul></div>
+          <div><h3>Run stops when</h3><ul><li>the profile returns <code>terminal = true</code></li><li>agent chooses to stop</li><li>action, decision, candidate, time, token, or cost budget expires</li><li>a contract violation is unrecoverable</li></ul></div>
+        </div>
+        <p>The supervisor sees process evidence only. It cannot edit candidates or supply the hidden solution. Agent stop means only “stop”; success remains the profile evaluator's decision.</p>
+      </section>
+
+      <section class="spec-section">
+        <h2>10. PuzzleScript implementation</h2>
+        <pre><code>FrameData.frame             → Observation.payload
+FrameData.state             → Observation.status
+FrameData.levels_completed  → Observation.progress
+FrameData.available_actions → Observation.available_actions
+GameAction                  ← Action.id</code></pre>
+        <pre><code>objective = "Win the game."
+success   = (FrameData.state == "WIN")
+fitness   = (success, levels_completed, -environment_actions)</code></pre>
+        <p>Not exposed by the adapter: game source, legend, object names, rules, win condition, or solution.</p>
+      </section>
+
+      <section class="spec-section implementation-status">
+        <h2>11. What exists now</h2>
+        <table>
+          <thead><tr><th>Part</th><th>Status</th><th>Implementation</th></tr></thead>
+          <tbody>
+            <tr><td>Generic environment and evidence kernel</td><td class="done">DONE</td><td><code>avo/core/framework.py</code></td></tr>
+            <tr><td>Filesystem Theory Packages</td><td class="done">DONE</td><td><code>avo/core/theory_package.py</code></td></tr>
+            <tr><td>Environment-neutral tool gateway</td><td class="done">DONE</td><td><code>avo/core/tool_gateway.py</code></td></tr>
+            <tr><td>Environment profile contract and loader</td><td class="done">DONE</td><td><code>avo/core/profile.py</code></td></tr>
+            <tr><td>Run history and immutable evidence</td><td class="done">DONE</td><td><code>avo/core/run_store.py</code></td></tr>
+            <tr><td>PuzzleScript specialization</td><td class="done">DONE</td><td><code>avo/environments/puzzlescript/</code></td></tr>
+            <tr><td>Focused framework tests</td><td class="done">DONE</td><td><code>avo/tests/</code></td></tr>
+            <tr><td>Persistent Codex OAuth agent</td><td class="done">DONE</td><td><code>avo/client/codex_oauth_agent.py</code></td></tr>
+            <tr><td>Profile-driven command-line runner</td><td class="done">DONE</td><td><code>python -m avo.run --profile puzzlescript</code></td></tr>
+            <tr><td>Agent workspace archival</td><td class="done">DONE</td><td>Notes, tools, and drafts cross the sandbox through the gateway</td></tr>
+            <tr><td>Historical replay evaluator</td><td class="done">DONE</td><td><code>AvoToolGateway.evaluate</code></td></tr>
+            <tr><td>Full Sokoban Basic integration run</td><td class="done">DONE</td><td><code>WIN</code> after 84 opaque actions in one persistent Codex turn</td></tr>
+            <tr><td>Secure candidate process sandbox</td><td class="todo">TODO</td><td>Current subprocess provides timeout/crash isolation only</td></tr>
+            <tr><td>Planning utility and token/cost metrics</td><td class="todo">TODO</td><td>Not part of the current score vector</td></tr>
+          </tbody>
+        </table>
+        <p class="final-note"><strong>Current truth:</strong> the full two-level Sokoban run reached the profile-authoritative <code>WIN</code> signal. Changing environments means adding a profile, adapter, and prompt under <code>avo/environments/</code>; the kernel, agent client, evidence format, candidate protocol, and runner stay unchanged. Candidate processes still need a stronger OS sandbox before hostile packages are safe.</p>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

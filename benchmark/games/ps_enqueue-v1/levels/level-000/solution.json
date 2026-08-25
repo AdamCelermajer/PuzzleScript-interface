@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "game_id": "ps_enqueue-v1",
+  "level_index": 0,
+  "method": "semantic_bfs",
+  "claim": "shortest_in_semantic_state_graph",
+  "replay_verified": true,
+  "action_count": 7,
+  "actions": [
+    "RIGHT",
+    "ACTION",
+    "LEFT",
+    "ACTION",
+    "RIGHT",
+    "ACTION",
+    "ACTION"
+  ]
+}

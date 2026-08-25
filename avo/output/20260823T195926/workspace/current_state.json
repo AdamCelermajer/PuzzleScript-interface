@@ -1,0 +1,160 @@
+{
+  "game": "unknown-game",
+  "state": "PLAYING",
+  "levels_completed": 0,
+  "win_levels": 2,
+  "available_actions": [
+    "ACTION1",
+    "ACTION2",
+    "ACTION3",
+    "ACTION4",
+    "ACTION5",
+    "ACTION7"
+  ],
+  "action_meanings": "RESET=restart current level, ACTION1=Up, ACTION2=Down, ACTION3=Left, ACTION4=Right, ACTION5=Space/Action, ACTION7=Undo",
+  "actions_used": 15,
+  "action_budget": 150,
+  "grid": [
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      5,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      4,
+      2,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      3,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ]
+  ],
+  "previous_batch": {
+    "requested_actions": [
+      "ACTION1",
+      "ACTION3",
+      "ACTION3"
+    ],
+    "prediction": "U: player (4,3)->(3,3). L: player ->(3,2). L: player attempts (3,1) where token 4 is. Most likely the player steps onto it (4 either vanishes = collectible, or the player token replaces/overlaps it). Box stays at (4,2).",
+    "transitions": [
+      {
+        "id": "T000013",
+        "action": "ACTION1",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 3,
+            "col": 3,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 4,
+            "col": 3,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "U: player (4,3)->(3,3). L: player ->(3,2). L: player attempts (3,1) where token 4 is. Most likely the player steps onto it (4 either vanishes = collectible, or the player token replaces/overlaps it). Box stays at (4,2).",
+        "note": "Testing whether the player can enter token 4's cell \u2014 this determines the level's solvability route. Undo semantics confirmed: no-ops aren't recorded."
+      },
+      {
+        "id": "T000014",
+        "action": "ACTION3",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "changed": true,
+        "diff": [
+          {
+            "row": 3,
+            "col": 2,
+            "before": 0,
+            "after": 2
+          },
+          {
+            "row": 3,
+            "col": 3,
+            "before": 2,
+            "after": 0
+          }
+        ],
+        "prediction": "U: player (4,3)->(3,3). L: player ->(3,2). L: player attempts (3,1) where token 4 is. Most likely the player steps onto it (4 either vanishes = collectible, or the player token replaces/overlaps it). Box stays at (4,2).",
+        "note": "Testing whether the player can enter token 4's cell \u2014 this determines the level's solvability route. Undo semantics confirmed: no-ops aren't recorded."
+      },
+      {
+        "id": "T000015",
+        "action": "ACTION3",
+        "before": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "after": {
+          "state": "PLAYING",
+          "levels_completed": 0
+        },
+        "changed": false,
+        "diff": [],
+        "prediction": "U: player (4,3)->(3,3). L: player ->(3,2). L: player attempts (3,1) where token 4 is. Most likely the player steps onto it (4 either vanishes = collectible, or the player token replaces/overlaps it). Box stays at (4,2).",
+        "note": "Testing whether the player can enter token 4's cell \u2014 this determines the level's solvability route. Undo semantics confirmed: no-ops aren't recorded."
+      }
+    ],
+    "error": ""
+  }
+}

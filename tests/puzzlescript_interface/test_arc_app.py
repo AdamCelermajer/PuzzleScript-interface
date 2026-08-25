@@ -20,15 +20,22 @@ from puzzlescript_interface.api.catalog import (  # type: ignore[import-not-foun
 class FakePuzzleScriptClient:
     def __init__(self) -> None:
         self.started_games: list[str] = []
+        self.started_levels: list[int | None] = []
         self.actions: list[tuple[str, str]] = []
         self.fail_next_start: tuple[int, str] | None = None
 
-    def start_game(self, source_name: str) -> dict:
+    def start_game(
+        self,
+        source_name: str,
+        *,
+        level_index: int | None = None,
+    ) -> dict:
         if self.fail_next_start is not None:
             status_code, detail = self.fail_next_start
             self.fail_next_start = None
             raise HTTPException(status_code=status_code, detail=detail)
         self.started_games.append(source_name)
+        self.started_levels.append(level_index)
         return {
             "sessionId": "ps-session-1",
             "frame": [[[0, 1], [1, 0]]],
@@ -244,6 +251,21 @@ class ArcServiceTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["game_id"], "ps_sokoban_basic-v1")
         self.assertEqual(self.fake_client.started_games[-1], "ps_sokoban_basic-v1")
+
+    def test_reset_command_can_start_at_a_catalog_reference_level(self) -> None:
+        card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
+
+        response = self.client.post(
+            "/api/cmd/RESET",
+            json={
+                "card_id": card_id,
+                "game_id": "ps_sokoban_basic-v1",
+                "level_index": 2,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.fake_client.started_levels[-1], 2)
 
     def test_action_command_accepts_legacy_folder_name_lookup(self) -> None:
         card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]

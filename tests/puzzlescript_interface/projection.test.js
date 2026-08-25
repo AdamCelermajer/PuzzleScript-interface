@@ -64,6 +64,18 @@ test('projectRawGrid maps unknown cells to the reserved unknown token instead of
     ]);
 });
 
+test('Midas fallback Crown and Love cells receive distinct stable values', () => {
+    const gameData = parseGame('ps_midas-v1');
+
+    const first = buildArcProjectionSpec(gameData);
+    const second = buildArcProjectionSpec(gameData);
+
+    assert.notEqual(first.charToInt.C, first.charToInt.L);
+    assert.notEqual(first.charToInt.C, first.charToInt['?']);
+    assert.notEqual(first.charToInt.L, first.charToInt['?']);
+    assert.deepEqual(first.charToInt, second.charToInt);
+});
+
 test('buildArcProjectionSpec compresses overflow chars into the unknown bucket', () => {
     const gameData = parseGame('ps_baba_is_you-v1');
 

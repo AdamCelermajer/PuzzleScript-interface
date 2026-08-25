@@ -18,8 +18,41 @@ function getDisplayLegend(gameData) {
     return displayLegend;
 }
 
+function getFallbackDisplayChars(gameData) {
+    const singleCharTiles = Array.isArray(gameData.legends)
+        ? gameData.legends.filter(tile => {
+            const key = tile.spriteNameOrLevelChar;
+            return key && key.length === 1;
+        })
+        : Object.entries(gameData.legends || {})
+            .filter(([key]) => key.length === 1)
+            .map(([, tile]) => tile);
+    const directlyRenderable = new Set();
+    for (const tile of singleCharTiles) {
+        const sprites = tile.getSprites();
+        if ((tile.isOr && tile.isOr()) || sprites.length === 1) {
+            for (const sprite of sprites) directlyRenderable.add(sprite);
+        }
+    }
+
+    const fallbackChars = [];
+    const objects = Array.isArray(gameData.objects)
+        ? gameData.objects
+        : Object.values(gameData.objects || {});
+    for (const sprite of objects) {
+        const name = String(sprite.getName ? sprite.getName() : sprite.name || '');
+        const normalized = name.toLowerCase();
+        if (!name || normalized === 'background' || normalized.includes('spawn')) continue;
+        if (directlyRenderable.has(sprite)) continue;
+        const char = name.charAt(0).toUpperCase();
+        if (!fallbackChars.includes(char)) fallbackChars.push(char);
+    }
+    return fallbackChars;
+}
+
 function buildArcProjectionSpec(gameData) {
     const displayLegend = getDisplayLegend(gameData);
+    const fallbackChars = getFallbackDisplayChars(gameData);
     const charToInt = {};
     const intToChar = {};
     let nextValue = 0;
@@ -37,6 +70,18 @@ function buildArcProjectionSpec(gameData) {
         if (key === '.' || charToInt[key] !== undefined) {
             continue;
         }
+        if (nextValue < maxDistinctVisibleValues) {
+            charToInt[key] = nextValue;
+            intToChar[nextValue] = key;
+            nextValue += 1;
+        } else {
+            charToInt[key] = overflowValue;
+            overflowChars.push(key);
+        }
+    }
+
+    for (const key of fallbackChars) {
+        if (charToInt[key] !== undefined) continue;
         if (nextValue < maxDistinctVisibleValues) {
             charToInt[key] = nextValue;
             intToChar[nextValue] = key;

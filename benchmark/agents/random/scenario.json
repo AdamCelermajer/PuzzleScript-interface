@@ -1,0 +1,10 @@
+{
+  "scenario_id": "fixed-random-baseline-v1",
+  "seed": 3838,
+  "delay_seconds": 0.5,
+  "actions_per_game": 15,
+  "games": [
+    "ps_coin_counter-v1",
+    "ps_wall_shuffle-v1"
+  ]
+}

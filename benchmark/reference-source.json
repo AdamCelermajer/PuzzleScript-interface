@@ -1,0 +1,829 @@
+{
+  "catalog_id": "puzzlescript-world-v0",
+  "version": "0.3.0",
+  "source": {
+    "result_file": "experiement/bfs_solver/semantic_all_60s_results.json",
+    "verification_file": "experiement/bfs_solver/semantic_all_60s_verification.json",
+    "sample_seed": 3838,
+    "attempted": 30,
+    "included": 21,
+    "scope_note": "Every included game has a replay-verified shortest path for one selected playable level. Only reference.whole_game entries have a whole-game reference."
+  },
+  "games": [
+    {
+      "game_id": "ps_coin_counter-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 0,
+        "actions": 9,
+        "path": [
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_enqueue-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 0,
+        "actions": 7,
+        "path": [
+          "RIGHT",
+          "ACTION",
+          "LEFT",
+          "ACTION",
+          "RIGHT",
+          "ACTION",
+          "ACTION"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_punt_mazes-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 1,
+        "actions": 11,
+        "path": [
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "UP",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "DOWN"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_compressed-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 12,
+        "path": [
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_spacekoban-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 0,
+        "actions": 1,
+        "path": [
+          "RIGHT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_fatigued_square_maze-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 1,
+        "actions": 12,
+        "path": [
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_wall_shuffle-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 11,
+        "path": [
+          "DOWN",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "LEFT",
+          "UP"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_knightoban-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 1,
+        "actions": 20,
+        "path": [
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "ACTION",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "ACTION",
+          "LEFT",
+          "LEFT",
+          "UP",
+          "ACTION",
+          "UP",
+          "UP",
+          "RIGHT",
+          "ACTION"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_icecrates-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 1,
+        "actions": 4,
+        "path": [
+          "LEFT",
+          "UP",
+          "LEFT",
+          "UP"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_atlas_shrank-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 1,
+        "actions": 6,
+        "path": [
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_sokoban_basic-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 0,
+        "actions": 33,
+        "path": [
+          "DOWN",
+          "LEFT",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "DOWN",
+          "LEFT",
+          "UP",
+          "LEFT",
+          "LEFT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "UP",
+          "RIGHT",
+          "UP",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "UP",
+          "UP"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph",
+        "whole_game": {
+          "actions": 49,
+          "playable_levels": 2,
+          "method": "semantic_bfs",
+          "replay_verified": true
+        }
+      }
+    },
+    {
+      "game_id": "ps_wall_virus-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 30,
+        "path": [
+          "DOWN",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "DOWN",
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "DOWN",
+          "DOWN"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_maera_public_works-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 0,
+        "actions": 1,
+        "path": [
+          "UP"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_extra_step-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 9,
+        "path": [
+          "DOWN",
+          "DOWN",
+          "DOWN",
+          "UP",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "UP",
+          "RIGHT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_moving_target-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 5,
+        "path": [
+          "UP",
+          "LEFT",
+          "LEFT",
+          "LEFT",
+          "UP"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_on_and_off-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 10,
+        "path": [
+          "UP",
+          "UP",
+          "UP",
+          "LEFT",
+          "UP",
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_take_heart_lass-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 1,
+        "actions": 3,
+        "path": [
+          "LEFT",
+          "LEFT",
+          "LEFT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_midas-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 0,
+        "actions": 7,
+        "path": [
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_rotaters_cause-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 12,
+        "path": [
+          "UP",
+          "LEFT",
+          "LEFT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "LEFT",
+          "LEFT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_the_switch-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 2,
+        "actions": 16,
+        "path": [
+          "UP",
+          "UP",
+          "LEFT",
+          "LEFT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    },
+    {
+      "game_id": "ps_some_pits-v1",
+      "max_actions": 500,
+      "tracks": {
+        "game_solving": {
+          "enabled": true
+        },
+        "goal_recognition": {
+          "enabled": true,
+          "mode": "online_winning_action_prediction"
+        },
+        "rule_inference": {
+          "enabled": true,
+          "mode": "online_next_observation_prediction"
+        }
+      },
+      "reference": {
+        "scope": "first_playable_level",
+        "level_index": 1,
+        "actions": 23,
+        "path": [
+          "DOWN",
+          "LEFT",
+          "LEFT",
+          "UP",
+          "UP",
+          "UP",
+          "UP",
+          "RIGHT",
+          "RIGHT",
+          "UP",
+          "UP",
+          "LEFT",
+          "UP",
+          "LEFT",
+          "DOWN",
+          "LEFT",
+          "DOWN",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT",
+          "RIGHT"
+        ],
+        "method": "semantic_bfs",
+        "replay_verified": true,
+        "claim": "shortest_in_semantic_state_graph"
+      }
+    }
+  ]
+}

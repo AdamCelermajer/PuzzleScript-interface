@@ -1,0 +1,12 @@
+{
+  "copied": [
+    "current_state.json",
+    "KNOWLEDGE.md",
+    "trajectory.jsonl",
+    "WORKING.md"
+  ],
+  "skipped": [
+    "helpers/search_level.py: [Errno 13] Permission denied: 'C:\\\\Users\\\\adamc\\\\AppData\\\\Local\\\\Temp\\\\avo-puzzle-run-1ojr3lbq\\\\helpers\\\\search_level.py'",
+    "helpers/search_level2.py: [Errno 13] Permission denied: 'C:\\\\Users\\\\adamc\\\\AppData\\\\Local\\\\Temp\\\\avo-puzzle-run-1ojr3lbq\\\\helpers\\\\search_level2.py'"
+  ]
+}

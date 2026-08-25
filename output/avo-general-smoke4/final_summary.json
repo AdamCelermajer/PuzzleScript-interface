@@ -1,0 +1,10 @@
+{
+  "terminal": false,
+  "finish_reason": "Completed the only permitted real probe and published/evaluated an evidence-grounded executable hypothesis with exact replay accuracy.",
+  "agent_turns": 1,
+  "environment_steps": 1,
+  "candidates": 2,
+  "final_status": "PLAYING",
+  "transcript": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\output\\avo-general-smoke4\\workspace\\agent_transcript.jsonl",
+  "evidence": "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\output\\avo-general-smoke4\\evidence\\evidence.jsonl"
+}

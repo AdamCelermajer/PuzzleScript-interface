@@ -1,0 +1,76 @@
+{
+  "game": "unknown-game",
+  "state": "PLAYING",
+  "levels_completed": 0,
+  "win_levels": 2,
+  "available_actions": [
+    "ACTION1",
+    "ACTION2",
+    "ACTION3",
+    "ACTION4",
+    "ACTION5",
+    "ACTION7"
+  ],
+  "action_meanings": "RESET=restart current level, ACTION1=Up, ACTION2=Down, ACTION3=Left, ACTION4=Right, ACTION5=Space/Action, ACTION7=Undo",
+  "actions_used": 0,
+  "action_budget": 150,
+  "grid": [
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      5,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      4,
+      2,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      3,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ]
+  ],
+  "previous_batch": null
+}

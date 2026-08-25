@@ -25,6 +25,16 @@ def _to_namespace(value):
     return value
 
 
+def _to_plain(value):
+    if isinstance(value, SimpleNamespace):
+        return {key: _to_plain(item) for key, item in vars(value).items()}
+    if isinstance(value, dict):
+        return {str(key): _to_plain(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_to_plain(item) for item in value]
+    return value
+
+
 def _is_official_arc_url(url: str) -> bool:
     return "three.arcprize.org" in str(url or "").strip().lower()
 
@@ -96,6 +106,30 @@ class LocalArcEnvironmentWrapper:
         if data:
             payload.update(data)
         frame = self._request("POST", f"/api/cmd/{action.name}", payload)
+        return _to_namespace(frame)
+
+    def save_state(self) -> str:
+        if not self.guid:
+            raise RuntimeError("Cannot save state before reset")
+        payload = self._request(
+            "POST",
+            "/api/state/save",
+            {"game_id": self.game_id, "guid": self.guid},
+        )
+        return str(payload["snapshot_id"])
+
+    def restore_state(self, snapshot_id: str):
+        if not self.guid:
+            raise RuntimeError("Cannot restore state before reset")
+        frame = self._request(
+            "POST",
+            "/api/state/restore",
+            {
+                "game_id": self.game_id,
+                "guid": self.guid,
+                "snapshot_id": snapshot_id,
+            },
+        )
         return _to_namespace(frame)
 
 
@@ -219,7 +253,7 @@ class ArcadeEnv(BaseEnv):
             available_actions=available_actions,
             action_input=action_input,
             legend=_normalize_legend(getattr(frame_data, "legend", {})),
-            projection=getattr(frame_data, "projection", {}) or {},
+            projection=_to_plain(getattr(frame_data, "projection", {}) or {}),
             rendered_frame=self._convert_rendered_frame(
                 getattr(frame_data, "rendered_frame", None)
             ),
@@ -243,5 +277,19 @@ class ArcadeEnv(BaseEnv):
             raise RuntimeError(
                 f"Failed to step ARC environment {self.game_id} with {action.name}"
             )
+        self._render_frame(frame_data)
+        return self._convert_frame(frame_data)
+
+    def save_state(self) -> str:
+        method = getattr(self._env, "save_state", None)
+        if method is None:
+            raise RuntimeError("This ARC environment does not support state checkpoints")
+        return str(method())
+
+    def restore_state(self, snapshot_id: str) -> FrameData:
+        method = getattr(self._env, "restore_state", None)
+        if method is None:
+            raise RuntimeError("This ARC environment does not support state checkpoints")
+        frame_data = method(snapshot_id)
         self._render_frame(frame_data)
         return self._convert_frame(frame_data)

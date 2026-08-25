@@ -1,0 +1,8 @@
+{
+  "candidate_id": "down_transition_v2",
+  "schema_version": 1,
+  "claim": "ACTION2 moves the player marker one row downward into a traversable cell and appends the resulting grid to the frame sequence.",
+  "complexity": 1.0,
+  "command": ["python", "predict.py"]
+}
+
