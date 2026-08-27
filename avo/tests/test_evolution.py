@@ -228,9 +228,10 @@ class EvolutionTests(unittest.TestCase):
             def fake_execute_player_run(**kwargs):
                 workspace = Path(kwargs["workspace"])
                 seen_workspaces.append(str(workspace))
+                self.assertTrue(workspace.is_relative_to(Path(kwargs["output_dir"])))
                 self.assertEqual((workspace / "NOTES.md").read_text(encoding="utf-8"), "seed")
                 run_dir = Path(kwargs["output_dir"])
-                run_dir.mkdir(parents=True)
+                run_dir.mkdir(parents=True, exist_ok=True)
                 return PlayerRunResult(
                     task=TaskEvaluation(False, False, 2.0, {"progress": 2}),
                     finish_reason="done",

@@ -14,7 +14,10 @@ from avo.environments.puzzlescript.adapter import PuzzleScriptEnvironment
 class PuzzleScriptProfile:
     environment: PuzzleScriptEnvironment
     profile_id: str = "puzzlescript"
-    objective: str = "Win the game."
+    objective: str = (
+        "Build and validate a reusable autonomous solver that can win from a fresh reset "
+        "without further Codex reasoning; manually chosen gameplay progress is only research."
+    )
 
     def evaluate(
         self,

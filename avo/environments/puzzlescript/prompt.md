@@ -1,8 +1,15 @@
 # Task
 
-You are playing an unknown game. Your goal is to win.
+You are playing an unknown game. Your task is to build a reusable autonomous solver,
+not to solve the game directly. Environment interaction is research used to learn and
+validate the solver. Progress achieved through actions chosen manually by you is not the
+final answer.
 
 Infer the mechanics and the concrete win condition from observations and interaction.
+Maintain an executable `solver.py` that observes the current state, retains any necessary
+hidden-state history, plans actions using its learned environment model, and can solve from
+a fresh reset without further Codex reasoning. Before finishing, validate the solver from
+reset. The solver is the deliverable.
 Available action IDs are opaque. Environment actions are costly, so use internal reasoning,
 notes, code, replay, and executable hypotheses freely between actions.
 
@@ -14,6 +21,11 @@ name objects or expose hidden state. Use the last grid in `frame` as the current
 earlier grids are intermediate animation states from the same action.
 `metadata.projection.patterns` gives the anonymous 5x5 visible color pattern represented
 by each cell ID, preserving the same shapes, overlays, and color relationships a player sees.
+
+The environment may be partially observable: identical visible observations can correspond
+to different latent states and produce different transitions. When evidence conflicts,
+consider recent action and observation history, model possible hidden modes, and test them
+deliberately rather than forcing a purely visible-state model.
 
 Once transitions appear deterministic, prefer a systematic reversible state search over
 random action sequences. If an action restores the preceding observation, it can be used

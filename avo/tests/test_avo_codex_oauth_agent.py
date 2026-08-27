@@ -83,7 +83,7 @@ class RecordingToolServer:
 
 
 class CodexOAuthAgentTests(unittest.TestCase):
-    def test_uses_one_persistent_workspace_write_thread(self):
+    def test_uses_one_persistent_workspace_write_thread_without_memories(self):
         with tempfile.TemporaryDirectory() as root:
             environment = IdleEnvironment()
             lab = AvoLaboratory(environment, [], Path(root) / "evidence")
@@ -102,7 +102,16 @@ class CodexOAuthAgentTests(unittest.TestCase):
                 FakeCodex.instance.thread_settings["sandbox"].value,
                 "workspace-write",
             )
+            self.assertEqual(
+                FakeCodex.instance.config.config_overrides,
+                (
+                    "features.memories=false",
+                    "memories.use_memories=false",
+                    "memories.generate_memories=false",
+                ),
+            )
             self.assertIn("unknown interactive environment", FakeCodex.instance.thread_settings["base_instructions"])
+            self.assertIn("Never inspect parent directories", FakeCodex.instance.thread_settings["base_instructions"])
 
     def test_accepts_a_custom_tool_server_for_the_outer_loop(self):
         with tempfile.TemporaryDirectory() as root:

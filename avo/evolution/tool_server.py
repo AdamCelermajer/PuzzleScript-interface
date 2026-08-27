@@ -43,36 +43,64 @@ OPTIMIZER_CLI = r'''from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
 import uuid
 from pathlib import Path
 
 
+def append_request(path, lock_path, payload):
+    encoded = (json.dumps(payload) + "\n").encode("utf-8")
+    with lock_path.open("r+b", buffering=0) as lock:
+        if os.name == "nt":
+            import msvcrt
+            while True:
+                try:
+                    msvcrt.locking(lock.fileno(), msvcrt.LK_NBLCK, 1)
+                    break
+                except OSError:
+                    time.sleep(0.01)
+            try:
+                with path.open("ab", buffering=0) as stream:
+                    stream.write(encoded)
+            finally:
+                lock.seek(0)
+                msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            try:
+                with path.open("ab", buffering=0) as stream:
+                    stream.write(encoded)
+            finally:
+                fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+
+
 def call(method, params=None):
     root = Path(__file__).resolve().parent / ".avo_evolution_rpc"
     request_id = uuid.uuid4().hex
-    request_file = root / "requests" / f"{request_id}.json"
-    response_file = root / "responses" / f"{request_id}.json"
-    request_file.parent.mkdir(parents=True, exist_ok=True)
-    response_file.parent.mkdir(parents=True, exist_ok=True)
-    request_file.write_text(
-        json.dumps({"id": request_id, "method": method, "params": params or {}}),
-        encoding="utf-8",
+    append_request(
+        root / "requests.jsonl",
+        root / "requests.lock",
+        {"id": request_id, "method": method, "params": params or {}},
     )
     deadline = time.monotonic() + 86_400
     while time.monotonic() < deadline:
         try:
-            data = json.loads(response_file.read_text(encoding="utf-8"))
-        except (json.JSONDecodeError, OSError):
+            lines = (root / "responses.jsonl").read_text(encoding="utf-8").splitlines()
+        except OSError:
             time.sleep(0.05)
             continue
-        if data.get("id") == request_id:
-            response_file.unlink(missing_ok=True)
-            request_file.unlink(missing_ok=True)
-            if not data.get("ok"):
-                raise SystemExit(data.get("error", "AVO evolution tool failed"))
-            print(json.dumps(data["result"], indent=2))
-            return
+        for line in reversed(lines):
+            try:
+                data = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if data.get("id") == request_id:
+                if not data.get("ok"):
+                    raise SystemExit(data.get("error", "AVO evolution tool failed"))
+                print(json.dumps(data["result"], indent=2))
+                return
         time.sleep(0.05)
     raise SystemExit("AVO evolution tool timed out")
 
@@ -111,15 +139,18 @@ class EvolutionFileToolServer:
         self.gateway = gateway
         self.workspace = Path(workspace).resolve()
         self.rpc_root = self.workspace / ".avo_evolution_rpc"
-        self.request_dir = self.rpc_root / "requests"
-        self.response_dir = self.rpc_root / "responses"
+        self.request_log = self.rpc_root / "requests.jsonl"
+        self.response_log = self.rpc_root / "responses.jsonl"
+        self.request_lock = self.rpc_root / "requests.lock"
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
 
     def install(self) -> None:
         self.workspace.mkdir(parents=True, exist_ok=True)
-        self.request_dir.mkdir(parents=True, exist_ok=True)
-        self.response_dir.mkdir(parents=True, exist_ok=True)
+        self.rpc_root.mkdir(parents=True, exist_ok=True)
+        self.request_log.write_text("", encoding="utf-8")
+        self.response_log.write_text("", encoding="utf-8")
+        self.request_lock.write_bytes(b"0")
         (self.workspace / "avo_evolve_tool.py").write_text(
             OPTIMIZER_CLI,
             encoding="utf-8",
@@ -146,22 +177,29 @@ class EvolutionFileToolServer:
 
     def _serve(self) -> None:
         processed: set[str] = set()
+        offset = 0
+        buffered = b""
         while not self._stop.is_set():
-            pending = [
-                path
-                for path in sorted(self.request_dir.glob("*.json"))
-                if path.stem not in processed
-            ]
-            if not pending:
+            try:
+                with self.request_log.open("rb") as stream:
+                    stream.seek(offset)
+                    chunk = stream.read()
+                    offset = stream.tell()
+            except OSError:
+                chunk = b""
+            if not chunk:
                 self._stop.wait(0.05)
                 continue
-            for request_file in pending:
+            buffered += chunk
+            lines = buffered.split(b"\n")
+            buffered = lines.pop()
+            for raw_line in lines:
                 try:
-                    request = json.loads(request_file.read_text(encoding="utf-8"))
-                except (json.JSONDecodeError, OSError):
+                    request = json.loads(raw_line.decode("utf-8"))
+                except (UnicodeDecodeError, json.JSONDecodeError):
                     continue
                 request_id = str(request.get("id", ""))
-                if not request_id:
+                if not request_id or request_id in processed:
                     continue
                 processed.add(request_id)
                 try:
@@ -176,7 +214,5 @@ class EvolutionFileToolServer:
                         "ok": False,
                         "error": f"{type(exc).__name__}: {exc}",
                     }
-                (self.response_dir / f"{request_id}.json").write_text(
-                    json.dumps(response, default=str),
-                    encoding="utf-8",
-                )
+                with self.response_log.open("a", encoding="utf-8") as stream:
+                    stream.write(json.dumps(response, default=str) + "\n")

@@ -64,7 +64,14 @@ class CodexOAuthAgent:
             trace.snapshot("workspace_initialized")
 
         codex_bin = _find_codex_bin(self.config.codex_bin)
-        sdk_config = CodexConfig(codex_bin=codex_bin) if codex_bin else None
+        sdk_config = CodexConfig(
+            codex_bin=codex_bin or None,
+            config_overrides=(
+                "features.memories=false",
+                "memories.use_memories=false",
+                "memories.generate_memories=false",
+            ),
+        )
         final_response = ""
         turns = 0
         try:

@@ -41,7 +41,14 @@ class CandidateEvaluator:
         # Loading here, rather than in __init__, constructs a fresh profile/environment
         # for every x_i.
         loaded = load_profile(self.config.profile, self.config.profile_settings)
-        with tempfile.TemporaryDirectory(prefix=f"avo-player-{candidate.candidate_id}-") as raw:
+        run_dir.mkdir(parents=True, exist_ok=True)
+        # Keep the sandbox workspace beneath the run directory. On Windows, files
+        # created by the restricted Codex token under the system temp directory can
+        # receive ACLs that the trusted file-RPC server cannot read.
+        with tempfile.TemporaryDirectory(
+            prefix=f"avo-player-{candidate.candidate_id}-",
+            dir=run_dir,
+        ) as raw:
             workspace = Path(raw).resolve()
             if candidate.workspace_path.is_dir():
                 shutil.copytree(candidate.workspace_path, workspace, dirs_exist_ok=True)

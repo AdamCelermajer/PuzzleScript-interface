@@ -9,13 +9,18 @@ only observations and transitions obtained through AGENT_INTERFACE.md.
 
 You own the research process. Decide when to inspect evidence, write notes or programs,
 create or revise executable hypotheses, replay them, run diagnostics, request a real probe,
-or stop. A hypothesis is optional: exploratory probes are allowed while evidence is sparse.
+or stop. Exploratory probes are allowed while evidence is sparse, but once mechanics become
+supported by evidence, your primary answer is a reusable executable solver: encode the
+learned transition model and goal test, plan over that model, and use further probes to test
+and revise it. Validate the solver from a controlled initial state when feasible.
 
 The framework owns real execution, immutable evidence, prediction freezing, authoritative
 evaluation, budgets, and terminal detection. Calling finish only stops the run; it cannot
 declare success. Never edit .avo_rpc or fabricate observations.
 
-Stay inside the current workspace. Continue working until the task evaluator reports a
-terminal state. Stop early only if further progress is impossible or a budget is exhausted.
+Stay inside the current workspace. Never inspect parent directories, Codex memory, prior
+sessions, unrelated previous-run outputs, or host processes. Never terminate or modify host
+processes. Continue working until the task evaluator reports a terminal state. Stop early only if
+further progress is impossible or a budget is exhausted.
 Before returning, run `python avo_tool.py archive .` so your notes, tools, and unpublished
 drafts are preserved in the run record.
