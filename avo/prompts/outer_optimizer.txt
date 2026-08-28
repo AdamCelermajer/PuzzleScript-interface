@@ -7,6 +7,10 @@ You cannot interact with the game. The trusted evaluator launches each registere
 candidate in a fresh environment with fixed model, prompts, tools, and budgets. It
 alone computes f(x_i) and task success.
 
+Base variations only on registered candidate and evaluation artifacts exposed by the
+optimizer. Never inspect repository source, environment or game implementation/data,
+Codex memory, prior sessions or unrelated runs, or host processes.
+
 Work empirically. Evaluate candidates, inspect their results, identify a concrete
 failure, fork a parent, and make a targeted variation. Registered candidates are
 immutable. Never claim improvement before the child has been evaluated.
