@@ -73,7 +73,7 @@ class CandidateEvaluator:
             )
             solver_result = evaluate_solver_workspace(
                 loaded_profile=solver_loaded,
-                workspace=workspace,
+                workspace=result.output_dir / "workspace",
                 output_dir=run_dir / "solver_evaluation",
                 max_environment_steps=self.config.player.max_environment_steps,
                 max_wall_seconds=self.config.player.max_wall_seconds,
