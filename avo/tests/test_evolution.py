@@ -321,20 +321,16 @@ class EvolutionTests(unittest.TestCase):
                     score={"levels_completed": completed},
                 )
 
-        solver_source = r'''import argparse, json, subprocess, sys
+        solver_source = r'''import argparse, json, sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--play", action="store_true")
 parser.add_argument("--max-steps", type=int, default=10)
 args = parser.parse_args()
 if args.play:
-    for _ in range(2):
-        subprocess.run(
-            [sys.executable, "avo_tool.py", "probe", "A1", "--rationale", "solve"],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
+    for line in sys.stdin:
+        json.loads(line)
+        print(json.dumps({"action": "A1"}), flush=True)
 else:
     request = json.load(sys.stdin)
     current = request["current"]

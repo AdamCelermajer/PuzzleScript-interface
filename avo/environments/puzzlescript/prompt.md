@@ -14,9 +14,12 @@ reset. The solver is the deliverable.
 `python solver.py` must implement the documented theory-prediction JSON protocol. For an
 unseen state and proposed action, predict the next observation from learned rules rather
 than replaying that action in the real environment or merely recalling an identical prior
-transition. `python solver.py --play --max-steps N` must autonomously play from the current
-observation. Plan by rolling the learned model forward internally; real probes and
-checkpoints are research and validation tools, not the solver's planning mechanism.
+transition. `python solver.py --play --max-steps N` is a streaming controller: for each
+newline-delimited JSON object on stdin containing `observation` and `history`, it must emit
+exactly one JSON line `{"action":"ACTION_ID"}` on stdout. The trusted evaluator executes
+that action and supplies the resulting observation. Plan by rolling the learned model
+forward internally; real probes and checkpoints are research and validation tools, not the
+solver's planning mechanism.
 
 After research, the trusted evaluator launches `solver.py` alone in a second fresh game.
 Fitness is the number of levels it completes multiplied by prospective model accuracy on

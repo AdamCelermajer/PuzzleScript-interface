@@ -40,3 +40,8 @@ the fresh solver's completed levels multiplied by its prospective transition-mod
 score. The model score weights exact next-state accuracy three times more than
 partial observation similarity. The research evidence, transcript, final workspace,
 fresh solver trace, and both scores are retained with each evaluation.
+
+Fresh play uses a framework-owned streaming loop. The evaluator sends one JSON line
+containing the current `observation` and fresh-run `history`; `solver.py --play` returns
+one `{"action":"ACTION_ID"}` line. The evaluator, not the solver process, owns all real
+environment execution.
