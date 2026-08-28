@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import shutil
 import tempfile
+from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -54,13 +55,19 @@ class CandidateEvaluator:
         )
         research_dir.mkdir(parents=True, exist_ok=True)
         evaluation_dir.mkdir(parents=True, exist_ok=True)
+        sandbox_dir = (
+            generation_dir.parent / ".sandboxes" if clean_layout else research_dir
+        )
+        sandbox_dir.mkdir(parents=True, exist_ok=True)
         # Keep the sandbox workspace beneath the run directory. On Windows, files
         # created by the restricted Codex token under the system temp directory can
-        # receive ACLs that the trusted file-RPC server cannot read.
-        with tempfile.TemporaryDirectory(
+        # receive ACLs that the trusted file-RPC server cannot read. Retain these
+        # hidden sandboxes as provenance: synchronous cleanup can block indefinitely
+        # on those same restricted ACLs after an otherwise complete evaluation.
+        with nullcontext(tempfile.mkdtemp(
             prefix=f"avo-player-{candidate.candidate_id}-",
-            dir=research_dir,
-        ) as raw:
+            dir=sandbox_dir,
+        )) as raw:
             workspace = Path(raw).resolve()
             if candidate.workspace_path.is_dir():
                 shutil.copytree(candidate.workspace_path, workspace, dirs_exist_ok=True)
