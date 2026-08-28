@@ -113,7 +113,7 @@ def main() -> None:
         "profile_prompt_hash": loaded_for_metadata.prompt_hash,
         "profile_settings": _jsonable(overrides),
         "objective": loaded_for_metadata.implementation.objective,
-        "fitness_owner": "environment profile TaskEvaluation.fitness",
+        "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
         "player": _jsonable(player_settings),
         "optimizer_model": args.optimizer_model,
         "optimizer_effort": args.optimizer_effort,

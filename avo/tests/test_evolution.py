@@ -12,10 +12,12 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from avo.core.framework import Action, Comparison, Observation
 from avo.core.profile import TaskEvaluation
 from avo.evolution.candidate import CandidateEvaluation, RunCandidate
 from avo.evolution.evaluator import CandidateEvaluator, PlayerEvaluationConfig
 from avo.evolution.gateway import EvolutionBudget, EvolutionGateway
+from avo.evolution.solver_evaluation import SolverEvaluation, evaluate_solver_workspace
 from avo.evolution.store import EvolutionStore
 from avo.evolution.tool_server import EvolutionFileToolServer, OPTIMIZER_INTERFACE
 from avo.run_once import PlayerRunResult, PlayerRunSettings
@@ -222,7 +224,12 @@ class EvolutionTests(unittest.TestCase):
                     player=PlayerRunSettings(),
                 )
             )
-            loaded_instances = [SimpleNamespace(name="first"), SimpleNamespace(name="second")]
+            loaded_instances = [
+                SimpleNamespace(name="research-one"),
+                SimpleNamespace(name="solver-one"),
+                SimpleNamespace(name="research-two"),
+                SimpleNamespace(name="solver-two"),
+            ]
             seen_workspaces: list[str] = []
 
             def fake_execute_player_run(**kwargs):
@@ -247,12 +254,120 @@ class EvolutionTests(unittest.TestCase):
             ) as load, patch(
                 "avo.evolution.evaluator.execute_player_run",
                 side_effect=fake_execute_player_run,
+            ), patch(
+                "avo.evolution.evaluator.evaluate_solver_workspace",
+                return_value=SolverEvaluation(
+                    fitness=1.5,
+                    success=False,
+                    terminal=False,
+                    score={"solver_levels_completed": 2, "model_score": 0.75},
+                    finish_reason="completed",
+                    environment_steps=2,
+                ),
             ):
                 evaluator.evaluate(candidate, root / "run_001")
                 evaluator.evaluate(candidate, root / "run_002")
 
-            self.assertEqual(load.call_count, 2)
+            self.assertEqual(load.call_count, 4)
             self.assertNotEqual(seen_workspaces[0], seen_workspaces[1])
+
+    def test_fresh_solver_evaluation_combines_model_accuracy_and_progress(self) -> None:
+        class CounterEnvironment:
+            value = 0
+
+            def reset(self):
+                self.value = 0
+                return self._observation()
+
+            def step(self, action: Action):
+                self.value += 1
+                return self._observation()
+
+            def _observation(self):
+                won = self.value >= 2
+                return Observation(
+                    payload={"value": self.value},
+                    status="WIN" if won else "PLAYING",
+                    progress={"levels_completed": self.value, "win_levels": 2},
+                    available_actions=("A1",),
+                )
+
+            def compare(self, expected: Observation, actual: Observation):
+                exact = (
+                    expected.payload == actual.payload
+                    and expected.status == actual.status
+                    and expected.progress == actual.progress
+                )
+                return Comparison(
+                    exact=exact,
+                    prospective_accuracy=float(expected.payload == actual.payload),
+                    status_accuracy=float(expected.status == actual.status),
+                    progress_accuracy=float(expected.progress == actual.progress),
+                )
+
+        class CounterProfile:
+            profile_id = "counter"
+            objective = "solve"
+
+            def __init__(self):
+                self.environment = CounterEnvironment()
+
+            def evaluate(self, history, current):
+                completed = int(current.progress["levels_completed"])
+                return TaskEvaluation(
+                    terminal=current.status == "WIN",
+                    success=current.status == "WIN",
+                    fitness=float(completed),
+                    score={"levels_completed": completed},
+                )
+
+        solver_source = r'''import argparse, json, subprocess, sys
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--play", action="store_true")
+parser.add_argument("--max-steps", type=int, default=10)
+args = parser.parse_args()
+if args.play:
+    for _ in range(2):
+        subprocess.run(
+            [sys.executable, "avo_tool.py", "probe", "A1", "--rationale", "solve"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+else:
+    request = json.load(sys.stdin)
+    current = request["current"]
+    value = current["payload"]["value"] + 1
+    print(json.dumps({
+        "protocol": "avo-theory-prediction-v1",
+        "expected": {
+            "payload": {"value": value},
+            "status": "WIN" if value >= 2 else "PLAYING",
+            "progress": {"levels_completed": value, "win_levels": 2},
+            "available_actions": ["A1"],
+        },
+        "confidence": 1.0,
+        "rationale": "counter rule",
+    }))
+'''
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            workspace = root / "workspace"
+            workspace.mkdir()
+            (workspace / "solver.py").write_text(solver_source, encoding="utf-8")
+            result = evaluate_solver_workspace(
+                loaded_profile=SimpleNamespace(implementation=CounterProfile()),
+                workspace=workspace,
+                output_dir=root / "evaluation",
+                max_environment_steps=10,
+                max_wall_seconds=10,
+            )
+
+            self.assertEqual(result.score["solver_levels_completed"], 2)
+            self.assertEqual(result.score["model_exact_rate"], 1.0)
+            self.assertEqual(result.fitness, 2.0)
+            self.assertTrue(result.success)
 
 
 if __name__ == "__main__":

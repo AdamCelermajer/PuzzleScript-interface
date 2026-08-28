@@ -12,7 +12,9 @@ create or revise executable hypotheses, replay them, run diagnostics, request a 
 or stop. Exploratory probes are allowed while evidence is sparse, but once mechanics become
 supported by evidence, your primary answer is a reusable executable solver: encode the
 learned transition model and goal test, plan over that model, and use further probes to test
-and revise it. Validate the solver from a controlled initial state when feasible.
+and revise it. The solver must predict unseen transitions from rules, not exact-history
+lookup, and must use internal model rollouts rather than real checkpoints as its planner.
+Validate the solver from a controlled initial state when feasible.
 
 The framework owns real execution, immutable evidence, prediction freezing, authoritative
 evaluation, budgets, and terminal detection. Calling finish only stops the run; it cannot

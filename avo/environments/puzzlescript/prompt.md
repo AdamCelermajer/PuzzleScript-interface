@@ -10,6 +10,17 @@ Maintain an executable `solver.py` that observes the current state, retains any 
 hidden-state history, plans actions using its learned environment model, and can solve from
 a fresh reset without further Codex reasoning. Before finishing, validate the solver from
 reset. The solver is the deliverable.
+
+`python solver.py` must implement the documented theory-prediction JSON protocol. For an
+unseen state and proposed action, predict the next observation from learned rules rather
+than replaying that action in the real environment or merely recalling an identical prior
+transition. `python solver.py --play --max-steps N` must autonomously play from the current
+observation. Plan by rolling the learned model forward internally; real probes and
+checkpoints are research and validation tools, not the solver's planning mechanism.
+
+After research, the trusted evaluator launches `solver.py` alone in a second fresh game.
+Fitness is the number of levels it completes multiplied by prospective model accuracy on
+the fresh transitions. Progress made manually during research earns no fitness.
 Available action IDs are opaque. Environment actions are costly, so use internal reasoning,
 notes, code, replay, and executable hypotheses freely between actions.
 
