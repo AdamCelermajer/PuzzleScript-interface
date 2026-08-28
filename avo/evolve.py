@@ -48,14 +48,15 @@ def main() -> None:
     parser.add_argument("--player-base-prompt", default="")
     parser.add_argument("--player-model", default="gpt-5.6-sol")
     parser.add_argument("--player-effort", default="high")
-    parser.add_argument("--player-max-environment-steps", type=int, default=200)
-    parser.add_argument("--player-max-theory-candidates", type=int, default=50)
+    parser.add_argument("--player-max-environment-steps", type=int, default=300)
+    parser.add_argument("--player-max-theory-candidates", type=int, default=10)
+    parser.add_argument("--fresh-solver-max-environment-steps", type=int, default=1_500)
     parser.add_argument("--player-max-wall-seconds", type=float, default=3600)
     parser.add_argument("--player-max-agent-turns", type=int, default=4)
     parser.add_argument("--optimizer-model", default="gpt-5.6-sol")
     parser.add_argument("--optimizer-effort", default="high")
-    parser.add_argument("--optimizer-max-agent-turns", type=int, default=20)
-    parser.add_argument("--max-evaluations", type=int, default=5)
+    parser.add_argument("--optimizer-max-agent-turns", type=int, default=30)
+    parser.add_argument("--max-evaluations", type=int, default=6)
     parser.add_argument("--max-wall-seconds", type=float, default=14_400)
     parser.add_argument("--codex-bin", default="")
     args = parser.parse_args()
@@ -64,7 +65,7 @@ def main() -> None:
     loaded_for_metadata = load_profile(args.profile, overrides)
     run_id = datetime.now().strftime("%Y%m%dT%H%M%S")
     root = Path(args.output_dir or DEFAULT_OUTPUT_ROOT / run_id).resolve()
-    optimizer_workspace = root / "optimizer_workspace"
+    optimizer_workspace = root / "outer"
     store = EvolutionStore.create(root, optimizer_workspace)
     if not store.candidates():
         strategy = (
@@ -89,6 +90,7 @@ def main() -> None:
             profile=args.profile,
             profile_settings=overrides,
             player=player_settings,
+            fresh_solver_max_environment_steps=args.fresh_solver_max_environment_steps,
         )
     )
     gateway = EvolutionGateway(
@@ -115,6 +117,7 @@ def main() -> None:
         "objective": loaded_for_metadata.implementation.objective,
         "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
         "player": _jsonable(player_settings),
+        "fresh_solver_max_environment_steps": args.fresh_solver_max_environment_steps,
         "optimizer_model": args.optimizer_model,
         "optimizer_effort": args.optimizer_effort,
         "optimizer_max_agent_turns": args.optimizer_max_agent_turns,

@@ -31,7 +31,7 @@ class DeterministicEvaluator:
             line for line in candidate.strategy().splitlines() if line.startswith("fitness=")
         )
         fitness = float(marker.partition("=")[2])
-        workspace = run_dir / "workspace"
+        workspace = run_dir / "solver"
         workspace.mkdir(parents=True)
         prior_notes = ""
         notes = candidate.workspace_path / "NOTES.md"
@@ -45,7 +45,7 @@ class DeterministicEvaluator:
             f"FITNESS = {fitness}\n",
             encoding="utf-8",
         )
-        (run_dir / "final_summary.json").write_text(
+        (run_dir / "summary.json").write_text(
             json.dumps({"candidate_id": candidate.candidate_id, "fitness": fitness}),
             encoding="utf-8",
         )
@@ -65,6 +65,28 @@ class DeterministicEvaluator:
 
 
 class EvolutionTests(unittest.TestCase):
+    def test_existing_population_keeps_legacy_layout(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "evolution"
+            root.mkdir()
+            (root / "population.json").write_text(
+                json.dumps(
+                    {"schema_version": 1, "candidates": [], "evaluations": []}
+                ),
+                encoding="utf-8",
+            )
+
+            store = EvolutionStore.create(root)
+            candidate = store.create_seed("x_0001", "legacy strategy")
+
+            self.assertTrue(store.legacy_layout)
+            self.assertEqual(store.population_path, root / "population.json")
+            self.assertEqual(candidate.workspace_path, root / "candidates/x_0001/workspace")
+            self.assertEqual(
+                store.next_run_dir("x_0001"),
+                root / "evaluations/x_0001/run_001",
+            )
+
     def test_outer_loop_registers_evaluates_inherits_and_retains_equal_scores(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -94,12 +116,12 @@ class EvolutionTests(unittest.TestCase):
             second_draft = Path(str(forked["draft_path"]))
             self.assertIn(
                 "learned by x_0001",
-                (second_draft / "workspace" / "NOTES.md").read_text(encoding="utf-8"),
+                (second_draft / "seed" / "NOTES.md").read_text(encoding="utf-8"),
             )
-            self.assertTrue((second_draft / "workspace" / "helper.py").is_file())
+            self.assertTrue((second_draft / "seed" / "helper.py").is_file())
             (second_draft / "STRATEGY.md").write_text("fitness=6\nrefined", encoding="utf-8")
             gateway.handle("register", {"candidate_id": "x_0002"})
-            (second_draft / "STRATEGY.md").write_text("fitness=999", encoding="utf-8")
+            self.assertFalse(second_draft.exists())
             second = gateway.handle("evaluate", {"candidate_id": "x_0002"})
             self.assertEqual(second["evaluation"]["fitness"], 6)
 
@@ -270,6 +292,79 @@ class EvolutionTests(unittest.TestCase):
 
             self.assertEqual(load.call_count, 4)
             self.assertNotEqual(seen_workspaces[0], seen_workspaces[1])
+
+    def test_clean_generation_layout_and_separate_fresh_solver_budget(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "evolution"
+            store = EvolutionStore.create(root, root / "outer")
+            candidate = store.create_seed("x_0001", "build a model")
+            evaluator = CandidateEvaluator(
+                PlayerEvaluationConfig(
+                    profile="fake",
+                    profile_settings={},
+                    player=PlayerRunSettings(max_environment_steps=300),
+                    fresh_solver_max_environment_steps=1_500,
+                )
+            )
+
+            def fake_execute_player_run(**kwargs):
+                research = Path(kwargs["output_dir"])
+                archived = research / "workspace"
+                archived.mkdir(parents=True)
+                (archived / "solver.py").write_text("print('solver')\n", encoding="utf-8")
+                (archived / "NOTES.md").write_text("learned movement\n", encoding="utf-8")
+                (archived / "agent_transcript.jsonl").write_text("{}\n", encoding="utf-8")
+                (research / "final_summary.json").write_text("{}", encoding="utf-8")
+                return PlayerRunResult(
+                    task=TaskEvaluation(False, False, 1.0, {"levels_completed": 1}),
+                    finish_reason="research complete",
+                    agent_turns=4,
+                    environment_steps=300,
+                    output_dir=research,
+                    summary={
+                        "transcript": str(archived / "agent_transcript.jsonl"),
+                        "output_dir": str(research),
+                    },
+                )
+
+            fresh_result = SolverEvaluation(
+                fitness=0.5,
+                success=False,
+                terminal=False,
+                score={"solver_levels_completed": 1, "model_score": 0.5},
+                finish_reason="fresh evaluation complete",
+                environment_steps=1_500,
+            )
+            with patch(
+                "avo.evolution.evaluator.load_profile",
+                side_effect=[SimpleNamespace(name="research"), SimpleNamespace(name="fresh")],
+            ), patch(
+                "avo.evolution.evaluator.execute_player_run",
+                side_effect=fake_execute_player_run,
+            ), patch(
+                "avo.evolution.evaluator.evaluate_solver_workspace",
+                return_value=fresh_result,
+            ) as fresh:
+                evaluation = evaluator.evaluate(candidate, store.next_run_dir("x_0001"))
+
+            generation = root / "x_0001"
+            self.assertEqual(evaluation.run_dir, generation.resolve())
+            self.assertTrue((generation / "seed" / "NOTES.md").is_file())
+            self.assertTrue((generation / "research" / "summary.json").is_file())
+            self.assertTrue((generation / "solver" / "solver.py").is_file())
+            self.assertTrue((generation / "evaluation").is_dir())
+            self.assertTrue((generation / "summary.json").is_file())
+            self.assertFalse((generation / "research" / "workspace").exists())
+            self.assertEqual(fresh.call_args.kwargs["max_environment_steps"], 1_500)
+            self.assertEqual(fresh.call_args.kwargs["workspace"], generation / "solver")
+
+            store.record_evaluation(evaluation)
+            child = store.fork("x_0001", "x_0002")
+            child_seed = Path(str(child["draft_path"])) / "seed"
+            self.assertEqual(
+                (child_seed / "NOTES.md").read_text(encoding="utf-8"),
+                "learned movement\n",
+            )
 
     def test_fresh_solver_evaluation_combines_model_accuracy_and_progress(self) -> None:
         class CounterEnvironment:

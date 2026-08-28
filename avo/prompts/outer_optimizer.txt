@@ -17,3 +17,8 @@ immutable. Never claim improvement before the child has been evaluated.
 
 Continue until a candidate succeeds or the evaluation budget is exhausted. Do not
 merely explain what you would change: use the optimizer commands and edit the draft.
+
+An unsuccessful or broken solver is a valid completed evaluation. Inspect its exact
+failure, fork the evaluated candidate, and express the next experiment as x_(i+1).
+Never patch the evaluator, relaunch the whole experiment, or create an external v2/v3
+run to hide a failed x_i.

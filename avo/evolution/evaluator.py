@@ -27,6 +27,7 @@ class PlayerEvaluationConfig:
     profile: str | Path
     profile_settings: Mapping[str, Any]
     player: PlayerRunSettings
+    fresh_solver_max_environment_steps: int = 1_500
 
 
 class CandidateEvaluator:
@@ -43,20 +44,29 @@ class CandidateEvaluator:
         # Loading here, rather than in __init__, constructs a fresh profile/environment
         # for every x_i.
         loaded = load_profile(self.config.profile, self.config.profile_settings)
-        run_dir.mkdir(parents=True, exist_ok=True)
+        generation_dir = run_dir.resolve()
+        clean_layout = generation_dir == candidate.root.resolve()
+        research_dir = generation_dir / "research" if clean_layout else generation_dir
+        evaluation_dir = (
+            generation_dir / "evaluation"
+            if clean_layout
+            else generation_dir / "solver_evaluation"
+        )
+        research_dir.mkdir(parents=True, exist_ok=True)
+        evaluation_dir.mkdir(parents=True, exist_ok=True)
         # Keep the sandbox workspace beneath the run directory. On Windows, files
         # created by the restricted Codex token under the system temp directory can
         # receive ACLs that the trusted file-RPC server cannot read.
         with tempfile.TemporaryDirectory(
             prefix=f"avo-player-{candidate.candidate_id}-",
-            dir=run_dir,
+            dir=research_dir,
         ) as raw:
             workspace = Path(raw).resolve()
             if candidate.workspace_path.is_dir():
                 shutil.copytree(candidate.workspace_path, workspace, dirs_exist_ok=True)
             result = execute_player_run(
                 loaded_profile=loaded,
-                output_dir=run_dir,
+                output_dir=research_dir,
                 workspace=workspace,
                 settings=self.config.player,
                 candidate_id=candidate.candidate_id,
@@ -68,15 +78,39 @@ class CandidateEvaluator:
             # Reloading the profile creates a second fresh game in which only the
             # archived solver may act. Its model is scored prospectively before
             # every action it executes.
+            archived_workspace = result.output_dir / "workspace"
+            solver_workspace = (
+                generation_dir / "solver" if clean_layout else archived_workspace
+            )
+            if clean_layout:
+                if solver_workspace.exists():
+                    shutil.rmtree(solver_workspace)
+                shutil.move(str(archived_workspace), str(solver_workspace))
+                research_summary = result.output_dir / "final_summary.json"
+                if research_summary.is_file():
+                    research_summary.replace(result.output_dir / "summary.json")
+
             solver_loaded = load_profile(
                 self.config.profile, self.config.profile_settings
             )
             solver_result = evaluate_solver_workspace(
                 loaded_profile=solver_loaded,
-                workspace=result.output_dir / "workspace",
-                output_dir=run_dir / "solver_evaluation",
-                max_environment_steps=self.config.player.max_environment_steps,
+                workspace=solver_workspace,
+                output_dir=evaluation_dir,
+                max_environment_steps=self.config.fresh_solver_max_environment_steps,
                 max_wall_seconds=self.config.player.max_wall_seconds,
+            )
+
+        research_evaluation = dict(result.summary)
+        if clean_layout:
+            transcript_name = Path(str(research_evaluation.get("transcript", ""))).name
+            if transcript_name:
+                research_evaluation["transcript"] = str(
+                    solver_workspace / transcript_name
+                )
+            research_evaluation["output_dir"] = str(research_dir)
+            (research_dir / "summary.json").write_text(
+                json.dumps(research_evaluation, indent=2), encoding="utf-8"
             )
 
         combined_score = {
@@ -93,16 +127,20 @@ class CandidateEvaluator:
             "score": combined_score,
             "finish_reason": solver_result.finish_reason,
             "environment_steps": solver_result.environment_steps,
-            "research_evaluation": result.summary,
-            "solver_evaluation": str(run_dir / "solver_evaluation"),
-            "output_dir": str(run_dir),
+            "research_evaluation": research_evaluation,
+            "research": str(research_dir),
+            "solver": str(solver_workspace),
+            "solver_evaluation": str(evaluation_dir),
+            "output_dir": str(generation_dir),
         }
-        (run_dir / "final_summary.json").write_text(
+        summary_name = "summary.json" if clean_layout else "final_summary.json"
+        summary_path = generation_dir / summary_name
+        summary_path.write_text(
             json.dumps(final_summary, indent=2), encoding="utf-8"
         )
 
         return CandidateEvaluation(
-            evaluation_id=run_dir.name,
+            evaluation_id="evaluation" if clean_layout else generation_dir.name,
             candidate_id=candidate.candidate_id,
             fitness=solver_result.fitness,
             success=solver_result.success,
@@ -111,6 +149,6 @@ class CandidateEvaluator:
             finish_reason=solver_result.finish_reason,
             environment_steps=solver_result.environment_steps,
             agent_turns=result.agent_turns,
-            run_dir=result.output_dir,
+            run_dir=generation_dir,
             recorded_at=datetime.now(timezone.utc).isoformat(),
         )

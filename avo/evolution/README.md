@@ -3,9 +3,9 @@
 The outer loop evaluates complete player-agent packages.
 
 ```text
-x_i = STRATEGY.md + seed workspace
-R_i = one fresh research run using x_i
-S_i = solver.py alone in a second fresh environment
+x_i = STRATEGY.md + inherited seed
+R_i = one fresh, 300-action research run using x_i
+S_i = solver.py alone in a second fresh environment, with its own action budget
 f(x_i) = levels_completed(S_i) * prospective_model_score(S_i)
 ```
 
@@ -20,8 +20,11 @@ PuzzleScript example:
 uv run python -m avo.evolve `
   --profile puzzlescript `
   --set game_id=ps_midas-v1 `
-  --max-evaluations 5 `
-  --player-max-environment-steps 1000
+  --max-evaluations 6 `
+  --player-max-environment-steps 300 `
+  --fresh-solver-max-environment-steps 1500 `
+  --player-max-theory-candidates 10 `
+  --optimizer-max-agent-turns 30
 ```
 
 Output:
@@ -29,10 +32,18 @@ Output:
 ```text
 avo/output/evolution/<run>/
 ├── evolution_config.json
-├── population.json
-├── candidates/x_0001/
-├── evaluations/x_0001/run_001/
-└── optimizer_workspace/
+├── lineage.json
+├── outer/
+│   └── drafts/
+├── x_0001/
+│   ├── manifest.json
+│   ├── STRATEGY.md
+│   ├── seed/
+│   ├── research/
+│   ├── solver/
+│   ├── evaluation/
+│   └── summary.json
+└── x_0002/
 ```
 
 For PuzzleScript, research progress is diagnostic only. The scalar fitness is
@@ -40,6 +51,12 @@ the fresh solver's completed levels multiplied by its prospective transition-mod
 score. The model score weights exact next-state accuracy three times more than
 partial observation similarity. The research evidence, transcript, final workspace,
 fresh solver trace, and both scores are retained with each evaluation.
+
+The research and fresh-solver budgets are deliberately separate. Exhausting the
+research budget completes x_i; it does not reduce the number of actions available to
+the autonomous held-out solver. Failed evaluations remain in `lineage.json` and must
+become evidence for the outer optimizer's next candidate rather than triggering a new
+top-level run directory.
 
 Fresh play uses a framework-owned streaming loop. The evaluator sends one JSON line
 containing the current `observation` and fresh-run `history`; `solver.py --play` returns

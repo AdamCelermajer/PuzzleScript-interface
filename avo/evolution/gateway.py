@@ -11,7 +11,7 @@ from avo.evolution.store import EvolutionStore
 
 @dataclass(frozen=True)
 class EvolutionBudget:
-    max_evaluations: int = 5
+    max_evaluations: int = 6
     max_wall_seconds: float = 14_400
 
 

@@ -58,7 +58,7 @@ class RunCandidate:
         if candidate_id in parent_ids:
             raise ValueError("A run candidate cannot be its own parent")
 
-        workspace = resolved / "workspace"
+        workspace = resolved / ("seed" if (resolved / "seed").exists() else "workspace")
         if workspace.exists() and (not workspace.is_dir() or workspace.is_symlink()):
             raise ValueError("workspace must be a regular directory")
         if workspace.is_dir():
@@ -78,7 +78,8 @@ class RunCandidate:
 
     @property
     def workspace_path(self) -> Path:
-        return self.root / "workspace"
+        seed = self.root / "seed"
+        return seed if seed.exists() else self.root / "workspace"
 
     def strategy(self) -> str:
         return self.strategy_path.read_text(encoding="utf-8").strip()

@@ -26,16 +26,18 @@ Workflow:
 
 1. Evaluate an unevaluated registered candidate.
 2. Inspect its trusted result.
-3. Fork it. The child draft inherits the final notes and helper programs produced
-   by the parent's evaluated run.
-4. Edit only `drafts/CHILD_ID/STRATEGY.md` and files below its `workspace/`.
+3. Fork it. The child draft inherits the final solver, notes, and helper programs
+   produced by the parent's evaluated run.
+4. Edit only `drafts/CHILD_ID/STRATEGY.md` and files below its `seed/`.
 5. Register the child, making it immutable.
 6. Evaluate it from a fresh environment.
 
 Fitness and success come only from the environment profile. Never report an
-improvement before evaluation. Equal-fitness candidates remain in the population.
-Registered candidates, evaluation artifacts, `population.json`, and `.avo_evolution_rpc/`
-are framework-owned and must not be edited.
+improvement before evaluation. A failed evaluation is still a completed x_i result:
+inspect it and fork x_(i+1); never restart the whole experiment to erase the failure.
+Equal-fitness candidates remain in the population. Registered candidates, evaluation
+artifacts, `lineage.json`, and `.avo_evolution_rpc/` are framework-owned and must not
+be edited.
 """
 
 

@@ -5,6 +5,7 @@ import queue
 import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from dataclasses import dataclass
@@ -13,7 +14,6 @@ from typing import Any
 
 from avo.core.framework import Action, AvoLaboratory, JsonValue, _jsonable
 from avo.core.profile import LoadedProfile
-from avo.core.run_store import RunStore
 from avo.core.theory_package import FilesystemTheoryCandidate
 
 
@@ -85,14 +85,14 @@ def evaluate_solver_workspace(
         )
         return result
 
-    store = RunStore.create(output)
-    package = store.candidates / "fresh_solver_model"
+    package_root = tempfile.TemporaryDirectory(prefix="fresh-solver-model-")
+    package = Path(package_root.name) / "fresh_solver_model"
     _copy_solver_package(source, package)
     model = FilesystemTheoryCandidate(package)
     laboratory = AvoLaboratory(
         loaded_profile.implementation.environment,
         [model],
-        store.root,
+        output,
     )
     process_status = "completed"
     return_code: int | None = None
@@ -261,4 +261,5 @@ def evaluate_solver_workspace(
     (output / "solver_evaluation.json").write_text(
         json.dumps(_jsonable(result), indent=2), encoding="utf-8"
     )
+    package_root.cleanup()
     return result

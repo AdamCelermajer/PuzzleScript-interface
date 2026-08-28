@@ -22,6 +22,7 @@ _INHERITANCE_EXCLUDES = {
     "MISSION.md",
     "agent_transcript.jsonl",
     "avo_tool.py",
+    "drafts",
 }
 
 
@@ -31,12 +32,24 @@ class EvolutionStore:
     def __init__(self, root: str | Path, optimizer_workspace: str | Path) -> None:
         self.root = Path(root).resolve()
         self.optimizer_workspace = Path(optimizer_workspace).resolve()
-        self.candidates_dir = self.root / "candidates"
-        self.evaluations_dir = self.root / "evaluations"
-        self.population_path = self.root / "population.json"
+        legacy_population = self.root / "population.json"
+        self.legacy_layout = legacy_population.exists() and not (
+            self.root / "lineage.json"
+        ).exists()
+        self.candidates_dir = (
+            self.root / "candidates" if self.legacy_layout else self.root
+        )
+        self.evaluations_dir = (
+            self.root / "evaluations" if self.legacy_layout else self.root
+        )
+        self.population_path = (
+            legacy_population if self.legacy_layout else self.root / "lineage.json"
+        )
         self.drafts_dir = self.optimizer_workspace / "drafts"
-        self.candidates_dir.mkdir(parents=True, exist_ok=True)
-        self.evaluations_dir.mkdir(parents=True, exist_ok=True)
+        self.root.mkdir(parents=True, exist_ok=True)
+        if self.legacy_layout:
+            self.candidates_dir.mkdir(parents=True, exist_ok=True)
+            self.evaluations_dir.mkdir(parents=True, exist_ok=True)
         self.drafts_dir.mkdir(parents=True, exist_ok=True)
         if not self.population_path.exists():
             self._save({"schema_version": 1, "candidates": [], "evaluations": []})
@@ -51,14 +64,14 @@ class EvolutionStore:
         workspace = (
             Path(optimizer_workspace).resolve()
             if optimizer_workspace is not None
-            else resolved / "optimizer_workspace"
+            else resolved / "outer"
         )
         return cls(resolved, workspace)
 
     def _load(self) -> dict[str, Any]:
         payload = json.loads(self.population_path.read_text(encoding="utf-8"))
         if payload.get("schema_version") != 1:
-            raise ValueError("Unsupported population.json schema")
+            raise ValueError("Unsupported evolution lineage schema")
         return payload
 
     def _save(self, payload: Mapping[str, Any]) -> None:
@@ -112,6 +125,7 @@ class EvolutionStore:
             }
         )
         self._save(payload)
+        shutil.rmtree(draft)
         return self.get_candidate(safe_id)
 
     def create_seed(
@@ -124,7 +138,8 @@ class EvolutionStore:
         draft = self.drafts_dir / safe_id
         if draft.exists() or (self.candidates_dir / safe_id).exists():
             raise ValueError(f"Candidate already exists: {safe_id}")
-        (draft / "workspace").mkdir(parents=True)
+        seed_name = "workspace" if self.legacy_layout else "seed"
+        (draft / seed_name).mkdir(parents=True)
         (draft / "manifest.json").write_text(
             json.dumps(
                 {
@@ -137,7 +152,7 @@ class EvolutionStore:
             encoding="utf-8",
         )
         (draft / "STRATEGY.md").write_text(strategy.strip() + "\n", encoding="utf-8")
-        (draft / "workspace" / "NOTES.md").write_text(notes, encoding="utf-8")
+        (draft / seed_name / "NOTES.md").write_text(notes, encoding="utf-8")
         return self.register_draft(safe_id)
 
     def evaluations(self, candidate_id: str | None = None) -> tuple[dict[str, Any], ...]:
@@ -153,17 +168,27 @@ class EvolutionStore:
 
     def next_run_dir(self, candidate_id: str) -> Path:
         safe_id = validate_candidate_id(candidate_id)
+        if not self.legacy_layout:
+            if self.evaluations(safe_id):
+                raise ValueError(f"{safe_id} is already evaluated")
+            return self.root / safe_id
         number = len(self.evaluations(safe_id)) + 1
         return self.evaluations_dir / safe_id / f"run_{number:03d}"
 
     def record_evaluation(self, evaluation: CandidateEvaluation) -> None:
         self.get_candidate(evaluation.candidate_id)
         run_dir = evaluation.run_dir.resolve()
-        expected_parent = (self.evaluations_dir / evaluation.candidate_id).resolve()
-        if run_dir.parent != expected_parent:
+        if self.legacy_layout:
+            expected_parent = (self.evaluations_dir / evaluation.candidate_id).resolve()
+            valid_location = run_dir.parent == expected_parent
+            summary_path = run_dir / "final_summary.json"
+        else:
+            valid_location = run_dir == (self.root / evaluation.candidate_id).resolve()
+            summary_path = run_dir / "summary.json"
+        if not valid_location:
             raise ValueError("Evaluation run directory is outside the trusted store")
-        if not (run_dir / "final_summary.json").is_file():
-            raise ValueError("Evaluation is missing final_summary.json")
+        if not summary_path.is_file():
+            raise ValueError(f"Evaluation is missing {summary_path.name}")
         payload = self._load()
         if any(
             item["candidate_id"] == evaluation.candidate_id
@@ -182,12 +207,17 @@ class EvolutionStore:
         latest = self.latest_evaluation(parent.candidate_id)
         if latest is None:
             raise ValueError(f"Evaluate {parent.candidate_id} before forking it")
-        source_workspace = Path(str(latest["run_dir"])) / "workspace"
+        parent_run = Path(str(latest["run_dir"]))
+        source_workspace = (
+            parent_run / "workspace"
+            if self.legacy_layout
+            else parent_run / "solver"
+        )
         if not source_workspace.is_dir():
             raise ValueError("Parent evaluation has no archived workspace")
 
         draft = self.drafts_dir / safe_child
-        (draft / "workspace").mkdir(parents=True)
+        (draft / "seed").mkdir(parents=True)
         shutil.copy2(parent.strategy_path, draft / "STRATEGY.md")
         for source in source_workspace.rglob("*"):
             relative = source.relative_to(source_workspace)
@@ -195,7 +225,7 @@ class EvolutionStore:
                 continue
             if not source.is_file():
                 continue
-            target = draft / "workspace" / relative
+            target = draft / "seed" / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
         (draft / "manifest.json").write_text(
@@ -230,12 +260,16 @@ class EvolutionStore:
         learned_notes: dict[str, JsonValue] = {}
         if latest is not None:
             run_dir = Path(str(latest["run_dir"]))
-            summary_path = run_dir / "final_summary.json"
+            summary_path = run_dir / (
+                "final_summary.json" if self.legacy_layout else "summary.json"
+            )
             if summary_path.is_file():
                 final_summary = _jsonable(
                     json.loads(summary_path.read_text(encoding="utf-8"))
                 )
-            final_workspace = run_dir / "workspace"
+            final_workspace = run_dir / (
+                "workspace" if self.legacy_layout else "solver"
+            )
             if final_workspace.is_dir():
                 note_files = sorted(
                     path
