@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "status": "stage_1_runtime_and_source_vetted",
+  "target_games": 30,
+  "tier_counts": {
+    "easy": 5,
+    "medium": 17,
+    "hard": 8
+  },
+  "difficulty_basis": [
+    "mechanic inference",
+    "planning depth",
+    "latent or aliased state",
+    "rule composition",
+    "cross-level transfer"
+  ],
+  "selection": [
+    {
+      "game_id": "ps_modality-v1",
+      "tier": "easy",
+      "mechanic_summary": "Movement and pushing are constrained by matching black and white modes.",
+      "reason": "A small, clean extension beyond basic Sokoban with four progressive levels."
+    },
+    {
+      "game_id": "ps_feeling_like_filling-v1",
+      "tier": "easy",
+      "mechanic_summary": "The player can push and pull crates and must fill targets exactly.",
+      "reason": "Few rules, six levels, and a directly observable mechanic extension."
+    },
+    {
+      "game_id": "ps_purple-v1",
+      "tier": "easy",
+      "mechanic_summary": "Pushed crates change type and change back when blocked.",
+      "reason": "Introduces state transformation without a large rule system."
+    },
+    {
+      "game_id": "ps_mowing-v1",
+      "tier": "easy",
+      "mechanic_summary": "The action button uses an oriented tool to clear tiles while rocks remain pushable.",
+      "reason": "Adds orientation and an explicit interaction while remaining locally observable."
+    },
+    {
+      "game_id": "ps_2d_whale_world-v1",
+      "tier": "easy",
+      "mechanic_summary": "Movement creates directional beams whose perpendicular interaction removes whales.",
+      "reason": "Compact rules and clear causal effects across eight levels."
+    },
+
+    {
+      "game_id": "ps_compressed-v1",
+      "tier": "medium",
+      "mechanic_summary": "Pushing and spatial compression transform player or crate configurations.",
+      "reason": "Small rule set but less obvious state transformation and planning."
+    },
+    {
+      "game_id": "ps_knightoban-v1",
+      "tier": "medium",
+      "mechanic_summary": "Crates can be selected and moved using knight-like displacement patterns.",
+      "reason": "Requires learning a nonlocal action mechanic and applying it across six levels."
+    },
+    {
+      "game_id": "ps_fatigued_square_maze-v1",
+      "tier": "medium",
+      "mechanic_summary": "Changing movement direction consumes stamina and pickups restore it.",
+      "reason": "Tests resource state, direction history, and route planning."
+    },
+    {
+      "game_id": "ps_wall_virus-v1",
+      "tier": "medium",
+      "mechanic_summary": "Different crate types interact with and transform walls and each other.",
+      "reason": "Several observable interaction rules must be composed."
+    },
+    {
+      "game_id": "ps_wall_shuffle-v1",
+      "tier": "medium",
+      "mechanic_summary": "Pushing a crate can also move walls and alter target access.",
+      "reason": "Extends pushing to coupled environmental motion."
+    },
+    {
+      "game_id": "ps_the_switch-v1",
+      "tier": "medium",
+      "mechanic_summary": "A propagated switch state converts pushable and pullable crate types.",
+      "reason": "Tests global state changes and mode-dependent object behavior."
+    },
+    {
+      "game_id": "ps_on_and_off-v1",
+      "tier": "medium",
+      "mechanic_summary": "Object interactions temporarily disable and restore corresponding wall types.",
+      "reason": "Requires tracking two coupled switch and wall systems."
+    },
+    {
+      "game_id": "ps_moving_target-v1",
+      "tier": "medium",
+      "mechanic_summary": "The target responds to player movement and must be manipulated relative to a crate.",
+      "reason": "The goal object is dynamic rather than a passive destination."
+    },
+    {
+      "game_id": "ps_take_heart_lass-v1",
+      "tier": "medium",
+      "mechanic_summary": "Hope and despair spread through space and interact with walls, crates, and the target.",
+      "reason": "Tests autonomous propagation and cancellation rules."
+    },
+    {
+      "game_id": "ps_some_pits-v1",
+      "tier": "medium",
+      "mechanic_summary": "Crate types differ in how they enter, survive, or fill pits.",
+      "reason": "A moderate object-type and hazard interaction problem."
+    },
+    {
+      "game_id": "ps_using_pushers-v1",
+      "tier": "medium",
+      "mechanic_summary": "Directional pusher objects redirect and propagate crate movement.",
+      "reason": "Requires discovering directional causal chains."
+    },
+    {
+      "game_id": "ps_magnetic-v1",
+      "tier": "medium",
+      "mechanic_summary": "Movement pulls aligned magnetic objects, with conflicts suppressing motion.",
+      "reason": "Introduces nonlocal attraction and simultaneous-motion conflicts."
+    },
+    {
+      "game_id": "ps_explod-v1",
+      "tier": "medium",
+      "mechanic_summary": "Bombs have fuse states, chain reactions, water interactions, and lethal explosions.",
+      "reason": "Several clear temporal mechanics interact without requiring hidden randomness."
+    },
+    {
+      "game_id": "ps_it_dies_in_the_light-v1",
+      "tier": "medium",
+      "mechanic_summary": "Light beams, prisms, shadows, and opaque objects determine safe and winning states.",
+      "reason": "Tests spatial propagation and derived-state reasoning."
+    },
+    {
+      "game_id": "ps_slidings-v1",
+      "tier": "medium",
+      "mechanic_summary": "The player slides until blocked and the action button cyclically permutes objects.",
+      "reason": "Combines forced motion, a global operation, and a move counter."
+    },
+    {
+      "game_id": "ps_the_workshop-v1",
+      "tier": "medium",
+      "mechanic_summary": "Directional cutters and material-specific objects must be manipulated into matching goals.",
+      "reason": "Multiple object classes share a coherent tool-use mechanic."
+    },
+    {
+      "game_id": "ps_collapsing_tiles-v1",
+      "tier": "medium",
+      "mechanic_summary": "Traversed floor states propagate and collapse into pits.",
+      "reason": "Tests delayed environmental change and route commitment."
+    },
+
+    {
+      "game_id": "ps_midas-v1",
+      "tier": "hard",
+      "mechanic_summary": "Jump phases, gravity, crown transfer, material transformation, water, and a derived win state interact.",
+      "reason": "Partially observable jump phase and strong cross-level rule composition."
+    },
+    {
+      "game_id": "ps_atlas_shrank-v1",
+      "tier": "hard",
+      "mechanic_summary": "Gravity, jumping, carrying and dropping crates, switches, doors, and orientation interact.",
+      "reason": "Many persistent modes must be coordinated over twelve levels."
+    },
+    {
+      "game_id": "ps_enqueue-v1",
+      "tier": "hard",
+      "mechanic_summary": "The action button manipulates an abstract queue through send and receive modes and colored pads.",
+      "reason": "Nonlocal data-structure-like behavior is difficult to infer from visual transitions."
+    },
+    {
+      "game_id": "ps_icecrates-v1",
+      "tier": "hard",
+      "mechanic_summary": "Directional movement produces long sliding and pushing chains with water interactions.",
+      "reason": "Large transition chains and forced motion make both inference and planning difficult."
+    },
+    {
+      "game_id": "ps_coin_counter-v1",
+      "tier": "hard",
+      "mechanic_summary": "Collectibles update decimal digits, propagate carries, drive a display, and gate completion.",
+      "reason": "Arithmetic latent state and distributed display effects require a structured model."
+    },
+    {
+      "game_id": "ps_portal_ban-v1",
+      "tier": "hard",
+      "mechanic_summary": "The player shoots two oriented portals whose placement and traversal depend on surfaces and occlusion.",
+      "reason": "Long-range action effects, orientation, and portal pairing create a large hypothesis space."
+    },
+    {
+      "game_id": "ps_rotaters_cause-v1",
+      "tier": "hard",
+      "mechanic_summary": "Attached and oriented objects rotate, push at a distance, fall into pits, and can destroy the player or crates.",
+      "reason": "A large coupled rule system with orientation and failure states."
+    },
+    {
+      "game_id": "ps_extra_step-v1",
+      "tier": "hard",
+      "mechanic_summary": "Powerups change step length and object behavior while pits, timers, and multi-cell objects interact.",
+      "reason": "Many modes and internal markers make rule induction and prediction difficult."
+    }
+  ],
+  "alternates": [
+    { "game_id": "ps_maera_public_works-v1", "likely_tier": "hard", "reason": "Rich waterwheel, gate, switch, and door system; annotation cost and visual aliases are unusually high." },
+    { "game_id": "ps_ponies_jumping-v1", "likely_tier": "hard", "reason": "Multiple controllable characters with distinct jumping and teleport abilities." },
+    { "game_id": "ps_manic_ammo-v1", "likely_tier": "hard", "reason": "Mines, weapons, droids, and chain reactions provide a replacement hard game." },
+    { "game_id": "ps_castlemouse-v1", "likely_tier": "hard", "reason": "Multiple animal motion systems; numerous visually aliased internal motion states need review." },
+    { "game_id": "ps_fuse_to_green-v1", "likely_tier": "medium", "reason": "Directional forces and fusion are useful, but the implementation contains many helper states." },
+    { "game_id": "ps_self_alteration-v1", "likely_tier": "medium", "reason": "Player and object transformations provide a useful backup mechanic family." },
+    { "game_id": "ps_tile_step-v1", "likely_tier": "medium", "reason": "Directional floor tiles move crates and create a clean replacement interaction." },
+    { "game_id": "ps_lime_rick-v1", "likely_tier": "medium", "reason": "Growth, body trails, gravity, and crate interaction form a compact alternative." },
+    { "game_id": "ps_mazezam-v1", "likely_tier": "easy", "reason": "Simple row-pushing rule but a long 30-level planning curriculum." },
+    { "game_id": "ps_stairways-v1", "likely_tier": "easy", "reason": "Multi-block row movement is a modest extension beyond basic pushing." }
+  ],
+  "remaining_acceptance_checks": [
+    "replay-verified solution for every included level",
+    "gold conceptual rule list",
+    "first-observable and first-required level for every rule",
+    "history-aware treatment of latent-state probes",
+    "manual image and anonymous-grid legibility review",
+    "redistribution and attribution review"
+  ]
+}

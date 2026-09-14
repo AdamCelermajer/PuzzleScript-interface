@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import atexit
+import colorsys
 import os
 import shutil
 import sys
@@ -63,7 +64,11 @@ def _format_color_grid(grid: list[list[int]]) -> str:
     for row in grid:
         color_line = []
         for value in row:
-            rgb = hex_to_rgb(COLOR_MAP.get(int(value), "#000000FF"))
+            if int(value) in COLOR_MAP:
+                rgb = hex_to_rgb(COLOR_MAP[int(value)])
+            else:
+                rgb = tuple(round(channel * 255) for channel in
+                            colorsys.hsv_to_rgb((int(value) * 0.618034) % 1, 0.65, 0.85))
             color_line.append(f"{rgb_to_ansi(rgb)}{block}{reset}")
         lines.append("".join(color_line))
     return "\n".join(lines)
@@ -87,7 +92,7 @@ def _compact_symbol(value: int) -> str:
     digits = "0123456789ABCDEF"
     if 0 <= value < len(digits):
         return digits[value]
-    return "?"
+    return f"{{{value}}}"
 
 
 def _format_compact_grid(grid: list[list[int]]) -> str:

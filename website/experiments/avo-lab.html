@@ -3,248 +3,446 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Exact implementation specification for the general AVO framework." />
-    <title>General AVO Framework — Implementation Specification</title>
+    <meta name="description" content="Monitor AVO experiments, inspect their architecture, and read complete run traces without opening raw JSON dumps." />
+    <title>AVO Research Console</title>
     <link rel="stylesheet" href="/src/style.css" />
     <link rel="stylesheet" href="/src/avo-lab.css" />
   </head>
-  <body data-section="avo-lab">
-    <main class="avo-spec">
-      <header class="spec-header">
-        <p>IMPLEMENTATION SPECIFICATION · VERSION 0.4</p>
-        <h1>General AVO framework</h1>
-        <div class="status-line">
-          <span><b>Implemented:</b> self-contained AVO package, profile loader, evaluator, Codex agent</span>
-          <span><b>Backend:</b> existing Codex OAuth session</span>
-        </div>
-      </header>
+  <body class="avo-console-page" data-section="avo-lab">
+    <div class="avo-console" data-avo-console>
+      <aside class="avo-rail">
+        <a class="avo-brand" href="/experiments/avo-lab.html" aria-label="AVO Research Console">
+          <span class="avo-brand-mark">A</span>
+          <span><strong>AVO</strong><small>Research console</small></span>
+        </a>
 
-      <section class="spec-section important">
-        <h2>1. Exact definition</h2>
-        <p><strong>An AVO framework is a trusted execution kernel around a persistent autonomous agent.</strong></p>
-        <p>The agent—not the framework—chooses which candidate to create or revise, which tools to use, and which environment action to test.</p>
-        <div class="comparison">
-          <div><b>EVO</b><code>framework selects parent → LLM generates once → framework scores</code></div>
-          <div><b>AVO</b><code>agent researches freely → agent creates xᵢ → agent chooses probe → framework verifies</code></div>
-        </div>
-        <p class="rule"><b>Necessary condition:</b> if the outer framework tells the model when or how to generate each candidate, it is EVO—not AVO.</p>
-      </section>
+        <nav class="avo-menu" aria-label="AVO menu">
+          <p>Observe</p>
+          <button class="active" type="button" data-avo-view="live"><span aria-hidden="true">◉</span> Run & replay</button>
+          <button type="button" data-avo-view="architecture"><span aria-hidden="true">⌘</span> Architecture</button>
+          <p>Inspect</p>
+          <button type="button" data-avo-view="logs"><span aria-hidden="true">≡</span> Logs</button>
+          <button type="button" data-avo-view="artifacts"><span aria-hidden="true">◇</span> Artifacts</button>
+        </nav>
 
-      <section class="spec-section">
-        <h2>2. Components</h2>
-        <table>
-          <thead><tr><th>Component</th><th>Receives</th><th>Controls</th><th>Produces</th></tr></thead>
-          <tbody>
-            <tr><td><code>EnvironmentAdapter</code></td><td>Action</td><td>Real environment call</td><td>Observation</td></tr>
-            <tr><td><code>EnvironmentProfile</code></td><td>History + observation</td><td>Objective, adapter construction, task evaluation</td><td>TaskEvaluation</td></tr>
-            <tr><td><code>AutonomousAgent</code></td><td>Context + workspace</td><td>Research, tools, candidates, probe</td><td>AgentDecision</td></tr>
-            <tr><td><code>TheoryPackageRegistry</code></td><td>Candidate directories</td><td>Schema admission only</td><td>Executable candidates</td></tr>
-            <tr><td><code>AvoToolGateway</code></td><td>Agent tool requests</td><td>Trust boundary and budgets</td><td>Observations, probes, scores</td></tr>
-            <tr><td><code>AvoLaboratory</code></td><td>Candidates + requested action</td><td>Freeze, execute, compare, record</td><td>CycleResult</td></tr>
-            <tr><td><code>Supervisor</code></td><td>Process history</td><td>Warnings and redirects</td><td>SupervisorEvent</td></tr>
-            <tr><td><code>CodexOAuthAgent</code></td><td>Prompt + tool workspace</td><td>One persistent research session</td><td>Agent-authored actions and packages</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section class="spec-section">
-        <h2>3. Complete run loop</h2>
-        <pre><code>profile = load_profile(profile_id, settings)
-observation = profile.environment.reset()
-task = profile.evaluate(history, observation)
-
-while budget_remains and not task.terminal:
-    # Agent has a persistent session and writable workspace.
-    context = build_context(
-        observation,
-        immutable_history,
-        admitted_candidates,
-        supervisor_events,
-        remaining_budgets,
-    )
-
-    decision = agent.decide(context)
-    # During decide(), the agent may inspect evidence, write tools,
-    # create several candidates, revise parents, or run local tests.
-
-    if decision.stop:
-        break
-
-    require_legal(decision.action)
-
-    predictions = freeze_before_execution(
-        candidate.predict(history, observation, decision.action)
-        for candidate in admitted_candidates
-    )
-
-    actual = profile.environment.step(decision.action) # exactly once
-    transition = append_immutable(before, action, actual)
-    evaluations = compare(predictions, actual)
-    task = profile.evaluate(history, actual)
-    supervisor_events = supervisor.inspect(history, evaluations)
-    observation = actual</code></pre>
-        <p class="rule">A probe is legal with zero candidates. The agent may collect evidence before it has a defensible hypothesis.</p>
-      </section>
-
-      <section class="spec-section">
-        <h2>4. Environment contract</h2>
-        <div class="two-column">
-          <pre><code>class EnvironmentAdapter:
-    reset() -> Observation
-    step(Action) -> Observation
-    compare(expected, actual) -> Comparison</code></pre>
-          <pre><code>class EnvironmentProfile:
-    objective: str
-    environment: EnvironmentAdapter
-    evaluate(history, current) -> TaskEvaluation
-
-TaskEvaluation:
-    terminal: bool
-    success: bool
-    score: JSON</code></pre>
-          <pre><code>Observation:
-    payload: opaque JSON
-    status: string
-    progress: opaque JSON
-    available_actions: string[]
-    metadata: JSON</code></pre>
-        </div>
-        <p>The adapter translates transport and data formats. The profile supplies the external objective and the authoritative task evaluator. Neither supplies object names, action meanings, mechanics, a legend, or a solution.</p>
-        <p class="rule">The generic kernel never checks for PuzzleScript values such as <code>WIN</code>. Only the selected profile interprets environment status.</p>
-      </section>
-
-      <section class="spec-section">
-        <h2>5. Agent contract</h2>
-        <div class="two-column">
-          <div>
-            <h3>Input: <code>AgentContext</code></h3>
-            <ul>
-              <li>current observation</li>
-              <li>profile objective and current task score</li>
-              <li>complete transition history</li>
-              <li>candidate summaries</li>
-              <li>available actions</li>
-              <li>supervisor events</li>
-              <li>remaining budgets</li>
-              <li>writable research workspace</li>
-            </ul>
+        <div class="avo-run-picker">
+          <label for="avo-run-select">Run</label>
+          <select id="avo-run-select" data-run-select><option value="">Finding AVO runs…</option></select>
+          <div class="avo-connection" data-connection-state="loading">
+            <i aria-hidden="true"></i><span data-connection-label>Connecting</span>
           </div>
+        </div>
+
+        <a class="avo-back-link" href="/">← All runs</a>
+        <a class="avo-back-link" href="/runs/avo.html">New AVO campaign</a>
+      </aside>
+
+      <main class="avo-main">
+        <header class="avo-topbar">
           <div>
-            <h3>Output: <code>AgentDecision</code></h3>
-            <pre><code>{
-  "action": {"id": "ACTION3", "data": {}},
-  "rationale": "x_12 and x_17 disagree here"
+            <p class="avo-kicker">Campaign evidence</p>
+            <h1 data-run-title>AVO evolution</h1>
+            <p data-agent-identity></p>
+          </div>
+          <div class="avo-top-actions">
+            <label class="avo-follow"><input type="checkbox" data-auto-refresh checked /> Auto-refresh</label>
+            <button type="button" data-refresh-run>Refresh</button>
+            <span class="avo-live-pill" data-run-status="loading"><i></i><span data-run-status-label>Loading</span></span>
+          </div>
+        </header>
+
+        <div class="avo-notice" data-console-notice hidden></div>
+
+        <section class="avo-view active" data-avo-panel="live" aria-labelledby="live-heading">
+          <div class="avo-view-heading">
+            <div><p class="avo-kicker">Run monitor</p><h2 id="live-heading">Run & hypothesis replay</h2></div>
+            <span data-last-activity>Waiting for activity</span>
+          </div>
+
+          <div class="avo-metrics" aria-label="Live AVO metrics">
+            <article><span>Current candidate</span><strong data-current-candidate>—</strong><small data-current-phase>Initializing</small></article>
+            <article><span>Research actions</span><strong data-research-actions>0 / —</strong><div class="avo-meter"><i data-research-meter></i></div></article>
+            <article><span>Levels reached</span><strong data-levels>0 / —</strong><small data-game-state>NOT STARTED</small></article>
+            <article><span>Fresh evaluations</span><strong data-evaluated-count>0 / —</strong><small data-latest-fitness>No fitness yet</small></article>
+          </div>
+
+          <div class="avo-live-grid">
+            <section class="avo-panel avo-game-panel">
+              <div class="avo-panel-heading">
+                <div><span>Environment</span><h3>Game replay</h3></div>
+                <div class="avo-frame-controls">
+                  <label><span>Hypothesis / phase</span><select data-frame-session aria-label="Frame session"><option value="">No session yet</option></select></label>
+                  <span data-frame-step>No transition</span>
+                </div>
+              </div>
+              <div class="avo-game-frame" data-game-frame><p>No live frame yet.</p></div>
+              <div class="avo-replay-controls">
+                <button type="button" data-replay-start aria-label="First frame">|◀</button>
+                <button type="button" data-replay-prev aria-label="Previous action">◀</button>
+                <button type="button" data-replay-play>Play</button>
+                <button type="button" data-replay-next aria-label="Next action">▶</button>
+                <input type="range" min="0" max="0" value="0" data-replay-position aria-label="Replay action" />
+                <span data-replay-position-label>0 / 0</span>
+                <button type="button" data-replay-latest>Latest frame</button>
+              </div>
+              <div class="avo-inspect-actions"><span data-inspect-candidate>Select a hypothesis</span>
+                <button type="button" data-inspect="strategy">Read hypothesis</button>
+                <button type="button" data-inspect="solver">Inspect solver.py</button>
+                <button type="button" data-inspect="logs">Session logs</button>
+                <button type="button" data-inspect="model">Read final world_model.md</button>
+                <a data-final-result hidden>Final result</a>
+              </div>
+              <dl class="avo-frame-meta">
+                <div><dt>Last action</dt><dd data-last-action>—</dd></div>
+                <div><dt>State</dt><dd data-frame-state>—</dd></div>
+                <div><dt>Phase</dt><dd data-frame-phase>—</dd></div>
+              </dl>
+            </section>
+
+            <section class="avo-panel avo-candidate-panel">
+              <div class="avo-panel-heading"><div><span>Evolution</span><h3>Candidate lineage</h3></div><span data-lineage-count>0 candidates</span></div>
+              <div class="avo-lineage" data-lineage><p class="avo-empty">No candidate has been registered.</p></div>
+            </section>
+          </div>
+
+          <section class="avo-panel avo-activity-panel">
+            <div class="avo-panel-heading"><div><span>Evidence stream</span><h3>Recent run activity</h3></div><span>Compact live view</span></div>
+            <div class="avo-activity" data-recent-activity><p class="avo-empty">Waiting for the first event.</p></div>
+          </section>
+        </section>
+
+        <section class="avo-view" data-avo-panel="architecture" aria-labelledby="architecture-heading" hidden>
+          <div class="avo-view-heading">
+            <div><p class="avo-kicker">Global framework</p><h2 id="architecture-heading">Outer Codex proposes. Inner Codex builds. Evaluation decides.</h2></div>
+            <span>One loop, three clear roles</span>
+          </div>
+
+          <section class="avo-framework-map" aria-label="Global AVO framework diagram">
+            <div class="framework-loop-label">AVO evolution loop · repeat for x_1, x_2, … x_n</div>
+
+            <article class="framework-outer-codex">
+              <header><span>01 · one persistent session</span><h3>Outer Codex</h3></header>
+              <p class="framework-role">Reads evidence and chooses the next falsifiable change.</p>
+              <div class="candidate-build">
+                <small>CREATES THE COMPLETE CHILD</small>
+                <strong>x_(i+1)</strong>
+                <span>inherited x_i workspace</span>
+                <b>+</b>
+                <span>updated STRATEGY.md</span>
+              </div>
+            </article>
+
+            <div class="framework-handoff" aria-label="Candidate handoff">
+              <code>x_(i+1)</code><span aria-hidden="true">→</span><small>complete candidate</small>
+            </div>
+
+            <article class="framework-inner-cube">
+              <div class="cube-face cube-top" aria-hidden="true"></div>
+              <div class="cube-face cube-side" aria-hidden="true"></div>
+              <div class="cube-front">
+                <header><span>02 · fresh for every x_i</span><h3>Inner Codex</h3></header>
+                <p class="framework-role">Implements and tests the candidate hypothesis.</p>
+                <div class="cube-inputs">
+                  <span>Prompt package</span>
+                  <span>x_(i+1)</span>
+                  <span>Framework tools</span>
+                  <span>Real observations</span>
+                </div>
+                <div class="framework-file"><small>COMPLETES x_(i+1)</small><strong>solver.py + research evidence</strong></div>
+              </div>
+            </article>
+
+            <div class="framework-down-arrow"><code>completed solver.py</code><span aria-hidden="true">↓</span></div>
+
+            <article class="framework-evaluator">
+              <header><span>03 · no LLM prompt</span><h3>Fresh evaluator</h3></header>
+              <p>Trusted Python runs only the completed solver from a fresh reset. Its result—not the inner self-check—owns fitness.</p>
+              <div><strong>fitness + transitions + artifacts</strong><span aria-hidden="true">↩</span><small>saved to the lineage and read by Outer Codex</small></div>
+            </article>
+          </section>
+
+          <section class="avo-rendered-acdl avo-panel" aria-labelledby="rendered-acdl-heading">
+            <div class="avo-panel-heading"><div><span>Rendered ACDL</span><h3 id="rendered-acdl-heading">The two Codex contexts</h3></div><small>Evaluator stays outside: it is deterministic Python.</small></div>
+            <a href="/docs/architecture-assets/avo-framework-acdl.png" target="_blank" rel="noreferrer" aria-label="Open the rendered ACDL image at full size">
+              <img src="/docs/architecture-assets/avo-framework-acdl.png" alt="Rendered ACDL diagram of the persistent Outer Optimizer context and per-candidate Inner Player context" />
+            </a>
+          </section>
+
+          <section class="avo-prompt-section" aria-labelledby="prompt-heading">
+            <div class="avo-panel-heading"><div><span>Prompt package</span><h3 id="prompt-heading">What each Codex session receives</h3></div><small>Open only the component you want to inspect.</small></div>
+            <div class="avo-prompt-grid">
+              <article class="prompt-package">
+                <header><span>Persistent</span><h4>Outer Codex</h4></header>
+                <details>
+                  <summary><strong>Base prompt</strong><code>outer_optimizer.txt</code></summary>
+                  <pre>You own the AVO search. Your most important job is to reason about why each solver
+plateaus and decide what x_(i+1) should test.
+
+Read MISSION.md and AGENT_INTERFACE.md. You cannot interact with a game. For x_0001,
+read the frozen `initial` observation, design the initial solver strategy in the prepared
+draft, register it, and evaluate it.
+
+After that, for each candidate:
+1. Inspect its score, solver, parent diff, and saved evidence.
+2. Read as many paged research, self-check, or final evaluation events as needed; they
+   contain the complete boards, actions, and transitions produced by that hypothesis.
+3. Think carefully about the cause of failure.
+4. Choose one concrete, falsifiable hypothesis.
+5. Fork the best parent and write the experiment and evidence criteria in STRATEGY.md.
+   Prescribe a solver change only when existing evidence already establishes it.
+6. Evaluate the child.
+
+Do not assume the current representation is correct. Ask whether the solver is missing
+a useful object, relation, mode, memory, or other latent variable that explains apparently
+conflicting transitions. Distinguish a bad implementation from a bad representation or
+search method before choosing the next change.
+
+At a plateau, explicitly distinguish an incomplete mechanics model from inefficient
+planning. Use controlled counterfactual transitions to test missing rules. Treat board
+changes without actor displacement as causal until evidence proves otherwise. You may
+replace the inherited fallback rather than extending its patch pile.
+
+Flat fitness does not mean the whole hypothesis failed. First check whether the candidate
+reached an intermediate pass condition or a genuinely novel state. If it did, inspect the
+first transitions afterward for a stale mode, stale goal, missing state-key variable, or
+control-flow path that bypassed perception updates before changing representation or search.
+
+When mechanics are uncertain, do not make one guessed solver action the experiment.
+Give Luna a bounded research experiment: reproduce the plateau from a solver trace,
+checkpoint it, compare alternative continuations from that same state, then revise the
+solver from the evidence. You own the question and comparisons; Luna runs the probes.
+
+Luna implements your strategy and may make small local decisions; it does not choose the
+next high-level hypothesis. Base decisions only on registered candidates and their trusted
+evaluation artifacts. Never alter the evaluator, claim unevaluated improvement, repeat a
+materially unchanged variation, or hide a failed x_i by restarting the experiment.
+
+Continue until success or the evaluation budget is exhausted.</pre>
+                </details>
+                <details>
+                  <summary><strong>Mission</strong><code>MISSION.md</code></summary>
+                  <pre># Mission
+
+Improve complete player-agent candidates for profile &lt;profile_id&gt;.
+
+Environment objective: &lt;profile objective&gt;
+
+The fixed evaluator allows &lt;max evaluations&gt; candidate evaluations.</pre>
+                </details>
+                <details>
+                  <summary><strong>Agent interface</strong><code>AGENT_INTERFACE.md</code></summary>
+                  <pre># Outer AVO optimizer interface
+
+You are the hypothesis and experiment owner. You vary and evaluate complete
+player-agent packages named RunCandidates (`x_i`). You can read the frozen initial
+observation and every saved event from evaluated candidates. You do not control a
+game and have no gameplay actions.
+
+Workflow:
+1. If the population is empty, design x_0001 in its prepared draft, then register and evaluate it.
+2. Inspect an evaluated candidate's trusted result, solver source, parent diff, and evidence.
+3. State one falsifiable hypothesis, then fork it. The child inherits the parent's final solver,
+   notes, and helper programs.
+4. Edit `drafts/CHILD_ID/STRATEGY.md` and files below its `seed/`.
+5. Register the complete child, making it immutable.
+6. Evaluate it from a fresh environment.
+
+Fitness and success come only from the environment profile. Never report an improvement
+before evaluation. A failed evaluation remains a completed x_i result and evidence for x_(i+1).</pre>
+                </details>
+              </article>
+
+              <article class="prompt-package">
+                <header><span>Fresh per x_i</span><h4>Inner Codex</h4></header>
+                <details>
+                  <summary><strong>Base prompt</strong><code>base_agent.txt</code></summary>
+                  <pre>You are the inner implementation session for an unknown interactive environment.
+
+Read MISSION.md, AGENT_INTERFACE.md, and the candidate strategy in your instructions.
+The outer session owns the hypothesis. Implement its strategy with the smallest coherent
+solver change and run the requested probes. Make small local decisions when necessary,
+but do not replace the strategy with a new broad direction.
+
+Treat the candidate strategy as a falsifiable hypothesis, not ground truth. Continuously
+compare it against observed transitions. If evidence contradicts an assumption, stop
+forcing the predicted route or repeating ineffective actions; isolate the contradiction
+with a controlled comparison, adapt the local experiment or implementation within the
+candidate's scope, and record the falsification for the outer optimizer.
+
+Produce solver.py, then use `evaluate_solver` before finishing. You have at most two
+fresh self-checks: use the first to expose implementation failures, repair them, and use
+the second to confirm the repair when useful. If the strategy itself fails, preserve the
+solver and record the concrete evidence instead of silently changing hypotheses.
+
+Use only observations obtained through AGENT_INTERFACE.md. Never inspect parent directories,
+repository game code, Codex memory, prior sessions, unrelated runs, or host processes.
+Never edit .avo_rpc or fabricate observations. Before returning, run
+`python avo_tool.py archive .`.</pre>
+                </details>
+                <details>
+                  <summary><strong>Mission</strong><code>MISSION.md</code></summary>
+                  <pre>Profile-owned objective, success condition, current task state, and budgets.</pre>
+                </details>
+                <details>
+                  <summary><strong>Agent interface</strong><code>AGENT_INTERFACE.md</code></summary>
+                  <pre>The environment is unknown and actions are opaque. Use only evidence returned by
+the framework commands. The workspace may contain notes, programs, simulations,
+tests, and intermediate files. `evaluate_solver` is provisional; only the later
+independent evaluation owns final fitness. Archive the workspace before returning.</pre>
+                </details>
+                <details>
+                  <summary><strong>Candidate-specific input</strong><code>profile prompt + STRATEGY.md</code></summary>
+                  <pre>ENVIRONMENT_PROFILE_PROMPT
+
+# Run candidate strategy
+
+This strategy is part of the candidate being evaluated. Follow it when useful,
+but trust real environment evidence over unsupported claims.
+
+&lt;contents of STRATEGY.md for this x_i&gt;</pre>
+                </details>
+              </article>
+            </div>
+          </section>
+
+          <details class="avo-acdl-panel">
+            <summary><span>ACDL source</span><strong>Show the formal source</strong><small>The rendered version is shown above.</small></summary>
+            <pre>// AVO uses two distinct persistent Codex contexts.
+// The fresh solver evaluator is deterministic and therefore belongs in the high-level runtime diagram, not in ACDL.
+
+AvoOuterOptimizer[@T]: {
+    S: {
+        CODEX_RUNTIME_INSTRUCTIONS
+        CODEX_TOOLS
+        OUTER_OPTIMIZER_PROMPT
+        env.evolution_mission
+    }
+
+    U: sys.start_instruction[@1]
+
+    ForEach(@t: range(1, @T)) {
+        A: {
+            resp.reasoning[@t]
+            sys.evolution_tool_call[@t]
+        }
+        T: sys.evolution_tool_call[@t].response
+
+        If sys.codex_turn_ended[@t] {
+            A: resp.turn_summary[@t]
+            U: sys.continue_instruction[@t]
+        }
+    }
 }
 
-# or
-{"stop_reason": "model is sufficient"}</code></pre>
+AvoInnerPlayer[candidate, @T]: {
+    S: {
+        CODEX_RUNTIME_INSTRUCTIONS
+        CODEX_TOOLS
+        INNER_IMPLEMENTATION_PROMPT
+        ENVIRONMENT_PROFILE_PROMPT
+        CANDIDATE_STRATEGY(candidate)
+    }
+
+    U: sys.start_instruction[@1]
+
+    ForEach(@t: range(1, @T)) {
+        A: {
+            resp.reasoning[@t]
+            sys.workspace_or_gateway_call[@t]
+        }
+        T: sys.workspace_or_gateway_call[@t].response
+
+        If sys.codex_turn_ended[@t] {
+            A: resp.turn_summary[@t]
+            U: sys.continue_instruction[@t]
+        }
+    }
+}</pre>
+          </details>
+
+          <section class="avo-tools-section" aria-labelledby="tools-heading">
+            <div class="avo-panel-heading"><div><span>Framework surface</span><h3 id="tools-heading">Tools given to each session</h3></div><small>These are the complete AVO-specific command sets.</small></div>
+            <div class="avo-tools-grid">
+              <article>
+                <header><span>Outer Codex · 9 tools</span><strong>Candidate management</strong></header>
+                <ul>
+                  <li><details><summary><code>population</code><span>List candidates and scores.</span></summary><div><b>Returns to Codex</b><p><code>candidates[]</code>, <code>evaluations[]</code>, candidate/evaluation counts, open <code>drafts[]</code>, and the <code>best</code> evaluation.</p></div></details></li>
+                  <li><details><summary><code>initial</code><span>Read the frozen first observation.</span></summary><div><b>Returns to Codex</b><p><code>{ observation }</code> containing the untouched initial environment state.</p></div></details></li>
+                  <li><details><summary><code>inspect</code><span>Open one candidate and its result.</span></summary><div><b>Returns to Codex</b><p>Candidate record, strategy, workspace files, evaluations, learned notes, complete <code>solver.py</code>, parent diff, hashes, final summary, and trace summary.</p></div></details></li>
+                  <li><details><summary><code>evidence</code><span>Read paged research or evaluation events.</span></summary><div><b>Returns to Codex</b><p><code>candidate_id</code>, phase, paging offsets, total event count, and the requested <code>events[]</code> page.</p></div></details></li>
+                  <li><details><summary><code>fork</code><span>Create an inherited child draft.</span></summary><div><b>Returns to Codex</b><p>Child draft ID and path, parent ID, and the evaluation it inherited. The draft contains the parent strategy and final workspace.</p></div></details></li>
+                  <li><details><summary><code>register</code><span>Make the completed draft immutable.</span></summary><div><b>Returns to Codex</b><p><code>{ candidate_id, parent_ids, path }</code> for the registered candidate.</p></div></details></li>
+                  <li><details><summary><code>evaluate</code><span>Build and test the registered candidate.</span></summary><div><b>Returns to Codex</b><p>The trusted evaluation record—fitness, score, success, terminal state, steps, turns, finish reason, artifact path—and updated evolution status.</p></div></details></li>
+                  <li><details><summary><code>status</code><span>Check progress, success, and budget.</span></summary><div><b>Returns to Codex</b><p>Finished state and reason, task success and best candidate, evaluations used/remaining, and remaining wall time.</p></div></details></li>
+                  <li><details><summary><code>finish</code><span>Stop the evolution loop.</span></summary><div><b>Returns to Codex</b><p>The final status with <code>finished: true</code> and the supplied stop reason.</p></div></details></li>
+                </ul>
+              </article>
+              <article>
+                <header><span>Inner Codex · 12 tools</span><strong>Research and workspace</strong></header>
+                <ul>
+                  <li><details><summary><code>observe</code><span>Read the current observation.</span></summary><div><b>Returns to Codex</b><p>Current <code>observation</code>, task evaluation, and remaining research/self-check budgets.</p></div></details></li>
+                  <li><details><summary><code>mission</code><span>Read the task and budget.</span></summary><div><b>Returns to Codex</b><p>Profile ID, objective, terminal/success flags, current fitness, and score.</p></div></details></li>
+                  <li><details><summary><code>history</code><span>Read prior research transitions.</span></summary><div><b>Returns to Codex</b><p>All recorded <code>transitions[]</code>, transition count, and current episode number.</p></div></details></li>
+                  <li><details><summary><code>archive</code><span>Save the working files as evidence.</span></summary><div><b>Returns to Codex</b><p>Sorted archived file paths and the total number of saved bytes.</p></div></details></li>
+                  <li><details><summary><code>evaluate_solver</code><span>Run a provisional fresh self-check.</span></summary><div><b>Returns to Codex</b><p>Check number, action limit, scalar fitness only, checks remaining, and research budgets. The detailed trajectory is withheld.</p></div></details></li>
+                  <li><details><summary><code>probe</code><span>Take one real environment action.</span></summary><div><b>Returns to Codex</b><p>The full before/action/after transition, task evaluations, supervisor events/state, and remaining budgets.</p></div></details></li>
+                  <li><details><summary><code>reset</code><span>Start a fresh research episode.</span></summary><div><b>Returns to Codex</b><p>New episode number, reset observation, updated task evaluation, and remaining budgets.</p></div></details></li>
+                  <li><details><summary><code>checkpoint</code><span>Save the current opaque game state.</span></summary><div><b>Returns to Codex</b><p>The generated <code>checkpoint_id</code> and its label. Hidden state is not exposed.</p></div></details></li>
+                  <li><details><summary><code>restore</code><span>Return to a saved checkpoint.</span></summary><div><b>Returns to Codex</b><p>Episode and checkpoint IDs, restored observation, updated task evaluation, and budgets.</p></div></details></li>
+                  <li><details><summary><code>acknowledge_supervisor</code><span>Record a revised approach and resume.</span></summary><div><b>Returns to Codex</b><p><code>acknowledged: true</code>, the revised response, and the supervisor events being cleared.</p></div></details></li>
+                  <li><details><summary><code>status</code><span>Check task, budget, and supervisor state.</span></summary><div><b>Returns to Codex</b><p>Finished state/reason, task result, budgets, episode number, and any supervisor attention events.</p></div></details></li>
+                  <li><details><summary><code>finish</code><span>Stop the inner session.</span></summary><div><b>Returns to Codex</b><p><code>{ finished: true, reason, task }</code>. This stops work but cannot declare environment success.</p></div></details></li>
+                </ul>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section class="avo-view" data-avo-panel="logs" aria-labelledby="logs-heading" hidden>
+          <div class="avo-view-heading"><div><p class="avo-kicker">Session reader</p><h2 id="logs-heading">Agent conversations</h2></div><span>Messages and tool calls first · telemetry on demand</span></div>
+          <section class="avo-panel avo-session-reader">
+            <header class="avo-session-header">
+              <div class="avo-session-identity"><span class="avo-session-avatar" aria-hidden="true">A</span><div><small>Agent session</small><h3 data-log-session-name>Choose a session</h3></div></div>
+              <label class="avo-session-picker"><span>Actor / session</span><select data-log-scope><option value="outer">Outer optimizer</option></select></label>
+            </header>
+            <div class="avo-session-toolbar">
+              <div class="avo-session-modes" aria-label="Session view">
+                <button class="active" type="button" data-log-stream="session">Session chat</button>
+                <button type="button" data-log-stream="environment">Environment</button>
+                <details class="avo-advanced-menu">
+                  <summary>Advanced</summary>
+                  <div>
+                    <button type="button" data-log-stream="reasoning">Reasoning</button>
+                    <button type="button" data-log-stream="workspace">Workspace snapshots</button>
+                    <button type="button" data-log-stream="requests">Model requests</button>
+                    <button type="button" data-log-stream="raw">Raw SDK stream</button>
+                  </div>
+                </details>
+              </div>
+              <label class="avo-log-search"><span aria-hidden="true">⌕</span><input type="search" data-log-search placeholder="Search this session" /></label>
+              <span class="avo-log-count" data-log-count>0 items</span>
+            </div>
+            <div class="avo-log-summary" data-log-summary>Choose a session to read its conversation.</div>
+            <div class="avo-chat-thread" data-log-groups><p class="avo-empty">No session loaded.</p></div>
+            <div class="avo-load-older"><button type="button" data-load-older hidden>Load earlier messages</button></div>
+          </section>
+        </section>
+
+        <section class="avo-view" data-avo-panel="artifacts" aria-labelledby="artifacts-heading" hidden>
+          <div class="avo-view-heading"><div><p class="avo-kicker">Candidate files</p><h2 id="artifacts-heading">Artifacts grouped by hypothesis</h2></div><span>One folder per xᵢ · lifecycle sections inside</span></div>
+          <div class="avo-artifact-layout">
+            <aside class="avo-panel avo-artifact-browser">
+              <label class="avo-artifact-search"><span aria-hidden="true">⌕</span><input type="search" data-artifact-search placeholder="Find a file in any xᵢ" /></label>
+              <div data-artifact-tree><p class="avo-empty">Choose a run to see its artifacts.</p></div>
+            </aside>
+            <section class="avo-panel avo-artifact-preview">
+              <header><div><span data-artifact-role>No artifact selected</span><h3 data-artifact-name>Choose a file from the lifecycle tree</h3></div><small data-artifact-meta></small></header>
+              <pre data-artifact-content><code>Strategy, research, self-check, completed solver, fresh evaluation, and summary are kept visibly separate here.</code></pre>
+            </section>
           </div>
-        </div>
-        <p class="rule">The session stays alive across tool calls. The framework does not restart the model after each probe.</p>
-      </section>
-
-      <section class="spec-section">
-        <h2>6. Candidate xᵢ format</h2>
-        <div class="two-column package-format">
-          <pre><code>drafts/x_017/       # agent-owned working copy
-  manifest.json
-  predict.py
-
-publish → trusted candidates/x_017/
-  manifest.json
-  predict.py
-  notes.md             # optional
-  tests/               # optional</code></pre>
-          <pre><code>{
-  "schema_version": 1,
-  "candidate_id": "x_017",
-  "parent_id": "x_012",
-  "claim": "ACTION5 changes traversability",
-  "complexity": 0.2,
-  "command": ["$PYTHON", "predict.py"]
-}</code></pre>
-        </div>
-        <p>The agent authors the package, then explicitly publishes it through the gateway. The command reads <code>{history, current, action}</code> as JSON and returns <code>{expected, confidence, rationale}</code>.</p>
-      </section>
-
-      <section class="spec-section">
-        <h2>7. Authoritative event order</h2>
-        <ol class="event-order">
-          <li><code>candidate_registered</code></li>
-          <li><code>agent_decision</code></li>
-          <li><code>prediction_frozen</code> for every candidate</li>
-          <li><code>transition</code> containing the real environment result</li>
-          <li><code>prediction_evaluated</code> for every candidate</li>
-          <li><code>supervisor_event</code> when triggered</li>
-        </ol>
-        <p>A prediction recorded after the transition is invalid and receives no prospective score.</p>
-      </section>
-
-      <section class="spec-section">
-        <h2>8. Two separate evaluations</h2>
-        <p><strong>Task fitness</strong> answers whether the agent solved the environment. It is defined by the selected environment profile and cannot be self-declared by the agent.</p>
-        <p><strong>Hypothesis evaluation</strong> answers whether an optional candidate <code>xᵢ</code> predicts observed transitions.</p>
-        <table>
-          <thead><tr><th>Metric</th><th>Calculated by</th><th>Purpose</th></tr></thead>
-          <tbody>
-            <tr><td>Contract validity</td><td>Framework</td><td>Candidate runs and returns valid data</td></tr>
-            <tr><td>Replay consistency</td><td>Framework</td><td>Explains previous transitions</td></tr>
-            <tr><td>Prospective accuracy</td><td>Environment comparator</td><td>Predicts unseen outcomes</td></tr>
-            <tr><td>Status/goal accuracy</td><td>Environment comparator</td><td>Predicts terminal and progress signals</td></tr>
-            <tr><td>Coverage</td><td>Framework</td><td>Penalizes constant abstention</td></tr>
-            <tr><td>Planning utility</td><td>Framework experiment</td><td>Measures whether the model supports successful plans</td></tr>
-            <tr><td>Complexity and cost</td><td>Framework</td><td>Prefers smaller, cheaper equivalent theories</td></tr>
-          </tbody>
-        </table>
-        <p class="rule">Keep the vector visible. Do not hide all tradeoffs inside one unexplained scalar score.</p>
-      </section>
-
-      <section class="spec-section">
-        <h2>9. Supervisor and termination</h2>
-        <div class="two-column">
-          <div><h3>Supervisor triggers</h3><ul><li>repeated no-change actions</li><li>repeated probes without information gain</li><li>collective prospective failure</li><li>ignored contradictions</li><li>budget exhaustion risk</li></ul></div>
-          <div><h3>Run stops when</h3><ul><li>the profile returns <code>terminal = true</code></li><li>agent chooses to stop</li><li>action, decision, candidate, time, token, or cost budget expires</li><li>a contract violation is unrecoverable</li></ul></div>
-        </div>
-        <p>The supervisor sees process evidence only. It cannot edit candidates or supply the hidden solution. Agent stop means only “stop”; success remains the profile evaluator's decision.</p>
-      </section>
-
-      <section class="spec-section">
-        <h2>10. PuzzleScript implementation</h2>
-        <pre><code>FrameData.frame             → Observation.payload
-FrameData.state             → Observation.status
-FrameData.levels_completed  → Observation.progress
-FrameData.available_actions → Observation.available_actions
-GameAction                  ← Action.id</code></pre>
-        <pre><code>objective = "Win the game."
-success   = (FrameData.state == "WIN")
-fitness   = (success, levels_completed, -environment_actions)</code></pre>
-        <p>Not exposed by the adapter: game source, legend, object names, rules, win condition, or solution.</p>
-      </section>
-
-      <section class="spec-section implementation-status">
-        <h2>11. What exists now</h2>
-        <table>
-          <thead><tr><th>Part</th><th>Status</th><th>Implementation</th></tr></thead>
-          <tbody>
-            <tr><td>Generic environment and evidence kernel</td><td class="done">DONE</td><td><code>avo/core/framework.py</code></td></tr>
-            <tr><td>Filesystem Theory Packages</td><td class="done">DONE</td><td><code>avo/core/theory_package.py</code></td></tr>
-            <tr><td>Environment-neutral tool gateway</td><td class="done">DONE</td><td><code>avo/core/tool_gateway.py</code></td></tr>
-            <tr><td>Environment profile contract and loader</td><td class="done">DONE</td><td><code>avo/core/profile.py</code></td></tr>
-            <tr><td>Run history and immutable evidence</td><td class="done">DONE</td><td><code>avo/core/run_store.py</code></td></tr>
-            <tr><td>PuzzleScript specialization</td><td class="done">DONE</td><td><code>avo/environments/puzzlescript/</code></td></tr>
-            <tr><td>Focused framework tests</td><td class="done">DONE</td><td><code>avo/tests/</code></td></tr>
-            <tr><td>Persistent Codex OAuth agent</td><td class="done">DONE</td><td><code>avo/client/codex_oauth_agent.py</code></td></tr>
-            <tr><td>Profile-driven command-line runner</td><td class="done">DONE</td><td><code>python -m avo.run --profile puzzlescript</code></td></tr>
-            <tr><td>Agent workspace archival</td><td class="done">DONE</td><td>Notes, tools, and drafts cross the sandbox through the gateway</td></tr>
-            <tr><td>Historical replay evaluator</td><td class="done">DONE</td><td><code>AvoToolGateway.evaluate</code></td></tr>
-            <tr><td>Full Sokoban Basic integration run</td><td class="done">DONE</td><td><code>WIN</code> after 84 opaque actions in one persistent Codex turn</td></tr>
-            <tr><td>Secure candidate process sandbox</td><td class="todo">TODO</td><td>Current subprocess provides timeout/crash isolation only</td></tr>
-            <tr><td>Planning utility and token/cost metrics</td><td class="todo">TODO</td><td>Not part of the current score vector</td></tr>
-          </tbody>
-        </table>
-        <p class="final-note"><strong>Current truth:</strong> the full two-level Sokoban run reached the profile-authoritative <code>WIN</code> signal. Changing environments means adding a profile, adapter, and prompt under <code>avo/environments/</code>; the kernel, agent client, evidence format, candidate protocol, and runner stay unchanged. Candidate processes still need a stronger OS sandbox before hostile packages are safe.</p>
-      </section>
-    </main>
-    <script type="module" src="/src/main.js"></script>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/avo-lab.js"></script>
   </body>
 </html>

@@ -6,6 +6,20 @@ from avo.environments.puzzlescript.profile import PuzzleScriptProfile
 
 
 class PuzzleScriptProfileTests(unittest.TestCase):
+    def test_extended_texture_ids_survive_adapter(self) -> None:
+        from avo.environments.puzzlescript.adapter import PuzzleScriptEnvironment
+        from client.arc.types import FrameData, GameState, GameAction, ActionInput
+        grid = [[[0, 16, 30, 64, 127, 128, 65535]]]
+        frame = FrameData(frame=grid, state=GameState.PLAYING, levels_completed=0,
+                          game_id="test", win_levels=1, guid="test", full_reset=True,
+                          available_actions=[GameAction.ACTION1],
+                          action_input=ActionInput(GameAction.RESET),
+                          projection={"mode": "visible-cell-v1", "max_combinations": 65536})
+        observation = PuzzleScriptEnvironment.from_frame(frame)
+        self.assertEqual(observation.payload["frame"], grid)
+        self.assertEqual(observation.metadata["projection"]["max_combinations"], 65536)
+        self.assertEqual(observation.metadata["projection"]["mode"], "visible-cell-v1")
+
     def test_bundled_profile_is_resolvable(self) -> None:
         manifest = resolve_profile_manifest("puzzlescript")
         self.assertEqual(manifest.name, "profile.toml")

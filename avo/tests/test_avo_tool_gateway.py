@@ -1,4 +1,3 @@
-import base64
 import json
 import subprocess
 import sys
@@ -61,6 +60,44 @@ class CounterProfile:
 
 
 class AvoToolGatewayTests(unittest.TestCase):
+    def test_solver_self_checks_are_fresh_separate_and_limited_to_two(self) -> None:
+        with tempfile.TemporaryDirectory() as root:
+            calls: list[tuple[int, int]] = []
+
+            def self_check(check_number: int, max_actions: int):
+                calls.append((check_number, max_actions))
+                return {
+                    "fitness": float(check_number),
+                    "evidence": "must-not-be-returned-by-real-self-check",
+                }
+
+            environment = CounterEnvironment()
+            lab = AvoLaboratory(environment, [], Path(root) / "evidence")
+            gateway = AvoToolGateway(
+                lab,
+                CounterProfile(environment),
+                budget=GatewayBudget(max_environment_steps=3),
+                solver_self_check=self_check,
+                max_solver_self_checks=2,
+                max_solver_self_check_steps=20,
+            )
+
+            first = gateway.handle("evaluate_solver", {"max_actions": 10})
+            second = gateway.handle("evaluate_solver", {"max_actions": 20})
+
+            self.assertEqual(calls, [(1, 10), (2, 20)])
+            self.assertEqual(first["result"], {"fitness": 1.0})
+            self.assertNotIn("evidence", json.dumps(first))
+            self.assertEqual(first["checks_remaining"], 1)
+            self.assertEqual(second["checks_remaining"], 0)
+            self.assertEqual(gateway.environment_steps, 0)
+            self.assertEqual(
+                gateway.handle("status")["budgets"]["environment_steps_remaining"],
+                3,
+            )
+            with self.assertRaisesRegex(RuntimeError, "limit exhausted"):
+                gateway.handle("evaluate_solver", {"max_actions": 1})
+
     def test_observation_has_opaque_actions_and_probe_needs_no_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as root:
             environment = CounterEnvironment()
@@ -68,7 +105,6 @@ class AvoToolGatewayTests(unittest.TestCase):
             gateway = AvoToolGateway(
                 lab,
                 CounterProfile(environment),
-                Path(root) / "workspace" / "candidates",
                 budget=GatewayBudget(max_environment_steps=2),
             )
             observed = gateway.handle("observe")
@@ -86,7 +122,7 @@ class AvoToolGatewayTests(unittest.TestCase):
             workspace = Path(root) / "workspace"
             environment = CounterEnvironment()
             lab = AvoLaboratory(environment, [], Path(root) / "evidence")
-            gateway = AvoToolGateway(lab, CounterProfile(environment), workspace / "candidates")
+            gateway = AvoToolGateway(lab, CounterProfile(environment))
             server = FileToolServer(gateway, workspace)
             server.start()
             try:
@@ -109,48 +145,46 @@ class AvoToolGatewayTests(unittest.TestCase):
             self.assertNotIn("Up", AGENT_INTERFACE)
             self.assertNotIn("Down", AGENT_INTERFACE)
 
-    def test_agent_can_publish_and_replay_an_executable_hypothesis(self) -> None:
+    def test_workspace_has_no_theory_package_workflow(self) -> None:
         with tempfile.TemporaryDirectory() as root:
+            workspace = Path(root) / "workspace"
             environment = CounterEnvironment()
             lab = AvoLaboratory(environment, [], Path(root) / "evidence")
-            gateway = AvoToolGateway(lab, CounterProfile(environment), Path(root) / "trusted-candidates")
-            gateway.handle("observe")
-            gateway.handle("probe", {"action_id": "A1", "rationale": "collect evidence"})
-            manifest = {
-                "schema_version": 1,
-                "candidate_id": "x_counter",
-                "parent_id": None,
-                "claim": "A1 increments the observed value",
-                "complexity": 0.1,
-                "command": ["$PYTHON", "predict.py"],
-            }
-            predictor = """import json, sys
-r = json.load(sys.stdin)
-v = r["current"]["payload"]["value"] + (1 if r["action"]["id"] == "A1" else 0)
-json.dump({"protocol":"avo-theory-prediction-v1","expected":{"payload":{"value":v},"status":"DONE","progress":None,"available_actions":["A1","A2"]},"confidence":1,"rationale":"counter"}, sys.stdout)
-"""
-            encode = lambda value: base64.b64encode(value.encode()).decode()
-            published = gateway.handle(
-                "publish",
-                {
-                    "files": {
-                        "manifest.json": encode(json.dumps(manifest)),
-                        "predict.py": encode(predictor),
-                    }
-                },
+            gateway = AvoToolGateway(
+                lab,
+                CounterProfile(environment),
             )
-            replay = gateway.handle("evaluate", {"candidate_id": "x_counter"})
+            server = FileToolServer(gateway, workspace)
+            server.start()
+            try:
+                help_result = subprocess.run(
+                    [sys.executable, "avo_tool.py", "--help"],
+                    cwd=workspace,
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                    check=True,
+                )
+                status = gateway.handle("status")
+            finally:
+                server.stop()
 
-            self.assertTrue(published["published"])
-            self.assertEqual(replay["replay"]["predictions_made"], 1)
-            self.assertEqual(replay["replay"]["exact_rate"], 1)
+            interface = (workspace / "AGENT_INTERFACE.md").read_text(encoding="utf-8")
+            self.assertNotIn("publish", help_result.stdout)
+            self.assertNotIn("candidates", help_result.stdout)
+            self.assertNotIn("executable hypotheses", interface)
+            self.assertIn("You own the workspace", interface)
+            self.assertNotIn("candidate_slots_remaining", status["budgets"])
+            self.assertFalse((workspace / "drafts").exists())
+            with self.assertRaisesRegex(ValueError, "Unknown AVO tool"):
+                gateway.handle("publish", {})
 
     def test_agent_can_archive_research_workspace_through_rpc(self) -> None:
         with tempfile.TemporaryDirectory() as root:
             workspace = Path(root) / "agent"
             environment = CounterEnvironment()
             lab = AvoLaboratory(environment, [], Path(root) / "run")
-            gateway = AvoToolGateway(lab, CounterProfile(environment), Path(root) / "candidates")
+            gateway = AvoToolGateway(lab, CounterProfile(environment))
             server = FileToolServer(gateway, workspace)
             server.start()
             try:
@@ -179,7 +213,6 @@ json.dump({"protocol":"avo-theory-prediction-v1","expected":{"payload":{"value":
             gateway = AvoToolGateway(
                 lab,
                 CounterProfile(environment),
-                Path(root) / "trusted-candidates",
             )
             gateway.handle("observe")
             stopped = gateway.handle("finish", {"reason": "giving up"})
@@ -195,7 +228,6 @@ json.dump({"protocol":"avo-theory-prediction-v1","expected":{"payload":{"value":
             gateway = AvoToolGateway(
                 lab,
                 CounterProfile(environment),
-                Path(root) / "candidates",
                 budget=GatewayBudget(max_environment_steps=10),
             )
             for _ in range(3):
@@ -222,7 +254,6 @@ json.dump({"protocol":"avo-theory-prediction-v1","expected":{"payload":{"value":
             gateway = AvoToolGateway(
                 lab,
                 CounterProfile(environment),
-                Path(root) / "candidates",
                 budget=GatewayBudget(max_environment_steps=10),
             )
             gateway.handle("probe", {"action_id": "A2", "rationale": "collect evidence"})
@@ -247,7 +278,6 @@ json.dump({"protocol":"avo-theory-prediction-v1","expected":{"payload":{"value":
             gateway = AvoToolGateway(
                 lab,
                 CounterProfile(environment),
-                Path(root) / "candidates",
                 budget=GatewayBudget(max_environment_steps=10),
             )
             gateway.handle("observe")

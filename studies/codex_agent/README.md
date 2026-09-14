@@ -8,6 +8,57 @@ later turn sends the result of the previous action plus the new frame. Codex
 returns exactly one next action. There are no experiment-owned tools, notes,
 probe trees, rule languages, or separate planning loop.
 
+The model-facing prompt deliberately omits the backend game ID/title and does
+not explain what the opaque `ACTION1`, `ACTION2`, etc. controls do. Their effects
+must be inferred from observed transitions. The backend retains the real game ID
+only for routing and artifact metadata. Codex also runs from an opaque temporary
+working directory so artifact folder names cannot reveal the game identity.
+
+The `baseline-plus` condition keeps the same persistent session, prompt, frame
+feedback, and one-action output. Its only addition is a persistent note workspace
+with three tools: `list_notes`, `read_note`, and `write_note`. Codex can use those
+tools during a turn and then return the next game action. The condition requires
+Codex to create `strategy.md` before its first action, read it on later turns, and
+update it when evidence or the plan changes. Only its three audited note tools are
+automatically approved. Shell and computer-use tools remain disabled. Codex may
+still advertise generic internal tools; these are allowed by the user for the
+September 5 Luna comparison and their use is recorded, not represented as a
+strict notes-only tool inventory. Both conditions use the same internal settings.
+Recent CLI versions expose the note tools through native client-side `tool_search`.
+Baseline+ permits that discovery step; every returned tool is still checked against
+the same allowlist. This does not enable shell execution or web search.
+Every successful note write also creates an immutable numbered snapshot under
+the run's `note_history/` directory. That directory is outside the model-visible
+workspace, so version logging does not provide the agent with extra memory.
+`note_history/note_transitions.jsonl` records the complete before/after content
+and unified diff for every note write.
+
+Every run also writes two passive audit logs. `transitions.jsonl` records the
+complete before/action/after transition, including changed cells and the final
+winning transition. `codex_session.jsonl` records every item returned by the
+Codex SDK for each turn, including final action responses, note-tool calls,
+timing, token usage, and any reasoning summary exposed by the service. It does
+not contain private chain-of-thought, which is not exposed to the harness.
+`isolation_manifest.json` records the model-facing isolation configuration for
+contamination auditing. Frame images are copied to a generic filename inside
+the opaque temporary session directory before being attached.
+New runs also capture outgoing requests under `model_requests/` and block leaked
+repository/archive paths or inherited AGENTS instructions before forwarding.
+This is not a certificate of OS-level read isolation. These checks and config
+changes do not retrofit processes that were already running.
+
+## New-session continuation
+
+`--continue-from PARENT_RUN --max-steps 50` starts a separate continuation after
+an unsolved parent exhausts its action budget. Keep the same model, effort,
+condition, and game and choose a fresh output directory. The runner replays and
+verifies every prior environment transition, carries over note files and visible
+action/observation history, then allows 50 additional actions. Replay actions
+are recorded separately in `restoration.json`; they do not consume the new
+decision budget. This is not the same persistent Codex conversation and does not
+restore its private reasoning. Keep the original result and continuation result
+separate when reporting the experiment.
+
 The SDK reuses the Codex OAuth sign-in on this machine. It does not use
 `OPENAI_API_KEY`, `OPENROUTER_API_KEY`, or a Kimi key.
 
@@ -27,7 +78,30 @@ In another terminal:
 
 ```powershell
 uv run python -m studies.codex_agent.run --game-id ps_sokoban_basic-v1 --max-steps 50
+
+# Baseline plus persistent note tools
+uv run python -m studies.codex_agent.run --game-id ps_sokoban_basic-v1 --model gpt-5.5 --effort medium --max-steps 100 --condition baseline-plus
 ```
+
+Run a bounded parallel matrix by repeating `--model`, `--effort`, and
+`--condition`. This example launches at most three isolated runs at once and
+performs three repeats at each reasoning effort:
+
+```powershell
+uv run python -m studies.codex_agent.batch `
+  --game-id ps_sokoban_basic-v1 `
+  --model gpt-5.5 `
+  --effort minimal --effort low --effort medium `
+  --condition baseline-plus `
+  --repeats 3 `
+  --parallel 3 `
+  --max-steps 100
+```
+
+Each child run has an opaque `run-####` directory containing its normal
+artifacts plus `stdout.log`, `stderr.log`, and `batch_outcome.json`. The batch
+root contains `batch_config.json` and a final `summary.json`. Ctrl+C terminates
+active children and prevents queued runs from starting.
 
 The defaults are `gpt-5.6-sol` with `low` reasoning effort, which corresponds
 to Sol with Light reasoning in the Codex app.
@@ -35,14 +109,18 @@ to Sol with Light reasoning in the Codex app.
 Use `--no-window` for a headless run. Outputs are written under
 `studies/codex_agent/output/<run-id>/`.
 
-The same runner is available on the local workbench homepage. Run
-`npm run workbench`, open `http://127.0.0.1:5173`, select **Codex Live**, choose
-the game and step limit, and press **Start**.
+The maintained browser launcher is `/runs/codex.html`. Run `npm run workbench`,
+choose games, models, efforts, conditions, repeats and concurrency, then review
+and launch the batch. New runs appear on `/`; results and direct-player replay
+are under `/runs/results.html`. New workbench batches write to `output/workbench/`.
+The CLI default output location remains unchanged. Continuation is available for
+unsolved runs that exhausted their action budget and preserves the parent settings.
 
 ## Boundaries
 
 - One Codex SDK thread is kept alive for the whole game episode.
 - Each turn receives the integer grid and, when available, the rendered PNG.
 - The ARC environment is the authority on whether the game is solved.
-- Codex runs read-only with approvals denied and is instructed not to inspect
-  files or use coding tools.
+- Codex runs read-only with approvals denied. Baseline+ adds only its isolated
+  note-tool server. Shell/browser integrations are disabled, but generic internal
+  Codex tools may still be advertised; inspect captured requests and tool traces.

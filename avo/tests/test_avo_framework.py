@@ -1,9 +1,11 @@
+import base64
 import json
 import tempfile
 import unittest
 from dataclasses import dataclass
+from pathlib import Path
 
-from client.arc.types import ActionInput, FrameData, GameAction, GameState
+from client.arc.types import ActionInput, FrameData, GameAction, GameState, RenderedFrame
 from avo.core.framework import (
     Action,
     AvoLaboratory,
@@ -113,6 +115,55 @@ class AvoFrameworkTests(unittest.TestCase):
         self.assertEqual(observation.available_actions, ("ACTION1", "ACTION5"))
         self.assertNotIn("legend", observation.metadata)
         self.assertNotIn("game_id", observation.metadata)
+
+    def test_puzzlescript_final_png_is_saved_and_referenced_without_base64_logs(self) -> None:
+        png = b"\x89PNG\r\n\x1a\nfinal-frame"
+        frame = FrameData(
+            frame=[[[1]]],
+            state=GameState.PLAYING,
+            levels_completed=0,
+            game_id="secret-game-id",
+            win_levels=1,
+            guid="secret-guid",
+            full_reset=True,
+            available_actions=[GameAction.ACTION1],
+            action_input=ActionInput(GameAction.RESET),
+            rendered_frame=RenderedFrame(
+                mime_type="image/png",
+                data_url="data:image/png;base64,"
+                + base64.b64encode(png).decode("ascii"),
+                width=45,
+                height=45,
+            ),
+        )
+
+        class RenderedEnvironment:
+            def reset(self) -> FrameData:
+                return frame
+
+            def step(self, action: GameAction, data=None) -> FrameData:
+                return frame
+
+        with tempfile.TemporaryDirectory() as output:
+            environment = PuzzleScriptEnvironment(RenderedEnvironment())
+            lab = AvoLaboratory(environment, [], output)
+            observation = lab.reset()
+            rendered = observation.metadata["rendered_frame"]
+            saved = Path(rendered["path"])
+            transition = lab.step(Action("ACTION1")).transition
+
+            self.assertEqual(saved.read_bytes(), png)
+            self.assertEqual(rendered["artifact_path"], "frames/observation_000001.png")
+            self.assertEqual(rendered["width"], 45)
+            self.assertEqual(rendered["height"], 45)
+            self.assertEqual(
+                transition.after.metadata["rendered_frame"]["artifact_path"],
+                "frames/observation_000002.png",
+            )
+            self.assertEqual(lab.history[0], transition)
+            evidence = lab.store.path.read_text(encoding="utf-8")
+            self.assertIn(str(saved).replace("\\", "\\\\"), evidence)
+            self.assertNotIn("data:image/png;base64", evidence)
 
 
 if __name__ == "__main__":

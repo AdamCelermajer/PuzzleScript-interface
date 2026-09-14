@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import difflib
+import hashlib
 import json
 import shutil
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
@@ -16,6 +19,12 @@ from avo.evolution.candidate import (
 
 
 _INHERITANCE_EXCLUDES = {
+    ".codex",
+    ".agents",
+    ".tmp",
+    "observations",
+    "AGENTS.md",
+    "AGENTS.override.md",
     ".avo_rpc",
     "__pycache__",
     "AGENT_INTERFACE.md",
@@ -24,6 +33,99 @@ _INHERITANCE_EXCLUDES = {
     "avo_tool.py",
     "drafts",
 }
+
+
+def _solver_details(path: Path) -> tuple[str | None, str | None]:
+    if not path.is_file():
+        return None, None
+    source = path.read_text(encoding="utf-8", errors="replace")[:100_000]
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    return source, digest
+
+
+def _trace_summary(run_dir: Path) -> dict[str, JsonValue] | None:
+    evidence_path = next(
+        (
+            path
+            for path in (
+                run_dir / "evaluation" / "evidence.jsonl",
+                run_dir / "solver_evaluation" / "evidence.jsonl",
+                run_dir / "evidence.jsonl",
+            )
+            if path.is_file()
+        ),
+        None,
+    )
+    if evidence_path is None:
+        return None
+
+    transitions: list[dict[str, Any]] = []
+    for line in evidence_path.read_text(encoding="utf-8", errors="replace").splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if event.get("type") == "transition" and isinstance(event.get("payload"), dict):
+            transitions.append(event["payload"])
+    if not transitions:
+        return None
+
+    def level(observation: Any) -> int:
+        if not isinstance(observation, dict):
+            return 0
+        progress = observation.get("progress", {})
+        if not isinstance(progress, dict):
+            return 0
+        try:
+            return int(progress.get("levels_completed", 0))
+        except (TypeError, ValueError):
+            return 0
+
+    def comparable_observation(observation: Any) -> Any:
+        if not isinstance(observation, dict):
+            return observation
+        comparable = dict(observation)
+        metadata = comparable.get("metadata")
+        if isinstance(metadata, dict) and "rendered_frame" in metadata:
+            comparable_metadata = dict(metadata)
+            comparable_metadata.pop("rendered_frame", None)
+            if comparable_metadata:
+                comparable["metadata"] = comparable_metadata
+            else:
+                comparable.pop("metadata", None)
+        return comparable
+
+    deepest_level = max(
+        max(level(item.get("before")), level(item.get("after")))
+        for item in transitions
+    )
+    deepest = [item for item in transitions if level(item.get("before")) == deepest_level]
+    action_counts = Counter(
+        str(item.get("action", {}).get("id", "unknown")) for item in deepest
+    )
+    observations = {
+        hashlib.sha256(
+            json.dumps(
+                comparable_observation(item.get("before")),
+                sort_keys=True,
+                separators=(",", ":"),
+                default=str,
+            ).encode("utf-8")
+        ).hexdigest()
+        for item in deepest
+    }
+    return {
+        "transitions": len(transitions),
+        "deepest_level": deepest_level,
+        "actions_at_deepest_level": len(deepest),
+        "unchanged_actions_at_deepest_level": sum(
+            comparable_observation(item.get("before"))
+            == comparable_observation(item.get("after"))
+            for item in deepest
+        ),
+        "unique_observations_at_deepest_level": len(observations),
+        "action_counts_at_deepest_level": dict(sorted(action_counts.items())),
+    }
 
 
 class EvolutionStore:
@@ -134,6 +236,15 @@ class EvolutionStore:
         strategy: str,
         notes: str = "# Candidate knowledge\n\nNo prior run evidence.\n",
     ) -> RunCandidate:
+        self.prepare_seed_draft(candidate_id, strategy, notes)
+        return self.register_draft(candidate_id)
+
+    def prepare_seed_draft(
+        self,
+        candidate_id: str,
+        strategy: str = "",
+        notes: str = "# Candidate knowledge\n\nNo prior run evidence.\n",
+    ) -> dict[str, JsonValue]:
         safe_id = validate_candidate_id(candidate_id)
         draft = self.drafts_dir / safe_id
         if draft.exists() or (self.candidates_dir / safe_id).exists():
@@ -153,7 +264,7 @@ class EvolutionStore:
         )
         (draft / "STRATEGY.md").write_text(strategy.strip() + "\n", encoding="utf-8")
         (draft / seed_name / "NOTES.md").write_text(notes, encoding="utf-8")
-        return self.register_draft(safe_id)
+        return {"draft_candidate_id": safe_id, "draft_path": str(draft)}
 
     def evaluations(self, candidate_id: str | None = None) -> tuple[dict[str, Any], ...]:
         records = tuple(dict(item) for item in self._load()["evaluations"])
@@ -258,6 +369,11 @@ class EvolutionStore:
         latest = self.latest_evaluation(candidate.candidate_id)
         final_summary: JsonValue = None
         learned_notes: dict[str, JsonValue] = {}
+        solver_source: str | None = None
+        solver_sha256: str | None = None
+        parent_solver_sha256: str | None = None
+        solver_diff: str | None = None
+        trace_summary: dict[str, JsonValue] | None = None
         if latest is not None:
             run_dir = Path(str(latest["run_dir"]))
             summary_path = run_dir / (
@@ -270,6 +386,28 @@ class EvolutionStore:
             final_workspace = run_dir / (
                 "workspace" if self.legacy_layout else "solver"
             )
+            solver_source, solver_sha256 = _solver_details(final_workspace / "solver.py")
+            trace_summary = _trace_summary(run_dir)
+            if candidate.parent_ids:
+                parent_id = candidate.parent_ids[0]
+                parent_latest = self.latest_evaluation(parent_id)
+                if parent_latest is not None:
+                    parent_run = Path(str(parent_latest["run_dir"]))
+                    parent_workspace = parent_run / (
+                        "workspace" if self.legacy_layout else "solver"
+                    )
+                    parent_source, parent_solver_sha256 = _solver_details(
+                        parent_workspace / "solver.py"
+                    )
+                    if parent_source is not None and solver_source is not None:
+                        solver_diff = "".join(
+                            difflib.unified_diff(
+                                parent_source.splitlines(keepends=True),
+                                solver_source.splitlines(keepends=True),
+                                fromfile=f"{parent_id}/solver.py",
+                                tofile=f"{candidate.candidate_id}/solver.py",
+                            )
+                        )[:100_000]
             if final_workspace.is_dir():
                 note_files = sorted(
                     path
@@ -292,7 +430,76 @@ class EvolutionStore:
             "latest_run": {
                 "final_summary": final_summary,
                 "learned_notes": learned_notes,
+                "solver": {
+                    "sha256": solver_sha256,
+                    "parent_sha256": parent_solver_sha256,
+                    "source": solver_source,
+                    "diff_from_parent": solver_diff,
+                },
+                "trace_summary": trace_summary,
             },
+        }
+
+    def evidence(
+        self,
+        candidate_id: str,
+        phase: str,
+        *,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> dict[str, JsonValue]:
+        safe_id = validate_candidate_id(candidate_id)
+        valid_phases = {"research", "evaluation", "self_check_01", "self_check_02"}
+        if phase not in valid_phases:
+            raise ValueError(
+                "phase must be research, evaluation, self_check_01, or self_check_02"
+            )
+        if offset < 0:
+            raise ValueError("offset must be non-negative")
+        if limit < 1 or limit > 100:
+            raise ValueError("limit must be between 1 and 100")
+        latest = self.latest_evaluation(safe_id)
+        if latest is None:
+            raise ValueError(f"Evaluate {safe_id} before reading its evidence")
+        run_dir = Path(str(latest["run_dir"]))
+        if phase.startswith("self_check_"):
+            research_dir = run_dir if self.legacy_layout else run_dir / "research"
+            check_number = int(phase.rsplit("_", 1)[1])
+            evidence_path = (
+                research_dir
+                / "self_check"
+                / f"check_{check_number:02d}"
+                / "evidence.jsonl"
+            )
+        elif self.legacy_layout:
+            evidence_path = (
+                run_dir / "evidence.jsonl"
+                if phase == "research"
+                else run_dir / "solver_evaluation" / "evidence.jsonl"
+            )
+        else:
+            evidence_path = run_dir / phase / "evidence.jsonl"
+        if not evidence_path.is_file():
+            raise ValueError(f"{safe_id} has no saved {phase} evidence")
+
+        events: list[JsonValue] = []
+        for line in evidence_path.read_text(
+            encoding="utf-8", errors="replace"
+        ).splitlines():
+            try:
+                events.append(_jsonable(json.loads(line)))
+            except json.JSONDecodeError:
+                continue
+        page = events[offset : offset + limit]
+        next_offset = offset + len(page)
+        return {
+            "candidate_id": safe_id,
+            "phase": phase,
+            "offset": offset,
+            "limit": limit,
+            "total_events": len(events),
+            "next_offset": next_offset if next_offset < len(events) else None,
+            "events": page,
         }
 
     def population_summary(self) -> dict[str, JsonValue]:
@@ -304,5 +511,8 @@ class EvolutionStore:
             "evaluations": _jsonable(evaluations),
             "candidate_count": len(candidates),
             "evaluation_count": len(evaluations),
+            "drafts": sorted(
+                path.name for path in self.drafts_dir.iterdir() if path.is_dir()
+            ),
             "best": _jsonable(best),
         }

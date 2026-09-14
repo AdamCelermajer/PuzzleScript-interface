@@ -16,6 +16,17 @@ class HeadlessPixelUI extends BaseUI {
     }
     drawCellsAfterRecentering() {}
     clearScreen() {}
+
+    visibleCells(cells, levelIndex) {
+        this.onLevelChange(levelIndex, cells, null);
+        // Use the engine UI's own flickscreen/zoomscreen recentering rules.
+        this.drawCells(cells.flat(), true);
+        const top = this.windowOffsetRowStart;
+        const left = this.windowOffsetColStart;
+        const height = this.windowOffsetHeight || cells.length;
+        const width = this.windowOffsetWidth || cells[0].length;
+        return cells.slice(top, top + height).map(row => row.slice(left, left + width));
+    }
 }
 
 function makeCrcTable() {
@@ -107,23 +118,35 @@ function rgbaFromColor(color) {
     return [r, g, b, a === null ? 255 : Math.round(a * 255)];
 }
 
-function renderSessionVisualGrid(session) {
+function visibleScene(session) {
     let cells;
     try {
         cells = session.engine.getCurrentLevelCells();
     } catch (e) {
-        return [];
+        return null;
     }
     if (!cells || cells.length === 0 || !cells[0] || cells[0].length === 0) {
-        return [];
+        return null;
+    }
+    if (cells.some(row => row.length !== cells[0].length)) {
+        throw new Error('Unsupported ragged level: source rows have different widths.');
     }
 
-    const ui = new HeadlessPixelUI();
-    ui.onGameChange(session.gameData);
-    const signatures = session.visualSignatureToInt;
-    const overflow = session.visualSignatureOverflow;
+    if (!session.pixelUI || session.pixelLevel !== session.engine.currentLevelNum) {
+        session.pixelUI = new HeadlessPixelUI();
+        session.pixelUI.onGameChange(session.gameData);
+        session.pixelLevel = session.engine.currentLevelNum;
+    }
+    const ui = session.pixelUI;
+    return { ui, cells: ui.visibleCells(cells, session.engine.currentLevelNum) };
+}
 
-    return cells.map(row => row.map(cell => {
+function renderSessionVisualGrid(session) {
+    const scene = visibleScene(session);
+    if (!scene) return [];
+    const {ui, cells} = scene;
+    const signatures = session.visualSignatureToInt;
+    const ids = cells.map(row => row.map(cell => {
         const pixels = ui.getPixelsForCell(cell);
         const signature = pixels.flat()
             .map(color => rgbaFromColor(color).join(','))
@@ -131,40 +154,33 @@ function renderSessionVisualGrid(session) {
         if (signatures.has(signature)) {
             return signatures.get(signature);
         }
-        if (signatures.size < 16) {
+        const limit = session.projectionCompression.max_combinations || 65536;
+        if (signatures.size < limit) {
             const id = signatures.size;
             signatures.set(signature, id);
-            session.intToName[id] = `Visible cell pattern ${id}`;
-            session.visualPatterns[id] = pixels.map(pixelRow => pixelRow.map(color => {
-                const colorKey = rgbaFromColor(color).join(',');
-                if (!session.visualColorToInt.has(colorKey)) {
-                    const colorId = Math.min(session.visualColorToInt.size, 15);
-                    session.visualColorToInt.set(colorKey, colorId);
-                }
-                return session.visualColorToInt.get(colorKey);
-            }));
+            // RGBA preserves all colours, including transparency; no palette clamping.
+            session.visualPatterns[id] = pixels.map(row => row.map(rgbaFromColor));
+            if (session.projectionCompression.mode === 'visible-cell-v1') {
+                session.intToName[id] = `Visible texture ${id}`;
+            }
             return id;
         }
-        overflow.add(signature);
-        session.projectionCompression.compressed = true;
-        session.projectionCompression.overflow_count = overflow.size;
-        return 15;
+        throw new Error('Visible texture dictionary exhausted; refusing to merge different textures.');
     }));
+    session.projectionCompression.board_shape = [cells.length, cells[0].length];
+    if (session.projectionCompression.mode === 'visible-cell-v1') return ids;
+    // Four hexadecimal digits per tile, row-major, most significant first.
+    // Fixed geometry from RESET onward keeps earlier frames and IDs interpretable.
+    return ids.flatMap(row => [
+        row.flatMap(id => [(id >>> 12) & 15, (id >>> 8) & 15]),
+        row.flatMap(id => [(id >>> 4) & 15, id & 15]),
+    ]);
 }
 
 function renderSessionFrame(session) {
-    let cells;
-    try {
-        cells = session.engine.getCurrentLevelCells();
-    } catch (e) {
-        return null;
-    }
-    if (!cells || cells.length === 0 || !cells[0] || cells[0].length === 0) {
-        return null;
-    }
-
-    const ui = new HeadlessPixelUI();
-    ui.onGameChange(session.gameData);
+    const scene = visibleScene(session);
+    if (!scene) return null;
+    const {ui, cells} = scene;
 
     const spriteHeight = ui.SPRITE_HEIGHT;
     const spriteWidth = ui.SPRITE_WIDTH;

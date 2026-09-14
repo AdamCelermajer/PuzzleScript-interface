@@ -20,6 +20,7 @@ from workbench import openrouter_account
 from workbench.paper_investigation import CodexPaperAssistant, PaperAssistant
 from workbench.paper_library import PaperLibrary
 from workbench.run_manager import RunManager
+from workbench.experiments import create_router as create_experiments_router
 from experiement.bfs_solver.web_api import create_optimal_path_router
 from experiement.bfs_solver.web_manager import OptimalPathManager
 
@@ -177,6 +178,7 @@ def create_app(
     app.state.paper_assistant = research_assistant
     app.state.paper_library = library
     app.include_router(create_optimal_path_router(path_manager))
+    app.include_router(create_experiments_router())
 
     @app.get("/api/workbench/health")
     def health() -> dict:

@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Historical rule-learning client</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body data-section="workbench">
+    <main class="workbench-page" data-workbench>
+      <header class="workbench-toolbar">
+        <div>
+          <p class="eyebrow">Historical · rule-learning client</p>
+          <h1>Rule-learning client</h1>
+        </div>
+        <div class="workbench-controls">
+          <div class="segment-control" aria-label="Agent mode">
+            <label><input type="radio" name="agent-mode" value="rule" checked />Rule agent</label>
+            <label hidden><input type="radio" name="agent-mode" value="codex" />Codex Live</label>
+          </div>
+          <div class="segment-control" aria-label="Memory mode" data-rule-only>
+            <label><input type="radio" name="memory-mode" value="fresh" checked />Fresh</label>
+            <label><input type="radio" name="memory-mode" value="resume" />Resume</label>
+          </div>
+          <button class="command-button primary" type="button" data-run-start disabled>Start</button>
+          <button class="command-button danger" type="button" data-run-stop disabled>Stop</button>
+        </div>
+      </header>
+
+      <div class="workbench-statusbar" role="status" aria-live="polite">
+        <span class="run-state" data-run-status>Idle</span>
+        <span data-run-summary>OpenRouter | Local PuzzleScript | ps_sokoban_basic-v1 | 12 steps</span>
+        <span class="workbench-error" data-run-error></span>
+      </div>
+
+      <nav class="workbench-view-tabs" aria-label="Workbench views">
+        <button type="button" class="active" data-view-tab="run">Run</button>
+        <button type="button" data-view-tab="replay" data-rule-only>Replay</button>
+        <button type="button" data-view-tab="prompts" data-rule-only>Prompts</button>
+        <button type="button" data-view-tab="settings">Settings</button>
+      </nav>
+
+      <section data-view-panel="run">
+        <div class="workbench-run-grid">
+          <section class="game-surface" aria-label="Current game frame">
+            <div class="surface-header">
+              <h2>Game State</h2>
+              <span data-level-progress>0 / 0 levels</span>
+            </div>
+            <div class="game-frame" data-game-frame>
+              <div class="frame-empty">Waiting for a run</div>
+            </div>
+            <div class="frame-meta">
+              <span>Step <strong data-step-count>0</strong></span>
+              <span>State <strong data-game-state>NOT_STARTED</strong></span>
+              <span>Action <strong data-last-action>None</strong></span>
+            </div>
+          </section>
+
+          <section class="reasoning-surface" aria-label="Agent reasoning state">
+            <div class="surface-header"><h2>Reasoning State</h2></div>
+            <dl class="reasoning-facts">
+              <div><dt>Task goal</dt><dd data-task-goal>Not defined</dd></div>
+              <div><dt>Subgoal</dt><dd data-subgoal>None</dd></div>
+              <div><dt>Decision</dt><dd data-decision>None</dd></div>
+              <div><dt>Active plan</dt><dd data-active-plan>None</dd></div>
+              <div><dt>Legend</dt><dd data-legend>Not available</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <section class="evidence-surface" aria-label="Agent evidence">
+          <nav class="evidence-tabs" aria-label="Evidence views">
+            <button type="button" class="active" data-evidence-tab="natural" data-rule-only>Natural rules <span data-natural-count>0</span></button>
+            <button type="button" data-evidence-tab="logical" data-rule-only>Verified rules <span data-logical-count>0</span></button>
+            <button type="button" data-evidence-tab="failures" data-rule-only>Failures <span data-failure-count>0</span></button>
+            <button type="button" data-evidence-tab="attempts" data-rule-only>Rule attempts <span data-attempt-count>0</span></button>
+            <button type="button" data-evidence-tab="timeline">Timeline <span data-timeline-count>0</span></button>
+            <button type="button" data-evidence-tab="logs">Logs <span data-log-count>0</span></button>
+          </nav>
+          <div class="evidence-panel active" data-evidence-panel="natural" data-rule-only></div>
+          <div class="evidence-panel" data-evidence-panel="logical" data-rule-only></div>
+          <div class="evidence-panel" data-evidence-panel="failures" data-rule-only></div>
+          <div class="evidence-panel" data-evidence-panel="attempts" data-rule-only></div>
+          <div class="evidence-panel" data-evidence-panel="timeline"></div>
+          <div class="evidence-panel" data-evidence-panel="logs"></div>
+        </section>
+      </section>
+
+      <section class="replay-surface" data-view-panel="replay" hidden>
+        <div class="replay-toolbar">
+          <label class="field replay-select">
+            <span>Saved run</span>
+            <select data-replay-artifact><option value="">No saved runs</option></select>
+          </label>
+          <button class="command-button" type="button" data-replay-refresh>Refresh</button>
+          <button class="command-button danger" type="button" data-replay-delete disabled>Delete archive</button>
+        </div>
+        <div class="replay-layout">
+          <div class="game-frame" data-replay-frame><div class="frame-empty">Choose a saved run</div></div>
+          <aside class="replay-details">
+            <strong data-replay-position>0 / 0</strong>
+            <span data-replay-state>NOT_STARTED</span>
+            <span data-replay-action>Action: None</span>
+            <span data-replay-subgoal>Subgoal: Unavailable</span>
+            <span data-replay-plan>Plan: Unavailable</span>
+            <span data-replay-legend>Legend unavailable</span>
+          </aside>
+        </div>
+        <section class="replay-prediction" aria-label="Prediction compared with observation">
+          <div class="replay-evidence-heading">
+            <h2>Prediction vs observed</h2>
+            <span data-replay-prediction-status>Prediction not recorded</span>
+          </div>
+          <p class="replay-prediction-source" data-replay-prediction-source>Source unavailable</p>
+          <div class="replay-prediction-grids">
+            <figure>
+              <figcaption>Predicted</figcaption>
+              <div class="prediction-grid" data-replay-predicted><div class="frame-empty">No prediction</div></div>
+            </figure>
+            <figure>
+              <figcaption>Observed</figcaption>
+              <div class="prediction-grid" data-replay-observed><div class="frame-empty">No frame</div></div>
+            </figure>
+          </div>
+          <p class="replay-prediction-diff" data-replay-prediction-diff></p>
+        </section>
+        <div class="replay-controls" aria-label="Replay controls">
+          <button class="command-button" type="button" data-replay-previous title="Previous frame">Previous</button>
+          <button class="command-button primary" type="button" data-replay-play title="Play replay">Play</button>
+          <button class="command-button" type="button" data-replay-next title="Next frame">Next</button>
+        </div>
+        <section class="replay-evidence" aria-label="Rules at replay position">
+          <div class="replay-evidence-heading">
+            <h2>Rules at this point</h2>
+            <span data-replay-through>Before first transition</span>
+          </div>
+          <nav class="evidence-tabs replay-rule-tabs" aria-label="Replay rule views">
+            <button class="active" type="button" data-replay-rule-tab="natural">Natural <span data-replay-natural-count>0</span></button>
+            <button type="button" data-replay-rule-tab="logical">Verified <span data-replay-logical-count>0</span></button>
+            <button type="button" data-replay-rule-tab="failures">Failures <span data-replay-failure-count>0</span></button>
+            <button type="button" data-replay-rule-tab="attempts">Attempts <span data-replay-attempt-count>0</span></button>
+          </nav>
+          <div class="replay-rule-panel active" data-replay-rule-panel="natural"></div>
+          <div class="replay-rule-panel" data-replay-rule-panel="logical" hidden></div>
+          <div class="replay-rule-panel" data-replay-rule-panel="failures" hidden></div>
+          <div class="replay-rule-panel" data-replay-rule-panel="attempts" hidden></div>
+        </section>
+      </section>
+
+      <section class="prompts-surface" data-view-panel="prompts" hidden>
+        <div class="prompt-toolbar">
+          <label class="field">
+            <span>Prompt</span>
+            <select data-prompt-select></select>
+          </label>
+          <div class="prompt-meta">
+            <span data-prompt-version>Not loaded</span>
+            <span data-prompt-state>Default</span>
+          </div>
+        </div>
+        <textarea class="prompt-editor" data-prompt-editor spellcheck="false" aria-label="Prompt instructions"></textarea>
+        <div class="prompt-actions">
+          <span data-prompt-message aria-live="polite"></span>
+          <button class="command-button" type="button" data-prompt-reset>Reset default</button>
+          <button class="command-button primary" type="button" data-prompt-save>Save prompt</button>
+        </div>
+      </section>
+
+      <section class="settings-surface" data-view-panel="settings" hidden>
+        <h2>Run Settings</h2>
+        <div class="settings-grid">
+          <section class="openrouter-account" aria-label="OpenRouter account status" data-rule-settings>
+            <div class="openrouter-account-heading">
+              <div>
+                <span>LLM provider</span>
+                <strong>OpenRouter</strong>
+              </div>
+              <div class="openrouter-account-actions">
+                <a href="https://openrouter.ai/settings/keys" target="_blank" rel="noreferrer">Manage account</a>
+                <button class="command-button" type="button" data-openrouter-refresh>Refresh</button>
+              </div>
+            </div>
+            <dl class="openrouter-metrics">
+              <div><dt>Status</dt><dd data-openrouter-state>Checking</dd></div>
+              <div><dt>Key</dt><dd data-openrouter-label>--</dd></div>
+              <div><dt>Used, all time</dt><dd data-openrouter-usage>--</dd></div>
+              <div><dt>Used this month</dt><dd data-openrouter-monthly>--</dd></div>
+              <div><dt>Limit remaining</dt><dd data-openrouter-remaining>--</dd></div>
+              <div><dt>Limit reset</dt><dd data-openrouter-reset>--</dd></div>
+            </dl>
+            <div class="openrouter-key-update">
+              <label class="field">
+                <span>OpenRouter API key</span>
+                <input type="text" autocomplete="off" spellcheck="false" data-openrouter-key />
+              </label>
+              <button class="command-button primary" type="button" data-openrouter-save>Save key</button>
+            </div>
+            <p class="openrouter-message" data-openrouter-message aria-live="polite"></p>
+          </section>
+          <section class="openrouter-account codex-account" aria-label="Codex OAuth status" data-codex-settings hidden>
+            <div class="openrouter-account-heading">
+              <div>
+                <span>Agent provider</span>
+                <strong>Codex OAuth</strong>
+              </div>
+              <button class="command-button" type="button" data-codex-refresh>Refresh</button>
+            </div>
+            <dl class="openrouter-metrics">
+              <div><dt>Status</dt><dd data-codex-state>Checking</dd></div>
+              <div><dt>Runtime</dt><dd data-codex-version>--</dd></div>
+              <div><dt>Authentication</dt><dd data-codex-auth>--</dd></div>
+            </dl>
+            <p class="openrouter-message" data-codex-message aria-live="polite">
+              Uses the Codex desktop login on this machine. No API key is required.
+            </p>
+          </section>
+          <label class="field" data-rule-settings>
+            <span>Model</span>
+            <select data-model>
+              <option value="anthropic/claude-opus-4.8" selected>Anthropic: Claude Opus 4.8</option>
+              <option value="openai/gpt-5.6-luna">OpenAI: GPT-5.6 Luna</option>
+              <option value="x-ai/grok-4.5">xAI: Grok 4.5</option>
+              <option value="xiaomi/mimo-v2.5">Xiaomi: MiMo-V2.5</option>
+            </select>
+          </label>
+          <label class="field" data-reasoning-field data-rule-settings hidden>
+            <span>Reasoning effort</span>
+            <select data-reasoning-effort>
+              <option value="">Provider default</option>
+            </select>
+          </label>
+          <label class="field" data-codex-settings hidden>
+            <span>Codex model</span>
+            <select data-codex-model>
+              <option value="gpt-5.6-sol" selected>OpenAI: GPT-5.6 Sol</option>
+            </select>
+          </label>
+          <label class="field" data-codex-settings hidden>
+            <span>Reasoning effort</span>
+            <select data-codex-effort>
+              <option value="minimal">Minimal</option>
+              <option value="low" selected>Light</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="xhigh">Extra high</option>
+            </select>
+          </label>
+          <fieldset>
+            <legend>Backend</legend>
+            <div class="segment-control wide">
+              <label><input type="radio" name="backend" value="puzzlescript" checked />PuzzleScript</label>
+              <label><input type="radio" name="backend" value="arc" />Official ARC</label>
+            </div>
+          </fieldset>
+          <label class="field" data-local-game-field>
+            <span>Game</span>
+            <select data-local-game>
+              <option value="ps_sokoban_basic-v1">Sokoban Basic</option>
+            </select>
+          </label>
+          <label class="field" data-arc-game-field hidden>
+            <span>ARC game ID</span>
+            <input type="text" value="ls20" data-arc-game maxlength="160" />
+          </label>
+          <label class="field">
+            <span>Maximum steps</span>
+            <input type="number" min="1" max="200" value="12" data-max-steps />
+          </label>
+          <label class="setting-toggle" data-rule-settings>
+            <input type="checkbox" data-provide-legend checked />
+            <span>Use game legend</span>
+          </label>
+          <label class="setting-toggle" data-rule-settings>
+            <input type="checkbox" data-provide-end-goal checked />
+            <span>Use provided end goal</span>
+          </label>
+          <label class="field settings-wide" data-end-goal-field data-rule-settings>
+            <span>End goal</span>
+            <input type="text" value="complete the level" maxlength="500" data-end-goal />
+          </label>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/workbench.js"></script>
+  </body>
+</html>

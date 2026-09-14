@@ -4,6 +4,7 @@ version = "1.0.0"
 description = "Research framework for LLM agents that learn puzzle game mechanics by observing state transitions."
 requires-python = ">=3.10"
 dependencies = [
+    "aiohttp",
     "requests",
     "arc-agi",
     "openai",
@@ -12,6 +13,7 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "pypdf",
+    "backports-zstd>=1.7.0",
 ]
 
 [project.optional-dependencies]

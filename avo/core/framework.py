@@ -267,6 +267,11 @@ class AvoLaboratory:
         self.candidates = list(candidates)
         self._candidate_ids = set(ids)
         self.store = EvidenceStore(evidence_dir)
+        configure_rendered_frames = getattr(
+            self.environment, "set_rendered_frame_output_dir", None
+        )
+        if callable(configure_rendered_frames):
+            configure_rendered_frames(self.store.root / "frames")
         self.supervisor = supervisor or DeterministicSupervisor()
         self.history: list[Transition] = []
         self.current: Observation | None = None

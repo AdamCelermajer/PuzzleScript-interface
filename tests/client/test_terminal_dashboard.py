@@ -18,6 +18,12 @@ from client.terminal_dashboard import (  # type: ignore[import-not-found]
 
 
 class TerminalDashboardTests(unittest.TestCase):
+    def test_extended_ids_remain_distinct_in_terminal_views(self) -> None:
+        from client.terminal_dashboard import _format_compact_grid
+        self.assertEqual(_format_compact_grid([[128, 65535]]), "{128}{65535}")
+        self.assertNotEqual(format_color_grid([[[128]]]), format_color_grid([[[129]]]))
+        self.assertNotEqual(format_color_grid([[[128]]]), format_color_grid([[[0]]]))
+
     def test_numeric_grid_uses_only_final_grid(self) -> None:
         formatted = format_numeric_grid(
             [

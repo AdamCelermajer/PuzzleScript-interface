@@ -134,6 +134,8 @@ studies/goal_recognition/experiment/artifacts/*
 !studies/goal_recognition/experiment/artifacts/.gitkeep
 studies/goal_recognition/experiment/node_modules/
 outputs/
+/output/
+/website/experiments/avo-three-live-status.json
 benchmark/results/*.json
 paper_library/
 
@@ -156,3 +158,4 @@ test/
 __pycache__
 .worktrees/
 .local-logs/
+.codex-remote-attachments/

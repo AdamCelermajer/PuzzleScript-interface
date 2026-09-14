@@ -13,6 +13,7 @@ if __package__ in {None, ""}:
 
 from avo.core.profile import load_profile
 from avo.run_once import PlayerRunSettings, execute_player_run
+from avo.isolation import new_workspace
 
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
@@ -48,9 +49,10 @@ def main() -> None:
     parser.add_argument("--effort", default="high")
     parser.add_argument("--codex-bin", default="")
     parser.add_argument("--max-environment-steps", type=int, default=200)
-    parser.add_argument("--max-candidates", type=int, default=50)
     parser.add_argument("--max-wall-seconds", type=float, default=3600)
     parser.add_argument("--max-agent-turns", type=int, default=4)
+    parser.add_argument("--max-solver-self-checks", type=int, default=2)
+    parser.add_argument("--solver-self-check-max-environment-steps", type=int, default=1_500)
     parser.add_argument("--output-dir", default="")
     args = parser.parse_args()
 
@@ -58,7 +60,7 @@ def main() -> None:
     loaded = load_profile(args.profile, overrides)
     run_id = datetime.now().strftime("%Y%m%dT%H%M%S")
     output_dir = Path(args.output_dir) if args.output_dir else DEFAULT_OUTPUT_ROOT / run_id
-    workspace = Path(tempfile.mkdtemp(prefix="avo-agent-run-")).resolve()
+    workspace = new_workspace()
     result = execute_player_run(
         loaded_profile=loaded,
         output_dir=output_dir,
@@ -69,9 +71,12 @@ def main() -> None:
             codex_bin=args.codex_bin,
             base_prompt=args.base_prompt or PlayerRunSettings.base_prompt,
             max_environment_steps=args.max_environment_steps,
-            max_theory_candidates=args.max_candidates,
             max_wall_seconds=args.max_wall_seconds,
             max_agent_turns=args.max_agent_turns,
+            max_solver_self_checks=args.max_solver_self_checks,
+            solver_self_check_max_environment_steps=(
+                args.solver_self_check_max_environment_steps
+            ),
         ),
     )
     print(json.dumps(result.summary, indent=2))

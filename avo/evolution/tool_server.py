@@ -9,12 +9,16 @@ from avo.evolution.gateway import EvolutionGateway
 
 OPTIMIZER_INTERFACE = """# Outer AVO optimizer interface
 
-You vary and evaluate complete player-agent packages named RunCandidates (`x_i`).
-You do not control the environment and have no gameplay actions.
+You are the hypothesis and experiment owner. You vary and evaluate complete
+player-agent packages named RunCandidates (`x_i`). You can read the frozen initial
+observation and every saved event from evaluated candidates. You do not control a
+game and have no gameplay actions.
 
 ```text
 python avo_evolve_tool.py population
+python avo_evolve_tool.py initial
 python avo_evolve_tool.py inspect CANDIDATE_ID
+python avo_evolve_tool.py evidence CANDIDATE_ID research|evaluation|self_check_01|self_check_02 --offset N --limit N
 python avo_evolve_tool.py fork PARENT_ID CHILD_ID
 python avo_evolve_tool.py register CANDIDATE_ID
 python avo_evolve_tool.py evaluate CANDIDATE_ID
@@ -24,17 +28,25 @@ python avo_evolve_tool.py finish "reason"
 
 Workflow:
 
-1. Evaluate an unevaluated registered candidate.
-2. Inspect its trusted result.
-3. Fork it. The child draft inherits the final solver, notes, and helper programs
+1. If the population is empty, read `initial`, design x_0001 in the prepared
+   `drafts/x_0001/`, then register and evaluate it.
+2. Inspect an evaluated candidate's trusted result, solver source, parent diff,
+   and trace summary. Page through research, self-check, or final `evidence` whenever
+   boards or transitions matter.
+3. State one falsifiable hypothesis, then fork it. The child draft inherits the final solver, notes, and helper programs
    produced by the parent's evaluated run.
-4. Edit only `drafts/CHILD_ID/STRATEGY.md` and files below its `seed/`.
+4. Edit only `drafts/CHILD_ID/STRATEGY.md` and files below its `seed/`. Specify
+   the observed failure, research question, bounded experiment, pass/fail evidence,
+   and what must remain unchanged. Do not delegate the high-level hypothesis to the
+   player. Prescribe a solver delta only when existing evidence already supports it.
 5. Register the child, making it immutable.
 6. Evaluate it from a fresh environment.
 
 Fitness and success come only from the environment profile. Never report an
 improvement before evaluation. A failed evaluation is still a completed x_i result:
 inspect it and fork x_(i+1); never restart the whole experiment to erase the failure.
+PuzzleScript observations in initial state and evidence may include
+`metadata.rendered_frame.path`, which points to the final visible PNG for direct inspection.
 Equal-fitness candidates remain in the population. Registered candidates, evaluation
 artifacts, `lineage.json`, and `.avo_evolution_rpc/` are framework-owned and must not
 be edited.
@@ -109,10 +121,18 @@ def call(method, params=None):
 
 parser = argparse.ArgumentParser()
 sub = parser.add_subparsers(dest="method", required=True)
-for name in ("population", "status"):
+for name in ("population", "initial", "status"):
     sub.add_parser(name)
 inspect = sub.add_parser("inspect")
 inspect.add_argument("candidate_id")
+evidence = sub.add_parser("evidence")
+evidence.add_argument("candidate_id")
+evidence.add_argument(
+    "phase",
+    choices=("research", "evaluation", "self_check_01", "self_check_02"),
+)
+evidence.add_argument("--offset", type=int, default=0)
+evidence.add_argument("--limit", type=int, default=20)
 fork = sub.add_parser("fork")
 fork.add_argument("parent_id")
 fork.add_argument("child_id")
@@ -126,6 +146,13 @@ args = parser.parse_args()
 params = {}
 if args.method in {"inspect", "register", "evaluate"}:
     params["candidate_id"] = args.candidate_id
+elif args.method == "evidence":
+    params.update(
+        candidate_id=args.candidate_id,
+        phase=args.phase,
+        offset=args.offset,
+        limit=args.limit,
+    )
 elif args.method == "fork":
     params.update(parent_id=args.parent_id, child_id=args.child_id)
 elif args.method == "finish":
@@ -138,8 +165,11 @@ class EvolutionFileToolServer:
     """Filesystem RPC exposing only outer candidate-management operations."""
 
     def __init__(self, gateway: EvolutionGateway, workspace: str | Path) -> None:
+        from avo.core.model_view import ModelView
         self.gateway = gateway
         self.workspace = Path(workspace).resolve()
+        self.model_view = ModelView(self.workspace, (gateway.store.root,))
+        self.isolation_failure: str | None = None
         self.rpc_root = self.workspace / ".avo_evolution_rpc"
         self.request_log = self.rpc_root / "requests.jsonl"
         self.response_log = self.rpc_root / "responses.jsonl"
@@ -205,16 +235,22 @@ class EvolutionFileToolServer:
                     continue
                 processed.add(request_id)
                 try:
+                    if self.isolation_failure:
+                        from avo.isolation import IsolationError
+                        raise IsolationError(self.isolation_failure)
                     result = self.gateway.handle(
                         str(request.get("method", "")),
                         request.get("params", {}),
                     )
-                    response = {"id": request_id, "ok": True, "result": result}
+                    response = {"id": request_id, "ok": True, "result": self.model_view.present(result)}
                 except Exception as exc:
+                    from avo.isolation import IsolationError
+                    if isinstance(exc, IsolationError):
+                        self.isolation_failure = str(exc)
                     response = {
                         "id": request_id,
                         "ok": False,
-                        "error": f"{type(exc).__name__}: {exc}",
+                        "error": self.model_view.error(exc),
                     }
                 with self.response_log.open("a", encoding="utf-8") as stream:
                     stream.write(json.dumps(response, default=str) + "\n")

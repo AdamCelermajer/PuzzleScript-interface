@@ -10,12 +10,14 @@ from avo.core.framework import JsonValue, _jsonable
 
 
 _CANDIDATE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}")
-_RESERVED_WORKSPACE_PARTS = {".avo_rpc", "__pycache__"}
+_RESERVED_WORKSPACE_PARTS = {".avo_rpc", "__pycache__", ".codex", ".agents"}
 _RESERVED_WORKSPACE_FILES = {
     "AGENT_INTERFACE.md",
     "MISSION.md",
     "agent_transcript.jsonl",
     "avo_tool.py",
+    "AGENTS.md",
+    "AGENTS.override.md",
 }
 
 
@@ -64,11 +66,11 @@ class RunCandidate:
         if workspace.is_dir():
             for path in workspace.rglob("*"):
                 relative = path.relative_to(workspace)
-                if path.is_symlink():
+                if path.is_symlink() or path.is_junction():
                     raise ValueError(f"Candidate workspace cannot contain symlinks: {relative}")
-                if any(part in _RESERVED_WORKSPACE_PARTS for part in relative.parts):
+                if any(part.casefold() in {v.casefold() for v in _RESERVED_WORKSPACE_PARTS} for part in relative.parts):
                     raise ValueError(f"Candidate workspace contains reserved path: {relative}")
-                if len(relative.parts) == 1 and relative.name in _RESERVED_WORKSPACE_FILES:
+                if relative.name.casefold() in {"agents.md", "agents.override.md"} or (len(relative.parts) == 1 and relative.name in _RESERVED_WORKSPACE_FILES):
                     raise ValueError(f"Candidate workspace contains reserved file: {relative}")
         return cls(candidate_id=candidate_id, parent_ids=parent_ids, root=resolved)
 

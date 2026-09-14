@@ -1,12 +1,12 @@
-﻿# Client
+﻿# Shared ARC client and historical rule agent
 
 `client/` contains the ARC-compatible command-line entry points and the shared agent runtime.
 
 ## Main Scripts
 
 - `run_arc_agent.py` runs the unified rule-learning and solving agent against an ARC-compatible backend, including the local PuzzleScript service and the official ARC-AGI-3 endpoint.
-- `run_arc_agent.py` runs headlessly and prints progress logs; the website home page is the primary agent interface.
-- `screen_dashboard.py` is retained temporarily as a legacy window while the browser workflow is validated.
+- `run_arc_agent.py` runs headlessly and prints progress logs; the historical browser interface is `/experiments/rule-agent.html`.
+- `screen_dashboard.py` provides the optional desktop display used by the direct Codex CLI and older runners.
 - `play_arc_client.py` lets a human play a local ARC-compatible PuzzleScript game from the terminal with keyboard controls.
 - `terminal_dashboard.py` is retained only for the manual terminal play client.
 
@@ -36,19 +36,10 @@ experiments live under `studies/goal_recognition/`; the simple persistent Codex
 SDK game agent lives under `studies/codex_agent/`; the previous custom ReAct
 implementation is archived under `studies/old_react/`.
 
-## AVO Framework
+## Maintained AVO Framework
 
-The self-contained AVO implementation now lives under top-level `avo/`,
+The maintained AVO implementation lives under top-level `avo/`,
 including its Codex client, generic kernel, profiles, prompts, tests, and run
 artifacts.
 
-Start the local PuzzleScript stack, then run:
-
-```powershell
-npm run local
-uv run python -m avo.run --profile puzzlescript --set game_id=ps_sokoban_basic-v1
-```
-
-The PuzzleScript profile owns the ARC adapter, objective, prompt, terminal
-condition, and fitness. The generic AVO core and Codex OAuth client contain no
-PuzzleScript action meanings or game rules.
+Use `/runs/avo.html` for supported Docker launches. See `avo/docker/README.md` for isolation setup. The native Windows AVO preflight currently fails closed; do not present a native `avo.run` launch as the supported Windows workflow.

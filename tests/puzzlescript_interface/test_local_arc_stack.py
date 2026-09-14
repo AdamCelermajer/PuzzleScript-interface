@@ -19,8 +19,8 @@ from client.arc.arcade_env import ArcadeEnv  # type: ignore[import-not-found]
 from client.arc.types import GameAction, GameState  # type: ignore[import-not-found]
 
 
-NODE_PORT = 3101
-ARC_PORT = 8100
+NODE_PORT = int(os.environ.get("PUZZLESCRIPT_STACK_TEST_NODE_PORT", "3101"))
+ARC_PORT = int(os.environ.get("PUZZLESCRIPT_STACK_TEST_ARC_PORT", "8100"))
 
 
 def wait_for_http(url: str, timeout_seconds: float = 15.0) -> None:
@@ -73,6 +73,8 @@ class LocalArcStackTests(unittest.TestCase):
             self.assertEqual(frame.state, GameState.PLAYING)
             self.assertEqual(frame.win_levels, 2)
             self.assertEqual(frame.game_id, "ps_sokoban_basic-v1")
+            self.assertEqual(frame.projection["mode"], "visible-cell-v1")
+            self.assertEqual(frame.projection["cell_encoding"]["shape"], [1, 1])
 
             next_frame = env.step(GameAction.ACTION4)
             self.assertIn(next_frame.state, {GameState.PLAYING, GameState.WIN})

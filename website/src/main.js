@@ -1,11 +1,12 @@
 ﻿const primaryNavItems = [
-  { href: '/', label: 'Client Agent', match: /^\/$/ },
-  { href: '/docs/architecture.html', label: 'Architecture', match: /^\/docs\/architecture\.html$/ },
-  { href: '/notes.html', label: 'Notes', match: /^\/notes\.html$/ },
+  { href: '/', label: 'Runs', match: /^\/$/ },
+  { href: '/runs/new.html', label: 'New campaign', match: /^\/runs\/(new|avo|codex)\.html$/ },
+  { href: '/runs/results.html', label: 'Results', match: /^\/runs\/(results|detail|submission|compare)\.html$/ },
 ]
 
 const traceNavItems = [
-  { href: '/experiments/avo-lab.html', label: 'AVO lab', match: /^\/experiments\/avo-lab\.html$/ },
+  { href: '/experiments/avo-lab.html', label: 'AVO console & architecture', match: /^\/experiments\/avo-lab\.html$/ },
+  { href: '/notes.html', label: 'Notes', match: /^\/notes\.html$/ },
   { href: '/experiments/paper-investigation.html', label: 'Paper investigation', match: /^\/experiments\/paper-investigation\.html$/ },
   { href: '/experiments/optimal-path.html', label: 'Optimal path', match: /^\/experiments\/optimal-path\.html$/ },
   { href: '/experiments/goal-recognition/', label: 'Goal recognition', match: /^\/experiments\/goal-recognition\/?/ },
@@ -16,6 +17,11 @@ const traceNavItems = [
 const referenceNavItems = [
   { href: '/docs/api.html', label: 'API', match: /^\/docs\/api\.html$/ },
   { href: '/games/', label: 'Games', match: /^\/games\/?/ },
+]
+
+const historicalNavItems = [
+  { href: '/experiments/rule-agent.html', label: 'Rule-learning client', match: /^\/experiments\/rule-agent\.html$/ },
+  { href: '/docs/architecture.html', label: 'Rule-client architecture', match: /^\/docs\/architecture\.html$/ },
 ]
 
 function normalizedPath() {
@@ -366,8 +372,9 @@ function buildSidebar(pathname) {
     </a>
     <nav class="site-nav" aria-label="Main navigation">
       ${primaryNavItems.map((item) => navLink(item, pathname)).join('')}
-      ${navGroup('Research traces', traceNavItems, pathname)}
+      ${navGroup('Research', traceNavItems, pathname)}
       ${navGroup('Reference', referenceNavItems, pathname)}
+      ${navGroup('Historical', historicalNavItems, pathname)}
     </nav>
     <div class="site-note">
       Local workbench, architecture notes, and experiment evidence.

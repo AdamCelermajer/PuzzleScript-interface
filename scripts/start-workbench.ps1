@@ -30,13 +30,14 @@ if ($uvCmd) {
 function Get-PortOwner {
     param([int]$Port)
     return Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue |
+        Where-Object { $_.LocalAddress -in @('127.0.0.1', '0.0.0.0', '::1', '::') } |
         Select-Object -First 1
 }
 
-function Stop-KnownPortOwner {
+function Test-KnownPortOwner {
     param([int]$Port, [string[]]$AllowedCommandParts)
     $connection = Get-PortOwner -Port $Port
-    if ($null -eq $connection) { return }
+    if ($null -eq $connection) { return $false }
     $owner = Get-CimInstance Win32_Process -Filter "ProcessId=$($connection.OwningProcess)" -ErrorAction SilentlyContinue
     $commandLine = [string]$owner.CommandLine
     $known = $false
@@ -46,15 +47,8 @@ function Stop-KnownPortOwner {
     if (-not $known) {
         throw "Port ${Port} is already used by PID $($owner.ProcessId): $commandLine"
     }
-    Write-Host "Stopping stale owned process on port ${Port}: PID $($owner.ProcessId)"
-    Stop-Process -Id $owner.ProcessId -Force
-}
-
-function Find-WebPort {
-    param([int]$Preferred)
-    $candidate = $Preferred
-    while ($null -ne (Get-PortOwner -Port $candidate)) { $candidate += 1 }
-    return $candidate
+    Write-Host "Reusing existing service on port ${Port}: PID $($owner.ProcessId)"
+    return $true
 }
 
 function Wait-HttpReady {
@@ -97,25 +91,33 @@ function Stop-Children {
     }
 }
 
-Stop-KnownPortOwner -Port $runtimePort -AllowedCommandParts @("puzzlescript_interface/runtime/server.js")
-Stop-KnownPortOwner -Port $arcPort -AllowedCommandParts @("puzzlescript_interface.api.main")
-Stop-KnownPortOwner -Port $apiPort -AllowedCommandParts @("workbench.main", "workbench/main.py")
-$webPort = Find-WebPort -Preferred $webPort
+$reuseRuntime = Test-KnownPortOwner -Port $runtimePort -AllowedCommandParts @("puzzlescript_interface/runtime/server.js")
+$reuseArc = Test-KnownPortOwner -Port $arcPort -AllowedCommandParts @("puzzlescript_interface.api.main")
+$reuseApi = Test-KnownPortOwner -Port $apiPort -AllowedCommandParts @("workbench.main", "workbench/main.py")
+$reuseWeb = Test-KnownPortOwner -Port $webPort -AllowedCommandParts @("vite.js", "vite/bin/vite")
 
 try {
-    Start-OwnedProcess -FileName "node" -Arguments "puzzlescript_interface/runtime/server.js" -Environment @{ PORT = $runtimePort }
-    Start-OwnedProcess -FileName $pythonFileName -Arguments "${pythonPrefix}-m puzzlescript_interface.api.main" -Environment @{
-        ARC_PROXY_PORT = $arcPort
-        PUZZLESCRIPT_SERVER_URL = "http://127.0.0.1:$runtimePort"
+    if (-not $reuseRuntime) {
+        Start-OwnedProcess -FileName "node" -Arguments "puzzlescript_interface/runtime/server.js" -Environment @{ PORT = $runtimePort }
+    }
+    if (-not $reuseArc) {
+        Start-OwnedProcess -FileName $pythonFileName -Arguments "${pythonPrefix}-m puzzlescript_interface.api.main" -Environment @{
+            ARC_PROXY_PORT = $arcPort
+            PUZZLESCRIPT_SERVER_URL = "http://127.0.0.1:$runtimePort"
+        }
     }
     Wait-HttpReady -Url "http://127.0.0.1:$arcPort/api/games"
-    Start-OwnedProcess -FileName $pythonFileName -Arguments "${pythonPrefix}-m workbench.main" -Environment @{
-        WORKBENCH_API_PORT = $apiPort
+    if (-not $reuseApi) {
+        Start-OwnedProcess -FileName $pythonFileName -Arguments "${pythonPrefix}-m workbench.main" -Environment @{
+            WORKBENCH_API_PORT = $apiPort
+        }
     }
     Wait-HttpReady -Url "http://127.0.0.1:$apiPort/api/workbench/health"
-    Start-OwnedProcess -FileName "node" -Arguments "node_modules/vite/bin/vite.js --config website/vite.config.js --host 127.0.0.1 --port $webPort --strictPort" -Environment @{
-        WORKBENCH_API_PORT = $apiPort
-        WORKBENCH_ALLOWED_HOSTS = $tailscaleDnsName
+    if (-not $reuseWeb) {
+        Start-OwnedProcess -FileName "node" -Arguments "node_modules/vite/bin/vite.js --config website/vite.config.js --host 127.0.0.1 --port $webPort --strictPort" -Environment @{
+            WORKBENCH_API_PORT = $apiPort
+            WORKBENCH_ALLOWED_HOSTS = $tailscaleDnsName
+        }
     }
     Wait-HttpReady -Url "http://127.0.0.1:$webPort/"
 

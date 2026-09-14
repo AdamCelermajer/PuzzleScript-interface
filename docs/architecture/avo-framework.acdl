@@ -1,0 +1,53 @@
+// AVO uses two distinct persistent Codex contexts.
+// The fresh solver evaluator is deterministic and therefore belongs in the high-level runtime diagram, not in ACDL.
+
+AvoOuterOptimizer[@T]: {
+    S: {
+        CODEX_RUNTIME_INSTRUCTIONS
+        CODEX_TOOLS
+        OUTER_OPTIMIZER_PROMPT
+        env.evolution_mission
+    }
+
+    U: sys.start_instruction[@1]
+
+    // Persistent history: candidate inspection, hypothesis design, registration, and evaluation
+    ForEach(@t: range(1, @T)) {
+        A: {
+            resp.reasoning[@t]
+            sys.evolution_tool_call[@t]
+        }
+        T: sys.evolution_tool_call[@t].response
+
+        If sys.codex_turn_ended[@t] {
+            A: resp.turn_summary[@t]
+            U: sys.continue_instruction[@t]
+        }
+    }
+}
+
+AvoInnerPlayer[candidate, @T]: {
+    S: {
+        CODEX_RUNTIME_INSTRUCTIONS
+        CODEX_TOOLS
+        INNER_IMPLEMENTATION_PROMPT
+        ENVIRONMENT_PROFILE_PROMPT
+        CANDIDATE_STRATEGY(candidate)
+    }
+
+    U: sys.start_instruction[@1]
+
+    // Persistent history: workspace edits, probes, checkpoints, self-checks, and evidence
+    ForEach(@t: range(1, @T)) {
+        A: {
+            resp.reasoning[@t]
+            sys.workspace_or_gateway_call[@t]
+        }
+        T: sys.workspace_or_gateway_call[@t].response
+
+        If sys.codex_turn_ended[@t] {
+            A: resp.turn_summary[@t]
+            U: sys.continue_instruction[@t]
+        }
+    }
+}

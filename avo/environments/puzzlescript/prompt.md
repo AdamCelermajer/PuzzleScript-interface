@@ -1,49 +1,48 @@
 # Task
 
-You are playing an unknown game. Your task is to build a reusable autonomous solver,
-not to solve the game directly. Environment interaction is research used to learn and
-validate the solver. Progress achieved through actions chosen manually by you is not the
-final answer.
+Build `solver.py` for this unknown game. Interaction is research; manually completed
+levels do not count as fitness.
 
-Infer the mechanics and the concrete win condition from observations and interaction.
-Maintain an executable `solver.py` that observes the current state, retains any necessary
-hidden-state history, plans actions using its learned environment model, and can solve from
-a fresh reset without further Codex reasoning. Before finishing, validate the solver from
-reset. The solver is the deliverable.
+The solver is a persistent streaming controller:
 
-`python solver.py` must implement the documented theory-prediction JSON protocol. For an
-unseen state and proposed action, predict the next observation from learned rules rather
-than replaying that action in the real environment or merely recalling an identical prior
-transition. `python solver.py --play --max-steps N` is a streaming controller: for each
-newline-delimited JSON object on stdin containing `observation` and `history`, it must emit
-exactly one JSON line `{"action":"ACTION_ID"}` on stdout. The trusted evaluator executes
-that action and supplies the resulting observation. Plan by rolling the learned model
-forward internally; real probes and checkpoints are research and validation tools, not the
-solver's planning mechanism.
+```text
+python solver.py --play --max-steps N
+```
 
-After research, the trusted evaluator launches `solver.py` alone in a second fresh game.
-Fitness is the number of levels it completes multiplied by prospective model accuracy on
-the fresh transitions. Progress made manually during research earns no fitness.
-Available action IDs are opaque. Environment actions are costly, so use internal reasoning,
-notes, code, replay, and executable hypotheses freely between actions.
+For each JSON observation on stdin, emit exactly one JSON line:
 
-Do not stop merely because a hypothesis is accurate. The task succeeds only when the
-environment evaluator reports success.
+```json
+{"action":"ACTION_ID"}
+```
 
-Frame values are anonymous, stable IDs for visually distinct rendered cells. They do not
-name objects or expose hidden state. Use the last grid in `frame` as the current board;
-earlier grids are intermediate animation states from the same action.
-`metadata.projection.patterns` gives the anonymous 5x5 visible color pattern represented
-by each cell ID, preserving the same shapes, overlays, and color relationships a player sees.
+The evaluator runs the solver alone from a fresh reset. Fitness is the number of levels
+it completes there.
 
-The environment may be partially observable: identical visible observations can correspond
-to different latent states and produce different transitions. When evidence conflicts,
-consider recent action and observation history, model possible hidden modes, and test them
-deliberately rather than forcing a purely visible-state model.
+During implementation, `evaluate_solver` provides at most two provisional fresh-game
+self-checks. They do not own fitness; use them to catch and repair solver regressions
+before the independent final evaluation.
 
-Once transitions appear deterministic, prefer a systematic reversible state search over
-random action sequences. If an action restores the preceding observation, it can be used
-to explore branches without repeatedly discarding progress. Do not call `finish` while
-the evaluator still reports failure and a materially different test remains possible.
-Use environment checkpoints to preserve hard-won positions before testing alternative
-continuations; restore the checkpoint instead of replaying or resetting the entire level.
+Action IDs and frame values are opaque; infer their meaning from observed transitions.
+Use the last frame grid as the current board. The game may contain hidden state, so the
+solver may retain action and observation history. Plan internally rather than using real
+checkpoints as the solver's search mechanism.
+
+The default `metadata.projection.mode` is `visible-cell-v1`: each grid cell is one
+visible game tile. Identical rendered RGBA textures share an anonymous integer ID;
+hidden object differences are not encoded. Visibly different textures have different
+IDs. IDs remain stable within a session and can exceed 15. The dictionary in
+`metadata.projection.patterns` contains only textures already observed, as RGBA pixels.
+This is an observation encoding, not a rule or object-name legend.
+
+For explicitly configured legacy `visible-cell-hex-v2`, each visible tile is encoded
+as a 2x2 block `[[a,b],[c,d]]`. Decode its opaque pattern ID as
+`4096*a + 256*b + 16*c + d` before treating it as one board tile. The dictionary in
+`metadata.projection.patterns` contains the visible RGBA pixels for each pattern ID.
+This is an observation encoding, not a rule or object-name legend.
+
+When `metadata.projection.mode` is `object-cell-v1`, each grid cell is one visible
+game tile. Values are anonymous object-combination IDs, not texture or color IDs.
+Overlapping gameplay objects remain distinct combinations.
+
+Every observation's `metadata.rendered_frame.path` points to the lossless PNG of its final
+visible state. Inspect these images directly when visual shapes, colors, or overlays matter.

@@ -14,7 +14,6 @@ from avo.core.profile import EnvironmentProfile, TaskEvaluation, load_profile
 from avo.core.theory_package import (
     FilesystemTheoryCandidate,
     TheoryManifest,
-    TheoryPackageRegistry,
 )
 from avo.core.tool_gateway import AvoToolGateway, GatewayBudget
 
@@ -34,6 +33,5 @@ __all__ = [
     "Prediction",
     "TaskEvaluation",
     "TheoryManifest",
-    "TheoryPackageRegistry",
     "load_profile",
 ]

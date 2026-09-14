@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import shutil
-import tempfile
 from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -13,6 +12,7 @@ from avo.core.profile import load_profile
 from avo.evolution.candidate import CandidateEvaluation, RunCandidate
 from avo.evolution.solver_evaluation import evaluate_solver_workspace
 from avo.run_once import PlayerRunSettings, execute_player_run
+from avo.isolation import new_workspace
 
 
 class RunCandidateEvaluator(Protocol):
@@ -55,19 +55,9 @@ class CandidateEvaluator:
         )
         research_dir.mkdir(parents=True, exist_ok=True)
         evaluation_dir.mkdir(parents=True, exist_ok=True)
-        sandbox_dir = (
-            generation_dir.parent / ".sandboxes" if clean_layout else research_dir
-        )
-        sandbox_dir.mkdir(parents=True, exist_ok=True)
-        # Keep the sandbox workspace beneath the run directory. On Windows, files
-        # created by the restricted Codex token under the system temp directory can
-        # receive ACLs that the trusted file-RPC server cannot read. Retain these
-        # hidden sandboxes as provenance: synchronous cleanup can block indefinitely
-        # on those same restricted ACLs after an otherwise complete evaluation.
-        with nullcontext(tempfile.mkdtemp(
-            prefix=f"avo-player-{candidate.candidate_id}-",
-            dir=sandbox_dir,
-        )) as raw:
+        # Opaque external directory, retained to avoid restricted-token ACL
+        # cleanup hangs. Never inherit the repository's AGENTS/config chain.
+        with nullcontext(new_workspace()) as raw:
             workspace = Path(raw).resolve()
             if candidate.workspace_path.is_dir():
                 shutil.copytree(candidate.workspace_path, workspace, dirs_exist_ok=True)
@@ -83,8 +73,7 @@ class CandidateEvaluator:
 
             # The researching Codex player's progress is evidence, not fitness.
             # Reloading the profile creates a second fresh game in which only the
-            # archived solver may act. Its model is scored prospectively before
-            # every action it executes.
+            # archived solver may act. Only progress in this fresh game owns fitness.
             archived_workspace = result.output_dir / "workspace"
             solver_workspace = (
                 generation_dir / "solver" if clean_layout else archived_workspace

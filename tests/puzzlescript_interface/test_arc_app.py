@@ -267,6 +267,23 @@ class ArcServiceTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.fake_client.started_levels[-1], 2)
 
+    def test_extended_visible_texture_ids_and_dictionary_survive_public_api(self) -> None:
+        from unittest.mock import patch
+        payload = self.fake_client.start_game("ps_sokoban_basic-v1")
+        payload["frame"] = [[[0, 128, 65535]]]
+        payload["projection"] = {
+            "mode": "visible-cell-v1", "max_combinations": 65536,
+            "patterns": {"65535": [[[1, 2, 3, 255]]]},
+        }
+        card = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
+        with patch.object(self.fake_client, "start_game", return_value=payload):
+            response = self.client.post("/api/cmd/RESET", json={
+                "card_id": card, "game_id": "ps_sokoban_basic-v1",
+            })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["frame"], payload["frame"])
+        self.assertEqual(response.json()["projection"], payload["projection"])
+
     def test_action_command_accepts_legacy_folder_name_lookup(self) -> None:
         card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
         reset_response = self.client.post(

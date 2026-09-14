@@ -34,8 +34,11 @@ class CodexRunResult:
     actions: list[GameAction]
     output_dir: Path
     transcript_path: Path
+    transitions_path: Path
     final_frame: FrameData
     decisions: int
+    workspace_operations: int
+    world_model_path: Path | None
 
 
 @dataclass
@@ -50,6 +53,8 @@ class CodexAgentRunner:
     transition_sink: Callable[[dict], None] | None = None
     stop_event: Event | None = None
     actions: list[GameAction] = field(default_factory=list)
+    workspace_enabled: bool = False
+    continuation_from: str | Path | None = None
 
     def __post_init__(self) -> None:
         self.output_dir = Path(self.output_dir)
@@ -57,6 +62,8 @@ class CodexAgentRunner:
         self.frames_dir = self.output_dir / "frames"
         self.frames_dir.mkdir(parents=True, exist_ok=True)
         self.transcript_path = self.output_dir / "transcript.jsonl"
+        self.transitions_path = self.output_dir / "transitions.jsonl"
+        self.workspace_operation_count = 0
         if self.max_decisions is None:
             self.max_decisions = max(self.max_steps + 5, self.max_steps * 2)
         if self.stop_event is None:
@@ -65,6 +72,17 @@ class CodexAgentRunner:
     def run(self) -> CodexRunResult:
         self._emit(f"Codex agent output: {self.output_dir}")
         frame = self.env.reset()
+        prior_history = []
+        if self.continuation_from:
+            from studies.codex_agent.continuation import load_parent, restore_game
+            _, prior_history = load_parent(self.continuation_from)
+            frame = restore_game(self.env, frame, prior_history)
+            (self.output_dir / "restoration.json").write_text(json.dumps({
+                "parent": str(Path(self.continuation_from).resolve()),
+                "restoration_replay_actions": len(prior_history),
+                "all_transitions_verified": True, "same_codex_conversation": False,
+                "additional_action_budget": self.max_steps,
+            }, indent=2), encoding="utf-8")
         solved = self._is_solved(frame)
         decisions = 0
         feedback = "This is the initial frame. Solve the game."
@@ -80,32 +98,49 @@ class CodexAgentRunner:
                 break
             image_path = self._save_frame_image(frame, decisions)
             prompt = self._turn_prompt(frame, feedback, initial=(decisions == 0))
+            if prior_history and decisions == 0:
+                from studies.codex_agent.continuation import history_prompt
+                prompt = history_prompt(prior_history) + prompt
             response = self.session.next_action(prompt, image_path=image_path)
             decisions += 1
 
-            action_name = response["action"]
+            operation = str(response.get("operation", "ACT")).upper()
+            action_name = response.get("action", "NONE")
             note = response.get("note", "")
             if self.decision_sink is not None:
                 self.decision_sink(
                     {
+                        "operation": operation,
                         "action": action_name,
                         "note": note,
                         "decision": decisions,
                     }
                 )
             self._emit(
-                f"Decision {decisions}: {action_name}"
+                f"Decision {decisions}: {operation}"
+                + (f" {action_name}" if operation == "ACT" else "")
                 + (f" | {note}" if note else "")
             )
             if self.stop_event.is_set():
                 stopped = True
                 break
 
-            if action_name == "FINISH":
+            if operation == "FINISH" or action_name == "FINISH":
                 feedback = (
                     "FINISH was rejected because the ARC environment still reports "
                     "the game as unsolved. Choose a game action."
                 )
+                self._append_transcript(
+                    decision=decisions,
+                    frame=frame,
+                    prompt=prompt,
+                    response=response,
+                    result={"accepted": False, "reason": feedback},
+                )
+                continue
+
+            if operation != "ACT":
+                feedback = f"Unsupported operation {operation}. Choose a valid operation."
                 self._append_transcript(
                     decision=decisions,
                     frame=frame,
@@ -127,6 +162,32 @@ class CodexAgentRunner:
                 after_grid,
                 next_frame,
             )
+            transition = {
+                "id": f"T{len(self.actions):06d}",
+                "timestamp": datetime.now().isoformat(timespec="seconds"),
+                "decision": decisions,
+                "action_index": len(self.actions),
+                "action": action.name,
+                "before": {
+                    "grid": before_grid,
+                    "state": getattr(frame.state, "value", str(frame.state)),
+                    "levels_completed": frame.levels_completed,
+                    "win_levels": frame.win_levels,
+                },
+                "after": {
+                    "grid": after_grid,
+                    "state": getattr(
+                        next_frame.state,
+                        "value",
+                        str(next_frame.state),
+                    ),
+                    "levels_completed": next_frame.levels_completed,
+                    "win_levels": next_frame.win_levels,
+                },
+                "changed": before_grid != after_grid,
+                "changed_cells": self._changed_cells(before_grid, after_grid),
+                "note": note,
+            }
             self._append_transcript(
                 decision=decisions,
                 frame=frame,
@@ -141,16 +202,9 @@ class CodexAgentRunner:
                     "win_levels": next_frame.win_levels,
                 },
             )
+            self._append_jsonl(self.transitions_path, transition)
             if self.transition_sink is not None:
-                self.transition_sink(
-                    {
-                        "id": f"T{len(self.actions):06d}",
-                        "action": action.name,
-                        "before": {"grid": before_grid},
-                        "after": {"grid": after_grid},
-                        "note": note,
-                    }
-                )
+                self.transition_sink(transition)
             frame = next_frame
 
         if stopped:
@@ -170,16 +224,25 @@ class CodexAgentRunner:
             reason = "decision_budget_exhausted"
             self._emit("Max decisions reached.")
 
-        return CodexRunResult(
+        note_tool_count = getattr(self.session, "note_tool_count", None)
+        if callable(note_tool_count):
+            self.workspace_operation_count = int(note_tool_count())
+        world_model_path = self._save_world_model()
+        result = CodexRunResult(
             status=status,
             reason=reason,
             solved=solved,
             actions=list(self.actions),
             output_dir=self.output_dir,
             transcript_path=self.transcript_path,
+            transitions_path=self.transitions_path,
             final_frame=frame,
             decisions=decisions,
+            workspace_operations=self.workspace_operation_count,
+            world_model_path=world_model_path,
         )
+        self._write_result(result)
+        return result
 
     def _turn_prompt(
         self,
@@ -194,8 +257,6 @@ class CodexAgentRunner:
                 "Solve this unknown puzzle game. You will receive one current frame "
                 "per turn. Reply with exactly one action, observe the next frame, and "
                 "continue in this same session until the environment reports a win.\n"
-                "Action meanings: ACTION1=Up, ACTION2=Down, ACTION3=Left, "
-                "ACTION4=Right, ACTION5=Space/Action, ACTION7=Undo. "
                 "Use FINISH only after the environment reports WIN.\n\n"
             )
         grid = last_grid(frame.frame)
@@ -203,17 +264,70 @@ class CodexAgentRunner:
         available = ", ".join(
             action.name for action in getattr(frame, "available_actions", []) or []
         )
+        encoding = ""
+        if (getattr(frame, "projection", None) or {}).get("mode") == "visible-cell-v1":
+            encoding = "Grid encoding: one cell per visible game tile; identical rendered textures share an anonymous ID. Hidden object differences are not encoded.\n"
+        if (getattr(frame, "projection", None) or {}).get("mode") == "object-cell-v1":
+            encoding = "Grid encoding: one cell per visible game tile; values are anonymous object-combination IDs.\n"
+        if (getattr(frame, "projection", None) or {}).get("mode") == "visible-cell-hex-v2":
+            encoding = (
+                "Grid encoding: each visible tile is a 2x2 block [[a,b],[c,d]]. "
+                "Its opaque pattern ID is 4096*a+256*b+16*c+d. "
+                "Group these blocks to recover the tile board; the PNG shows the same visible board.\n"
+            )
         return (
             f"{introduction}"
             f"Transition feedback:\n{feedback}\n\n"
             "Current frame:\n"
-            f"game_id={frame.game_id}\n"
             f"state={getattr(frame.state, 'value', str(frame.state))}\n"
             f"levels_completed={frame.levels_completed}/{frame.win_levels}\n"
             f"available_actions={available or 'unknown'}\n"
             f"actions_used={len(self.actions)}/{self.max_steps}\n"
+            f"{encoding}"
             f"grid:\n{rows}\n\n"
             "Choose the single next action."
+        )
+
+    def _save_world_model(self) -> Path | None:
+        method = getattr(self.session, "final_world_model", None)
+        if method is None:
+            return None
+        target = self.output_dir / "world_model.json"
+        try:
+            payload = method()
+        except Exception as exc:
+            payload = {"error": f"{type(exc).__name__}: {exc}"}
+        target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        return target
+
+    def _write_result(self, result: CodexRunResult) -> None:
+        payload = {
+            "status": result.status,
+            "reason": result.reason,
+            "solved": result.solved,
+            "actions": [action.name for action in result.actions],
+            "action_count": len(result.actions),
+            "decisions": result.decisions,
+            "workspace_enabled": self.workspace_enabled,
+            "workspace_operations": result.workspace_operations,
+            "final_state": getattr(
+                result.final_frame.state,
+                "value",
+                str(result.final_frame.state),
+            ),
+            "levels_completed": result.final_frame.levels_completed,
+            "win_levels": result.final_frame.win_levels,
+            "world_model": str(result.world_model_path) if result.world_model_path else None,
+            "transcript": str(result.transcript_path),
+            "transitions": str(result.transitions_path),
+            "codex_session_log": str(
+                getattr(self.session, "session_log_path", "") or ""
+            )
+            or None,
+        }
+        (self.output_dir / "result.json").write_text(
+            json.dumps(payload, indent=2),
+            encoding="utf-8",
         )
 
     def _action_feedback(
@@ -223,16 +337,11 @@ class CodexAgentRunner:
         after: list[list[int]],
         frame: FrameData,
     ) -> str:
-        changes = []
-        for row_index, (before_row, after_row) in enumerate(zip(before, after)):
-            for col_index, (before_value, after_value) in enumerate(
-                zip(before_row, after_row)
-            ):
-                if before_value != after_value:
-                    changes.append(
-                        f"({row_index},{col_index}):{before_value}->{after_value}"
-                    )
-        diff = ", ".join(changes[:40]) or "none"
+        changes = self._changed_cells(before, after)
+        diff = ", ".join(
+            f"({item['row']},{item['col']}):{item['before']}->{item['after']}"
+            for item in changes[:40]
+        ) or "none"
         return (
             f"Previous action {action.name}. "
             f"Frame changed={before != after}. "
@@ -278,6 +387,32 @@ class CodexAgentRunner:
             "result": result,
         }
         with self.transcript_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, default=str) + "\n")
+
+    @staticmethod
+    def _changed_cells(
+        before: list[list[int]],
+        after: list[list[int]],
+    ) -> list[dict[str, int]]:
+        changes = []
+        for row_index, (before_row, after_row) in enumerate(zip(before, after)):
+            for col_index, (before_value, after_value) in enumerate(
+                zip(before_row, after_row)
+            ):
+                if before_value != after_value:
+                    changes.append(
+                        {
+                            "row": row_index,
+                            "col": col_index,
+                            "before": before_value,
+                            "after": after_value,
+                        }
+                    )
+        return changes
+
+    @staticmethod
+    def _append_jsonl(path: Path, record: dict) -> None:
+        with path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record, default=str) + "\n")
 
     def _is_solved(self, frame: FrameData) -> bool:

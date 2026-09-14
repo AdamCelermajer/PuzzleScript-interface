@@ -45,6 +45,36 @@ class DeterministicEvaluator:
             f"FITNESS = {fitness}\n",
             encoding="utf-8",
         )
+        (workspace / "solver.py").write_text(
+            f"FITNESS = {fitness}\n",
+            encoding="utf-8",
+        )
+        evaluation_dir = run_dir / "evaluation"
+        evaluation_dir.mkdir()
+        before_observation = {
+            "payload": {"frame": [[[int(fitness)]]]},
+            "status": "PLAYING",
+            "progress": {"levels_completed": int(fitness)},
+            "metadata": {"rendered_frame": {"path": "frames/before.png"}},
+        }
+        after_observation = {
+            **before_observation,
+            "metadata": {"rendered_frame": {"path": "frames/after.png"}},
+        }
+        (evaluation_dir / "evidence.jsonl").write_text(
+            json.dumps(
+                {
+                    "type": "transition",
+                    "payload": {
+                        "action": {"id": "A1", "data": {}},
+                        "before": before_observation,
+                        "after": after_observation,
+                    },
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
         (run_dir / "summary.json").write_text(
             json.dumps({"candidate_id": candidate.candidate_id, "fitness": fitness}),
             encoding="utf-8",
@@ -65,6 +95,48 @@ class DeterministicEvaluator:
 
 
 class EvolutionTests(unittest.TestCase):
+    def test_world_model_modes_preserve_normal_registration_and_inheritance(self):
+        for mode in ("final-only", "between-hypotheses"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as raw:
+                store = EvolutionStore.create(Path(raw) / "campaign")
+                store.prepare_seed_draft("x_0001", "fitness=1")
+                gateway = EvolutionGateway(store, DeterministicEvaluator(), mission="test", world_model_mode=mode)
+                # Neither mode requires a model file to register the initial hypothesis.
+                gateway.handle("register", {"candidate_id": "x_0001"})
+                gateway.handle("evaluate", {"candidate_id": "x_0001"})
+                # A naturally produced note follows the ordinary inheritance path.
+                model = store.root / "x_0001/solver/world_model.md"
+                model.write_text("A learned rule.", encoding="utf-8")
+                gateway.handle("fork", {"parent_id": "x_0001", "child_id": "x_0002"})
+                draft_model = store.drafts_dir / "x_0002/seed/world_model.md"
+                self.assertEqual(draft_model.read_text(encoding="utf-8"), "A learned rule.")
+                gateway.handle("register", {"candidate_id": "x_0002"})
+                frozen = store.get_candidate("x_0002").workspace_path / "world_model.md"
+                self.assertEqual(frozen.read_text(encoding="utf-8"), "A learned rule.")
+
+    def test_outer_designs_x1_from_frozen_initial_observation(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            store = EvolutionStore.create(root / "evolution")
+            draft = store.prepare_seed_draft("x_0001")
+            gateway = EvolutionGateway(
+                store,
+                DeterministicEvaluator(),
+                mission="Improve the player.",
+                initial_observation={"payload": {"frame": [[[7]]]}},
+            )
+
+            self.assertEqual(store.population_summary()["candidate_count"], 0)
+            self.assertEqual(store.population_summary()["drafts"], ["x_0001"])
+            self.assertEqual(
+                gateway.handle("initial")["observation"]["payload"]["frame"],
+                [[[7]]],
+            )
+            strategy = Path(str(draft["draft_path"])) / "STRATEGY.md"
+            strategy.write_text("fitness=1\nouter-designed baseline", encoding="utf-8")
+            gateway.handle("register", {"candidate_id": "x_0001"})
+            self.assertEqual(store.get_candidate("x_0001").strategy(), "fitness=1\nouter-designed baseline")
+
     def test_existing_population_keeps_legacy_layout(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "evolution"
@@ -107,6 +179,64 @@ class EvolutionTests(unittest.TestCase):
                 "learned by x_0001",
                 inspected["latest_run"]["learned_notes"]["NOTES.md"],
             )
+            self.assertIn("FITNESS = 4.0", inspected["latest_run"]["solver"]["source"])
+            self.assertIsNotNone(inspected["latest_run"]["solver"]["sha256"])
+            self.assertEqual(inspected["latest_run"]["trace_summary"]["deepest_level"], 4)
+            self.assertEqual(
+                inspected["latest_run"]["trace_summary"][
+                    "unchanged_actions_at_deepest_level"
+                ],
+                1,
+            )
+            self.assertEqual(
+                inspected["latest_run"]["trace_summary"][
+                    "unique_observations_at_deepest_level"
+                ],
+                1,
+            )
+            self.assertEqual(
+                inspected["latest_run"]["trace_summary"]["action_counts_at_deepest_level"],
+                {"A1": 1},
+            )
+            evidence = gateway.handle(
+                "evidence",
+                {
+                    "candidate_id": "x_0001",
+                    "phase": "evaluation",
+                    "offset": 0,
+                    "limit": 1,
+                },
+            )
+            self.assertEqual(evidence["total_events"], 1)
+            self.assertIsNone(evidence["next_offset"])
+            self.assertEqual(
+                evidence["events"][0]["payload"]["before"]["payload"]["frame"],
+                [[[4]]],
+            )
+            self_check_dir = (
+                root
+                / "evolution"
+                / "x_0001"
+                / "research"
+                / "self_check"
+                / "check_01"
+            )
+            self_check_dir.mkdir(parents=True)
+            (self_check_dir / "evidence.jsonl").write_text(
+                json.dumps({"type": "episode_started", "payload": {"board": [[4]]}})
+                + "\n",
+                encoding="utf-8",
+            )
+            self_check_evidence = gateway.handle(
+                "evidence",
+                {
+                    "candidate_id": "x_0001",
+                    "phase": "self_check_01",
+                },
+            )
+            self.assertEqual(
+                self_check_evidence["events"][0]["payload"]["board"], [[4]]
+            )
             with self.assertRaisesRegex(ValueError, "already evaluated"):
                 gateway.handle("evaluate", {"candidate_id": "x_0001"})
 
@@ -124,6 +254,19 @@ class EvolutionTests(unittest.TestCase):
             self.assertFalse(second_draft.exists())
             second = gateway.handle("evaluate", {"candidate_id": "x_0002"})
             self.assertEqual(second["evaluation"]["fitness"], 6)
+            second_inspected = gateway.handle("inspect", {"candidate_id": "x_0002"})
+            self.assertNotEqual(
+                second_inspected["latest_run"]["solver"]["sha256"],
+                second_inspected["latest_run"]["solver"]["parent_sha256"],
+            )
+            self.assertIn(
+                "-FITNESS = 4.0",
+                second_inspected["latest_run"]["solver"]["diff_from_parent"],
+            )
+            self.assertIn(
+                "+FITNESS = 6.0",
+                second_inspected["latest_run"]["solver"]["diff_from_parent"],
+            )
 
             third_fork = gateway.handle(
                 "fork", {"parent_id": "x_0002", "child_id": "x_0003"}
@@ -152,6 +295,7 @@ class EvolutionTests(unittest.TestCase):
                 store,
                 DeterministicEvaluator(),
                 mission="Improve the player.",
+                initial_observation={"payload": {"frame": [[[3]]]}},
             )
             server = EvolutionFileToolServer(gateway, store.optimizer_workspace)
             server.start()
@@ -164,12 +308,25 @@ class EvolutionTests(unittest.TestCase):
                     timeout=10,
                     check=True,
                 )
+                initial = subprocess.run(
+                    [sys.executable, "avo_evolve_tool.py", "initial"],
+                    cwd=store.optimizer_workspace,
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                    check=True,
+                )
             finally:
                 server.stop()
 
             payload = json.loads(completed.stdout)
             self.assertEqual(payload["candidate_count"], 1)
+            self.assertEqual(
+                json.loads(initial.stdout)["observation"]["payload"]["frame"],
+                [[[3]]],
+            )
             self.assertIn("fork PARENT_ID CHILD_ID", OPTIMIZER_INTERFACE)
+            self.assertIn("evidence CANDIDATE_ID", OPTIMIZER_INTERFACE)
             self.assertNotIn(" probe ", OPTIMIZER_INTERFACE)
             self.assertNotIn("checkpoint", OPTIMIZER_INTERFACE)
 
@@ -257,7 +414,7 @@ class EvolutionTests(unittest.TestCase):
             def fake_execute_player_run(**kwargs):
                 workspace = Path(kwargs["workspace"])
                 seen_workspaces.append(str(workspace))
-                self.assertTrue(workspace.is_relative_to(Path(kwargs["output_dir"])))
+                self.assertFalse(workspace.is_relative_to(Path(kwargs["output_dir"])))
                 self.assertEqual((workspace / "NOTES.md").read_text(encoding="utf-8"), "seed")
                 run_dir = Path(kwargs["output_dir"])
                 run_dir.mkdir(parents=True, exist_ok=True)
@@ -366,7 +523,7 @@ class EvolutionTests(unittest.TestCase):
                 "learned movement\n",
             )
 
-    def test_fresh_solver_evaluation_combines_model_accuracy_and_progress(self) -> None:
+    def test_fresh_solver_evaluation_scores_fresh_progress(self) -> None:
         class CounterEnvironment:
             value = 0
 
@@ -427,36 +584,29 @@ if args.play:
         json.loads(line)
         print(json.dumps({"action": "A1"}), flush=True)
 else:
-    request = json.load(sys.stdin)
-    current = request["current"]
-    value = current["payload"]["value"] + 1
-    print(json.dumps({
-        "protocol": "avo-theory-prediction-v1",
-        "expected": {
-            "payload": {"value": value},
-            "status": "WIN" if value >= 2 else "PLAYING",
-            "progress": {"levels_completed": value, "win_levels": 2},
-            "available_actions": ["A1"],
-        },
-        "confidence": 1.0,
-        "rationale": "counter rule",
-    }))
+    raise SystemExit("fresh evaluation must use --play")
 '''
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
             workspace = root / "workspace"
             workspace.mkdir()
             (workspace / "solver.py").write_text(solver_source, encoding="utf-8")
-            result = evaluate_solver_workspace(
-                loaded_profile=SimpleNamespace(implementation=CounterProfile()),
-                workspace=workspace,
-                output_dir=root / "evaluation",
-                max_environment_steps=10,
-                max_wall_seconds=10,
-            )
+            # This tests the solver protocol, not native OS isolation. The real
+            # sandbox is separately exercised by the mandatory launch preflight.
+            with patch("avo.evolution.solver_evaluation.IsolatedRuntime.preflight"), patch(
+                "avo.evolution.solver_evaluation.IsolatedRuntime.command",
+                side_effect=lambda *args: list(args),
+            ), patch("avo.evolution.solver_evaluation._find_codex_bin", return_value="codex"):
+                result = evaluate_solver_workspace(
+                    loaded_profile=SimpleNamespace(implementation=CounterProfile()),
+                    workspace=workspace,
+                    output_dir=root / "evaluation",
+                    max_environment_steps=10,
+                    max_wall_seconds=10,
+                )
 
             self.assertEqual(result.score["solver_levels_completed"], 2)
-            self.assertEqual(result.score["model_exact_rate"], 1.0)
+            self.assertEqual(result.score["solver_environment_actions"], 2)
             self.assertEqual(result.fitness, 2.0)
             self.assertTrue(result.success)
 

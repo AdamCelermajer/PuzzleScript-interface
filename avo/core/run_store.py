@@ -17,12 +17,7 @@ class RunStore:
     def create(cls, root: str | Path) -> "RunStore":
         resolved = Path(root).resolve()
         resolved.mkdir(parents=True, exist_ok=True)
-        (resolved / "candidates").mkdir(exist_ok=True)
         return cls(resolved)
-
-    @property
-    def candidates(self) -> Path:
-        return self.root / "candidates"
 
     @property
     def evidence_file(self) -> Path:

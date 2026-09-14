@@ -10,6 +10,10 @@ const {
 } = require('./arc_projection');
 const { renderSessionFrame, renderSessionVisualGrid } = require('./rendered_frame');
 
+const GRID_ENCODING = process.env.PUZZLESCRIPT_GRID_ENCODING || 'visible-cell-v1';
+if (!['visible-cell-v1', 'visible-cell-hex-v2'].includes(GRID_ENCODING)) {
+    throw new Error('Unsupported PUZZLESCRIPT_GRID_ENCODING: ' + GRID_ENCODING);
+}
 const app = express();
 const port = Number(process.env.PORT || 3543);
 const runtimeDir = path.join(__dirname, '..', '.runtime');
@@ -121,6 +125,27 @@ class Session {
         this.buildIntMapping();
         // Start directly
         this.engine.setLevel(levelIndex);
+        this.skipMessageLevels();
+    }
+
+    skipMessageLevels() {
+        const levels = this.gameData.levels;
+        while (levels[this.engine.currentLevelNum]?.type !== 'LEVEL_MAP') {
+            if (!levels[this.engine.currentLevelNum]) throw new Error('Level index is out of range.');
+            if (this.engine.currentLevelNum === levels.length - 1) {
+                // Keep the last solved board visible at the terminal boundary.
+                this.handler.won = true;
+                return;
+            }
+            this.engine.setLevel(this.engine.currentLevelNum + 1);
+        }
+        this.lastPlayableLevelIndex = this.engine.currentLevelNum;
+    }
+
+    completedLevels() {
+        return this.handler.won ? this.winLevels : countCompletedPlayableLevels(
+            this.gameData.levels || [], this.engine.currentLevelNum
+        );
     }
 
     buildRenderList(gameData) {
@@ -288,21 +313,21 @@ class Session {
 
 
     buildIntMapping() {
-        const displayLegend = this.getDisplayLegend();
-        const projection = buildArcProjectionSpec(this.gameData);
-
-        this.charToInt = projection.charToInt;
+        // ASCII/debug rendering is separate from the agent-facing visual grid.
+        this.charToInt = buildArcProjectionSpec(this.gameData).charToInt;
+        const legacy = GRID_ENCODING === 'visible-cell-hex-v2';
         this.projectionCompression = {
-            compressed: false,
-            overflow_count: 0,
-            mode: 'visible-cell-pixels-v1',
-            patterns: this.visualPatterns,
+            mode: GRID_ENCODING, compressed: false, overflow_count: 0,
+            cell_encoding: legacy
+                ? {shape: [2, 2], radix: 16, order: 'row-major-msb-first'}
+                : {shape: [1, 1]},
+            max_combinations: 65536,
+            pattern_format: 'rgba', patterns: this.visualPatterns,
+            message_policy: 'skip-without-action',
         };
-        const intToName = {};
-        for (const [char, value] of Object.entries(this.charToInt)) {
-            intToName[value] = displayLegend[char] || (char === '?' ? 'Unknown' : char);
-        }
-        this.intToName = intToName;
+        this.intToName = legacy
+            ? Object.fromEntries(Array.from({length: 16}, (_, i) => [i, `Hex digit ${i.toString(16)}`]))
+            : {};
     }
 
     getCellChar(cell) {
@@ -412,26 +437,33 @@ function mapActionToButton(action) {
     return null;
 }
 
-async function executeAction(session, action, { silent = false } = {}) {
+async function executeAction(session, action, {
+    silent = false,
+    captureFrames = true,
+    includeRenderedFrame = true,
+} = {}) {
     const dir = mapActionToButton(action);
     const startingLevel = session.engine.currentLevelNum;
-    const framesList = [session.renderIntGrid()];
+    const framesList = captureFrames ? [session.renderIntGrid()] : [];
     let message = "";
     let arcState = "PLAYING";
 
     if (dir) {
         session.handler.messages = [];
         if (dir === INPUT_BUTTON.RESTART) {
-            session.engine.setLevel(session.engine.currentLevelNum);
+            session.engine.setLevel(session.lastPlayableLevelIndex ?? session.engine.currentLevelNum);
+            session.pixelUI = null;
+            session.skipMessageLevels();
             session.levelActionHistory = [];
-            framesList.push(session.renderIntGrid());
+            if (captureFrames) framesList.push(session.renderIntGrid());
         } else {
             session.engine.press(dir);
             let ticks = 0;
             const maxTicks = 50;
             do {
                 const tickResult = await session.engine.tick();
-                framesList.push(session.renderIntGrid());
+                session.skipMessageLevels();
+                if (captureFrames) framesList.push(session.renderIntGrid());
                 if (tickResult.didWinGame) {
                     message = "YOU WIN!";
                     arcState = "WIN";
@@ -447,7 +479,7 @@ async function executeAction(session, action, { silent = false } = {}) {
     }
 
     if (dir && dir !== INPUT_BUTTON.RESTART) {
-        if (session.engine.currentLevelNum !== startingLevel) {
+        if (session.engine.currentLevelNum !== startingLevel && !session.handler.won) {
             session.levelActionHistory = [];
         } else {
             session.levelActionHistory.push(String(action));
@@ -463,10 +495,10 @@ async function executeAction(session, action, { silent = false } = {}) {
         arcState = "WIN";
     }
 
-    const boardRender = session.render();
     const currentLevelInfo = session.engine.currentLevelNum + 1;
-    const levelsCompleted = countCompletedPlayableLevels(session.gameData.levels || [], session.engine.currentLevelNum);
+    const levelsCompleted = session.completedLevels();
     if (!silent) {
+        const boardRender = session.render();
         logHistory(session.id, currentLevelInfo, String(action || ""), boardRender, session.renderJSON());
         console.clear();
         console.log(`Action: ${String(action || "").toUpperCase()}`);
@@ -477,8 +509,8 @@ async function executeAction(session, action, { silent = false } = {}) {
     }
 
     return {
-        frame: framesList,
-        rendered_frame: renderSessionFrame(session),
+        frame: captureFrames ? framesList : [session.renderIntGrid()],
+        rendered_frame: includeRenderedFrame ? renderSessionFrame(session) : null,
         state: arcState,
         levels_completed: levelsCompleted,
         message
@@ -515,11 +547,8 @@ app.post('/init', (req, res) => {
             sessionId,
             frame: [session.renderIntGrid()],
             rendered_frame: renderSessionFrame(session),
-            state: "PLAYING",
-            levels_completed: countCompletedPlayableLevels(
-                session.gameData.levels || [],
-                session.engine.currentLevelNum
-            ),
+            state: session.handler.won ? 'WIN' : 'PLAYING',
+            levels_completed: session.completedLevels(),
             win_levels: session.winLevels,
             legend: session.intToName,
             projection: session.projectionCompression,
@@ -562,7 +591,7 @@ app.post('/snapshot', (req, res) => {
         const snapshotId = newId('snapshot');
         savedStates.set(snapshotId, {
             sessionId,
-            levelIndex: session.engine.currentLevelNum,
+            levelIndex: session.lastPlayableLevelIndex ?? session.engine.currentLevelNum,
             actions: [...session.levelActionHistory],
         });
         res.json({ snapshotId });
@@ -581,6 +610,8 @@ app.post('/restore', async (req, res) => {
             return res.status(404).json({ error: 'Snapshot not found' });
         }
         session.engine.setLevel(snapshot.levelIndex);
+        session.pixelUI = null;
+        session.skipMessageLevels();
         session.levelActionHistory = [];
         for (const action of snapshot.actions) {
             await executeAction(session, action, { silent: true });
@@ -589,10 +620,7 @@ app.post('/restore', async (req, res) => {
             frame: [session.renderIntGrid()],
             rendered_frame: renderSessionFrame(session),
             state: session.handler.won ? 'WIN' : 'PLAYING',
-            levels_completed: countCompletedPlayableLevels(
-                session.gameData.levels || [],
-                session.engine.currentLevelNum
-            ),
+            levels_completed: session.completedLevels(),
             legend: session.intToName,
             projection: session.projectionCompression,
             win_levels: session.winLevels,
@@ -613,7 +641,7 @@ app.get('/observe', (req, res) => {
             frame: [session.renderIntGrid()],
             rendered_frame: renderSessionFrame(session),
             state: session.handler.won ? "WIN" : "PLAYING",
-            levels_completed: countCompletedPlayableLevels(session.gameData.levels || [], session.engine.currentLevelNum),
+            levels_completed: session.completedLevels(),
             legend: session.intToName,
             projection: session.projectionCompression,
             available_actions: session.availableActions
@@ -631,5 +659,9 @@ module.exports = {
     app,
     Session,
     SessionHandler,
+    createSessionFromSource,
+    executeAction,
     getAvailableActions,
+    loadGameSourceByName,
+    renderSessionFrame,
 };

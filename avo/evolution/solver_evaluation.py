@@ -2,19 +2,18 @@ from __future__ import annotations
 
 import json
 import queue
-import shutil
 import subprocess
-import sys
-import tempfile
+import shutil
 import threading
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
 
 from avo.core.framework import Action, AvoLaboratory, JsonValue, _jsonable
 from avo.core.profile import LoadedProfile
-from avo.core.theory_package import FilesystemTheoryCandidate
+from avo.core.model_view import ModelView
+from avo.isolation import IsolatedRuntime, IsolationError, new_workspace
+from studies.codex_agent.session import _find_codex_bin
 
 
 @dataclass(frozen=True)
@@ -27,29 +26,6 @@ class SolverEvaluation:
     environment_steps: int
 
 
-def _copy_solver_package(workspace: Path, package: Path) -> None:
-    shutil.copytree(
-        workspace,
-        package,
-        dirs_exist_ok=True,
-        ignore=shutil.ignore_patterns(
-            ".avo_rpc", "avo_tool.py", "AGENT_INTERFACE.md", "MISSION.md"
-        ),
-    )
-    (package / "manifest.json").write_text(
-        json.dumps(
-            {
-                "schema_version": 1,
-                "candidate_id": "fresh_solver_model",
-                "claim": "Top-level solver.py transition model evaluated prospectively.",
-                "complexity": 1.0,
-                "command": ["$PYTHON", "solver.py"],
-            }
-        ),
-        encoding="utf-8",
-    )
-
-
 def evaluate_solver_workspace(
     *,
     loaded_profile: LoadedProfile,
@@ -58,7 +34,38 @@ def evaluate_solver_workspace(
     max_environment_steps: int,
     max_wall_seconds: float,
 ) -> SolverEvaluation:
-    """Run solver.py alone in a fresh game and score its held-out predictions."""
+    """Run solver.py alone in a fresh game and score completed levels."""
+    source = Path(workspace).resolve()
+    if not (source / "solver.py").is_file():
+        return _evaluate_solver(loaded_profile=loaded_profile, workspace=source,
+                                output_dir=output_dir, max_environment_steps=max_environment_steps,
+                                max_wall_seconds=max_wall_seconds, runtime=None)
+    staged = new_workspace()
+    if any(path.is_symlink() or path.is_junction() for path in source.rglob("*")):
+        raise IsolationError("Solver archive contains a link or junction")
+    shutil.copytree(source, staged, dirs_exist_ok=True,
+                    ignore=shutil.ignore_patterns(".avo_rpc", ".tmp", "observations", "__pycache__"))
+    binary = _find_codex_bin()
+    if not binary:
+        raise IsolationError("Codex sandbox runtime is required for fresh solver evaluation")
+    runtime = IsolatedRuntime(staged, Path(output_dir), binary)
+    try:
+        runtime.preflight()
+        return _evaluate_solver(loaded_profile=loaded_profile, workspace=staged,
+                                output_dir=output_dir, max_environment_steps=max_environment_steps,
+                                max_wall_seconds=max_wall_seconds, runtime=runtime)
+    except IsolationError as exc:
+        (runtime.artifacts / "infrastructure_invalid.json").write_text(
+            json.dumps({"status": "infrastructure_invalid", "reason": str(exc)}), encoding="utf-8"
+        )
+        raise
+    finally:
+        runtime.close()
+
+
+def _evaluate_solver(*, loaded_profile: LoadedProfile, workspace: str | Path,
+                     output_dir: str | Path, max_environment_steps: int,
+                     max_wall_seconds: float, runtime: IsolatedRuntime | None) -> SolverEvaluation:
 
     source = Path(workspace).resolve()
     output = Path(output_dir).resolve()
@@ -72,10 +79,6 @@ def evaluate_solver_workspace(
             score={
                 "solver_available": 0,
                 "solver_levels_completed": 0,
-                "model_score": 0.0,
-                "model_exact_rate": 0.0,
-                "model_observation_accuracy": 0.0,
-                "model_coverage": 0.0,
             },
             finish_reason="solver.py was not produced",
             environment_steps=0,
@@ -85,13 +88,9 @@ def evaluate_solver_workspace(
         )
         return result
 
-    package_root = tempfile.TemporaryDirectory(prefix="fresh-solver-model-")
-    package = Path(package_root.name) / "fresh_solver_model"
-    _copy_solver_package(source, package)
-    model = FilesystemTheoryCandidate(package)
     laboratory = AvoLaboratory(
         loaded_profile.implementation.environment,
-        [model],
+        [],
         output,
     )
     process_status = "completed"
@@ -100,15 +99,18 @@ def evaluate_solver_workspace(
     stderr_lines: list[str] = []
     response_lines: queue.Queue[str | None] = queue.Queue()
 
+    assert runtime is not None
+    model_view = ModelView(source, (output,))
     process = subprocess.Popen(
-        [
-            sys.executable,
+        runtime.command(
+            str(runtime.python),
             "solver.py",
             "--play",
             "--max-steps",
             str(max_environment_steps),
-        ],
+        ),
         cwd=source,
+        env=runtime.env,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -139,8 +141,7 @@ def evaluate_solver_workspace(
                 break
             assert process.stdin is not None
             request = {
-                "observation": _jsonable(laboratory.current),
-                "history": _jsonable(laboratory.history),
+                "observation": model_view.present(_jsonable(laboratory.current)),
             }
             process.stdin.write(json.dumps(request) + "\n")
             process.stdin.flush()
@@ -194,59 +195,21 @@ def evaluate_solver_workspace(
     (output / "solver_stderr.txt").write_text(
         "".join(stderr_lines), encoding="utf-8"
     )
-
+    if "windows sandbox failed:" in "".join(stderr_lines).lower():
+        raise IsolationError("Native sandbox failed during solver evaluation")
     current = laboratory.current
     if current is None:
         raise RuntimeError("Fresh solver evaluation did not initialize the environment")
     task = loaded_profile.implementation.evaluate(tuple(laboratory.history), current)
 
     total = len(laboratory.history)
-    covered = 0
-    exact = 0
-    observation_total = 0.0
-    prediction_errors: list[dict[str, Any]] = []
-    for index, transition in enumerate(laboratory.history):
-        try:
-            prediction = model.predict(
-                tuple(laboratory.history[:index]),
-                transition.before,
-                transition.action,
-            )
-            if prediction.expected is None:
-                continue
-            covered += 1
-            comparison = loaded_profile.implementation.environment.compare(
-                prediction.expected, transition.after
-            )
-            exact += int(comparison.exact)
-            observation_total += comparison.prospective_accuracy
-        except Exception as exc:
-            prediction_errors.append(
-                {
-                    "transition": transition.sequence,
-                    "error": f"{type(exc).__name__}: {exc}",
-                }
-            )
-
-    denominator = total or 1
-    exact_rate = exact / denominator
-    observation_accuracy = observation_total / denominator
-    coverage = covered / denominator
-    model_score = (3 * exact_rate + observation_accuracy) / 4
     levels_completed = int((current.progress or {}).get("levels_completed", 0))
-    fitness = float(levels_completed) * model_score
-    success = bool(task.success and total and exact == total)
+    fitness = float(levels_completed)
+    success = bool(task.success)
     score: dict[str, JsonValue] = {
         "solver_available": 1,
         "solver_levels_completed": levels_completed,
         "solver_environment_actions": total,
-        "model_score": model_score,
-        "model_exact_rate": exact_rate,
-        "model_observation_accuracy": observation_accuracy,
-        "model_coverage": coverage,
-        "model_predictions_exact": exact,
-        "model_transitions_tested": total,
-        "model_prediction_errors": _jsonable(prediction_errors),
         "environment_task": _jsonable(task),
         "solver_return_code": return_code,
     }
@@ -261,5 +224,4 @@ def evaluate_solver_workspace(
     (output / "solver_evaluation.json").write_text(
         json.dumps(_jsonable(result), indent=2), encoding="utf-8"
     )
-    package_root.cleanup()
     return result

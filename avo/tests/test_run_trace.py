@@ -37,7 +37,7 @@ class RunTraceRecorderTests(unittest.TestCase):
             self.assertEqual((recorder.blob_root / digest).read_text(), "second")
             self.assertFalse((workspace / "analysis").exists())
 
-    def test_does_not_record_reasoning_content_or_noisy_deltas(self):
+    def test_keeps_raw_reasoning_and_deltas_but_preserves_compact_redaction(self):
         with tempfile.TemporaryDirectory() as root:
             workspace = Path(root) / "workspace"
             workspace.mkdir()
@@ -55,6 +55,56 @@ class RunTraceRecorderTests(unittest.TestCase):
             self.assertEqual(len(events), 1)
             self.assertEqual(events[0]["payload"]["item"]["content"], "[not recorded]")
             self.assertNotIn("private", recorder.events_path.read_text())
+            raw = [
+                json.loads(line)
+                for line in recorder.raw_events_path.read_text().splitlines()
+            ]
+            self.assertEqual(len(raw), 2)
+            self.assertEqual(raw[0]["payload"]["item"]["content"], ["private"])
+            self.assertEqual(raw[1]["payload"]["delta"], "x")
+            conversation = json.loads(recorder.conversation_path.read_text().strip())
+            self.assertEqual(conversation["role"], "assistant_reasoning")
+            self.assertEqual(conversation["item"]["content"], ["private"])
+
+    def test_records_session_prompt_turn_input_and_transport_status(self):
+        with tempfile.TemporaryDirectory() as root:
+            workspace = Path(root) / "workspace"
+            workspace.mkdir()
+            recorder = RunTraceRecorder(Path(root) / "analysis", workspace)
+            recorder.start_session(
+                role="outer_optimizer",
+                model="test-model",
+                effort="high",
+                codex_bin="patched-codex",
+                base_instructions="system prompt",
+                ephemeral=True,
+                metadata={"candidate": "x_0001"},
+            )
+            recorder.attach_thread("thread-1")
+            recorder.record_turn_input(
+                turn_number=1,
+                turn_id="turn-1",
+                instruction="continue",
+                effort="high",
+            )
+            recorder.transport_root.mkdir()
+            (recorder.transport_root / "request-000001.json").write_text(
+                "{}", encoding="utf-8"
+            )
+            recorder.finish_session(status="completed")
+
+            session = json.loads(recorder.session_path.read_text())
+            prompt = json.loads(recorder.prompt_path.read_text())
+            turn = json.loads(recorder.turn_inputs_path.read_text().strip())
+            conversation = json.loads(recorder.conversation_path.read_text().strip())
+            self.assertEqual(session["role"], "outer_optimizer")
+            self.assertEqual(session["thread_id"], "thread-1")
+            self.assertEqual(session["capture"]["model_request_files"], 1)
+            self.assertEqual(session["capture"]["model_request_status"], "captured")
+            self.assertEqual(session["artifacts"]["model_requests"], "model_requests")
+            self.assertEqual(prompt["base_instructions"], "system prompt")
+            self.assertEqual(turn["inputs"][0]["text"], "continue")
+            self.assertEqual(conversation["role"], "user")
 
     def test_locked_workspace_file_cannot_interrupt_the_run(self):
         with tempfile.TemporaryDirectory() as root:

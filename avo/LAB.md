@@ -1,37 +1,34 @@
-# AVO v0.4
+# AVO
 
-This is the executable kernel of the general-purpose AVO design. The complete
-contract and current implementation status are defined in `SPEC.md`.
+Operator entry point: start `npm run workbench` and open `/runs/avo.html` for
+one or parallel Docker campaigns. Native Windows isolation currently fails
+closed; the native commands below describe the controller interface, not the
+supported Windows launch path. See `docker/README.md`.
 
-## Authority boundary
+AVO gives a persistent Codex session an isolated workspace and a small interface to an
+unknown environment. Codex researches the game and leaves a reusable `solver.py`.
 
-- The autonomous agent owns candidate creation, representation, parent lineage,
-  tool use, experiment selection, and stop timing.
-- Candidate theories are filesystem Theory Packages invoked through a JSON
-  subprocess protocol.
-- `AvoLaboratory` owns the immutable evidence sequence, freezes predictions
-  before execution, performs the environment step, and records evaluations.
-- An environment adapter owns observation comparison. The first adapter maps
-  the existing ARC-compatible PuzzleScript client without exposing its legend
-  or game identity.
-- `DeterministicSupervisor` watches only process signals such as repeated
-  no-change actions, repeated probes, and collective prospective failure.
+The agent decides how to use its workspace. It may create notes, scripts, simulations,
+tests, intermediate representations, or temporary hardcoded transitions. The framework
+does not impose an internal hypothesis format or candidate-publication workflow.
 
-The generic runner uses the existing Codex OAuth session. The agent gets only
-the prompt, its isolated workspace, and the generic AVO tool interface.
+The framework owns observations, environment execution, checkpoints, budgets, terminal
+detection, artifact archival, and fresh solver evaluation. Action IDs remain opaque.
 
 ## Layout
 
 ```text
 avo/
-  core/                       generic kernel, evaluator, gateway, history
-  client/                     persistent Codex OAuth client
+  core/                       environment execution and evidence
+  client/                     persistent Codex client
   environments/puzzlescript/ PuzzleScript adapter, prompt, and fitness
-  prompts/                    environment-neutral base instructions
-  tests/                      active framework tests
-  legacy/                     superseded AVO experiments
+  evolution/                  outer x_i optimizer and fresh evaluation
+  prompts/                    player and outer instructions
+  tests/                      maintained tests
+  legacy/                     superseded experiments
   output/                     run artifacts
-  run.py                      generic profile runner
+  run.py                      one solver-building run
+  evolve.py                   outer sequence of solver-building runs
 ```
 
 ## Run PuzzleScript
@@ -42,28 +39,34 @@ Start the local stack:
 npm run local
 ```
 
-Then, in another terminal:
+Then run one player or the outer optimizer:
 
 ```powershell
-uv run python -m avo.run `
-  --profile puzzlescript `
-  --set backend_url=http://127.0.0.1:8000 `
-  --set game_id=ps_sokoban_basic-v1
+uv run python -m avo.run --profile puzzlescript --set game_id=ps_sokoban_basic-v1
+uv run python -m avo.evolve --profile puzzlescript --set game_id=ps_midas-v1
 ```
 
-To add a domain, create one folder under `avo/environments/` containing
-`profile.toml`, `profile.py`, `adapter.py`, and `prompt.md`. The profile owns
-input/output translation, the objective, task fitness, and terminal detection.
-The kernel, gateway, history, supervisor, and Codex client remain unchanged.
+See `SPEC.md` for the runtime contract and `evolution/README.md` for the x_i layout.
 
-Candidate code remains untrusted. It can predict and propose experiments, but
-it does not receive write access to framework evidence. A stronger OS process
-sandbox is still required before running hostile packages.
+## Session logs
 
-## Verified full run
+Every Codex-backed run writes a session bundle outside the agent workspace. A
+single run uses `<output>/analysis/`; evolution uses
+`<output>/optimizer_analysis/` for the outer optimizer and
+`<output>/x_NNNN/research/analysis/` for each inner player.
 
-`avo/output/sokoban-basic-full-v04-20260824/final_summary.json` records a complete
-two-level Sokoban Basic run. The PuzzleScript profile returned `WIN` after 84
-opaque environment actions in one persistent Codex turn. The agent created and
-archived its own BFS solver, plan executor, compact probe utility, and notes; no
-action meanings, legend, source, win condition, or solution were exposed.
+The bundle contains `session.json`, `prompt.json`, exact client turn inputs in
+`turn_inputs.jsonl`, the unfiltered Codex notification stream in
+`app_server_events.jsonl`, a role-aware `conversation.jsonl`, workspace snapshots,
+and the existing compact reasoning-redacted `agent_events.jsonl`.
+
+Exact request bodies sent from Codex to the model are captured automatically in
+`analysis/model_requests/`. AVO starts a loopback capture proxy inside the AVO
+process, points the ordinary Codex OAuth session through it, and stops it with
+the session. Authentication headers are forwarded in memory but are never
+written to the logs. There is no API key, logging flag, separate launcher, or
+custom Codex binary to manage.
+
+Session logs may contain full prompts, reasoning emitted by the server, command
+output, tool results, and workspace contents. Treat the output directory as
+private data.

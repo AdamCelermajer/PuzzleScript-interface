@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
 
-const SERVER_PORT = 3100;
+const SERVER_PORT = Number(process.env.PUZZLESCRIPT_TEST_PORT || 3100);
 const SERVER_URL = `http://127.0.0.1:${SERVER_PORT}`;
 const ROOT = path.join(__dirname, '..', '..');
 const SERVER_ENTRY = 'puzzlescript_interface/runtime/server.js';
@@ -167,7 +167,7 @@ test('compound Sokoban cells render as their compound legend character', async (
         const initBody = await initResponse.json();
 
         const frame = initBody.frame.at(-1);
-        assert.equal(initBody.projection.mode, 'visible-cell-pixels-v1');
+        assert.equal(initBody.projection.mode, 'visible-cell-v1');
         assert.notEqual(frame[3][1], frame[1][3]);
     } finally {
         server.kill();
@@ -236,13 +236,9 @@ test('Midas exposes distinct rendered player states without object names', async
 
         assert.notEqual(jumping, grounded);
         assert.equal(jumpBody.projection.compressed, false);
-        assert.equal(jumpBody.projection.mode, 'visible-cell-pixels-v1');
-        assert.notDeepEqual(
-            jumpBody.projection.patterns[jumping],
-            jumpBody.projection.patterns[grounded]
-        );
-        assert.equal(jumpBody.projection.patterns[jumping].length, 5);
-        assert.equal(jumpBody.projection.patterns[jumping][0].length, 5);
+        assert.equal(jumpBody.projection.mode, 'visible-cell-v1');
+        assert.ok(jumpBody.projection.patterns[jumping]);
+        assert.ok(Object.values(jumpBody.legend).every(name=>name.startsWith('Visible texture')));
     } finally {
         server.kill();
     }

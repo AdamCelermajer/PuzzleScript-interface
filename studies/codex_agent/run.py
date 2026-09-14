@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 import sys
+import traceback
 from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
@@ -48,6 +50,12 @@ def main() -> None:
     parser.add_argument("--max-steps", type=int, default=50)
     parser.add_argument("--max-decisions", type=int, default=None)
     parser.add_argument("--output-dir", default="")
+    parser.add_argument("--continue-from", default="", help="Restore an unsolved completed run in a new session; max-steps is the additional budget.")
+    parser.add_argument(
+        "--condition",
+        choices=["baseline", "baseline-plus"],
+        default="baseline",
+    )
     parser.add_argument(
         "--no-window",
         action="store_true",
@@ -58,8 +66,19 @@ def main() -> None:
     output_dir = (
         Path(args.output_dir)
         if args.output_dir
-        else DEFAULT_OUTPUT_ROOT / f"{_run_id()}-{args.game_id}"
+        else DEFAULT_OUTPUT_ROOT / _run_id()
     )
+    if args.continue_from:
+        from studies.codex_agent.continuation import load_parent
+        load_parent(args.continue_from)
+        parent_config = json.loads((Path(args.continue_from) / "run_config.json").read_text(encoding="utf-8"))
+        if any(parent_config[key] != value for key, value in {
+            "model": args.model, "reasoning_effort": args.effort,
+            "condition": args.condition, "game_id": args.game_id,
+        }.items()):
+            raise ValueError("Continuation must preserve the parent model, effort, condition, and game")
+        if output_dir.resolve() == Path(args.continue_from).resolve() or output_dir.exists():
+            raise ValueError("Continuation requires a fresh separate output directory")
     dashboard = None
     event_sink = _print_event
     if not args.no_window:
@@ -79,20 +98,64 @@ def main() -> None:
         model=args.model,
         effort=args.effort,
         codex_bin=args.codex_bin,
+        workspace_enabled=(args.condition == "baseline-plus"),
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "run_config.json").write_text(
+        json.dumps(
+            {
+                "condition": args.condition,
+                "model": args.model,
+                "reasoning_effort": args.effort,
+                "game_id": args.game_id,
+                "backend_url": args.backend_url,
+                "max_steps": args.max_steps,
+                "max_decisions": args.max_decisions,
+                "continuation_from": str(Path(args.continue_from).resolve()) if args.continue_from else None,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
     )
     result_holder = {}
 
     def run_agent() -> None:
-        with CodexGameSession(config, output_dir / "codex_workspace") as session:
-            runner = CodexAgentRunner(
-                env=env,
-                session=session,
-                output_dir=output_dir,
-                max_steps=args.max_steps,
-                max_decisions=args.max_decisions,
-                event_sink=event_sink,
+        try:
+            session_workspace = output_dir / (
+                "workspace" if config.workspace_enabled else "codex_workspace"
             )
-            result_holder["result"] = runner.run()
+            if args.continue_from:
+                from studies.codex_agent.continuation import seed_notes
+                seed_notes(args.continue_from, session_workspace)
+            with CodexGameSession(
+                config,
+                session_workspace,
+                artifact_directory=output_dir,
+            ) as session:
+                runner = CodexAgentRunner(
+                    env=env,
+                    session=session,
+                    output_dir=output_dir,
+                    max_steps=args.max_steps,
+                    max_decisions=args.max_decisions,
+                    event_sink=event_sink,
+                    workspace_enabled=config.workspace_enabled,
+                    continuation_from=args.continue_from or None,
+                )
+                result_holder["result"] = runner.run()
+        except BaseException as exc:
+            (output_dir / "error.json").write_text(
+                json.dumps(
+                    {
+                        "type": type(exc).__name__,
+                        "message": str(exc),
+                        "traceback": traceback.format_exc(),
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+            raise
 
     if dashboard is None:
         run_agent()
@@ -113,8 +176,12 @@ def main() -> None:
     print(f"reason={result.reason}")
     print(f"actions={[action.name for action in result.actions]}")
     print(f"decisions={result.decisions}")
+    print(f"workspace_operations={result.workspace_operations}")
+    print(f"world_model={result.world_model_path}")
     print(f"output_dir={result.output_dir}")
     print(f"transcript={result.transcript_path}")
+    print(f"transitions={result.transitions_path}")
+    print(f"codex_session={output_dir / 'codex_session.jsonl'}")
 
 
 if __name__ == "__main__":
