@@ -42,15 +42,45 @@ not contain private chain-of-thought, which is not exposed to the harness.
 `isolation_manifest.json` records the model-facing isolation configuration for
 contamination auditing. Frame images are copied to a generic filename inside
 the opaque temporary session directory before being attached.
-New runs also capture outgoing requests under `model_requests/` and block leaked
-repository/archive paths or inherited AGENTS instructions before forwarding.
-This is not a certificate of OS-level read isolation. These checks and config
-changes do not retrofit processes that were already running.
+Outgoing requests are recorded under `model_requests/` for inspection. Recording
+does not gate execution. Normal runs have no request-content or tool-inventory
+guard, and do not enforce a provider response schema. The runner accepts one
+action name or JSON, including prose and Markdown around JSON. An unusable reply
+gets a correction turn on the same frame, counted against the decision budget
+but not the game-action budget.
+
+## Harness ladder
+
+`--harness` changes only how the model is driven; the condition, prompt text,
+reply parser, frame feedback, note workspace and audit logs stay identical.
+
+| Harness | Transport | How tools reach the model |
+|---|---|---|
+| `codex` (H2, default) | Codex SDK thread | Codex MCP note tools plus Codex internals |
+| `tools` (H1) | OpenRouter chat completions | `list_notes`/`read_note`/`write_note` as native function tools |
+| `raw` (H0) | OpenRouter chat completions | no tool schema; `<write_note path="...">` style tags in the reply are executed |
+
+For `baseline` (no notes) H0 and H1 are the same plain conversation. H0/H1 need an
+`openrouter/vendor/model` ID, send only the newest frame image, drop the oldest
+exchanges past `HARNESS_CONTEXT_CHARS` (default 240000 characters), retry transient
+provider errors, and log every call to `model_session.jsonl` and `model_requests/`.
+`max` effort is sent to OpenRouter as `xhigh`; `isolation_manifest.json` records both.
+
+`--provider SLUG` pins one OpenRouter provider with fallbacks disabled, for all three
+harnesses (the Codex request proxy injects the same routing field). Without it
+OpenRouter routes to the cheapest endpoint, which for small open models is often an
+fp4/fp8 or undisclosed quantization, and can differ between runs.
+
+```powershell
+uv run python -m studies.codex_agent.run --no-window --game-id ps_modality-v1 `
+  --model openrouter/qwen/qwen3.8-27b --effort high --condition baseline-plus `
+  --harness tools --provider deepinfra --max-steps 300
+```
 
 ## New-session continuation
 
 `--continue-from PARENT_RUN --max-steps 50` starts a separate continuation after
-an unsolved parent exhausts its action budget. Keep the same model, effort,
+an unsolved parent exhausts its action budget or fails after recorded actions. Keep the same model, effort,
 condition, and game and choose a fresh output directory. The runner replays and
 verifies every prior environment transition, carries over note files and visible
 action/observation history, then allows 50 additional actions. Replay actions
@@ -59,8 +89,9 @@ decision budget. This is not the same persistent Codex conversation and does not
 restore its private reasoning. Keep the original result and continuation result
 separate when reporting the experiment.
 
-The SDK reuses the Codex OAuth sign-in on this machine. It does not use
-`OPENAI_API_KEY`, `OPENROUTER_API_KEY`, or a Kimi key.
+OpenAI models reuse the Codex OAuth sign-in on this machine. Models named
+`openrouter/vendor/model` use the existing `OPENROUTER_API_KEY` from `.env`
+or the environment. Both routes support baseline+ notes and `--effort max`.
 
 On Windows, the runner automatically uses the newest Codex CLI bundled with the
 installed Codex desktop app so current models work with the same OAuth session.

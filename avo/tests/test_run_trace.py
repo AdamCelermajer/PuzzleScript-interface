@@ -15,6 +15,19 @@ class FakeEvent:
 
 
 class RunTraceRecorderTests(unittest.TestCase):
+    def test_compact_trace_preserves_conversation_without_raw_events_or_snapshots(self):
+        with tempfile.TemporaryDirectory() as root, patch.dict("os.environ", {"AVO_TRACE_DETAIL": "compact"}):
+            workspace = Path(root) / "workspace"
+            workspace.mkdir()
+            (workspace / "large-data.json").write_text("x" * 1_000_000)
+            recorder = RunTraceRecorder(Path(root) / "analysis", workspace)
+            recorder.record_event(FakeEvent("item/completed", {"item": {"type": "agentMessage", "text": "learned rule"}}), 1)
+            recorder.snapshot("finished")
+            self.assertIn("learned rule", recorder.conversation_path.read_text())
+            self.assertFalse(recorder.raw_events_path.exists())
+            self.assertFalse(recorder.events_path.exists())
+            self.assertEqual(list(recorder.blob_root.iterdir()), [])
+
     def test_records_events_and_reconstructable_workspace_changes_outside_workspace(self):
         with tempfile.TemporaryDirectory() as root:
             workspace = Path(root) / "workspace"

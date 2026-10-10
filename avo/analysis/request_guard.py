@@ -8,7 +8,8 @@ from typing import Any
 from avo.isolation import IsolationError, REPOSITORY
 
 
-ALLOWED_TOOLS = {"exec_command", "write_stdin", "apply_patch", "view_image", "update_plan"}
+ALLOWED_TOOLS = {"exec_command", "write_stdin", "apply_patch", "view_image", "update_plan",
+                 "get_goal", "create_goal", "update_goal"}
 
 
 class RequestGuard:
@@ -77,10 +78,16 @@ class RequestGuard:
                     while "\\\\" in normalized:
                         normalized = normalized.replace("\\\\", "\\")
                     normalized = normalized.replace("\\", "/").casefold()
-                    # The native sandbox advertises its executable-only alias
-                    # directory. Its parent remains private and unreadable.
+                    # The sandbox exposes Codex's executable aliases. Listings
+                    # include generated subdirectories and a trailing colon;
+                    # neither is private context. Keep all other paths blocked.
                     if self.public_helper_root:
-                        normalized = re.sub(re.escape(self.public_helper_root) + r'(?=[\s<>"\']|$)', '<public-sandbox-helper>', normalized)
+                        helper_path = (
+                            r'(?<![\w/.-])' + re.escape(self.public_helper_root)
+                            + r'(?:/codex-arg0[a-z0-9]+(?:/(?:apply_patch|applypatch|codex-execve-wrapper|codex-linux-sandbox|\.lock))?)?'
+                            + r'/?(?=[\s<>"\':]|$)'
+                        )
+                        normalized = re.sub(helper_path, '<public-sandbox-helper>', normalized)
                     if "# agents.md instructions for" in normalized:
                         raise IsolationError("Automatically injected AGENTS instructions")
                     if any(re.search(r'(?<![\w/.-])' + re.escape(root) + r'(?=[/\s<>"\']|$)', normalized) for root in self.roots):

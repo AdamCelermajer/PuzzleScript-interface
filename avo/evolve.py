@@ -11,6 +11,7 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from avo.client.codex_oauth_agent import CodexOAuthAgent, CodexOAuthConfig
+from avo.client.openrouter_agent import OpenRouterShellAgent
 from avo.core.framework import _jsonable
 from avo.core.profile import load_profile
 from avo.evolution.evaluator import CandidateEvaluator, PlayerEvaluationConfig
@@ -23,6 +24,15 @@ from avo.isolation import ISOLATION_VERSION, IsolationError, new_workspace
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output" / "evolution"
 OUTER_PROMPT = Path(__file__).resolve().parent / "prompts" / "outer_optimizer.txt"
+
+
+def _record_infrastructure_failure(root: Path, exc: IsolationError) -> None:
+    reason = str(exc)
+    (root / "error.json").write_text(json.dumps({
+        "status": "needs_assistance",
+        "kind": "puzzlescript_backend_failure" if reason.startswith("PuzzleScript backend failure:") else "infrastructure_failure",
+        "error": reason,
+    }, indent=2), encoding="utf-8")
 
 
 def _setting(raw: str) -> tuple[str, Any]:
@@ -64,15 +74,23 @@ def main() -> None:
     parser.add_argument("--max-wall-seconds", type=float, default=14_400)
     parser.add_argument("--world-model-mode", choices=("off", "final-only", "between-hypotheses"), default=None)
     parser.add_argument("--codex-bin", default="")
+    parser.add_argument("--harness", choices=("codex", "tools", "raw"), default="codex",
+                        help="Agent harness for both optimizer and player: H2 codex, H1 tools, H0 raw")
+    parser.add_argument("--provider", default="", help="Pin one OpenRouter provider slug for all agents")
     args = parser.parse_args()
 
     overrides = dict(_setting(item) for item in args.set)
-    loaded_for_metadata = load_profile(args.profile, overrides)
     run_id = datetime.now().strftime("%Y%m%dT%H%M%S")
     root = Path(args.output_dir or DEFAULT_OUTPUT_ROOT / run_id).resolve()
     # A clean campaign must not inherit pre-fix notes/solvers or existing state.
     if not args.resume_saved_campaign and ((root / "lineage.json").exists() or (root / "evolution_config.json").exists()):
         raise IsolationError("Use a fresh output directory for an isolated campaign; automatic resume is disabled")
+    try:
+        loaded_for_metadata = load_profile(args.profile, overrides)
+    except IsolationError as exc:
+        root.mkdir(parents=True, exist_ok=True)
+        _record_infrastructure_failure(root, exc)
+        raise
     optimizer_workspace = new_workspace()
     store = EvolutionStore.create(root, optimizer_workspace)
     if args.resume_saved_campaign:
@@ -81,6 +99,8 @@ def main() -> None:
             args.world_model_mode = saved.get("world_model_mode", "off")
         if saved.get("world_model_mode", "off") != args.world_model_mode:
             raise ValueError("Cannot change world-model condition while continuing a campaign")
+        if saved.get("harness", "codex") != args.harness or saved.get("provider", "") != args.provider:
+            raise ValueError("Cannot change the agent harness while continuing a campaign")
     elif args.world_model_mode is None:
         args.world_model_mode = "final-only"
     initial_path = root / "initial_observation.json"
@@ -94,9 +114,13 @@ def main() -> None:
         )
         if callable(configure_rendered_frames):
             configure_rendered_frames(root / "initial_frames")
-        initial_observation = _jsonable(
-            loaded_for_metadata.implementation.environment.reset()
-        )
+        try:
+            initial_observation = _jsonable(
+                loaded_for_metadata.implementation.environment.reset()
+            )
+        except IsolationError as exc:
+            _record_infrastructure_failure(root, exc)
+            raise
         initial_path.write_text(
             json.dumps(initial_observation, indent=2), encoding="utf-8"
         )
@@ -121,6 +145,8 @@ def main() -> None:
         solver_self_check_max_environment_steps=(
             args.solver_self_check_max_environment_steps
         ),
+        harness=args.harness,
+        provider=args.provider,
     )
     evaluator = CandidateEvaluator(
         PlayerEvaluationConfig(
@@ -148,9 +174,27 @@ def main() -> None:
     )
     if args.world_model_mode == "between-hypotheses":
         gateway.mission += (
-            "\n\nBetween hypotheses, update drafts/CANDIDATE_ID/seed/world_model.md "
-            "with your current understanding of the game's rules for the next inner session."
+            "\n\nBefore registering every hypothesis, including x_0001, write "
+            "drafts/CANDIDATE_ID/seed/world_model.md with the current entity map, "
+            "evidence-backed rules, provisional hypotheses, retracted claims, and open "
+            "contradictions. Reconcile the parent's learned model against saved transitions. "
+            "The inner session receives this as world_model.md in its workspace root and "
+            "must update that same file after decisive experiments, reread it after "
+            "compaction and before solver changes or self-checks, and cite episode/history "
+            "transition numbers. Make this memory protocol explicit in STRATEGY.md."
         )
+    if args.resume_saved_campaign:
+        unevaluated = [candidate.candidate_id for candidate in store.candidates()
+                       if not store.evaluations(candidate.candidate_id)]
+        if unevaluated:
+            gateway.mission += (
+                "\n\nThis campaign is continuing in a fresh isolated optimizer session. "
+                "These registered candidates have no completed evaluation: "
+                + ", ".join(unevaluated)
+                + ". Inspect the population, then evaluate each pending candidate "
+                "before forking or registering another one. Its interrupted research "
+                "is retried from the saved immutable strategy and seed."
+            )
     config = {
         "schema_version": 1,
         "isolation_version": ISOLATION_VERSION,
@@ -165,6 +209,8 @@ def main() -> None:
         "fitness_owner": "fresh solver levels completed",
         "player": _jsonable(player_settings),
         "fresh_solver_max_environment_steps": args.fresh_solver_max_environment_steps,
+        "harness": args.harness,
+        "provider": args.provider,
         "optimizer_model": args.optimizer_model,
         "optimizer_effort": args.optimizer_effort,
         "optimizer_service_tier": args.optimizer_service_tier,
@@ -179,7 +225,7 @@ def main() -> None:
     )
 
     tool_server = EvolutionFileToolServer(gateway, optimizer_workspace)
-    optimizer = CodexOAuthAgent(
+    optimizer = (CodexOAuthAgent if args.harness == "codex" else OpenRouterShellAgent)(
         CodexOAuthConfig(
             model=args.optimizer_model,
             effort=args.optimizer_effort,
@@ -194,13 +240,19 @@ def main() -> None:
                 "profile_id": loaded_for_metadata.implementation.profile_id,
                 "run_kind": "evolution",
             },
+            harness=args.harness,
+            provider=args.provider,
         )
     )
-    result = optimizer.run(
-        gateway,
-        optimizer_workspace,
-        tool_server=tool_server,
-    )
+    try:
+        result = optimizer.run(
+            gateway,
+            optimizer_workspace,
+            tool_server=tool_server,
+        )
+    except IsolationError as exc:
+        _record_infrastructure_failure(root, exc)
+        raise
     # Archive the outer's report separately from the immutable evaluated solver.
     report = optimizer_workspace / "world_model.md"
     report_present = report.is_file() and not report.is_symlink() and bool(report.read_text(encoding="utf-8").strip())
@@ -214,7 +266,9 @@ def main() -> None:
     }
     (root / "world_model.json").write_text(json.dumps(_jsonable(report_record), indent=2), encoding="utf-8")
     summary = {
-        "success": gateway.success,
+        "success": gateway.success and (args.world_model_mode == "off" or report_present),
+        "solver_success": gateway.success,
+        "status": "completed" if args.world_model_mode == "off" or report_present else "failed",
         "finish_reason": result.finish_reason,
         "optimizer_turns": result.turns,
         "population": store.population_summary(),
@@ -227,6 +281,10 @@ def main() -> None:
         encoding="utf-8",
     )
     print(json.dumps(_jsonable(summary), indent=2))
+    if args.world_model_mode != "off" and not report_present:
+        reason = "Required world_model.md was not saved after three final reporting attempts"
+        (root / "error.json").write_text(json.dumps({"error": reason}, indent=2), encoding="utf-8")
+        raise RuntimeError(reason)
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ and exit codes. API restarts leave those workers running. Stop requests and the
 batch time limit cancel queued children and stop only owned processes/containers.
 
 AVO children invoke `avo.docker.launch --campaign`; that launcher retains the
-existing Linux isolation preflights, temporary OAuth credentials and cleanup.
+the existing Linux sandbox, temporary OAuth credentials and cleanup. Isolation probes are explicit diagnostics.
 Codex children invoke `studies.codex_agent.run --no-window`. Game/model/effort/
 condition/repeat combinations are separate child runs, with configurable bounded
 concurrency. The workbench does not introduce shared model memory or change fitness.
@@ -32,6 +32,8 @@ Current routes:
 - `/runs/avo.html`: supported Docker AVO campaign launcher.
 - `/runs/codex.html`: direct-player matrix and continuation launcher.
 - `/runs/results.html`, `/runs/detail.html`: outcomes and direct-player evidence.
+- `/games/`: benchmark library with manual play, per-game experiments, reviewed rules,
+  agent world models, level annotations and goal-recognition answers.
 - `/experiments/avo-lab.html?run=...`: AVO lineage, frames, logs and artifacts.
 - `/experiments/rule-agent.html`: preserved historical rule-learning workflow.
 
@@ -45,6 +47,37 @@ Static build output still requires local services for live APIs. Vite serves the
 AVO trace bridge; FastAPI serves run catalogs, launch controls and paper storage.
 The workbench launcher reuses recognized occupied service ports and refuses an
 unknown owner rather than killing it. A frontend-only server is insufficient.
+
+Run `npm run workbench` in one persistent terminal, or use the existing
+`PuzzleScript Website` shortcut. The launcher checks the PuzzleScript runtime
+(3543), ARC service (8000), Workbench API (8010), Vite website (5173), the
+frontend API proxy, and the configured Tailscale URL. It starts only missing
+services and rechecks them every five seconds. Existing healthy processes are
+reused, including an API whose command line Windows does not expose when its
+health response identifies it. A failed check is printed in the terminal and
+retried without stopping the other services; closing the terminal stops only
+processes that launcher started.
+
+The benchmark library joins the current 20-game selection, the earlier 30-game
+curation and the 21-game reference catalog by exact game ID. It retains their
+collection memberships and keeps reviewed mechanic notes separate from agent
+inferences. Agent experiments use the shared run catalog and browser visibility
+preferences. Goal studies, historical rule archives and saved BFS results are read
+from their existing locations. Missing records remain explicit.
+
+`website/game-library-server.mjs` supplies `/__games/catalog`, `/__games/detail`
+and `/__games/play` through Vite. Manual play uses the existing engine in a
+dedicated worker per session, with a 15-second response timeout, 30-minute idle
+expiry and explicit close. It never uses campaign sessions, writes research logs,
+or restarts shared game services. Playable level numbers exclude message screens.
+
+Play is always expanded. Reviewed rules and source-derived level notes support
+double-click editing, Save (Ctrl/Cmd+Enter) and Cancel (Escape). `POST /__games/notes`
+updates `output/game-selection-20/selection.json` for reviewed rules, or the
+original `level-annotations.mjs` for mechanics and Midas level-focus notes. Mechanic
+edits regenerate `level-annotation-detail.json` and apply across the listed levels.
+Writes are serialized, check the original value for conflicts and replace files
+atomically. Agent-produced experiment reports remain read-only.
 
 
 ## Campaigns and final submissions
@@ -113,7 +146,7 @@ downloads are secondary controls in a collapsed section.
 ## Codex and model providers
 
 Codex is the sole maintained coding-agent runtime. AVO uses the existing Docker
-launcher, sandbox, request guard and fresh-solver evaluator for both OpenAI and
+launcher, sandbox, request capture and fresh-solver evaluator for both OpenAI and
 OpenRouter models. Unprefixed model IDs use the existing Codex OAuth login;
 `openrouter/vendor/model` uses the project OpenRouter API key. Player and optimizer
 can select providers independently. See [AVO Docker setup](../../avo/docker/README.md).
@@ -155,3 +188,55 @@ evaluation count. Timing/action totals include completed candidate evaluations
 only. Links open each run's replay and evaluated solver/report. These are descriptive
 comparisons, not claims of statistical significance. Historical unpaired runs are
 not silently matched or rewritten.
+
+The Runs homepage is a live activity monitor. It reads worker status from the
+catalog immediately, groups active launches newest first, and keeps parallel
+conditions together in a compact list. Only current launch details are enriched through
+the existing AVO snapshot/settings endpoints. Finished or failed partners remain
+visible while their launch is active. Stale workers get an attention state;
+unconfirmed historical archives do not count as running. Historical visibility
+preferences never hide live activity. Polling does not restart any services.
+Inactive resumable batches can be removed from Runs after confirmation. This records
+display metadata in `job.json`; it does not delete artifacts or remove Results entries.
+
+Results defaults to finished runs and retains optional all/active filters and
+the historical comparison tools. Both pages order dated launches newest first,
+independently of game name, runner or process status. Results uses compact rows
+grouped by launch, keeping parallel pairs contiguous. Launch timestamps own the
+order; archives without launch/start times use their labeled last activity date.
+
+Runs and Results show fresh fitness as completed levels / total levels, with a
+separate recorded solved outcome and process status. Missing evaluations remain
+blank rather than zero. `website/src/run-results.mjs` joins the catalog with the
+existing settings/artifact and submission APIs, preferring each fresh evaluation's
+recorded level count. A current-library fallback is explicitly labeled. Archive
+requests are bounded and cached by run modification time; this requires no new
+service or game-engine restart.
+
+Results offers game/outcome filters, run checkboxes, a persistent selection bar,
+and one-click **Compare pair** links. Pairs retain both launch and pair identity,
+including original and recovery attempts. `/runs/compare.html?view=detail&run=...&run=...`
+opens a focused comparison with score cards, a fitness curve with full-level
+targets, and collapsible settings/timing/evidence. **Edit selection** returns to
+the selector with those run IDs. The selector defaults to parallel comparisons;
+**All AVO runs** also permits explicit comparisons across models and launches.
+Explicit detail URLs continue showing their selected runs if a run later fails.
+Game links open `/games/?game=...` throughout these result surfaces.
+
+## Enqueue engine backend and campaign failures
+
+`scripts/start-enqueue-backend.ps1` owns a separate Node PuzzleScript runtime on
+port 3544 with `PUZZLESCRIPT_METHOD=ondemand` and a separate ARC service on 8001.
+That ARC catalog exposes only `ps_enqueue-v1`; the usual 3543/8000 services are
+left alone. Launch Enqueue by itself with backend URL
+`http://host.docker.internal:8001` for Docker AVO (or
+`http://localhost:8001` for a local direct player). Keep the launcher running
+while the campaign runs. Existing campaign artifacts keep their original engine
+behavior; start a new campaign rather than mixing engine modes in one lineage.
+
+AVO treats PuzzleScript HTTP 5xx, connection failures, and timeouts as
+infrastructure failures. The active Codex turn is interrupted, the campaign
+stops with `error.json` status `needs_assistance`, and the run appears in the
+saved Runs list with its reason. Such a run cannot be resumed into the same
+lineage; repair the backend and launch a fresh campaign. A solver that simply
+does not solve the game remains an ordinary evaluated candidate.

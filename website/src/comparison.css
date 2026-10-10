@@ -1,5 +1,27 @@
 
 .comparison-toolbar { display:flex; align-items:end; gap:14px; margin:26px 0; }.comparison-toolbar label { display:grid; gap:7px; font-size:12px; flex:1; }.comparison-toolbar select { max-width:600px; }.comparison-toolbar .field-note { padding-bottom:12px; margin:0; white-space:nowrap; }
+.comparison-selection { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:16px 0; border-block:1px solid #dce3e7; }
+.comparison-selection strong { font-size:15px; }
+.comparison-scope { display:flex; gap:10px; align-items:center; font-size:13px; }
+.comparison-selection { position:sticky; top:10px; z-index:3; background:#f4f8f6; padding:14px 18px; border:1px solid #d1dfd8; border-radius:8px; }
+.comparison-detail .comparison-toolbar,.comparison-detail .comparison-scope,.comparison-detail [data-visibility],.comparison-detail .comparison-selection,.comparison-detail [data-comparison-content] { display:none; }
+.comparison-scorecards { display:flex; overflow:auto; gap:1px; background:#e8edef; }.comparison-scorecards>div { background:white; padding:24px 26px; min-width:230px; flex:1; }.comparison-scorecards h3 { margin:7px 0 0; font-size:17px; }.comparison-scorecards p,.comparison-scorecards small { font-size:12px; color:var(--muted); display:block; }.comparison-scorecards .run-fitness { font-size:34px; margin-top:16px; }
+.comparison-detail .comparison-chart svg { height:260px; }.comparison-metrics>summary { cursor:pointer; padding:18px 26px; border-top:1px solid #e8edef; font-size:14px; font-weight:550; }.comparison-detail h1 { text-transform:capitalize; font-size:36px; }
+.comparison-overview .run-table { min-width:1050px; font-size:13px; }
+.comparison-overview .run-table td,.comparison-overview .run-table th { padding:14px 12px; }
+.comparison-overview .is-selected { background:#f1f8f5; }
+.fitness-cell { font-size:23px; font-weight:600; }
+.fitness-cell small { font-size:11px; font-weight:400; }
+.condition-label { display:inline-block; border-radius:5px; padding:5px 8px; font-size:12px; }
+.condition-label.final { background:#eaf4ef; color:#196d5f; }
+.condition-label.between { background:#f0ebf8; color:#685a9d; }
+.selected-table td,.selected-table th { min-width:200px; }
+.selected-table thead small { text-transform:none; letter-spacing:0; font-weight:400; }
+.selected-legend { display:flex; gap:12px; flex-wrap:wrap; font-size:12px; }
+.selected-legend span { border-left:3px solid; padding-left:9px; }
+.selected-legend small { display:block; color:var(--muted); }
+#selected-comparison { scroll-margin-top:24px; padding-top:28px; }
+.comparison-chart svg text { font-size:11px; fill:#6d7c86; }
 .comparison-empty { text-align:center; background:white; border:1px dashed #cddad4; border-radius:14px; padding:60px 22px; }.comparison-empty h2 { font-weight:500; font-size:23px; }.comparison-empty p { color:var(--muted); font-size:14px; margin:8px 0 24px; }
 .comparison-settings { display:flex; gap:12px 26px; flex-wrap:wrap; border-block:1px solid #dce3e7; padding:16px 0; margin-bottom:24px; }.comparison-settings span { color:var(--muted); font-size:12px; }.comparison-settings strong { color:var(--ink); font-weight:550; margin-right:5px; }
 .comparison-pair { background:white; border:1px solid #dce3e7; border-radius:14px; margin-bottom:24px; overflow:hidden; }.comparison-pair>header { padding:24px 26px; border-bottom:1px solid #e8edef; display:flex; justify-content:space-between; gap:18px; align-items:flex-start; }.comparison-pair h2 { font-size:19px; font-weight:550; margin:0 0 5px; }.comparison-pair header p { color:var(--muted); font-size:12px; margin:0; overflow-wrap:anywhere; }.comparison-pair .pair-badge { border-radius:5px; padding:4px 9px; font-size:11px; background:#f1f4f6; color:var(--muted); white-space:nowrap; }.comparison-pair .pair-badge.done { background:#e8f3ed; color:var(--accent); }

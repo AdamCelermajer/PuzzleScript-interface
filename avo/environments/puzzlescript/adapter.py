@@ -6,10 +6,34 @@ import hashlib
 from pathlib import Path
 from typing import Any
 
+import requests
+
 from client.arc.arcade_env import ArcadeEnv
 from client.arc.base_env import BaseEnv
 from client.arc.types import FrameData, GameAction, RenderedFrame
 from avo.core.framework import Action, Comparison, Observation
+from avo.isolation import IsolationError
+
+
+def _backend_call(operation: str, call):
+    try:
+        return call()
+    except requests.HTTPError as exc:
+        response = exc.response
+        status = response.status_code if response is not None else None
+        if status is None or status < 500:
+            raise
+        detail = ""
+        try:
+            payload = response.json()
+            detail = str(payload.get("detail") or payload.get("error") or "") if isinstance(payload, dict) else ""
+        except ValueError:
+            pass
+        detail = " ".join(detail.split())[:500]
+        suffix = f": {detail}" if detail else ""
+        raise IsolationError(f"PuzzleScript backend failure: HTTP {status} during {operation}{suffix}") from exc
+    except (requests.ConnectionError, requests.Timeout) as exc:
+        raise IsolationError(f"PuzzleScript backend failure: {type(exc).__name__} during {operation}") from exc
 
 
 def _similarity(expected: Any, actual: Any) -> float:
@@ -94,26 +118,28 @@ class PuzzleScriptEnvironment:
         return self.from_frame(frame, self._save_rendered_frame(frame.rendered_frame))
 
     def reset(self) -> Observation:
-        return self._observation(self.environment.reset())
+        return self._observation(_backend_call("RESET", self.environment.reset))
 
     def step(self, action: Action) -> Observation:
         try:
             game_action = GameAction[action.id]
         except KeyError as exc:
             raise ValueError(f"Unknown PuzzleScript action: {action.id}") from exc
-        return self._observation(self.environment.step(game_action, dict(action.data)))
+        return self._observation(_backend_call(
+            action.id, lambda: self.environment.step(game_action, dict(action.data))
+        ))
 
     def save_state(self) -> str:
         method = getattr(self.environment, "save_state", None)
         if method is None:
             raise RuntimeError("PuzzleScript backend does not support state checkpoints")
-        return str(method())
+        return str(_backend_call("save_state", method))
 
     def restore_state(self, token: str) -> Observation:
         method = getattr(self.environment, "restore_state", None)
         if method is None:
             raise RuntimeError("PuzzleScript backend does not support state checkpoints")
-        return self._observation(method(token))
+        return self._observation(_backend_call("restore_state", lambda: method(token)))
 
     def compare(self, expected: Observation, actual: Observation) -> Comparison:
         payload_score = _similarity(expected.payload, actual.payload)

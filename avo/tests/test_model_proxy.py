@@ -4,6 +4,7 @@ import threading
 import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from unittest.mock import patch
 
 import requests
 
@@ -32,6 +33,12 @@ class UpstreamHandler(BaseHTTPRequestHandler):
 
 
 class CodexRequestProxyTests(unittest.TestCase):
+    def test_capture_write_failure_is_nonfatal_without_an_explicit_audit_guard(self):
+        with tempfile.TemporaryDirectory() as root:
+            proxy = CodexRequestProxy(root, session_id="test", session_role="test")
+            with patch.object(Path, "write_text", side_effect=OSError("log unavailable")):
+                proxy._record_request("responses_http", b'{"input": [], "tools": []}')
+
     def test_openrouter_path_is_forwarded_without_rewriting_payload(self):
         upstream = ThreadingHTTPServer(('127.0.0.1', 0), UpstreamHandler)
         worker = threading.Thread(target=upstream.serve_forever, daemon=True)
@@ -42,11 +49,31 @@ class CodexRequestProxyTests(unittest.TestCase):
                     upstream_origin=f'http://127.0.0.1:{upstream.server_port}', base_path='/api/v1')
                 proxy.start()
                 try:
-                    payload = {'model': 'vendor/model', 'input': [], 'tools': []}
+                    payload = {'model': 'vendor/model', 'input': [], 'tools': [{'type': 'function', 'name': 'new_cli_tool'}]}
                     response = requests.post(proxy.model_base_url+'/responses', json=payload, timeout=10)
                     self.assertEqual(response.status_code, 200)
                     self.assertEqual(UpstreamHandler.received_path, '/api/v1/responses')
                     self.assertEqual(json.loads(UpstreamHandler.received_body), payload)
+                finally:
+                    proxy.stop()
+        finally:
+            upstream.shutdown(); upstream.server_close(); worker.join(timeout=5)
+
+    def test_provider_pin_is_merged_into_forwarded_and_recorded_requests(self):
+        upstream = ThreadingHTTPServer(('127.0.0.1', 0), UpstreamHandler)
+        worker = threading.Thread(target=upstream.serve_forever, daemon=True)
+        worker.start()
+        try:
+            with tempfile.TemporaryDirectory() as folder:
+                pin = {'provider': {'order': ['deepinfra'], 'allow_fallbacks': False}}
+                proxy = CodexRequestProxy(Path(folder), session_id='test', session_role='test', body_patch=pin,
+                    upstream_origin=f'http://127.0.0.1:{upstream.server_port}', base_path='/api/v1')
+                proxy.start()
+                try:
+                    requests.post(proxy.model_base_url+'/responses', json={'model': 'm', 'input': []}, timeout=10)
+                    self.assertEqual(json.loads(UpstreamHandler.received_body), {'model': 'm', 'input': [], **pin})
+                    recorded, = Path(folder).glob('request-*.json')
+                    self.assertEqual(json.loads(recorded.read_text(encoding='utf-8'))['request']['provider'], pin['provider'])
                 finally:
                     proxy.stop()
         finally:

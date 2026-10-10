@@ -31,13 +31,14 @@ def stage_controller(destination: Path) -> None:
                 shutil.copyfile(source, target)
     (destination / 'AGENTS.md').write_text('Private controller canary. Not agent instructions.\n')
 
-def docker_command(source: Path, output: Path, args: list[str]) -> list[str]:
+def docker_command(source: Path, output: Path, args: list[str], trace_detail: str | None = None) -> list[str]:
     return ['docker', 'run', '--name', 'avo-isolated-'+uuid4().hex, '--rm', '--init', '--read-only',
             '--cap-drop', 'ALL', '--cap-add', 'SYS_ADMIN', '--cap-add', 'SETUID', '--cap-add', 'SETGID', '--cap-add', 'SETFCAP',
             '--security-opt', 'no-new-privileges', '--security-opt', 'seccomp=unconfined',
             '--pids-limit', '256', '--memory', '2g', '--cpus', '2',
             '--tmpfs', '/tmp:rw,exec,nosuid,size=256m',
-            '--tmpfs', '/home/controller:rw,exec,nosuid,size=512m',
+            '--mount', 'type=volume,dst=/home/controller',
+            '--env', f'AVO_TRACE_DETAIL={trace_detail or os.environ.get("AVO_TRACE_DETAIL", "compact")}',
             '--mount', f'type=bind,src={source},dst=/controller,readonly',
             '--mount', f'type=bind,src={output},dst=/results',
             IMAGE, *args]
@@ -71,6 +72,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--output-dir', required=True)
     parser.add_argument('--campaign', action='store_true')
+    parser.add_argument('--resume-saved-campaign', action='store_true',
+                        help='Continue an explicitly staged campaign in the output directory')
     parser.add_argument('--game-id')
     parser.add_argument('--backend-url')
     parser.add_argument('--optimizer-model')
@@ -78,6 +81,10 @@ def main() -> None:
     parser.add_argument('--effort', default='high')
     parser.add_argument('--optimizer-effort')
     parser.add_argument('--player-effort')
+    parser.add_argument('--trace-detail', choices=['compact', 'full'], default=None)
+    parser.add_argument('--harness', choices=['codex', 'tools', 'raw'], default='codex')
+    parser.add_argument('--provider', default='', help='Pin one OpenRouter provider slug for all agents')
+    parser.add_argument('--optimizer-service-tier', default='', choices=['', 'priority'])
     parser.add_argument('--player-service-tier', default='', choices=['', 'priority'])
     parser.add_argument('--max-wall-seconds', type=int, default=14400)
     parser.add_argument('--world-model-mode', choices=['final-only', 'between-hypotheses'], default='final-only')
@@ -85,6 +92,8 @@ def main() -> None:
     parser.add_argument('--research-moves', type=int)
     parser.add_argument('--solver-moves', type=int)
     options = parser.parse_args()
+    if options.resume_saved_campaign and not options.campaign:
+        parser.error('--resume-saved-campaign requires --campaign')
     if options.campaign:
         required=('game_id','backend_url','optimizer_model','player_model','max_evaluations','research_moves','solver_moves')
         if any(getattr(options,key) is None for key in required):
@@ -92,11 +101,21 @@ def main() -> None:
         if any(getattr(options,key)<=0 for key in ('max_evaluations','research_moves','solver_moves')):
             parser.error('Budgets must be positive')
         for model in (options.optimizer_model, options.player_model):
-            resolve_model(model)
+            if resolve_model(model)[0] != 'openrouter' and options.harness != 'codex':
+                parser.error('The tools and raw harnesses require openrouter/vendor/model IDs')
         if resolve_model(options.player_model)[0] == 'openrouter' and options.player_service_tier:
             parser.error('OpenRouter models do not support the Codex service tier setting')
     output = Path(options.output_dir).resolve()
-    if options.campaign and output.exists():
+    if options.resume_saved_campaign:
+        saved = json.loads((output / 'campaign' / 'evolution_config.json').read_text(encoding='utf-8'))
+        json.loads((output / 'campaign' / 'lineage.json').read_text(encoding='utf-8'))
+        if saved.get('profile_settings', {}).get('game_id') != options.game_id:
+            raise ValueError('Cannot change game while continuing a campaign')
+        if saved.get('world_model_mode', 'off') != options.world_model_mode:
+            raise ValueError('Cannot change world-model condition while continuing a campaign')
+        if saved.get('harness', 'codex') != options.harness or saved.get('provider', '') != options.provider:
+            raise ValueError('Cannot change the agent harness while continuing a campaign')
+    elif options.campaign and output.exists():
         raise ValueError('Campaign requires a fresh output directory')
     output.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='avo-controller-') as folder, tempfile.TemporaryDirectory(prefix='avo-credentials-') as credentials_folder:
@@ -109,15 +128,19 @@ def main() -> None:
                 '--output-dir','/results/campaign', '--optimizer-model',options.optimizer_model,
                 '--player-model',options.player_model,'--optimizer-effort',options.optimizer_effort or options.effort,
                 '--player-effort',options.player_effort or options.effort,
+                '--optimizer-service-tier',options.optimizer_service_tier,
                 '--player-service-tier',options.player_service_tier,
                 '--world-model-mode',options.world_model_mode,
+                '--harness',options.harness, '--provider',options.provider,
                 '--max-wall-seconds',str(options.max_wall_seconds),
                 '--player-max-wall-seconds',str(options.max_wall_seconds),
                 '--max-evaluations',str(options.max_evaluations),
                 '--player-max-environment-steps',str(options.research_moves),
                 '--fresh-solver-max-environment-steps',str(options.solver_moves),
                 '--solver-self-check-max-environment-steps',str(options.solver_moves)]
-        command = docker_command(source, output, arguments)
+            if options.resume_saved_campaign:
+                arguments.append('--resume-saved-campaign')
+        command = docker_command(source, output, arguments, options.trace_detail)
         (output / 'launcher.json').write_text(json.dumps({'container': command[command.index('--name')+1]}), encoding='utf-8')
         if options.campaign:
             command[command.index(IMAGE):command.index(IMAGE)] = stage_credentials(
@@ -126,13 +149,14 @@ def main() -> None:
             result = subprocess.run(command, cwd=ROOT)
         finally:
             # Exact launcher-owned name, never a sweep over unrelated containers.
-            subprocess.run(['docker','rm','-f',command[command.index('--name')+1]],
+            subprocess.run(['docker','rm','-f','-v',command[command.index('--name')+1]],
                            stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=15)
         if result.returncode:
             raise SystemExit(result.returncode)
-        report = json.loads((output / 'isolation_preflight.json').read_text())
-        if not report.get('passed'):
-            raise SystemExit('Container sandbox preflight did not pass')
+        if not options.campaign:
+            report = json.loads((output / 'isolation_preflight.json').read_text())
+            if not report.get('passed'):
+                raise SystemExit('Container sandbox preflight did not pass')
 
 if __name__ == '__main__':
     main()

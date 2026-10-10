@@ -25,10 +25,33 @@ def test_public_helper_reference_does_not_allow_private_files(tmp_path):
     helper = private / 'tmp' / 'arg0'
     RequestGuard(forbidden_roots=(private,), public_helper_root=helper).check(
         {'input': [{'role': 'user', 'content': f'<path>{helper}</path>'}]})
-    for path in [private / 'auth.json', helper / '../../auth.json', helper / 'extra']:
+    aliases = helper / 'codex-arg07orX7y'
+    for path in [private / 'auth.json', helper / '../../auth.json', helper / 'extra',
+                 aliases / '../../auth.json', aliases / 'auth.json',
+                 aliases / 'apply_patch' / '../../../auth.json',
+                 aliases / 'apply_patch.extra', helper.parent]:
         with pytest.raises(IsolationError):
             RequestGuard(forbidden_roots=(private,), public_helper_root=helper).check(
                 {'input': [{'role': 'user', 'content': str(path)}]})
+
+
+def test_public_helper_directory_listings_are_allowed(tmp_path):
+    private = tmp_path / 'private'
+    helper = private / 'tmp' / 'arg0'
+    aliases = helper / 'codex-arg07orX7y'
+    listing = '\n'.join([
+        f'{helper}:', f'{aliases}:',
+        *(str(aliases / name) for name in
+          ('apply_patch', 'applypatch', 'codex-execve-wrapper', 'codex-linux-sandbox', '.lock')),
+        f'{aliases}/',
+    ])
+    # Captured tool output can itself be JSON with escaped Windows separators.
+    guard = RequestGuard(forbidden_roots=(private,), public_helper_root=helper)
+    guard.check({'input': [{'type': 'function_call_output', 'output': json.dumps({'output': listing})}]})
+    assert guard.requests_checked == 1
+    with pytest.raises(IsolationError, match='Framework/private path'):
+        guard.check({'input': [{'type': 'function_call_output',
+                                'output': listing + '\n' + str(private / 'auth.json')}]})
 
 
 def test_private_path_matching_uses_path_boundaries(tmp_path):
@@ -65,6 +88,9 @@ def test_private_config_has_no_legacy_broad_read_override(tmp_path):
     assert "sandbox_workspace_write" not in config
     assert runtime.env.get("PYTHONPATH", "") == ""
     assert runtime.env.get("OPENAI_API_KEY", "") == ""
+    if os.name != "nt":
+        assert runtime.env["HOME"] == str(runtime.workspace)
+        assert runtime.env["CODEX_HOME"] == str(runtime.private)
 
 
 def test_windows_setup_identity_is_preserved_but_secrets_are_cleared(tmp_path):
@@ -150,8 +176,9 @@ def test_guard_blocks_canary_in_external_context():
 
 def test_guard_checks_nested_tool_inventory():
     guard = RequestGuard(forbidden_roots=())
-    guard.check({"input": [{"type": "additional_tools", "tools": [{"type": "namespace", "name": "functions", "tools": [{"name": "exec_command"}]}]}]})
-    assert guard.tools_seen == {"exec_command"}
+    guard.check({"input": [{"type": "additional_tools", "tools": [{"type": "namespace", "name": "functions", "tools": [
+        {"name": "exec_command"}, {"name": "get_goal"}, {"name": "create_goal"}, {"name": "update_goal"}]}]}]})
+    assert guard.tools_seen == {"exec_command", "get_goal", "create_goal", "update_goal"}
     with pytest.raises(IsolationError):
         guard.check({"input": [], "tools": [{"name": "web_search"}]})
 
@@ -258,16 +285,15 @@ def test_websocket_request_is_checked_and_unknown_messages_fail_closed(tmp_path)
         proxy._record_request("responses_websocket", b'{"type":"unknown","input":[]}')
 
 
-def test_preflight_failure_prevents_authentication_and_model_start(tmp_path):
+def test_normal_runs_do_not_require_a_separate_isolation_probe(tmp_path):
     agent = CodexOAuthAgent(CodexOAuthConfig(analysis_dir=tmp_path / "artifacts"))
     with patch("avo.client.codex_oauth_agent._find_codex_bin", return_value="codex"), patch.object(
         IsolatedRuntime, "preflight", side_effect=IsolationError("probe failed")
-    ), patch.object(IsolatedRuntime, "authenticate") as auth, patch.object(agent, "_run") as run:
-        with pytest.raises(IsolationError):
-            agent.run(object(), tmp_path / "workspace")
-        auth.assert_not_called()
-        run.assert_not_called()
-    assert json.loads((tmp_path / "artifacts/infrastructure_invalid.json").read_text())["status"] == "infrastructure_invalid"
+    ) as probe, patch.object(IsolatedRuntime, "authenticate") as auth, patch.object(agent, "_run") as run:
+        agent.run(object(), tmp_path / "workspace")
+        probe.assert_not_called()
+        auth.assert_called_once()
+        run.assert_called_once()
 
 
 def test_preflight_timeout_is_infrastructure_failure(tmp_path):

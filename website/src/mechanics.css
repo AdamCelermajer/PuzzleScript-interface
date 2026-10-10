@@ -1,0 +1,22 @@
+.mechanics-page { max-width:1180px; }
+.mechanics-provenance,.mechanics-note { padding:14px 18px; background:#eff4f4; border-left:3px solid #2f8575; line-height:1.55; }
+.mechanics-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:24px 0; }
+.mechanics-tabs button,.mechanics-new button { border:1px solid #bacbd0; border-radius:6px; background:white; padding:9px 13px; cursor:pointer; font:inherit; }
+.mechanics-tabs button[aria-selected="true"] { background:#173d38; color:white; border-color:#173d38; }
+.mechanics-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+.mechanics-card,.mechanics-new { background:white; border:1px solid #dbe4e6; border-radius:9px; padding:20px; }
+.mechanics-card h2,.mechanics-new h2 { margin:0 0 12px; }
+.mechanics-card ul { padding-left:21px; line-height:1.65; }
+.mechanics-card li { margin-bottom:8px; }
+.mechanics-card details { margin:12px 0; }
+.mechanics-card summary { cursor:pointer; }
+.mechanics-card pre { overflow:auto; padding:12px; background:#f5f7f7; font:12px/1.5 ui-monospace,Consolas,monospace; }
+.mechanics-card small { color:#5c6c72; }
+.mechanics-links { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+.mechanics-links a,.mechanics-run a { display:inline-block; padding:8px 10px; background:#eef5f3; border-radius:5px; }
+.mechanics-verdict { margin:18px 0; padding:15px 18px; border:1px solid #cddfd8; border-radius:7px; background:#f7fbf8; line-height:1.55; }
+.mechanics-new { margin:28px 0 18px; }
+.mechanics-new header { display:flex; justify-content:space-between; align-items:start; gap:16px; }
+.mechanics-run { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 0; border-top:1px solid #e3e9e9; }
+.mechanics-run span { display:block; color:#5c6c72; font-size:13px; }
+@media(max-width:760px) {.mechanics-grid { grid-template-columns:1fr; } .mechanics-new header,.mechanics-run { flex-direction:column; align-items:start; }}

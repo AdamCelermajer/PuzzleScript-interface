@@ -10,6 +10,9 @@ from workbench.catalog import ROOT, read_json
 from workbench.experiments import write_json
 
 
+REPORT_GRACE_SECONDS = 600
+
+
 def stop_child(process, row):
     if process.poll() is not None:
         return
@@ -36,12 +39,16 @@ def next_rows(rows: list[dict], slots: int, comparison: bool) -> list[dict]:
     if not comparison:
         return pending[:slots]
     ready = []
-    for index in range(0, len(pending), 2):
-        pair = pending[index:index+2]
-        if len(ready) + 2 > slots:
-            break
-        if len(pair) != 2 or not pair[0].get("pair_id") or pair[0]["pair_id"] != pair[1].get("pair_id"):
+    pair_order = list(dict.fromkeys(row.get("pair_id") for row in rows))
+    if any(not pair_id for pair_id in pair_order):
+        raise ValueError("Comparison manifest has an incomplete pair")
+    for pair_id in pair_order:
+        pair_rows = [row for row in rows if row.get("pair_id") == pair_id]
+        if len(pair_rows) != 2:
             raise ValueError("Comparison manifest has an incomplete pair")
+        pair = [row for row in pair_rows if row["status"] == "queued"]
+        if len(ready) + len(pair) > slots:
+            break
         ready.extend(pair)
     return ready
 
@@ -50,12 +57,17 @@ def run_job(directory: Path):
     manifest_path = directory / "job.json"
     job = read_json(manifest_path)
     config = job["config"]
-    deadline = time.time() + config["max_hours"] * 3600
+    # Campaigns use max_hours as their search budget; keep room for the final report turn.
+    deadline = time.time() + config["max_hours"] * 3600 + REPORT_GRACE_SECONDS
     active = []
     cancelled = False
+    paused = False
     job["status"] = "running"
     try:
         while True:
+            if (directory / "pause.request").exists():
+                paused = True
+                break
             if (directory / "stop.request").exists() or time.time() >= deadline:
                 cancelled = True
                 break
@@ -67,7 +79,7 @@ def run_job(directory: Path):
                     log.close()
                     active.remove(entry)
             for row in next_rows(job["runs"], config["parallel"]-len(active), config.get("comparison", False)):
-                if row.get("agent_backend", config.get("agent_backend", "codex")) != "codex":
+                if row.get("agent_backend", config.get("agent_backend", "codex")) not in {"codex", "tools", "raw"}:
                     raise ValueError("Saved job uses a retired agent backend; create a new Codex experiment")
                 # The CLI owns creation of a fresh run directory (especially continuation).
                 log = (directory / (Path(row["output"]).name + ".log")).open("wb")
@@ -91,15 +103,15 @@ def run_job(directory: Path):
         for row, proc, log in active:
             try:
                 stop_child(proc, row)
-                row["status"] = "cancelled" if cancelled else "failed"
+                row["status"] = "paused" if paused else "cancelled" if cancelled else "failed"
             except Exception as exc:
                 row.update(status="unconfirmed", error=f"Could not confirm child shutdown: {exc}")
                 job["error"] = row["error"]
             log.close()
         for row in job["runs"]:
             if row["status"] == "queued":
-                row["status"] = "cancelled" if cancelled else "failed"
-        job.update(status="failed" if job.get("error") or any(r["status"] == "failed" for r in job["runs"]) else "cancelled" if cancelled else "completed", heartbeat=time.time())
+                row["status"] = "paused" if paused else "cancelled" if cancelled else "failed"
+        job.update(status="failed" if job.get("error") or any(r["status"] == "failed" for r in job["runs"]) else "paused" if paused else "cancelled" if cancelled else "completed", heartbeat=time.time())
         write_json(manifest_path, job)
 
 

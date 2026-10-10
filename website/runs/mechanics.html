@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mechanics study · Research Workbench</title><link rel="stylesheet" href="/src/style.css"><link rel="stylesheet" href="/src/runs.css"><link rel="stylesheet" href="/src/mechanics.css"></head>
+<body><main class="runs-page mechanics-page">
+  <header class="runs-header"><div><p class="eyebrow">Research Workbench / presentation</p><h1>Three games, three learned rule sets</h1><p>Ground-truth PuzzleScript rules beside saved AVO hypotheses and independent solver results.</p></div><div class="runs-actions"><a class="button" href="/">Runs</a><a class="button" href="/runs/results.html">All results</a></div></header>
+  <p class="mechanics-provenance">Modality and Knightoban's polished world models were reconstructed after their original experiments. This view cites the strategy and research notes saved during the runs. IceCrates has an in-run model and controlled train-push notes.</p>
+  <nav class="mechanics-tabs" aria-label="Games" data-game-tabs></nav>
+  <section data-game-detail aria-live="polite"></section>
+  <section class="mechanics-new"><header><div><p class="eyebrow">DeepSeek rerun</p><h2>Up to 15 evaluations · 300 research actions each</h2><p>DeepSeek V4.1 Flash for both outer and inner agents, max reasoning, full trace.</p></div><button type="button" data-refresh-runs>Refresh runs</button></header><div data-rerun-list>Loading run status…</div></section>
+  <p class="mechanics-note">In replay, “Reasoning near this action” is the nearest earlier captured model thought by timestamp. A script can execute many actions from one thought. Fresh evaluation actions come from solver.py without a model call per action.</p>
+</main><script type="module" src="/src/mechanics.js"></script></body></html>

@@ -1,3 +1,5 @@
+import { fitnessText, outcome, gameHref } from './run-results.mjs'
+
 const arcColors = [
   '#111820', '#2962a8', '#d13e35', '#2f9d62', '#e2b53f', '#7e8790', '#c85aa1', '#ef8d32',
   '#56b9c9', '#754b33', '#d7dde1', '#8fb1db', '#ef938b', '#8bd0a7', '#f4d978', '#ffffff',
@@ -5,7 +7,7 @@ const arcColors = [
 
 const root = document.querySelector('[data-avo-console]')
 const state = {
-  runId: new URLSearchParams(location.search).get('run') || '', loadedRunId: '', run: null, runs: [], runPinned: Boolean(new URLSearchParams(location.search).get('run')), timer: null, refreshing: false, runsRefreshing: false, runRequestToken: 0, runAbortController: null,
+  runId: new URLSearchParams(location.search).get('run') || '', loadedRunId: '', run: null, runs: [], runPinned: Boolean(new URLSearchParams(location.search).get('run')), timer: null, refreshing: false, runsRequest: null, runRequestToken: 0, runAbortController: null,
   frameSession: '', framePinned: false, frameRevision: '', frameLoadingRevision: '', frameRequestToken: 0, frameAbortController: null,
   logScope: '', logStream: 'session', logPage: 0, logEntries: [], logMeta: null, logRevision: '', logRequestToken: 0, logSearchTimer: null,
   artifacts: [], selectedArtifact: '',
@@ -51,6 +53,14 @@ function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, (char) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
   }[char]))
+}
+
+const renderedHtml = new WeakMap()
+function setHtml(element, html) {
+  if (renderedHtml.get(element) === html) return false
+  renderedHtml.set(element, html)
+  element.innerHTML = html
+  return true
 }
 
 function setText(selector, value) {
@@ -119,33 +129,33 @@ function renderLineage(run) {
   setText('[data-lineage-count]', `${candidates.length} candidate${candidates.length === 1 ? '' : 's'}`)
   const container = root.querySelector('[data-lineage]')
   if (!candidates.length) {
-    container.innerHTML = '<p class="avo-empty">No candidate has been registered.</p>'
+    setHtml(container, '<p class="avo-empty">No candidate has been registered.</p>')
     return
   }
-  container.innerHTML = candidates.slice().reverse().map((candidate, reverseIndex) => {
+  setHtml(container, candidates.slice().reverse().map((candidate, reverseIndex) => {
     const index = candidates.length - reverseIndex
     const status = candidate.candidate_id === run.current ? run.phase.replaceAll('_', ' ') : candidate.evaluated ? 'evaluated' : 'registered'
-    const score = candidate.fitness == null ? status : `fitness ${candidate.fitness}`
+    const score = candidate.fitness == null ? status : `fitness ${fitnessText(candidate.fitness, candidate.win_levels ?? run.win_levels)}${candidate.success == null ? '' : ` · ${outcome(candidate).label}`}`
     const frameSelected = state.frameSession.startsWith(`${candidate.candidate_id}:`)
     return `<article class="lineage-row ${candidate.candidate_id === run.current ? 'current' : ''} ${frameSelected ? 'frame-selected' : ''}" data-frame-candidate="${escapeHtml(candidate.candidate_id)}" title="Replay and inspect this hypothesis" role="button" tabindex="0">
       <span class="lineage-index">${String(index).padStart(2, '0')}</span>
       <div class="lineage-copy"><strong>${escapeHtml(candidate.candidate_id)}</strong><small>${escapeHtml(candidate.parent_ids?.length ? `from ${candidate.parent_ids.join(', ')}` : 'root candidate')}</small></div>
       <span class="lineage-score">${escapeHtml(score)}</span>
     </article>`
-  }).join('')
+  }).join(''))
 }
 
 function renderActivity(events) {
   const container = root.querySelector('[data-recent-activity]')
   if (!events?.length) {
-    container.innerHTML = '<p class="avo-empty">Waiting for the first event.</p>'
+    setHtml(container, '<p class="avo-empty">Waiting for the first event.</p>')
     return
   }
-  container.innerHTML = events.slice().reverse().map((event) => `<article class="activity-item">
+  setHtml(container, events.slice().reverse().map((event) => `<article class="activity-item">
     <span>${escapeHtml(String(event.type || 'event').replaceAll('_', ' '))}</span>
     <strong>${escapeHtml(event.title || event.action || event.type || 'Activity')}</strong>
     <small>${escapeHtml(event.detail || formatTime(event.recorded_at))}</small>
-  </article>`).join('')
+  </article>`).join(''))
 }
 
 function frameSessionKey(session) {
@@ -186,6 +196,7 @@ function renderRun(run) {
     state.selectedArtifact = ''
   }
   setText('[data-run-title]', run.game_id ? `${run.game_id} · ${run.run_id.split('/').slice(-2).join('/')}` : shortRunName(run.run_id))
+  if (run.game_id) root.querySelector('[data-run-title]').innerHTML = `<a href="${gameHref(run.game_id)}">${escapeHtml(run.game_id)}</a> · ${escapeHtml(run.run_id.split('/').slice(-2).join('/'))}`
   root.querySelector('[data-run-title]').title = run.run_id
   setText('[data-agent-identity]', `${run.agent_backend === 'opencode' ? 'OpenCode' : 'Codex'} · player: ${run.player_model || '—'} · outer: ${run.optimizer_model || '—'}`)
   setText('[data-last-activity]', formatTime(run.last_activity))
@@ -194,6 +205,12 @@ function renderRun(run) {
   const finalLink = root.querySelector('[data-final-result]')
   finalLink.hidden = !run.finalized
   finalLink.href = `/runs/submission.html?run=${encodeURIComponent(run.run_id)}`
+  const recovery = root.querySelector('[data-recovery]')
+  recovery.hidden = !run.can_resume && !run.resumed_as
+  root.querySelector('[data-resume-run]').hidden = !run.can_resume
+  const recoveredLink = root.querySelector('[data-resumed-run]')
+  recoveredLink.hidden = !run.resumed_as
+  if (run.resumed_as) recoveredLink.href = `/experiments/avo-lab.html?run=${encodeURIComponent(run.resumed_as)}`
   root.querySelector('[data-inspect="model"]').disabled = !run.world_model_available
   root.querySelector('[data-inspect="model"]').title = run.world_model_available ? '' : 'No final world model saved for this campaign'
   setText('[data-research-actions]', `${run.research.actions} / ${run.research.budget ?? '—'}`)
@@ -202,7 +219,7 @@ function renderRun(run) {
   setText('[data-levels]', `${run.research.levels} / ${run.win_levels ?? '—'}`)
   setText('[data-game-state]', run.last_transition?.after?.status || 'NOT STARTED')
   setText('[data-evaluated-count]', `${run.hypotheses_evaluated} / ${run.max_hypotheses ?? '—'}`)
-  setText('[data-latest-fitness]', run.latest_fitness == null ? 'No fitness yet' : `Latest fitness ${run.latest_fitness}`)
+  setText('[data-latest-fitness]', `Latest fitness ${fitnessText(run.latest_fitness, run.win_levels)} · ${outcome({ fitness: run.latest_fitness, success: run.latest_success }).label}`)
   const frameSessions = (run.frame_sessions || []).slice().sort((left, right) => {
     const candidateOrder = right.candidate_id.localeCompare(left.candidate_id, undefined, { numeric: true })
     if (candidateOrder) return candidateOrder
@@ -221,10 +238,10 @@ function renderRun(run) {
   }).join('')
   if (liveFrameSession) {
     const livePhase = liveFrameSession.phase === 'research' ? 'research' : 'evaluation'
-    frameSelect.innerHTML = `<option value="__live__">${escapeHtml(`Latest frame · ${liveFrameSession.candidate_id} ${livePhase} · ${liveFrameSession.actions} actions`)}</option><optgroup label="Session history">${historyOptions}</optgroup>`
+    setHtml(frameSelect, `<option value="__live__">${escapeHtml(`Latest frame · ${liveFrameSession.candidate_id} ${livePhase} · ${liveFrameSession.actions} actions`)}</option><optgroup label="Session history">${historyOptions}</optgroup>`)
     frameSelect.value = state.framePinned ? state.frameSession : '__live__'
   } else {
-    frameSelect.innerHTML = '<option value="">No session yet</option>'
+    setHtml(frameSelect, '<option value="">No session yet</option>')
   }
   const selectedFrameSession = state.framePinned
     ? frameSessions.find((session) => frameSessionKey(session) === state.frameSession)
@@ -247,7 +264,7 @@ function renderRun(run) {
   const scope = root.querySelector('[data-log-scope]')
   const availableScopes = ['outer', ...(run.candidates || []).map((candidate) => candidate.candidate_id)]
   if (!state.logScope || !availableScopes.includes(state.logScope)) state.logScope = run.current || 'outer'
-  scope.innerHTML = availableScopes.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value === 'outer' ? 'Outer optimizer' : `${value} · inner player`)}</option>`).join('')
+  setHtml(scope, availableScopes.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value === 'outer' ? 'Outer optimizer' : `${value} · inner player`)}</option>`).join(''))
   scope.value = state.logScope
   setRunStatus(run.active ? 'running' : 'idle', run.process_status || 'Unconfirmed')
 }
@@ -281,6 +298,15 @@ async function loadRenderedFrame(session, revision, { force = false } = {}) {
     setText('[data-last-action]', transition.action?.id || '—')
     setText('[data-frame-state]', transition.status || '—')
     setText('[data-frame-phase]', `${payload.candidate_id} · ${payload.phase === 'research' ? 'inner research' : 'fresh evaluation'}`)
+    const reasoning = payload.reasoning || { status: 'unavailable' }
+    const reasoningMessage = reasoning.status === 'captured' ? reasoning.text
+      : reasoning.status === 'offline_solver' ? 'Fresh evaluation runs solver.py without a model call at each action. Read the candidate strategy and solver to inspect the plan.'
+      : reasoning.status === 'initial' ? 'Initial observation before any action.'
+      : 'No model reasoning was captured before this action.'
+    setText('[data-step-reasoning]', reasoningMessage)
+    setText('[data-step-reasoning-meta]', reasoning.status === 'captured'
+      ? `Inner turn ${reasoning.turn ?? '—'} · ${formatClock(reasoning.recorded_at)} · ${reasoning.new_since_previous_action ? 'new since prior action' : 'same reasoning as prior action'}`
+      : reasoning.status === 'offline_solver' ? 'Offline solver' : '')
     renderLineage(state.run)
   } catch (error) {
     if (error.name === 'AbortError') return
@@ -503,7 +529,7 @@ function renderArtifactTree(filter = '') {
     const selectedOwner = state.selectedArtifact && artifactOwner({ path: state.selectedArtifact }) === owner
     const open = Boolean(needle || selectedOwner || owner === state.run?.current)
     const status = owner === 'outer' ? 'Run-level files and persistent optimizer session'
-      : candidate?.fitness == null ? (owner === state.run?.current ? 'Current candidate' : 'Not evaluated') : `Fitness ${candidate.fitness}`
+      : candidate?.fitness == null ? (owner === state.run?.current ? 'Current candidate' : 'Not evaluated') : `Fitness ${fitnessText(candidate.fitness, candidate.win_levels ?? state.run?.win_levels)}${candidate.success == null ? '' : ` · ${outcome(candidate).label}`}`
     const sections = new Map()
     files.forEach((artifact) => {
       const section = artifactSectionName(artifact)
@@ -572,7 +598,7 @@ async function loadArtifact(path) {
 async function fetchJson(url, options = {}) {
   const response = await fetch(url, { cache: 'no-store', ...options })
   const payload = await response.json().catch(() => ({}))
-  if (!response.ok) throw new Error(payload.error || `Request failed (${response.status})`)
+  if (!response.ok) throw new Error(payload.error || (typeof payload.detail === 'string' ? payload.detail : '') || `Request failed (${response.status})`)
   return payload
 }
 
@@ -605,15 +631,18 @@ async function loadRun() {
   }
 }
 
-async function loadRuns() {
-  if (state.runsRefreshing) return
-  state.runsRefreshing = true
+function loadRuns() {
+  state.runsRequest ||= loadRunsOnce().finally(() => { state.runsRequest = null })
+  return state.runsRequest
+}
+
+async function loadRunsOnce() {
   const select = root.querySelector('[data-run-select]')
   try {
     const payload = await fetchJson('/__avo/runs')
     state.runs = payload.runs
     if (!payload.runs.length) {
-      select.innerHTML = '<option value="">No evolution runs found</option>'
+      setHtml(select, '<option value="">No evolution runs found</option>')
       setConnection('error', 'No local runs')
       return
     }
@@ -628,17 +657,33 @@ async function loadRuns() {
       state.runPinned = false
       state.runId = payload.runs[0].run_id
     }
-    select.innerHTML = `<option value="__live__">Follow latest · ${escapeHtml(payload.runs[0].label)}</option><optgroup label="Campaigns">${payload.runs.map((run) => `<option value="${escapeHtml(run.run_id)}">${escapeHtml(`${run.status} · ${run.label}`)}</option>`).join('')}</optgroup>`
+    setHtml(select, `<option value="__live__">Follow latest · ${escapeHtml(payload.runs[0].label)}</option><optgroup label="Campaigns">${payload.runs.map((run) => `<option value="${escapeHtml(run.run_id)}">${escapeHtml(`${run.status} · ${run.label}`)}</option>`).join('')}</optgroup>`)
     select.value = state.runPinned ? state.runId : '__live__'
     await loadRun()
   } catch (error) {
-    select.innerHTML = '<option value="">Live trace unavailable</option>'
+    setHtml(select, '<option value="">Live trace unavailable</option>')
     setConnection('error', 'Trace bridge unavailable')
     const notice = root.querySelector('[data-console-notice]')
     notice.textContent = `${error.message}. Run npm run workbench to serve the website and run catalog.`
     notice.hidden = false
+  }
+}
+
+// Manual refresh reloads everything the auto-refresh skips: the frame, the
+// artifact index and the newest log page, after any in-flight poll finishes.
+async function refreshEverything() {
+  const button = root.querySelector('[data-refresh-run]')
+  button.disabled = true
+  try {
+    await state.runsRequest
+    state.frameRevision = ''
+    state.frameLoadingRevision = ''
+    await loadRuns()
+    if (!root.querySelector('[data-avo-panel="logs"]').hidden) await loadLogs({ reset: true })
+    if (!root.querySelector('[data-avo-panel="artifacts"]').hidden) await loadArtifacts(state.selectedArtifact)
+    else state.artifacts = []
   } finally {
-    state.runsRefreshing = false
+    button.disabled = false
   }
 }
 
@@ -648,7 +693,26 @@ root.querySelector('[data-run-select]').addEventListener('change', (event) => {
   state.runId = state.runPinned ? event.target.value : state.runs[0]?.run_id || ''
   loadRun()
 })
-root.querySelector('[data-refresh-run]').addEventListener('click', loadRuns)
+root.querySelector('[data-refresh-run]').addEventListener('click', refreshEverything)
+root.querySelector('[data-resume-run]').addEventListener('click', async (event) => {
+  if (!state.run?.can_resume) return
+  const button = event.currentTarget
+  const feedback = root.querySelector('[data-resume-feedback]')
+  button.disabled = true
+  feedback.textContent = 'Preparing recovery…'
+  try {
+    const result = await fetchJson(`/api/workbench/experiments/resume-run?run=${encodeURIComponent(state.runId)}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+    })
+    state.run.can_resume = false
+    state.run.resumed_as = result.run
+    renderRun(state.run)
+    feedback.textContent = 'Recovery started.'
+  } catch (error) {
+    feedback.textContent = error.message
+    button.disabled = false
+  }
+})
 root.querySelector('[data-frame-session]').addEventListener('change', (event) => {
   pauseReplay()
   const sessions = state.run?.frame_sessions || []
@@ -741,8 +805,15 @@ root.querySelector('[data-artifact-tree]').addEventListener('click', (event) => 
   const button = event.target.closest('[data-artifact-path]')
   if (button) loadArtifact(button.dataset.artifactPath)
 })
-state.timer = window.setInterval(() => {
-  if (root.querySelector('[data-auto-refresh]').checked) loadRuns()
-}, 3000)
+async function poll() {
+  try {
+    if (root.querySelector('[data-auto-refresh]').checked && !document.hidden) await loadRuns()
+  } finally {
+    state.timer = window.setTimeout(poll, 3000)
+  }
+}
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && root.querySelector('[data-auto-refresh]').checked) loadRuns()
+})
 
-loadRuns()
+loadRuns().finally(() => { state.timer = window.setTimeout(poll, 3000) })

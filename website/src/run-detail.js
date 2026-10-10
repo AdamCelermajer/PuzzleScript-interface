@@ -1,4 +1,5 @@
 import { api, escapeHtml as e } from './runs-shared.js'
+import { gameHref } from './run-results.mjs'
 const root = document.querySelector('[data-record]'), run = new URLSearchParams(location.search).get('run') || ''
 const colors = ['#111820','#2962a8','#d13e35','#2f9d62','#e2b53f','#7e8790','#c85aa1','#ef8d32','#56b9c9','#754b33','#d7dde1','#8fb1db','#ef938b','#8bd0a7','#f4d978','#fff']
 let index = null, total = 0, loading = false
@@ -26,12 +27,17 @@ async function refresh() {
       Condition:config.condition || 'baseline', Outcome:result.solved ? 'Solved' : result.status === 'completed' ? 'Completed · unsolved' : result.status || 'No final result yet',
       Reason:result.reason?.replaceAll('_',' '), Levels:result.levels_completed == null ? '—' : `${result.levels_completed} / ${result.win_levels ?? '—'}`,
       Actions:result.action_count ?? record.latest_transition.action_index ?? 0}
-    root.querySelector('[data-result-summary]').innerHTML = Object.entries(facts).map(([label,value]) => `<div><dt>${e(label)}</dt><dd>${e(value ?? '—')}</dd></div>`).join('')
+    root.querySelector('[data-result-summary]').innerHTML = Object.entries(facts).map(([label,value]) => `<div><dt>${e(label)}</dt><dd>${label === 'Game' ? `<a href="${gameHref(value)}">${e(value)}</a>` : e(value ?? '—')}</dd></div>`).join('')
     root.querySelector('[data-result]').textContent = JSON.stringify({result:record.result, error:record.error, settings:record.config}, null, 2)
     root.querySelector('[data-files]').innerHTML = record.files.map(file => `<li><a href="/api/workbench/record/file?run=${encodeURIComponent(run)}&file=${encodeURIComponent(file)}">${e(file)}</a></li>`).join('')
     total = record.latest_transition.action_index || 0
     if (index !== null) index = Math.min(Math.max(index,1),total)
     const transition = index === null ? record.latest_transition : (await api(`/record/timeline?run=${encodeURIComponent(run)}&index=${index}`)).transition
+    const image = root.querySelector('[data-frame-image]')
+    const frameIndex = Math.max(0, (transition.decision || 1) - 1)
+    image.onload = () => { image.hidden = false; root.querySelector('[data-image-caption]').hidden = false }
+    image.onerror = () => { image.hidden = true; root.querySelector('[data-image-caption]').hidden = true }
+    image.src = `/api/workbench/record/file?run=${encodeURIComponent(run)}&file=${encodeURIComponent(`frames/${String(frameIndex).padStart(3,'0')}.png`)}`
     grid(transition?.after?.grid)
     root.querySelector('[data-position]').textContent = total ? `Action ${index ?? total} / ${total} · ${transition.action} · ${transition.after?.state}` : 'No transitions recorded yet'
     root.querySelector('[data-transition]').textContent = JSON.stringify({action:transition.action, note:transition.note, before:transition.before?.state, after:transition.after?.state, levels:transition.after?.levels_completed},null,2)

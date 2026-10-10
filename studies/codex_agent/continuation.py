@@ -11,10 +11,19 @@ from client.engine.utils import last_grid
 
 def load_parent(directory: str | Path) -> tuple[dict, list[dict]]:
     root = Path(directory).resolve()
-    result = json.loads((root / "result.json").read_text(encoding="utf-8"))
-    if result.get("solved") or result.get("reason") != "step_budget_exhausted":
-        raise ValueError("Continue only an unsolved run that exhausted its action budget")
     history = [json.loads(line) for line in (root / "transitions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+    if (root / "result.json").is_file():
+        result = json.loads((root / "result.json").read_text(encoding="utf-8"))
+        if result.get("solved") or result.get("reason") != "step_budget_exhausted":
+            raise ValueError("Continue only an unsolved run that exhausted its action budget")
+    else:
+        error = json.loads((root / "error.json").read_text(encoding="utf-8"))
+        if not error.get("message"):
+            raise ValueError("Failed continuation requires a recorded error")
+        config = json.loads((root / "run_config.json").read_text(encoding="utf-8"))
+        if not history or history[-1]["after"]["state"] == "WIN" or len(history) >= config["max_steps"]:
+            raise ValueError("Failed parent has no recoverable unsolved action budget")
+        result = {"status": "failed", "reason": "recorded_error", "solved": False, "action_count": len(history)}
     if not history or len(history) != result["action_count"]:
         raise ValueError("Parent transition history is incomplete")
     return result, history

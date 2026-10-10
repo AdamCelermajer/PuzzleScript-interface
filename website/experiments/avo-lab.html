@@ -52,6 +52,12 @@
         </header>
 
         <div class="avo-notice" data-console-notice hidden></div>
+        <div class="avo-recovery" data-recovery hidden>
+          <p>Continue this campaign in a fresh isolated session. Registered strategies and completed evaluations carry over; interrupted research starts again. This run's trace stays here.</p>
+          <button type="button" data-resume-run>Resume saved campaign</button>
+          <a data-resumed-run hidden>Open recovery run ↗</a>
+          <span role="status" data-resume-feedback></span>
+        </div>
 
         <section class="avo-view active" data-avo-panel="live" aria-labelledby="live-heading">
           <div class="avo-view-heading">
@@ -97,6 +103,10 @@
                 <div><dt>State</dt><dd data-frame-state>—</dd></div>
                 <div><dt>Phase</dt><dd data-frame-phase>—</dd></div>
               </dl>
+              <details class="avo-step-reasoning" open>
+                <summary>Reasoning near this action <small data-step-reasoning-meta>Choose an action</small></summary>
+                <pre data-step-reasoning>No action selected.</pre>
+              </details>
             </section>
 
             <section class="avo-panel avo-candidate-panel">

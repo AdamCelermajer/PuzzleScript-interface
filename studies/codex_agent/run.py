@@ -14,7 +14,8 @@ from client.arc.arcade_env import ArcadeEnv
 from client.screen_dashboard import ScreenDashboard
 
 from studies.codex_agent.runner import CodexAgentRunner
-from studies.codex_agent.session import CodexGameSession, CodexSessionConfig
+from studies.codex_agent.openrouter_session import open_game_session
+from studies.codex_agent.session import CodexSessionConfig
 
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
@@ -44,7 +45,7 @@ def main() -> None:
     parser.add_argument(
         "--effort",
         default="low",
-        choices=["minimal", "low", "medium", "high", "xhigh"],
+        choices=["minimal", "low", "medium", "high", "xhigh", "max"],
         help="Codex SDK reasoning effort. The app's Light setting is low here.",
     )
     parser.add_argument("--max-steps", type=int, default=50)
@@ -56,6 +57,14 @@ def main() -> None:
         choices=["baseline", "baseline-plus"],
         default="baseline",
     )
+    parser.add_argument(
+        "--harness",
+        choices=["codex", "tools", "raw"],
+        default="codex",
+        help="H2 codex (Codex SDK), H1 tools (OpenRouter native tools), H0 raw (OpenRouter, text-only tools).",
+    )
+    parser.add_argument("--provider", default="",
+                        help="Pin one OpenRouter provider slug (no fallback), e.g. alibaba or deepinfra.")
     parser.add_argument(
         "--no-window",
         action="store_true",
@@ -75,8 +84,8 @@ def main() -> None:
         if any(parent_config[key] != value for key, value in {
             "model": args.model, "reasoning_effort": args.effort,
             "condition": args.condition, "game_id": args.game_id,
-        }.items()):
-            raise ValueError("Continuation must preserve the parent model, effort, condition, and game")
+        }.items()) or parent_config.get("harness", "codex") != args.harness or parent_config.get("provider", "") != args.provider:
+            raise ValueError("Continuation must preserve the parent model, effort, condition, harness, and game")
         if output_dir.resolve() == Path(args.continue_from).resolve() or output_dir.exists():
             raise ValueError("Continuation requires a fresh separate output directory")
     dashboard = None
@@ -99,12 +108,16 @@ def main() -> None:
         effort=args.effort,
         codex_bin=args.codex_bin,
         workspace_enabled=(args.condition == "baseline-plus"),
+        harness=args.harness,
+        provider=args.provider,
     )
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "run_config.json").write_text(
         json.dumps(
             {
                 "condition": args.condition,
+                "harness": args.harness,
+                "provider": args.provider,
                 "model": args.model,
                 "reasoning_effort": args.effort,
                 "game_id": args.game_id,
@@ -127,7 +140,7 @@ def main() -> None:
             if args.continue_from:
                 from studies.codex_agent.continuation import seed_notes
                 seed_notes(args.continue_from, session_workspace)
-            with CodexGameSession(
+            with open_game_session(
                 config,
                 session_workspace,
                 artifact_directory=output_dir,
@@ -181,7 +194,7 @@ def main() -> None:
     print(f"output_dir={result.output_dir}")
     print(f"transcript={result.transcript_path}")
     print(f"transitions={result.transitions_path}")
-    print(f"codex_session={output_dir / 'codex_session.jsonl'}")
+    print(f"session_log={output_dir / ('codex_session.jsonl' if args.harness == 'codex' else 'model_session.jsonl')}")
 
 
 if __name__ == "__main__":

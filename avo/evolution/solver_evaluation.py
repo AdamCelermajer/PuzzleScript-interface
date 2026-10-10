@@ -12,7 +12,7 @@ from pathlib import Path
 from avo.core.framework import Action, AvoLaboratory, JsonValue, _jsonable
 from avo.core.profile import LoadedProfile
 from avo.core.model_view import ModelView
-from avo.isolation import IsolatedRuntime, IsolationError, new_workspace
+from avo.isolation import IsolatedRuntime, IsolationError, new_workspace, cleanup_private_directory
 from studies.codex_agent.session import _find_codex_bin
 
 
@@ -50,7 +50,6 @@ def evaluate_solver_workspace(
         raise IsolationError("Codex sandbox runtime is required for fresh solver evaluation")
     runtime = IsolatedRuntime(staged, Path(output_dir), binary)
     try:
-        runtime.preflight()
         return _evaluate_solver(loaded_profile=loaded_profile, workspace=staged,
                                 output_dir=output_dir, max_environment_steps=max_environment_steps,
                                 max_wall_seconds=max_wall_seconds, runtime=runtime)
@@ -61,6 +60,7 @@ def evaluate_solver_workspace(
         raise
     finally:
         runtime.close()
+        cleanup_private_directory(staged)
 
 
 def _evaluate_solver(*, loaded_profile: LoadedProfile, workspace: str | Path,

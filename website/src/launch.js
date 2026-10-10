@@ -5,6 +5,12 @@ const notice = get('[data-notice]'), review = get('[data-review]'), dialog = get
 let kind = new URLSearchParams(location.search).get('approach') === 'codex' ? 'codex' : 'avo'
 let games = [], selectedGames = new Set(['ps_modality-v1']), parentRuns = [], reviewed = null, launching = false
 let modelRole = 'player', provider = 'codex', modelRequest = 0, catalog = [], modelError = ''
+const standardBackends = new Set(['http://host.docker.internal:8000', 'http://host.docker.internal:8001', 'http://localhost:8000', 'http://localhost:8001'])
+function syncBackendForGame() {
+  if (!standardBackends.has(field('backend_url').value)) return
+  const port = selectedGames.size === 1 && selectedGames.has('ps_enqueue-v1') ? 8001 : 8000
+  field('backend_url').value = kind === 'avo' ? `http://host.docker.internal:${port}` : `http://localhost:${port}`
+}
 const catalogs = new Map(), details = new Map()
 const codexModels = ['gpt-6-astra','gpt-5.6-sol','gpt-5.6-terra','gpt-5.6-luna','gpt-5.5'].map(id => ({id,name:id,provider:'codex'}))
 const savedModels = {player:'gpt-5.6-luna',optimizer:'gpt-6-astra'}
@@ -39,6 +45,7 @@ function setApproach() {
   root.querySelectorAll('[data-codex]').forEach(el => { el.hidden = kind !== 'codex' })
   field('approach').value = kind
   field('backend_url').value = kind === 'avo' ? 'http://host.docker.internal:8000' : 'http://localhost:8000'
+  syncBackendForGame()
   get('[data-budget-step]').textContent = kind === 'avo' ? '04' : '03'
   setMode(); setModels()
 }
@@ -54,11 +61,11 @@ function setMode() {
 }
 function configuration() {
   const custom = kind === 'codex' ? list(field('custom_game_ids').value) : []
-  const config = {kind, agent_backend:'codex', comparison:comparing(),
+  const config = {kind, agent_backend:field('agent_backend').value, provider:field('provider').value.trim().toLowerCase(), comparison:comparing(),
     game_ids:custom.length ? custom : [...selectedGames], models:[currentModel('player')], efforts:[field('efforts').value],
     backend_url:field('backend_url').value, repeats:Number(field('repeats').value), parallel:Number(field('parallel').value), max_hours:Number(field('max_hours').value)}
   if (kind === 'avo') Object.assign(config, {optimizer_model:currentModel('optimizer'), optimizer_effort:field('optimizer_effort').value,
-    service_tier:field('service_tier').value, world_model_modes:comparing() ? ['final-only','between-hypotheses'] : [field('world_model_mode').value],
+    service_tier:field('service_tier').value, trace_detail:field('trace_detail').value, world_model_modes:comparing() ? ['final-only','between-hypotheses'] : [field('world_model_mode').value],
     max_evaluations:Number(field('max_evaluations').value), research_moves:Number(field('research_moves').value), solver_moves:Number(field('solver_moves').value)})
   else Object.assign(config,{conditions:[field('conditions').value],max_steps:Number(field('max_steps').value),continue_from:field('continue_from').value})
   return config
@@ -93,12 +100,12 @@ form.addEventListener('change', event => {
   if (el.name === 'approach') { kind = el.value; setApproach() }
   else if (el.name === 'experiment_mode') setMode()
   else if (el.name === 'same_model') { if(!el.checked) field('optimizer_model').value=savedModels.optimizer; renderModels(); update() }
-  else if (el.dataset.game) { el.checked ? selectedGames.add(el.dataset.game) : selectedGames.delete(el.dataset.game); renderSelectedGames(); update() }
+  else if (el.dataset.game) { el.checked ? selectedGames.add(el.dataset.game) : selectedGames.delete(el.dataset.game); syncBackendForGame(); renderSelectedGames(); update() }
   else update()
 })
 form.addEventListener('input', update)
 get('[data-game-search]').addEventListener('input', renderGames)
-get('[data-selected-games]').addEventListener('click', event => {const b=event.target.closest('[data-remove-game]');if(b){selectedGames.delete(b.dataset.removeGame);renderGames();update()}})
+get('[data-selected-games]').addEventListener('click', event => {const b=event.target.closest('[data-remove-game]');if(b){selectedGames.delete(b.dataset.removeGame);syncBackendForGame();renderGames();update()}})
 function renderModelList() {
   const needle=get('[data-model-search]').value.trim().toLowerCase(), free=get('[data-free-only]').checked
   const models=catalog.filter(m=>(!free || provider!=='openrouter' || m.free) && `${m.name} ${m.id}`.toLowerCase().includes(needle))
@@ -168,7 +175,7 @@ get('[data-launch-button]').addEventListener('click',async event=>{
 field('continue_from').addEventListener('change',()=>{
   const parent=parentRuns.find(r=>r.id===field('continue_from').value);if(!parent)return
   const c=parent.config;field('models').value=c.model;field('efforts').value=c.reasoning_effort || 'low'
-  field('repeats').value=1;field('parallel').value='1';field('conditions').value=c.condition;field('custom_game_ids').value=''
+  field('repeats').value=1;field('parallel').value='1';field('conditions').value=c.condition;field('custom_game_ids').value='';field('agent_backend').value=c.harness || 'codex';field('provider').value=c.provider || ''
   if(!games.some(g=>g.game_id===c.game_id))games.push({game_id:c.game_id,title:c.game_id})
   selectedGames=new Set([c.game_id]);if(c.backend_url)field('backend_url').value=c.backend_url
   renderModels();renderGames();update()
@@ -180,7 +187,7 @@ async function initialize(){
   if(results[0].status==='fulfilled'){
     games=results[0].value.games.map(g=>({game_id:g.game_id || g.id,title:g.title || g.name || g.game_id}))
     if(games.length && !games.some(g=>selectedGames.has(g.game_id)))selectedGames=new Set([games[0].game_id])
-    renderGames();update()
+    syncBackendForGame();renderGames();update()
   }else{get('[data-games-summary]').textContent='Game catalog unavailable';notice.hidden=false;notice.textContent=results[0].reason.message}
   if(results[1].status==='fulfilled'){parentRuns=results[1].value.runs.filter(r=>r.can_continue);field('continue_from').innerHTML='<option value="">Start fresh</option>'+parentRuns.map(r=>`<option value="${e(r.id)}">${e(r.game_id)} · ${e(r.model)} · ${e(r.id)}</option>`).join('')}
 }

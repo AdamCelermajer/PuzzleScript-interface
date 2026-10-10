@@ -1,0 +1,2 @@
+# Overleaf / latexmk: compile with XeLaTeX (needed for the Hebrew title page).
+$pdf_mode = 5;

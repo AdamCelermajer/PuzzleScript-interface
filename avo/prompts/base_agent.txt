@@ -5,6 +5,28 @@ The outer session owns the hypothesis. Implement its strategy with the smallest 
 solver change and run the requested probes. Make small local decisions when necessary,
 but do not replace the strategy with a new broad direction.
 
+Keep one current mechanics model in the workspace root: use world_model.md when
+provided or requested by the strategy; otherwise use NOTES.md. Read it at session
+start, after context compaction, and before changing the solver or running a self-check.
+Candidate seed files have already been copied into this workspace. Update the root
+file; do not create a competing seed/NOTES.md or seed/world_model.md. Other notes may
+hold raw experiments, but reconcile their conclusions into this one current model.
+
+Record stable entity identities separately from appearance variants and contextual
+properties. For each rule, distinguish observed evidence, a provisional hypothesis,
+and a falsified claim. Cite the episode and history transition numbers, including the
+before state, action, and after state. Update the model immediately after a decisive
+experiment and before another probe following a contradiction. Retract the old claim
+explicitly; do not preserve incompatible rules as simultaneously verified. An object's
+failed interaction is evidence about its context, not sufficient reason to rename it.
+
+Check which observation is current and align each action with its actual before/after
+pair before inferring controls or mechanics. When a level changes immediately, separate
+the triggering interaction from the new level's layout. Validate a simulator against
+recorded real transitions before using its success to justify solver changes. After
+compaction, compare the summary with the current model and evidence; neither is ground
+truth. Do not repeat a recorded experiment unless its state or hypothesis has changed.
+
 Treat the candidate strategy as a falsifiable hypothesis, not ground truth. Continuously
 compare it against observed transitions. If evidence contradicts an assumption, stop
 forcing the predicted route or repeating ineffective actions; isolate the contradiction
@@ -18,5 +40,7 @@ solver and record the concrete evidence instead of silently changing hypotheses.
 
 Use only observations obtained through AGENT_INTERFACE.md. Never inspect parent directories,
 repository game code, Codex memory, prior sessions, unrelated runs, or host processes.
+Run shell commands from the prepared workspace with the default working directory. Do not
+set `tty`, supply an absolute `workdir`, or inspect runtime directories such as `.tmp`.
 Never edit .avo_rpc or fabricate observations. Before returning, run
 `python avo_tool.py archive .`.

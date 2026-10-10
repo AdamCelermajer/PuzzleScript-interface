@@ -1,26 +1,10 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Games - PuzzleScript Research Workbench</title>
-    <link rel="stylesheet" href="/src/style.css" />
-  </head>
-  <body data-section="games">
-    <main class="content-page">
-      <section class="page-intro compact">
-        <p class="eyebrow">Game catalog</p>
-        <h1>PuzzleScript games</h1>
-        <p>Entry points for the games used by the ARC-compatible runtime and experiment artifacts.</p>
-      </section>
-      <div class="card-grid">
-        <a class="card" href="/games/sokoban-basic.html">
-          <h3>Sokoban Basic</h3>
-          <p>The baseline local PuzzleScript game used by the architecture, LIVE, and thinking-comparison pages.</p>
-          <span class="tag">ps_sokoban_basic-v1</span>
-        </a>
-      </div>
-    </main>
-    <script type="module" src="/src/main.js"></script>
-  </body>
-</html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Benchmark library · Research Workbench</title><link rel="stylesheet" href="/src/style.css"><link rel="stylesheet" href="/src/game-library.css"></head>
+<body data-section="games"><main class="game-library" data-library>
+<header class="library-heading"><div><p class="eyebrow">RESEARCH WORKBENCH / GAMES</p><h1>Benchmark library<span>.</span></h1><p>Play the puzzles. Explore what we learned.</p></div><button class="quiet-button" data-nav-toggle aria-expanded="false">Workbench menu</button></header>
+<div class="library-notice" data-notice role="alert" hidden></div>
+<div class="library-layout">
+<details class="game-menu" open><summary>Game library <span data-library-count></span></summary><div class="game-menu-body"><label class="sr-only" for="game-search">Find a game</label><input id="game-search" type="search" data-search placeholder="Find a game…"><label class="sr-only" for="collection">Benchmark collection</label><select id="collection" data-collection><option value="current">Current benchmark</option><option value="all">All benchmark collections</option></select><nav data-game-list aria-label="Benchmark games"><p>Loading games…</p></nav></div></details>
+<div class="game-content" data-game-content><div class="library-empty">Choose a game to explore.</div></div>
+</div></main><script type="module" src="/src/main.js"></script><script type="module" src="/src/game-library.js"></script></body></html>

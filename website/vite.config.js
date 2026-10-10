@@ -5,8 +5,11 @@ import { dirname, extname, isAbsolute, resolve, sep } from 'path'
 import { fileURLToPath } from 'url'
 import { defineConfig } from 'vite'
 import { resolveAvoRun } from './run-paths.js'
-import { selectEvidenceFrame } from './avo-replay.js'
+import { selectEvidenceFrame, reasoningAtAction } from './avo-replay.js'
+import { readEvidenceSummary } from './evidence-summary.mjs'
 import { openCodeConversation } from './history/opencode-events.js'
+import { gameLibraryPlugin } from './game-library-server.mjs'
+import { evaluationLevels } from './src/run-results.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const repoRoot = resolve(__dirname, '..')
@@ -32,7 +35,7 @@ const avoFrameReplayCache = new Map()
 const maxAvoArtifactBytes = 512 * 1024
 const maxPseudocodeBytes = 1024 * 1024
 const workbenchApiPort = process.env.WORKBENCH_API_PORT || '8010'
-const allowedHosts = (process.env.WORKBENCH_ALLOWED_HOSTS || '')
+const allowedHosts = (process.env.WORKBENCH_ALLOWED_HOSTS || 'adampalace-pc.tail65f3f9.ts.net')
   .split(',')
   .map((host) => host.trim())
   .filter(Boolean)
@@ -183,21 +186,6 @@ function directAvoRunPath(runId) {
   return resolveAvoRun(repoRoot, runId)
 }
 
-function eventStats(events) {
-  const transitions = events.filter((event) => event.type === 'transition')
-  const levels = transitions.flatMap((event) => {
-    const value = Number(event?.payload?.after?.progress?.levels_completed)
-    return Number.isFinite(value) ? [value] : []
-  })
-  return {
-    actions: transitions.length,
-    levels: levels.length ? Math.max(...levels) : 0,
-    events: events.length,
-    last_event: events.at(-1)?.type || '',
-    last_transition: transitions.at(-1) || null,
-  }
-}
-
 async function fileModified(path) {
   try { return (await fsp.stat(path)).mtimeMs } catch { return 0 }
 }
@@ -211,22 +199,21 @@ async function buildAvoSnapshot(runId) {
     throw Object.assign(new Error('AVO run not found'), { statusCode: 404 })
   }
 
-  const config = await readJsonSafe(resolve(root, 'evolution_config.json'))
-  const lineage = await readJsonSafe(resolve(root, 'lineage.json'))
+  const catalogRequest = listAvoRuns()
+  const [config, lineage] = await Promise.all([readJsonSafe(resolve(root, 'evolution_config.json')), readJsonSafe(resolve(root, 'lineage.json'))])
   const candidateEntries = Array.isArray(lineage.candidates) ? lineage.candidates : []
   const evaluations = Array.isArray(lineage.evaluations) ? lineage.evaluations : []
   const candidateIds = candidateEntries.map((item) => item?.candidate_id).filter(Boolean)
   const currentId = candidateIds.at(-1) || ''
   const current = currentId ? resolve(root, currentId) : root
-  const researchEvents = await readJsonLinesSafe(resolve(current, 'research/evidence.jsonl'))
-  const evaluationEvents = await readJsonLinesSafe(resolve(current, 'evaluation/evidence.jsonl'))
-  const research = eventStats(researchEvents)
-  const fresh = eventStats(evaluationEvents)
-  const summary = await readJsonSafe(resolve(current, 'summary.json'))
-  const solverEvaluation = await readJsonSafe(resolve(current, 'evaluation/solver_evaluation.json'))
-  const researchSession = await readJsonSafe(resolve(current, 'research/analysis/session.json'))
-  const outerSession = await readJsonSafe(resolve(root, 'optimizer_analysis/session.json'))
-  const solverArchived = Boolean(await fileModified(resolve(current, 'solver/solver.py')))
+  const [research, fresh, summary, solverEvaluation, solverModified] = await Promise.all([
+    readEvidenceSummary(resolve(current, 'research/evidence.jsonl'), 12),
+    readEvidenceSummary(resolve(current, 'evaluation/evidence.jsonl'), 12),
+    readJsonSafe(resolve(current, 'summary.json')),
+    readJsonSafe(resolve(current, 'evaluation/solver_evaluation.json')),
+    fileModified(resolve(current, 'solver/solver.py')),
+  ])
+  const solverArchived = Boolean(solverModified)
   const latestEvaluation = evaluations.at(-1) || {}
   const phase = Object.keys(summary).length ? 'evaluated'
     : Object.keys(solverEvaluation).length ? 'finishing_evaluation'
@@ -246,16 +233,18 @@ async function buildAvoSnapshot(runId) {
   const candidates = await Promise.all(candidateEntries.map(async (entry) => {
     const candidateId = entry.candidate_id
     const evaluation = evaluations.find((item) => item?.candidate_id === candidateId) || {}
-    const candidateSummary = await readJsonSafe(resolve(root, candidateId, 'summary.json'))
-    const candidateResearchEvents = await readJsonLinesSafe(resolve(root, candidateId, 'research/evidence.jsonl'))
-    const candidateEvaluationEvents = await readJsonLinesSafe(resolve(root, candidateId, 'evaluation/evidence.jsonl'))
-    const candidateResearch = eventStats(candidateResearchEvents)
-    const candidateEvaluation = eventStats(candidateEvaluationEvents)
+    const [candidateSummary, candidateResearch, candidateEvaluation] = await Promise.all([
+      readJsonSafe(resolve(root, candidateId, 'summary.json')),
+      candidateId === currentId ? research : readEvidenceSummary(resolve(root, candidateId, 'research/evidence.jsonl')),
+      candidateId === currentId ? fresh : readEvidenceSummary(resolve(root, candidateId, 'evaluation/evidence.jsonl')),
+    ])
     return {
       candidate_id: candidateId,
       parent_ids: entry.parent_ids || entry.parents || [],
       evaluated: Boolean(Object.keys(candidateSummary).length || Object.keys(evaluation).length),
       fitness: evaluation.fitness ?? candidateSummary.fitness ?? null,
+      success: evaluation.success ?? candidateSummary.success ?? null,
+      win_levels: evaluationLevels(evaluation) ?? candidateEvaluation.last_transition?.payload?.after?.progress?.win_levels ?? null,
       research: {
         actions: candidateResearch.actions,
         levels: candidateResearch.levels,
@@ -272,7 +261,7 @@ async function buildAvoSnapshot(runId) {
       },
     }
   }))
-  const recentActivity = [...researchEvents, ...evaluationEvents]
+  const recentActivity = [...research.recent, ...fresh.recent]
     .sort((left, right) => String(left.recorded_at || '').localeCompare(String(right.recorded_at || '')))
     .slice(-12)
     .map((event) => ({
@@ -288,9 +277,10 @@ async function buildAvoSnapshot(runId) {
     .filter(Boolean)
     .sort((left, right) => String(left.recorded_at || '').localeCompare(String(right.recorded_at || '')))
     .at(-1) || null
-  const catalog = await listAvoRuns()
+  const catalog = await catalogRequest
   const canonicalId = root.slice(repoRoot.length + 1).split(sep).join('/')
   const runRecord = catalog.find(item => item.run_id === canonicalId)
+  const [finalSummary, worldModelModified] = await Promise.all([readJsonSafe(resolve(root, 'evolution_summary.json')), fileModified(resolve(root, 'world_model.md'))])
   return {
     run_id: runId,
     game_id: config?.profile_settings?.game_id || '',
@@ -301,14 +291,16 @@ async function buildAvoSnapshot(runId) {
     phase,
     active: runRecord?.status === 'running',
     process_status: runRecord?.status || 'unconfirmed',
-    finalized: Boolean(Object.keys(await readJsonSafe(resolve(root, 'evolution_summary.json'))).length),
-    world_model_available: Boolean(await fileModified(resolve(root, 'world_model.md'))),
+    can_resume: Boolean(runRecord?.can_resume),
+    resumed_as: runRecord?.resumed_as || null,
+    finalized: Boolean(Object.keys(finalSummary).length),
+    world_model_available: Boolean(worldModelModified),
     hypotheses_registered: candidateIds.length,
     hypotheses_evaluated: evaluations.length,
     max_hypotheses: config.max_evaluations ?? null,
-    win_levels: lastTransition?.payload?.after?.progress?.win_levels ?? config?.initial_observation?.progress?.win_levels ?? null,
-    research: { ...research, budget: config?.player?.max_environment_steps ?? null },
-    fresh_evaluation: { ...fresh, budget: config.fresh_solver_max_environment_steps ?? null },
+    win_levels: evaluationLevels(latestEvaluation) ?? lastTransition?.payload?.after?.progress?.win_levels ?? config?.initial_observation?.progress?.win_levels ?? null,
+    research: { actions: research.actions, levels: research.levels, events: research.events, last_event: research.last_event, last_transition: research.last_transition, budget: config?.player?.max_environment_steps ?? null },
+    fresh_evaluation: { actions: fresh.actions, levels: fresh.levels, events: fresh.events, last_event: fresh.last_event, last_transition: fresh.last_transition, budget: config.fresh_solver_max_environment_steps ?? null },
     last_transition: lastTransition ? { sequence: lastTransition.sequence, action: lastTransition.payload?.action, after: lastTransition.payload?.after } : null,
     latest_fitness: latestEvaluation.fitness ?? null,
     latest_success: latestEvaluation.success ?? null,
@@ -369,6 +361,10 @@ async function buildAvoRenderedFrame(runId, candidateId, phase, step = null, ret
   const evidencePath = resolve(root, candidateId, phase, 'evidence.jsonl')
   const events = await readJsonLinesSafe(evidencePath)
   const selected = selectEvidenceFrame(events, step)
+  const conversation = phase === 'research'
+    ? await readJsonLinesSafe(resolve(root, candidateId, 'research/analysis/conversation.jsonl'))
+    : []
+  const reasoning = reasoningAtAction(events, conversation, step, phase)
   const storedTransition = { sequence: selected.transition.sequence, recorded_at: selected.transition.recorded_at,
     payload: { after: selected.observation, action: selected.transition.action, episode: selected.transition.episode } }
   const position = { step: selected.step, total_actions: selected.total_actions }
@@ -386,6 +382,7 @@ async function buildAvoRenderedFrame(runId, candidateId, phase, step = null, ret
           candidate_id: candidateId,
           phase,
           ...position,
+          reasoning,
           replay_exact: true,
           source: 'stored_observation_png',
           rendered_frame: {
@@ -412,7 +409,7 @@ async function buildAvoRenderedFrame(runId, candidateId, phase, step = null, ret
 
   // Historical playback uses saved observations only; it never drives a live game.
   if (step !== null) return {
-    candidate_id: candidateId, phase, ...position, replay_exact: true,
+    candidate_id: candidateId, phase, ...position, reasoning, replay_exact: true,
     source: 'stored_observation_grid', rendered_frame: null,
     fallback_frame: selected.observation?.payload?.frame || [], transition: selected.transition,
   }
@@ -471,6 +468,7 @@ async function buildAvoRenderedFrame(runId, candidateId, phase, step = null, ret
     candidate_id: candidateId,
     phase,
     ...position,
+    reasoning,
     replay_exact: replayExact,
     source: 'isolated_runtime_replay',
     rendered_frame: replayExact ? replay.lastResponse?.rendered_frame || null : null,
@@ -486,12 +484,24 @@ async function buildAvoRenderedFrame(runId, candidateId, phase, step = null, ret
   }
 }
 
-async function listAvoRuns() {
+// Every run snapshot needs the catalog status; share one fetch between concurrent
+// pollers and briefly reuse it (the API itself refreshes every few seconds).
+let avoRunsCache = { at: 0, promise: null }
+function listAvoRuns() {
+  if (avoRunsCache.promise && Date.now() - avoRunsCache.at < 1500) return avoRunsCache.promise
+  const promise = fetchAvoRuns()
+  avoRunsCache = { at: Date.now(), promise }
+  promise.catch(() => { if (avoRunsCache.promise === promise) avoRunsCache = { at: 0, promise: null } })
+  return promise
+}
+
+async function fetchAvoRuns() {
   const response = await fetch(`http://127.0.0.1:${workbenchApiPort}/api/workbench/catalog`, { signal: AbortSignal.timeout(15000) })
   if (!response.ok) throw new Error('Workbench run catalog unavailable')
   const data = await response.json()
   return data.runs.filter(run => run.kind === 'avo' && directAvoRunPath(run.id)).map(run => ({
     run_id: run.id, modified: run.modified, status: run.status,
+    can_resume: run.can_resume, resumed_as: run.resumed_as,
     label: `${run.game_id || 'AVO'} · ${run.batch} · ${run.id.split('/').slice(-2).join('/')}`,
   }))
 }
@@ -932,7 +942,7 @@ function experimentSourceRoutes() {
 
 export default defineConfig({
   root: 'website',
-  plugins: [experimentSourceRoutes()],
+  plugins: [experimentSourceRoutes(), gameLibraryPlugin(repoRoot)],
   resolve: {
     alias: {
       '@goal-recognition': goalRecognitionSource,
@@ -960,6 +970,7 @@ export default defineConfig({
         avoLaunch: resolve(__dirname, 'runs/avo.html'),
         codexLaunch: resolve(__dirname, 'runs/codex.html'),
         results: resolve(__dirname, 'runs/results.html'),
+        mechanics: resolve(__dirname, 'runs/mechanics.html'),
         runDetail: resolve(__dirname, 'runs/detail.html'),
         ruleAgent: resolve(__dirname, 'experiments/rule-agent.html'),
         oldContinuation: resolve(__dirname, 'experiments/avo-three-live.html'),

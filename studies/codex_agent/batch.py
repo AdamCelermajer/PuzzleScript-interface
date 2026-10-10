@@ -14,7 +14,7 @@ import requests
 
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
-EFFORTS = ["minimal", "low", "medium", "high", "xhigh"]
+EFFORTS = ["minimal", "low", "medium", "high", "xhigh", "max"]
 CONDITIONS = ["baseline", "baseline-plus"]
 
 

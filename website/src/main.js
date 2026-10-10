@@ -1,7 +1,9 @@
 ﻿const primaryNavItems = [
   { href: '/', label: 'Runs', match: /^\/$/ },
   { href: '/runs/new.html', label: 'New campaign', match: /^\/runs\/(new|avo|codex)\.html$/ },
-  { href: '/runs/results.html', label: 'Results', match: /^\/runs\/(results|detail|submission|compare)\.html$/ },
+  { href: '/runs/results.html', label: 'Results', match: /^\/runs\/(results|detail|submission)\.html$/ },
+  { href: '/runs/compare.html', label: 'Comparisons', match: /^\/runs\/compare\.html$/ },
+  { href: '/games/', label: 'Benchmark library', match: /^\/games\/?/ },
 ]
 
 const traceNavItems = [
@@ -16,7 +18,6 @@ const traceNavItems = [
 
 const referenceNavItems = [
   { href: '/docs/api.html', label: 'API', match: /^\/docs\/api\.html$/ },
-  { href: '/games/', label: 'Games', match: /^\/games\/?/ },
 ]
 
 const historicalNavItems = [

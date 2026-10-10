@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -173,6 +174,8 @@ def create_app(
         title="PuzzleScript Workbench",
         version="1.0.0",
     )
+    # Run catalogs and submissions are large JSON; compress them for remote (Tailscale) viewers.
+    app.add_middleware(GZipMiddleware, minimum_size=4096)
     app.state.run_manager = run_manager
     app.state.optimal_path_manager = path_manager
     app.state.paper_assistant = research_assistant

@@ -1,2 +1,28 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Runs · Research Workbench</title><link rel="stylesheet" href="/src/style.css"><link rel="stylesheet" href="/src/runs.css"></head><body><main class="runs-page" data-run-list><header class="runs-header"><div><p class="eyebrow">Research Workbench</p><h1>Runs</h1><p>Current experiments and their recorded results.</p></div><div class="runs-actions"><a class="button primary" href="/runs/new.html">New campaign</a></div></header><div class="service-line" data-services>Connecting to the workbench…</div><div class="run-notice" data-notice hidden></div><div class="run-filters"><input type="search" aria-label="Search runs" placeholder="Search game, model or batch" data-search><select aria-label="Run type" data-kind><option value="">All runners</option><option value="avo">AVO</option><option value="codex">Baseline / Baseline+</option></select><select aria-label="Run status" data-status><option value="active" selected>Active & queued</option><option value="finished">Finished</option><option value="all">All runs</option><option value="unconfirmed">Unconfirmed process</option></select><button type="button" data-refresh>Refresh</button></div><div data-run-groups><p class="run-empty">Loading recorded runs…</p></div><p class="service-line">AVO fitness belongs to the fresh solver. A completed process does not imply a solved game. Unconfirmed means the archive has no current process confirmation.</p></main><script type="module" src="/src/main.js"></script><script type="module" src="/src/runs.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Runs · Research Workbench</title>
+  <link rel="stylesheet" href="/src/style.css">
+  <link rel="stylesheet" href="/src/runs.css">
+  <link rel="stylesheet" href="/src/active-runs.css">
+</head>
+<body>
+  <main class="runs-page live-page" data-active-runs>
+    <header class="runs-header">
+      <div><p class="eyebrow">Research Workbench / Live activity</p><h1>Runs</h1><p>Active experiments · newest first · paired runs kept together.</p></div>
+      <div class="runs-actions"><a class="button" href="/runs/mechanics.html">Three-game study</a><a class="button" href="/runs/results.html">View results</a><a class="button primary" href="/runs/new.html">New campaign</a></div>
+    </header>
+    <div class="live-toolbar">
+      <div class="live-counts" data-live-counts aria-live="polite">Checking active experiments…</div>
+      <div class="runs-actions"><span class="service-line" data-services>Connecting…</span><button type="button" data-refresh>Refresh</button></div>
+    </div>
+    <div class="run-notice" data-notice role="status" hidden></div>
+    <div data-live-launches><p class="live-empty">Loading live activity…</p></div>
+    <section id="saved-runs" class="live-saved" data-saved-runs hidden></section>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+  <script type="module" src="/src/active-runs.js"></script>
+</body>
+</html>

@@ -42,9 +42,10 @@ class PuzzleScriptProfile:
 
 
 def create_profile(settings: dict[str, Any]) -> PuzzleScriptProfile:
-    raw_environment = ArcadeEnv(
+    from .adapter import _backend_call
+    raw_environment = _backend_call("scorecard/open", lambda: ArcadeEnv(
         game_id=str(settings["game_id"]),
         backend_url=str(settings.get("backend_url", "http://localhost:8000")),
         api_key=str(settings.get("api_key", "")) or None,
-    )
+    ))
     return PuzzleScriptProfile(PuzzleScriptEnvironment(raw_environment))

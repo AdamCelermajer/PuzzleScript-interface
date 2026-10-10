@@ -29,6 +29,10 @@ app.use((req, res, next) => {
 const gameSessions = new Map();
 const savedStates = new Map();
 
+app.get('/health', (_req, res) => {
+    res.json({ ok: true, service: 'puzzlescript-runtime' });
+});
+
 function getAvailableActions(gameData) {
     const actions = ["RESET", "ACTION1", "ACTION2", "ACTION3", "ACTION4"];
     if (!gameData?.metadata?.noAction) {

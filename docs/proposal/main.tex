@@ -1,0 +1,647 @@
+% =========================================================================
+%  M.Sc research proposal -- Adam Celermajer, Bar-Ilan University
+%
+%  OVERLEAF: set  Menu -> Compiler -> XeLaTeX  (required for the Hebrew
+%  title page). The bundled latexmkrc also selects XeLaTeX.
+%  Bibliography: BibTeX with natbib (plainnat), file refs.bib.
+%
+%  Search this file for "TODO" to find every placeholder that still needs
+%  Adam's input. Red \todo{...} notes are visible in the PDF on purpose;
+%  delete them before submission.
+% =========================================================================
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{fontspec}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[round]{natbib}
+\usepackage{microtype}
+\usepackage{xurl}
+\usepackage{hyperref}
+
+% Polyglossia must come after hyperref (it loads bidi for Hebrew).
+\usepackage{polyglossia}
+\setdefaultlanguage{english}
+\setotherlanguage{hebrew}
+
+% Hebrew font: Culmus fonts are installed on Overleaf. The fallbacks let the
+% file also compile on machines without them.
+\IfFontExistsTF{David CLM}{%
+  \newfontfamily\hebrewfont[Script=Hebrew]{David CLM}}{%
+\IfFontExistsTF{Frank Ruehl CLM}{%
+  \newfontfamily\hebrewfont[Script=Hebrew]{Frank Ruehl CLM}}{%
+\IfFontExistsTF{Noto Serif Hebrew}{%
+  \newfontfamily\hebrewfont[Script=Hebrew]{Noto Serif Hebrew}}{%
+  \newfontfamily\hebrewfont[Script=Hebrew]{David}}}}
+
+\definecolor{biugreen}{HTML}{005336}
+\hypersetup{colorlinks=true,linkcolor=biugreen,citecolor=biugreen,urlcolor=biugreen}
+
+\setlist{itemsep=1pt,topsep=3pt,parsep=0pt}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{3pt}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\qsmall}{Qwen~3.8-27B}
+
+\begin{document}
+
+% -------------------------------------------------------------------------
+% Title page
+% -------------------------------------------------------------------------
+\begin{titlepage}
+  \pagenumbering{gobble}
+  \centering
+  \includegraphics[width=0.13\textwidth]{figures/biu-cs-logo.png}\\[0.6cm]
+  {\scshape\Large Bar-Ilan University\par}
+  \vspace{0.15cm}
+  {\Large\texthebrew{אוניברסיטת בר-אילן}\par}
+  \vspace{0.6cm}
+  {\scshape\large M.Sc.\ Research Proposal\par}
+  \vspace{0.4cm}
+  \rule{\linewidth}{0.5pt}\\[0.3cm]
+  {\LARGE\bfseries Learning Unknown Games from Interaction:\\[0.15cm]
+   \Large Diagnosing and Fixing Small Open Models\par}
+  \vspace{0.4cm}
+  % TODO(Adam): confirm the Hebrew wording of the title.
+  \begin{hebrew}
+    {\Large\bfseries למידת משחקים לא מוכרים מתוך אינטראקציה:\par}
+    \vspace{0.1cm}
+    {\large\bfseries אבחון ותיקון של מודלי שפה פתוחים קטנים\par}
+  \end{hebrew}
+  \rule{\linewidth}{0.5pt}\\[1.0cm]
+
+  \begin{minipage}[t]{0.45\textwidth}
+    \raggedright\large
+    \emph{Student:}\\
+    Adam Celermajer\\
+    % TODO(Adam): confirm the Hebrew spelling of your name.
+    \texthebrew{אדם סלרמאייר}~\todo{confirm}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.45\textwidth}
+    \raggedleft\large
+    \emph{Supervisor:}\\
+    \textbf{[SUPERVISOR -- TODO]}
+  \end{minipage}
+
+  \vfill
+  {\large Department of Computer Science and Artificial Intelligence\par}
+  % TODO(Adam): confirm the official Hebrew department name.
+  {\large\texthebrew{המחלקה למדעי המחשב ובינה מלאכותית}\par}
+  {\large Bar-Ilan University, Ramat Gan, Israel\par}
+  \vspace{0.8cm}
+  {\large October 2026\par}
+\end{titlepage}
+
+% -------------------------------------------------------------------------
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+% -------------------------------------------------------------------------
+
+\section{Introduction}
+\label{sec:intro}
+
+Imagine an agent dropped into a game it has never seen. It receives a small
+grid of numbers and a picture. It is told which buttons exist
+(\texttt{ACTION1}, \texttt{ACTION2}, \dots) but not what they do. Nobody
+tells it the rules. Nobody tells it what winning means. It must find out by
+pressing buttons and watching what changes.
+
+This is the setting of ARC-AGI-3 \citep{arcprize2026arcagi3}, and it is a
+clean test of skill acquisition \citep{chollet2019measure}: an agent that
+succeeds must form, test and revise hypotheses rather than recall answers.
+
+\paragraph{PuzzleScript games.}
+We study this setting with PuzzleScript \citep{lavelle2013puzzlescript}, a
+small language for turn-based grid puzzles. A PuzzleScript game has four
+parts: \emph{sprites} on a grid (player, walls, crates, targets),
+\emph{rewrite rules} that say how the grid changes after an input
+(``a player moving into a crate pushes it''), a \emph{win condition}
+(``every target has a crate''), and an ordered list of \emph{levels} that
+reuse the same rules on harder layouts. Our repository contains 206 such games.
+Some are close to classic Sokoban. Others add their own twist:
+in \emph{IceCrates} the player slides until it hits something, and crates
+pushed into water fill it; in \emph{Knightoban} some crates move like chess
+knights, and a separate key commits the move.
+
+\paragraph{Running example: Modality.}
+Figure~\ref{fig:modality} shows the first level of \emph{Modality} as the agent
+sees it. The hidden rules are short. The player cannot step directly between
+white and black floor; the checkered tile bridges them. A crate can be pushed
+only when the player and the crate stand on compatible terrain. One button
+(\texttt{ACTION7}) is undo. The level is won when every crate is on a target.
+None of this is given to the agent. We use Modality throughout to make each
+difficulty concrete.
+
+\begin{figure}[h]
+  \centering
+  \begin{minipage}[c]{0.30\textwidth}\centering
+    \includegraphics[width=\linewidth]{figures/modality-level1.png}\\
+    {\small (a) Rendered frame, level 1}
+  \end{minipage}\hspace{0.6cm}
+  \begin{minipage}[c]{0.20\textwidth}\centering
+    {\small\ttfamily
+    \begin{tabular}{@{}ccccc@{}}
+      0&1&2&2&2\\ 3&1&4&2&5\\ 1&1&1&2&2
+    \end{tabular}}\\[4pt]
+    {\small (b) Grid the agent receives}
+  \end{minipage}\hspace{0.6cm}
+  \begin{minipage}[c]{0.24\textwidth}\centering
+    \includegraphics[width=\linewidth]{figures/modality-level2.png}\\
+    {\small (c) Level 2}
+  \end{minipage}
+  \caption{Modality. In (b) each number is an anonymous texture ID: 0 target,
+  1 white floor, 2 black floor, 3 crate, 4 checkered bridge, 5 player on black
+  floor. The agent is not told these meanings, and the player's ID changes with
+  the floor it stands on. Solving level~1 requires crossing to the white side
+  through the bridge and pushing the crate up onto the target.}
+  \label{fig:modality}
+\end{figure}
+
+\paragraph{What this proposal covers.}
+Since January 2026 we have built an ARC-AGI-3--compatible PuzzleScript
+environment, a rule-learning agent, a goal-recognition study with human
+participants, a direct game-playing agent, and an adaptation of NVIDIA's
+Agentic Variation Operators (AVO) \citep{chen2026avo}. With these tools,
+frontier models and some \emph{small} recent models recover hidden mechanics
+and solve whole games. A capable open model, \qsmall{}, does not. The
+proposed thesis asks why, along three axes---the harness, model scale, and
+pretraining exposure---and aims to build a harness under which the small open
+model succeeds.
+
+% -------------------------------------------------------------------------
+\section{Why Learning a Game from Interaction Is Hard}
+\label{sec:challenge}
+
+Solving an unknown game is not one skill. Table~\ref{tab:challenge}
+decomposes it into seven parts. Each row gives a definition and a real
+example from our runs. This decomposition is the backbone of the proposal:
+the failure taxonomy in Section~\ref{sec:plan} labels each failed run with one
+of these categories, plus an eighth category, \emph{protocol}, for failures of
+the agent's interface rather than of the game.
+
+\begin{table}[ht]
+  \centering\small
+  \begin{tabularx}{\linewidth}{L{0.15\linewidth} L{0.27\linewidth} Y}
+    \toprule
+    Challenge & What makes it hard & Example from our runs \\
+    \midrule
+    Perception & IDs are anonymous; identical pictures share an ID; hidden
+    objects are not shown. &
+    In Modality the player's ID is 5, 6 or 7 depending on the floor below it;
+    the agent must realise these are one object. \\
+    Action semantics & Buttons are unlabeled; some are not movements. &
+    On Modality and Knightoban, \qsmall{} never identified \texttt{ACTION7} as
+    undo. It called it ``fires a shot'', a ``jump opposite the facing
+    direction'', and ``contextual movement''. \\
+    Rule induction & Effects depend on context. &
+    Pushing in Modality depends on terrain. A GPT-5.6 Luna agent isolated this
+    with controlled tests from one saved state; \qsmall{} instead built a new
+    ``wall map'' for each level. \\
+    Goal recognition & The win condition is never stated. &
+    \qsmall{} took the crate for ``a goal frame you enter from below'', and in
+    Knightoban guessed ``collect all red squares''. \\
+    Planning & Moves can be irreversible; crates deadlock in corners. &
+    A \qsmall{} run pushed the crate into a corner and concluded it was
+    ``permanently stuck''. Undo would have recovered it. \\
+    Transfer & Later levels reuse rules on new layouts and add new mechanics. &
+    A \qsmall{} note generalised from level~1: ``unreachable object = decoy,
+    reachable object = goal''; this rule misled it on level~2. \\
+    Credit assignment & A win may happen by accident. &
+    \qsmall{} won Modality level~1 while ``testing if the frame is
+    enterable'', and the win reinforced its wrong goal theory. \\
+    \bottomrule
+  \end{tabularx}
+  \caption{The challenge decomposition, with examples taken from saved runs
+  (Section~\ref{sec:results}).}
+  \label{tab:challenge}
+\end{table}
+
+These parts interact. A misread action (undo as jump) makes a reversible
+mistake look irreversible, which turns a rule-induction error into a planning
+dead end. A wrong goal makes every later plan wrong, even when the rules are
+right. Measuring the parts separately is what lets us say \emph{where} an
+agent fails.
+
+% -------------------------------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Interactive reasoning benchmarks.}
+ARC-AGI-3 evaluates agents on interactive grid games with no instructions
+\citep{arcprize2026arcagi3}. BALROG \citep{paglieri2025balrog} and AgentBench
+\citep{liu2024agentbench} show that long-horizon game play remains far below
+static-benchmark performance. WorldTest evaluates learned world models through
+environment queries rather than reward \citep{warrier2026worldtest}. PuzzleJAX
+compiles PuzzleScript into fast environments \citep{earle2025puzzlejax}; we
+instead keep the original engine and expose it through the ARC-AGI-3
+interface, so the same agent code runs on both.
+
+\paragraph{Harnesses.}
+The code around a model matters. ReAct interleaves reasoning and tool calls
+\citep{yao2023react}. SWE-agent showed that interface design alone changes
+success rates \citep{yang2024sweagent}. WorldCoder learns an executable world
+model by writing code \citep{tang2024worldcoder}. AVO turns a coding agent
+into an evolutionary variation operator \citep{chen2026avo}, and NVIDIA
+reports that it reaches the full score on the public ARC-AGI-3 set with a
+frontier model \citep{nvidia2026avoarc}. RSIAgent lets open models outperform
+closed ones through autonomous exploration and frozen memory, without
+training \citep{zhu2026rsiagent}. Small format choices also matter: prompt
+formatting can swing accuracy by tens of points \citep{sclar2024quantifying},
+and forced output formats can hurt reasoning \citep{tam2024letmespeak}.
+
+\paragraph{Priors.}
+Humans learn new video games fast because of prior knowledge about objects
+and game conventions; hiding these cues slows them sharply
+\citep{dubey2018priors}. Agents that explicitly propose and revise causal
+theories approach human efficiency in Atari-like games
+\citep{tsividis2021theory}. This suggests two failure sources we test
+separately: missing priors, and failure to revise.
+
+\paragraph{Scale and training data.}
+Loss scales smoothly with size \citep{kaplan2020scaling}, but abilities can
+appear abruptly, sometimes as a metric artifact \citep{schaeffer2023mirage}.
+Exposure to similar data inflates measured ability
+\citep{magar2022contamination}; it can be detected indirectly
+\citep{golchin2024timetravel} or, for open corpora, searched directly
+\citep{elazar2024wimbd}. Qwen's training data is closed
+\citep{yang2025qwen3}, so we rely on indirect probes and optional fine-tuning
+\citep{hu2022lora}.
+
+% -------------------------------------------------------------------------
+\section{Work So Far and Initial Results}
+\label{sec:results}
+
+This section follows the work in time order. Each subsection states what was
+built and what it taught us.
+
+\subsection{The environment (January--April 2026)}
+
+The PuzzleScript engine is an npm package. A Node.js service runs the games,
+and a Python FastAPI service exposes them through the public ARC-AGI-3 REST
+contract (reset, actions, scorecards). Any ARC-AGI-3 agent can therefore play
+our games without changes. Observations use \texttt{visible-cell-v1}: one
+integer per rendered tile, as in Figure~\ref{fig:modality}(b), plus a lossless
+PNG. Game names, sprite names and action meanings are hidden.
+
+On top of this we built a benchmark layer (catalog sampling, scorecards for
+solving, goal and next-frame claims, and a live monitor) and a web workbench
+for launching and replaying runs. Search produced
+replay-verified winning paths for the first playable level of 30 sampled games,
+and a whole-game reference for Sokoban (49 actions over two levels). These
+references are used only for evaluation, never shown to agents.
+
+\subsection{A rule-learning agent (January--July 2026)}
+
+Our first agent tried to make learning explicit. After each transition, an LLM
+proposed a natural-language rule (``\texttt{ACTION1} moves the player up into
+empty floor''). The rule was compiled into a logical rule over relative cells,
+checked against the full transition timeline, and stored only if no recorded
+transition contradicted it. A planner then searched with the verified rules,
+and the LLM proposed subgoals only when no rule-based plan existed. In the
+recorded runs the agent was given the object legend and the instruction to
+complete the level.
+
+In short runs on Sokoban the agent learned correct, verified movement, wall and
+push rules. It did not complete a level in the recorded runs. The lesson we
+drew was that a hand-designed rule language is too narrow for the variety of
+PuzzleScript mechanics, and that many LLM calls per step make it slow. We
+therefore moved to general coding agents that write their own world models
+\todo{confirm this summary of the rule-agent outcome}.
+
+\subsection{The goal-recognition study (May--June 2026)}
+
+Goal recognition is the least-studied part of Table~\ref{tab:challenge}, so we
+measured it on its own. We curated 50 PuzzleScript games and asked four
+frontier models (Claude Opus~4.8, GPT-5.5, Kimi~K2.6, DeepSeek~V4~Pro) to state
+the goal and win condition of each game. Two factors were crossed: the
+\emph{evidence} (the first frame only, or the first frame plus three random
+actions) and the \emph{input} (text only, or text plus the first image;
+DeepSeek received text only). This gave 700 model predictions. In parallel,
+a web study collected 114 free-text goal descriptions from 38 human
+participants, covering 48 of the 50 games \todo{describe what humans saw}.
+
+\begin{table}[ht]
+  \centering\small
+  \begin{tabular}{lccc}
+    \toprule
+    Evidence & Text only & Text + image & Predictions \\
+    \midrule
+    First frame          & 4 models & 3 models & 350 \\
+    Frame + 3 random actions & 4 models & 3 models & 350 \\
+    \midrule
+    Human study & \multicolumn{2}{c}{38 participants, 48 games} & 114 answers \\
+    \bottomrule
+  \end{tabular}
+  \caption{Goal-recognition data collected (50 games). Correctness labels
+  (correct / partial / wrong) have not yet been assigned.}
+  \label{tab:goalrec}
+\end{table}
+
+Correctness has not been scored yet. A review tool lets an annotator play each
+game and label a prediction correct, partial or wrong; no labels have been
+recorded so far, so we report no accuracies. Two observations already shape
+the plan. First, the conditions are confounded: first-frame text prompts used
+the game's own level glyphs (\texttt{P}, \texttt{*}, \texttt{O}, \dots),
+while trajectory prompts used anonymous IDs. The scoring stage must separate
+evidence from representation. Second, glyphs invoke priors, for better or
+worse. From the Sokoban glyphs, Claude Opus~4.8 answered ``Push the box (*)
+onto the target/goal (O), a Sokoban-style puzzle'', but it read \texttt{@} as
+the player, as in the common Sokoban text format; in this game \texttt{@} means
+a crate on a target. From anonymous IDs after three actions it said only
+``Push or move the player token (2) toward a target/goal location''.
+
+\subsection{Direct player and AVO (July--September 2026)}
+
+\paragraph{Direct player.} One persistent model session receives each frame and
+returns exactly one action. The \emph{baseline+} condition adds three
+note-taking tools and requires a \texttt{strategy.md} file. A harness ladder
+can run the same condition through the Codex SDK, native function tools, or
+plain text.
+
+\paragraph{AVO.} In our from-scratch adaptation of AVO \citep{chen2026avo}, an
+\emph{inner player} researches the game (with checkpoints and at most two
+solver self-checks), an \emph{outer optimizer} evolves a lineage of strategies
+without touching the game, and a \emph{fresh evaluator} scores a candidate only
+by the levels its frozen \texttt{solver.py} completes alone in a new game,
+with no model calls. All sessions run in a Docker sandbox without network or
+game sources.
+
+\paragraph{Results.} Table~\ref{tab:success} lists the best fresh-solver scores.
+A post-hoc audit against the game sources found that the core mechanic of
+each solved game was recovered from observation, including corrected false
+hypotheses (e.g., the two-crate ``train'' collision in IceCrates). DeepSeek
+V4.1 Flash, a small recent model, matched the frontier models on all three
+games. Separately, GPT-5.6 Luna fully solved three of six further games in
+both repeats (Feeling Like Filling 6/6, Mowing 4/4, Fatigued Square Maze 8/8).
+
+\begin{table}[ht]
+  \centering\small
+  \begin{tabular}{llcr}
+    \toprule
+    Game (levels) & Player / optimizer model (effort) & Best solver & Actions \\
+    \midrule
+    Modality (4)   & GPT-5.6 Luna (high) / GPT-6 Astra (low)   & 4/4 & 263 \\
+    Knightoban (6) & GPT-5.6 Luna (high) / GPT-6 Astra (low)   & 6/6 & 255 \\
+    IceCrates (6)  & GPT-6 Astra (low) / GPT-6 Astra (high)    & 6/6 & 138 \\
+    Modality (4)   & DeepSeek V4.1 Flash (max) / same          & 4/4 & 263 \\
+    Knightoban (6) & DeepSeek V4.1 Flash (max) / same          & 6/6 & 216 \\
+    IceCrates (6)  & DeepSeek V4.1 Flash (max) / same          & 6/6 & 90 \\
+    Enqueue (14)   & GPT-6 Luna (high) / GPT-6 Sol (high)      & 8/14 & -- \\
+    Enqueue (14)   & DeepSeek V4.1 Flash (medium) / same (max) & 8/14 & -- \\
+    \bottomrule
+  \end{tabular}
+  \caption{Best fresh-solver score per AVO campaign; ``Actions'' is the length
+  of the winning fresh evaluation.}
+  \label{tab:success}
+\end{table}
+
+\subsection{The \qsmall{} thread (September--October 2026)}
+
+\qsmall{} is open and cheap, which makes it the natural model to study in
+depth. It fails where small closed models succeed.
+Table~\ref{tab:qwen} lists every run in which it played. Ten further launches
+failed before the model acted (Docker down, an SDK option error, isolation
+guards); these are infrastructure failures and are excluded.
+
+\begin{table}[ht]
+  \centering\small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{llllrcl}
+    \toprule
+    Provider & Harness & Effort & Game & Actions & Levels & How it ended \\
+    \midrule
+    unpinned & AVO research & medium & Modality & 228 & 1/4 & stopped by hand \\
+    unpinned & baseline+    & max    & Modality & 124 & 1/4 & stopped by hand \\
+    unpinned & baseline+    & high   & Modality & 36+53 & 1/4 & parse error, continued, stopped \\
+    unpinned & baseline+    & high   & IceCrates & 2  & 0/6 & parse error \\
+    \midrule
+    Alibaba  & baseline+    & high   & Modality  & 100 & 0/4 & action budget \\
+    Alibaba  & baseline+    & high   & Knightoban & 120 & 0/6 & action budget \\
+    Alibaba  & baseline+    & high   & IceCrates & 100 & 3/6 & in progress \todo{final} \\
+    \bottomrule
+  \end{tabular}
+  \caption{All runs in which \qsmall{} played. ``Stopped by hand'' means a run
+  that was clearly not progressing was stopped to save budget. The Alibaba runs
+  had budgets of 100 (Modality) and 120 actions; the IceCrates run was still in
+  progress at the time of writing.}
+  \label{tab:qwen}
+\end{table}
+
+\paragraph{Harness problems we found and fixed.} (1)~With an enforced JSON
+action schema, the model made 0/2 note-tool calls and wrote the note inside
+its answer instead; without the schema it made 2/2 calls. One harness choice
+silently disabled a tool. (2)~Twice, the model wrote a sentence before a valid
+JSON action (``I've been stuck in a note loop\ldots''). The strict parser ended
+the run; the parser now accepts such replies and asks again if a reply is
+unusable. (3)~Provider control. OpenRouter routes an open model to any
+provider unless pinned. Our first provider choice, DeepInfra, accepts at most
+30 images per request, so our long early runs could not have been served by it
+and ran on an unknown, possibly quantised provider. All new runs are pinned to
+Alibaba, the model's first-party provider, with fallbacks disabled.
+
+\paragraph{What the model believed.} We compared the notes of two unpinned
+27B runs with a GPT-5.5 run in the same baseline+ harness, which solved
+Modality level~2 in 39 actions (3/4 levels overall).
+
+\begin{table}[ht]
+  \centering\small
+  \begin{tabularx}{\linewidth}{L{0.18\linewidth} Y Y}
+    \toprule
+    Mechanic (truth) & \qsmall{} & GPT-5.5 \\
+    \midrule
+    \texttt{ACTION7} (undo) & ``fires a shot''; ``jumps one tile opposite the
+    facing direction'' & ``likely reset/undo'', then ``undo one move'' \\
+    Crate (pushable) & ``goal frame entered from below''; ``decoy'' &
+    ``Sokoban-like pushable blocks'' \\
+    Colour blocking & a new wall map per level & ``light player cannot enter
+    dark tiles directly'' \\
+    Level-1 win & accidental; reinforced the wrong goal & ``solved by pushing
+    orange onto purple'' \\
+    \bottomrule
+  \end{tabularx}
+  \caption{Beliefs about Modality from the agents' own notes, compared with the
+  game source (read only for this audit).}
+  \label{tab:beliefs}
+\end{table}
+
+The 27B model used the tools correctly, returned valid actions, and tracked
+coordinates and IDs. Its failure was in \emph{forming and revising
+hypotheses}: it did not reach for common conventions (undo, Sokoban pushing),
+explained evidence away level by level, and credited an accidental win to the
+wrong cause. GPT-5.5 named the genre and the undo key early. The new pinned
+runs refine the picture. On Modality the 27B now called the crate a ``pushable
+Sokoban box'' and the target a ``goal pad'', but it still read
+\texttt{ACTION7} as a jump, pushed the crate into a corner, and never cleared
+level~1. On Knightoban it read the knight crates as collectibles and never
+found the win condition. On IceCrates it did identify undo, used it in its
+plans, and cleared three levels in its first 27 actions. These are few runs,
+not proof, but they point to action semantics, goal recognition and revision
+rather than protocol as the main remaining failures.
+
+\subsection{What we have learned so far}
+
+\begin{enumerate}
+  \item PuzzleScript games are a practical test bed in the style of ARC-AGI-3: 206
+  games, hidden rules and goals, and an engine that serves as ground truth.
+  \item A fixed, hand-designed rule language was too narrow. Agents that write
+  their own code and solvers went much further.
+  \item Goal recognition can be measured on its own, but the input
+  representation can carry priors (Sokoban glyphs), so it must be controlled.
+  \item Small recent models can learn and solve whole games inside a strong
+  harness; see DeepSeek V4.1 Flash in Table~\ref{tab:success}.
+  \item For \qsmall{}, harness details (output schema, parser strictness,
+  provider) silently changed outcomes. Once they were fixed, its failures
+  concentrate in action semantics, goal recognition and hypothesis revision.
+\end{enumerate}
+
+% -------------------------------------------------------------------------
+\section{Research Goal, Hypotheses and Plan}
+\label{sec:plan}
+
+\subsection{Goal and design}
+
+\textbf{Goal.} Make \qsmall{} solve PuzzleScript games it currently fails, by
+first diagnosing why it fails. An agent is a model $m$ with a harness $h$
+(prompt, tools, output format, memory, budgets). The outcome $L(m,h,g)$ is the
+number of levels completed in game $g$: by the agent's own play for the direct
+player, or by the frozen solver for AVO. We ask:
+\begin{description}[leftmargin=1.2em]
+  \item[RQ1 (Where).] Which challenge in Table~\ref{tab:challenge}, or the
+  protocol, causes each failure of the 27B model?
+  \item[RQ2 (Why).] How much of the gap is explained by harness, by scale
+  within the Qwen~3.8 family, and by training exposure?
+  \item[RQ3 (Fix).] Which harness changes raise $L$ for the 27B model, and do
+  they generalise to games not used to design them?
+\end{description}
+
+Following a correlational-then-interventional design, the work has two
+stages.
+
+\textbf{Stage A (correlational).} (i)~Run the 27B model under baseline+ and AVO
+on Modality, IceCrates and Knightoban, three repeats each, pinned to one
+provider. Label every failed run with the taxonomy. (ii)~Run a fixed-harness
+model sweep: the Qwen~3.8 family from \texttt{qwen3.8-flash} through 27B and
+the open 2.4T-A95B weights to Qwen~3.8~Max, plus small successful models
+(DeepSeek~V4.1~Flash, GPT-6~Luna) and a large flagship released before
+ARC-AGI-3 \todo{choose}. (iii)~Probe familiarity without play: can the model
+write PuzzleScript that compiles in our engine, name a level's genre from its
+image, and predict the next grid of logged transitions?
+
+\textbf{Stage B (interventional).} Change one harness component at a time,
+chosen from Stage~A: revision scaffolds (list two competing explanations for
+each surprising transition, including ``undo''; replay ``what caused this
+win?'' after each level); an explicit hypothesis ledger; a forced
+predict--act--compare loop; observation format (IDs, ASCII, frame diffs);
+code tools for search; budgets. Optionally, fine-tune an open Qwen model with
+LoRA on successful trajectories from \emph{other} games.
+
+\textbf{Goal recognition as a condition.} The goal-recognition study becomes a
+probe inside this design. The same game runs under three conditions: goal
+hidden (the normal task), goal \emph{elicited} (the agent must state the goal
+before acting and revise it after each level), and goal \emph{given} (the true
+win condition is in the prompt). If giving the goal fixes the 27B model, goal
+recognition is its bottleneck; if not, the problem lies in rules or planning.
+In parallel we score the 700 existing predictions and 114 human answers, which
+gives a model-vs-human baseline and separates evidence from representation.
+
+\textbf{Taxonomy and agreement.} Each failed run gets one primary label: one
+of the seven challenges in Table~\ref{tab:challenge}, or protocol. An LLM
+labeller \citep{zheng2023judging} reads the run's notes, transitions and the
+true rules, and cites the step where the failure occurs. Two human annotators
+label at least 40 runs independently. We report Cohen's $\kappa$
+\citep{cohen1960kappa} and use the LLM labels only if $\kappa \ge 0.6$
+\citep{landis1977kappa}.
+
+\textbf{Measures.} Levels solved ($L$, $L/n_g$, whole-game success); actions
+per level; protocol errors per turn; the distribution of failure labels;
+goal-statement correctness; tokens and cost. Provider, precision and dates are
+recorded for every run.
+
+\subsection{Hypotheses}
+
+\begin{description}[leftmargin=1.2em]
+  \item[H1 (Harness).] Harness changes alone, with the model fixed, raise the
+  27B model's levels solved on held-out games. After protocol fixes, the most
+  effective changes will target revision and action semantics, not format.
+  \item[H2 (Scale).] Within the Qwen~3.8 family, under one harness, levels
+  solved rise with model size.
+  \item[H3 (Pretraining).] At similar size or cost, models that succeed also
+  score higher on the familiarity probes, consistent with exposure to grid
+  puzzles and their conventions.
+  \item[H4 (Goal).] Giving the 27B model the true goal improves its levels
+  solved more than any single other intervention.
+\end{description}
+
+\subsection{Work plan}
+
+The plan covers November 2026 to June 2027 (Table~\ref{tab:timeline}).
+\begin{enumerate}[leftmargin=1.5em]
+  \item \textbf{Failure taxonomy.} 18 pinned 27B runs; labelling; $\kappa$.
+  Score the goal-recognition predictions and human answers.
+  \item \textbf{Model sweep.} Qwen family and controls on the three games.
+  \item \textbf{Familiarity probes.} PuzzleScript writing, genre naming,
+  next-frame prediction; optional LoRA fine-tuning.
+  \item \textbf{Harness interventions} (main contribution). Single-factor
+  ablations, including the goal conditions; combine the best and evaluate on
+  held-out catalog games.
+  \item \textbf{Trace comparison.} Successful vs.\ failed runs (Max vs.\ 27B,
+  small closed models vs.\ 27B), coded with the taxonomy.
+\end{enumerate}
+
+\begin{table}[ht]
+  \centering\small
+  \setlength{\tabcolsep}{4.5pt}
+  \begin{tabular}{lcccccccc}
+    \toprule
+    Task & Nov & Dec & Jan & Feb & Mar & Apr & May & Jun \\
+    \midrule
+    1. Taxonomy, $\kappa$, goal-recognition scoring & \textbullet & \textbullet & & & & & & \\
+    2. Model sweep                                  & & \textbullet & \textbullet & & & & & \\
+    3. Familiarity probes (optional fine-tuning)    & & & \textbullet & \textbullet & \textbullet & & & \\
+    4. Harness interventions, held-out evaluation   & & & & \textbullet & \textbullet & \textbullet & & \\
+    5. Trace comparison                             & & & & & & \textbullet & \textbullet & \\
+    Thesis writing; paper submission                & & & & & & & \textbullet & \textbullet \\
+    \bottomrule
+  \end{tabular}
+  \caption{Timeline (2026--2027).}
+  \label{tab:timeline}
+\end{table}
+
+\paragraph{Expected contributions.} (1)~A challenge decomposition and failure
+taxonomy for agents that learn games from interaction, with an LLM labeller
+validated against humans. (2)~A scored model-vs-human comparison of
+goal recognition on PuzzleScript games. (3)~A controlled decomposition of one
+open model's failure into harness, scale and training factors. (4)~A harness,
+built from single-factor ablations, under which \qsmall{} solves games it
+currently fails, evaluated on held-out games.
+
+\paragraph{Budget and risks.} A 27B run costs about \$2; a Qwen~3.8~Max run of
+similar length is estimated at about \$20. The full plan needs a few hundred
+dollars of API cost \todo{confirm budget source}; fine-tuning needs GPU access
+\todo{confirm compute}. Hosted models can change, so we record provider and
+dates and treat the open-weight models as the primary subjects. To avoid
+fitting the harness to three games, final results use held-out games. Qwen's
+training data is closed, so the pretraining explanation can only be supported
+indirectly unless fine-tuning shows a causal effect; we will say so.
+
+% -------------------------------------------------------------------------
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\end{document}

@@ -39,6 +39,7 @@ class CodexRequestProxy:
         upstream_origin: str = "https://chatgpt.com",
         base_path: str = "/backend-api/codex",
         guard: RequestGuard | None = None,
+        body_patch: dict[str, Any] | None = None,
     ) -> None:
         self.output_dir = Path(output_dir).resolve()
         self.session_id = session_id
@@ -54,6 +55,8 @@ class CodexRequestProxy:
         self._port = 0
         self._sequence = 0
         self.guard = guard
+        # Top-level fields merged into every Responses request (e.g. provider pinning).
+        self.body_patch = dict(body_patch or {})
 
     @property
     def model_base_url(self) -> str:
@@ -133,6 +136,13 @@ class CodexRequestProxy:
     async def _handle_http(self, request: web.Request) -> web.StreamResponse:
         assert self._session is not None
         body = await request.read()
+        if request.method == "POST" and request.path.endswith("/responses") and self.body_patch:
+            try:
+                parsed = json.loads(body)
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                parsed = None
+            if isinstance(parsed, dict):
+                body = json.dumps({**parsed, **self.body_patch}).encode("utf-8")
         if request.method == "POST" and request.path.endswith("/responses"):
             try:
                 self._record_request("responses_http", body)
@@ -267,7 +277,9 @@ class CodexRequestProxy:
             if self.guard is not None:
                 self.guard.failure = "Mandatory model request capture failed"
                 raise IsolationError(self.guard.failure) from exc
-            raise
+            # Recording is diagnostic in normal runs; a log write must not
+            # block the model request. Explicit isolation audits stay strict.
+            return
         if failure is not None:
             raise failure
 

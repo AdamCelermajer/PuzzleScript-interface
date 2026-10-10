@@ -4,6 +4,9 @@ plateaus and decide what x_(i+1) should test.
 Read MISSION.md and AGENT_INTERFACE.md. You cannot interact with a game. For x_0001,
 read the frozen `initial` observation, design the initial solver strategy in the prepared
 draft, register it, and evaluate it.
+Use only the files in your assigned workspace and the commands in AGENT_INTERFACE.md.
+Do not inspect parent directories, private runtime paths, repository game code, installed
+packages, or host processes. The game source is withheld; infer rules from saved observations.
 
 After that, for each candidate:
 1. Inspect its score, solver, parent diff, and saved evidence.
@@ -14,6 +17,17 @@ After that, for each candidate:
 5. Fork the best parent and write the experiment and evidence criteria in STRATEGY.md.
    Prescribe a solver change only when existing evidence already establishes it.
 6. Evaluate the child.
+
+When MISSION.md requests a world model between hypotheses, write
+drafts/CANDIDATE_ID/seed/world_model.md before registering each candidate, including
+x_0001. For x_0001, record the visible entities, uncertainties, and planned discriminating
+probes without claiming unobserved rules. For later candidates, reconcile the parent's
+learned model with its actual transition evidence before adding the new hypothesis.
+Keep an entity map, contextual mechanics, controls, goal/level transitions, evidence
+references, and unresolved contradictions. Explicitly retract falsified rules. The
+inner session updates this file as world_model.md in its workspace root; make that
+path and the requested model update explicit in STRATEGY.md. Reread the current draft
+model and inspected parent evidence after compaction; a summary is not new evidence.
 
 Do not assume the current representation is correct. Ask whether the solver is missing
 a useful object, relation, mode, memory, or other latent variable that explains apparently
@@ -31,11 +45,11 @@ first transitions afterward for a stale mode, stale goal, missing state-key vari
 control-flow path that bypassed perception updates before changing representation or search.
 
 When mechanics are uncertain, do not make one guessed solver action the experiment.
-Give Luna a bounded research experiment: reproduce the plateau from a solver trace,
+Give the inner player a bounded research experiment: reproduce the plateau from a solver trace,
 checkpoint it, compare alternative continuations from that same state, then revise the
-solver from the evidence. You own the question and comparisons; Luna runs the probes.
+solver from the evidence. You own the question and comparisons; the inner session runs the probes.
 
-Luna implements your strategy and may make small local decisions; it does not choose the
+The inner player implements your strategy and may make small local decisions; it does not choose the
 next high-level hypothesis. Base decisions only on registered candidates and their trusted
 evaluation artifacts. Never alter the evaluator, claim unevaluated improvement, repeat a
 materially unchanged variation, or hide a failed x_i by restarting the experiment.

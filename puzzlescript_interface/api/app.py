@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
@@ -129,6 +130,11 @@ def create_app(
     puzzlescript_client: PuzzleScriptClient | None = None,
 ) -> FastAPI:
     game_catalog = catalog or build_catalog(_games_root())
+    only_game = os.getenv("PUZZLESCRIPT_ONLY_GAME_ID", "").strip()
+    if only_game:
+        game_catalog = [entry for entry in game_catalog if entry.game_id == only_game]
+        if not game_catalog:
+            raise ValueError(f"PuzzleScript game is not in the catalog: {only_game}")
     client = puzzlescript_client or PuzzleScriptClient()
     scorecards = ScorecardStore()
     sessions_by_guid: dict[str, SessionBinding] = {}

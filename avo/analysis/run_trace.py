@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import asdict, dataclass, is_dataclass
 from datetime import datetime, timezone
 from enum import Enum
@@ -47,6 +48,7 @@ class RunTraceRecorder:
         self.root = self.root.resolve()
         self.workspace = self.workspace.resolve()
         self.root.mkdir(parents=True, exist_ok=True)
+        self.full_trace = os.environ.get("AVO_TRACE_DETAIL", "full") == "full"
         self.blob_root = self.root / "workspace_blobs"
         self.blob_root.mkdir(exist_ok=True)
         self.events_path = self.root / "agent_events.jsonl"
@@ -98,7 +100,8 @@ class RunTraceRecorder:
             "ephemeral": ephemeral,
             "metadata": _jsonable(metadata or {}),
             "capture": {
-                "app_server_events": "complete unfiltered SDK notification stream",
+                "app_server_events": "complete unfiltered SDK notification stream" if self.full_trace else "disabled (compact tracing)",
+                "workspace_snapshots": self.full_trace,
                 "model_requests_requested": True,
                 "model_request_files": 0,
                 "model_request_status": "pending",
@@ -173,16 +176,21 @@ class RunTraceRecorder:
             "method": method,
             "payload": payload,
         }
-        self._append(self.raw_events_path, envelope)
+        if self.full_trace:
+            self._append(self.raw_events_path, envelope)
         self._record_conversation_item(envelope)
 
-        if "reasoning" not in method.lower() and not method.lower().endswith("delta"):
+        if self.full_trace and "reasoning" not in method.lower() and not method.lower().endswith("delta"):
             compact_payload = payload
             if method in {"item/started", "item/completed"}:
                 compact_payload = self._without_reasoning_item(payload)
             self._append(self.events_path, {**envelope, "payload": compact_payload})
         if method in {"item/completed", "turn/completed"}:
             self.snapshot(f"turn:{turn_number}:{method}")
+
+    def record_conversation(self, record: dict[str, Any]) -> None:
+        """Append one harness-produced item in the app-server conversation shape."""
+        self._append(self.conversation_path, record)
 
     def traced(
         self,
@@ -214,13 +222,15 @@ class RunTraceRecorder:
         self._write_json(self.session_path, self._session)
 
     def snapshot(self, cause: str) -> None:
+        if not self.full_trace:
+            return
         current: dict[str, dict[str, Any]] = {}
         errors: list[dict[str, str]] = []
         for path in sorted(self.workspace.rglob("*")):
             if not path.is_file() or path.is_symlink():
                 continue
             relative = path.relative_to(self.workspace)
-            if ".avo_rpc" in relative.parts or "__pycache__" in relative.parts:
+            if any(part in {".avo_rpc", ".avo_evolution_rpc", ".tmp", "__pycache__"} for part in relative.parts):
                 continue
             try:
                 content = path.read_bytes()

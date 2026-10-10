@@ -12,12 +12,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from avo.client.codex_oauth_agent import CodexOAuthAgent, CodexOAuthConfig
-from avo.evolution.gateway import EvolutionBudget, EvolutionGateway
+from avo.evolution.gateway import EvolutionBudget, EvolutionGateway, FINAL_WORLD_MODEL_PROMPT
 from avo.evolution.store import EvolutionStore
 from avo.evolution.tool_server import EvolutionFileToolServer
 from avo.isolation import new_workspace
 
-FINAL_PROMPT = "Write world_model.md in your current workspace describing your understanding of the game's rules."
+FINAL_PROMPT = FINAL_WORLD_MODEL_PROMPT
 
 
 def archived_history(analysis: Path, session_id: str) -> list[dict]:
@@ -74,7 +74,14 @@ def main() -> None:
     restored = restore_observations(analysis, normalized, workspace)
     (workspace / "OUTER_HISTORY.jsonl").write_text(normalized, encoding="utf-8")
     prompt_path = output / "restored_prompt.txt"
-    prompt_path.write_text(prompt + "\n\nYour saved outer-session history is in OUTER_HISTORY.jsonl. Read it to recover your prior work.\n", encoding="utf-8")
+    prompt_path.write_text(
+        prompt
+        + "\n\nYour saved outer-session history is in OUTER_HISTORY.jsonl. "
+        "Read it to recover your prior work. Write world_model.md before any optional "
+        "cross-checks. Do not inspect, list, or kill processes; the saved evidence is "
+        "sufficient for this report.\n",
+        encoding="utf-8",
+    )
     store = EvolutionStore(source, workspace)
     initial = json.loads((source / "initial_observation.json").read_text(encoding="utf-8"))
     gateway = EvolutionGateway(store, None, mission=FINAL_PROMPT, initial_observation=initial,

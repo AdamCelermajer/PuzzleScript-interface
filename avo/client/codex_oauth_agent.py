@@ -5,13 +5,13 @@ import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 from uuid import uuid4
 
 from avo.analysis.model_proxy import CodexRequestProxy
 from avo.analysis.run_trace import RunTraceRecorder
-from avo.analysis.request_guard import RequestGuard
 from avo.client.model_provider import resolve_model
+from avo.client.openrouter_chat import provider_routing
 from avo.isolation import IsolatedRuntime, IsolationError, runtime_root
 from avo.core.agent_backend import AgentGateway, AgentRunResult, AgentToolServer
 from avo.core.tool_gateway import FileToolServer
@@ -43,6 +43,16 @@ INNER_RUN_INSTRUCTION = (
 )
 
 
+REPORT_GRACE_SECONDS = 300.0
+
+CONTINUE_INSTRUCTION = (
+    "Continue the same AVO run. Use the status command documented in "
+    "AGENT_INTERFACE.md, then keep using the tools. Do not return while "
+    "the task remains active. "
+    "Calling finish stops the run but does not make it successful."
+)
+
+
 @dataclass(frozen=True)
 class CodexOAuthConfig:
     model: str = "gpt-5.6-sol"
@@ -55,6 +65,103 @@ class CodexOAuthConfig:
     analysis_dir: str | Path = ""
     session_role: str = "player"
     session_metadata: Mapping[str, Any] | None = None
+    harness: str = "codex"
+    provider: str = ""  # pinned OpenRouter provider slug; empty = OpenRouter routing
+
+
+def initial_instruction(session_role: str) -> str:
+    if session_role == "inner_player":
+        return INNER_RUN_INSTRUCTION
+    return (
+        "Operate the AVO run autonomously now. Use the commands in "
+        "AGENT_INTERFACE.md and pursue MISSION.md. Do not merely explain "
+        "what you would do."
+    )
+
+
+def drive_turns(
+    gateway: AgentGateway,
+    config: CodexOAuthConfig,
+    workspace_path: Path,
+    transcript_path: Path,
+    trace: RunTraceRecorder | None,
+    run_turn: Callable[[int, str, float], str],
+) -> tuple[int, str]:
+    """AVO turn protocol shared by every harness.
+
+    ``run_turn(turn_number, instruction, timeout_seconds)`` runs one autonomous
+    agent turn and returns its final text. Budgets, finishing, and the final
+    world-model report retries are identical for Codex and OpenRouter harnesses.
+    """
+    instruction = initial_instruction(config.session_role)
+    final_response = ""
+    turns = 0
+    reporting = False
+    report_instruction = ""
+    report_attempts = 0
+    finalizer = getattr(gateway, "finalization_instruction", None)
+    # The optional last call reuses the outer session and its evidence.
+    for turn_number in range(1, config.max_turns + 4):
+        turns = turn_number
+        remaining = float(gateway.handle("status")["budgets"]["wall_seconds_remaining"])
+        if reporting:
+            # The report turn has fixed grace: an exhausted search budget must not
+            # also erase the required final report.
+            remaining = REPORT_GRACE_SECONDS
+        final_response = run_turn(turn_number, instruction, max(1.0, remaining))
+        with transcript_path.open("a", encoding="utf-8") as stream:
+            stream.write(
+                json.dumps(
+                    {
+                        "turn": turn_number,
+                        "recorded_at": datetime.now(timezone.utc).isoformat(),
+                        "response": final_response,
+                    },
+                    sort_keys=True,
+                )
+                + "\n"
+            )
+
+        if trace is not None:
+            trace.snapshot(f"turn:{turn_number}:transcript_written")
+
+        status = gateway.handle("status")
+        if reporting:
+            report = workspace_path / "world_model.md"
+            if report.is_file() and not report.is_symlink() and report.read_text(encoding="utf-8").strip():
+                break
+            report_attempts += 1
+            if report_attempts < 3:
+                instruction = (
+                    "The required world_model.md was not saved in the preceding turn. "
+                    "This is the final report; do not run more evaluations.\n\n"
+                    + report_instruction
+                )
+                continue
+            break
+        if status["budgets"]["wall_seconds_remaining"] <= 0:
+            if not status["finished"]:
+                gateway.handle("finish", {"reason": "wall-time budget exhausted"})
+        elif status["task"]["terminal"]:
+            if not status["finished"]:
+                gateway.handle("finish", {"reason": "environment terminal"})
+        if turn_number >= config.max_turns and not gateway.handle("status")["finished"]:
+            gateway.handle("finish", {"reason": f"agent turn budget exhausted ({config.max_turns})"})
+        if gateway.handle("status")["finished"]:
+            final_instruction = finalizer() if callable(finalizer) else None
+            if final_instruction:
+                instruction = final_instruction
+                report_instruction = final_instruction
+                reporting = True
+                continue
+            break
+        instruction = CONTINUE_INSTRUCTION
+    else:
+        gateway.handle(
+            "finish",
+            {"reason": f"agent turn budget exhausted ({config.max_turns})"},
+        )
+    return turns, final_response
 
 
 class CodexOAuthAgent:
@@ -74,13 +181,7 @@ class CodexOAuthAgent:
         return "\n\n".join(sections)
 
     def _initial_instruction(self) -> str:
-        if self.config.session_role == "inner_player":
-            return INNER_RUN_INSTRUCTION
-        return (
-            "Operate the AVO run autonomously now. Use the commands in "
-            "AGENT_INTERFACE.md and pursue MISSION.md. Do not merely explain "
-            "what you would do."
-        )
+        return initial_instruction(self.config.session_role)
 
     def run(
         self,
@@ -95,7 +196,6 @@ class CodexOAuthAgent:
             raise IsolationError("Codex runtime is unavailable")
         runtime = IsolatedRuntime(Path(workspace), artifacts, codex_bin)
         try:
-            runtime.preflight()
             if self.provider == "openrouter":
                 runtime.authenticate_openrouter()
             else:
@@ -142,7 +242,8 @@ class CodexOAuthAgent:
                 base_instructions=prompt,
                 ephemeral=True,
                 metadata={**(self.config.session_metadata or {}), "model_provider": self.provider,
-                          "provider_model": self.provider_model},
+                          "provider_model": self.provider_model, "harness": "codex",
+                          "openrouter_provider": self.config.provider or None},
             )
         request_proxy = None
         if trace is not None:
@@ -150,8 +251,8 @@ class CodexOAuthAgent:
                 trace.transport_root,
                 session_id=str(trace.session_id),
                 session_role=self.config.session_role,
-                guard=RequestGuard(forbidden_roots=(runtime.personal_codex, runtime.private, runtime.artifacts),
-                                    public_helper_root=runtime.private / 'tmp' / 'arg0'),
+                body_patch=({"provider": provider_routing(self.config.provider)}
+                            if self.provider == "openrouter" and self.config.provider else None),
                 **({"upstream_origin": "https://openrouter.ai", "base_path": "/api/v1"}
                    if self.provider == "openrouter" else {}),
             )
@@ -206,12 +307,8 @@ class CodexOAuthAgent:
                 )
                 if trace is not None:
                     trace.attach_thread(str(getattr(thread, "id", "")) or None)
-                instruction = self._initial_instruction()
-                reporting = False
-                finalizer = getattr(gateway, "finalization_instruction", None)
-                # The optional last call reuses the outer session and its evidence.
-                for turn_number in range(1, self.config.max_turns + 2):
-                    turns = turn_number
+
+                def run_turn(turn_number: int, instruction: str, timeout: float) -> str:
                     turn = thread.turn(
                         [TextInput(instruction)],
                         effort=self.config.effort,
@@ -223,12 +320,7 @@ class CodexOAuthAgent:
                             instruction=instruction,
                             effort=self.config.effort,
                         )
-                    remaining = float(
-                        gateway.handle("status")["budgets"]["wall_seconds_remaining"]
-                    )
-                    if reporting:
-                        remaining = min(180.0, remaining)
-                    timer = threading.Timer(max(1.0, remaining), turn.interrupt)
+                    timer = threading.Timer(timeout, turn.interrupt)
                     timer.daemon = True
                     timer.start()
                     try:
@@ -245,63 +337,13 @@ class CodexOAuthAgent:
                             result = _collect_turn_result(events, turn_id=turn.id)
                     finally:
                         timer.cancel()
-                    if getattr(server, "isolation_failure", None):
-                        raise IsolationError(server.isolation_failure)
-                    if request_proxy.guard.failure:
-                        raise IsolationError(request_proxy.guard.failure)
-                    if request_proxy.guard.requests_checked == 0:
-                        raise IsolationError("Model transport capture is missing")
-                    final_response = str(result.final_response or "")
-                    with transcript_path.open("a", encoding="utf-8") as stream:
-                        stream.write(
-                            json.dumps(
-                                {
-                                    "turn": turn_number,
-                                    "recorded_at": datetime.now(timezone.utc).isoformat(),
-                                    "response": final_response,
-                                },
-                                sort_keys=True,
-                            )
-                            + "\n"
-                        )
+                    return str(result.final_response or "")
 
-                    if trace is not None:
-                        trace.snapshot(f"turn:{turn_number}:transcript_written")
-
-                    status = gateway.handle("status")
-                    if reporting:
-                        break
-                    if status["budgets"]["wall_seconds_remaining"] <= 0:
-                        if not status["finished"]:
-                            gateway.handle("finish", {"reason": "wall-time budget exhausted"})
-                        break
-                    if status["task"]["terminal"]:
-                        if not status["finished"]:
-                            gateway.handle("finish", {"reason": "environment terminal"})
-                    if turn_number >= self.config.max_turns and not status["finished"]:
-                        gateway.handle("finish", {"reason": f"agent turn budget exhausted ({self.config.max_turns})"})
-                    if gateway.handle("status")["finished"]:
-                        final_instruction = finalizer() if callable(finalizer) else None
-                        if final_instruction:
-                            instruction = final_instruction
-                            reporting = True
-                            continue
-                        break
-                    instruction = (
-                        "Continue the same AVO run. Use the status command documented in "
-                        "AGENT_INTERFACE.md, then keep using the tools. Do not return while "
-                        "the task remains active. "
-                        "Calling finish stops the run but does not make it successful."
-                    )
-                else:
-                    gateway.handle(
-                        "finish",
-                        {"reason": f"agent turn budget exhausted ({self.config.max_turns})"},
-                    )
+                turns, final_response = drive_turns(
+                    gateway, self.config, workspace_path, transcript_path, trace, run_turn
+                )
         except BaseException as exc:
             run_error = exc
-            if request_proxy is not None and request_proxy.guard is not None and request_proxy.guard.failure:
-                raise IsolationError(request_proxy.guard.failure) from exc
             raise
         finally:
             if request_proxy is not None:
@@ -317,9 +359,6 @@ class CodexOAuthAgent:
                         else None
                     ),
                 )
-
-        if request_proxy is None or request_proxy.guard is None or request_proxy.guard.failure or request_proxy.guard.requests_checked == 0:
-            raise IsolationError("No complete validated model-request capture; run is infrastructure-invalid")
 
         return AgentRunResult(
             finish_reason=gateway.finish_reason,

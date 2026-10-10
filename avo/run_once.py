@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from avo.client.codex_oauth_agent import CodexOAuthAgent, CodexOAuthConfig
+from avo.client.openrouter_agent import OpenRouterShellAgent
 from avo.core.framework import AvoLaboratory, JsonValue, _jsonable
 from avo.core.profile import LoadedProfile, TaskEvaluation, load_profile
 from avo.core.run_store import RunStore
@@ -24,6 +25,8 @@ class PlayerRunSettings:
     max_agent_turns: int = 4
     max_solver_self_checks: int = 2
     solver_self_check_max_environment_steps: int = 1_500
+    harness: str = "codex"
+    provider: str = ""
 
 
 @dataclass(frozen=True)
@@ -61,7 +64,9 @@ def execute_player_run(
         "profile_prompt_hash": loaded_profile.prompt_hash,
         "profile_settings": _jsonable(loaded_profile.settings),
         "objective": loaded_profile.implementation.objective,
-        "agent_backend": "CodexOAuthAgent",
+        "agent_backend": "CodexOAuthAgent" if settings.harness == "codex" else "OpenRouterShellAgent",
+        "harness": settings.harness,
+        "provider": settings.provider,
         "model": settings.model,
         "effort": settings.effort,
         "base_prompt": str(base_prompt_path),
@@ -146,13 +151,16 @@ def execute_player_run(
         max_turns=settings.max_agent_turns,
         analysis_dir=store.root / "analysis",
         session_role="inner_player",
+        harness=settings.harness,
+        provider=settings.provider,
         session_metadata={
             "candidate_id": candidate_id,
             "profile_id": loaded_profile.implementation.profile_id,
             "run_metadata": _jsonable(run_metadata or {}),
         },
     )
-    agent_result = CodexOAuthAgent(agent_config).run(gateway, workspace_path)
+    agent = CodexOAuthAgent(agent_config) if settings.harness == "codex" else OpenRouterShellAgent(agent_config)
+    agent_result = agent.run(gateway, workspace_path)
     store.archive_agent_workspace(workspace_path)
 
     current = laboratory.current

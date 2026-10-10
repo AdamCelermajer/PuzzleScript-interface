@@ -15,3 +15,31 @@ export function selectEvidenceFrame(events, requestedStep = null) {
     progress: observation.progress || {}, episode: event?.payload?.episode ?? null,
   } }
 }
+
+function reasoningText(value) {
+  if (typeof value === 'string') return value
+  if (Array.isArray(value)) return value.map(reasoningText).filter(Boolean).join('\n')
+  if (value && typeof value === 'object') return reasoningText(value.text ?? value.content ?? value.summary)
+  return ''
+}
+
+// Timestamps establish proximity, not a one-to-one cause: one tool call may play many actions.
+export function reasoningAtAction(evidence, conversation, requestedStep, phase) {
+  const { step, transition } = selectEvidenceFrame(evidence, requestedStep)
+  if (!step) return { status: 'initial' }
+  if (phase === 'evaluation') return { status: 'offline_solver' }
+  const actionTime = Date.parse(transition.recorded_at)
+  if (!Number.isFinite(actionTime)) return { status: 'unavailable' }
+  const transitions = evidence.filter(event => event.type === 'transition')
+  const previousTime = step > 1 ? Date.parse(transitions[step - 2]?.recorded_at) : -Infinity
+  const matching = conversation.filter(event => event.type === 'reasoning' || event.role === 'assistant_reasoning')
+    .map(event => ({ event, time: Date.parse(event.recorded_at), text: reasoningText(event.item?.content ?? event.item?.summary ?? event.content) }))
+    .filter(entry => Number.isFinite(entry.time) && entry.time <= actionTime && entry.text.trim())
+    .sort((left, right) => left.time - right.time)
+  const latest = matching.at(-1)
+  if (!latest) return { status: 'unavailable' }
+  return {
+    status: 'captured', text: latest.text, recorded_at: latest.event.recorded_at,
+    turn: latest.event.turn ?? null, new_since_previous_action: latest.time > previousTime,
+  }
+}

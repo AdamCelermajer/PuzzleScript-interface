@@ -95,6 +95,16 @@ class DeterministicEvaluator:
 
 
 class EvolutionTests(unittest.TestCase):
+    def test_final_world_model_prompt_is_shared_and_rules_first(self):
+        from avo.evolution.gateway import FINAL_WORLD_MODEL_PROMPT
+        from avo.report_saved_world_model import FINAL_PROMPT
+
+        self.assertEqual(FINAL_PROMPT, FINAL_WORLD_MODEL_PROMPT)
+        self.assertIn("start with the objective", FINAL_WORLD_MODEL_PROMPT)
+        self.assertIn("movement and interactions", FINAL_WORLD_MODEL_PROMPT)
+        self.assertIn("remaining uncertainty", FINAL_WORLD_MODEL_PROMPT)
+        self.assertNotIn("Ice Crates", FINAL_WORLD_MODEL_PROMPT)
+
     def test_world_model_modes_preserve_normal_registration_and_inheritance(self):
         for mode in ("final-only", "between-hypotheses"):
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as raw:

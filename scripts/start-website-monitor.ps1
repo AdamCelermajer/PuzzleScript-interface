@@ -27,10 +27,9 @@ if ($scheduledTask.State -eq "Running") {
     } while ((Get-Date) -lt $deadline)
 }
 
-Write-Host "Starting the PuzzleScript website, workbench API, and game services." -ForegroundColor Green
-Write-Host "Windows:  http://127.0.0.1:5173/"
-Write-Host "Fedora:   http://adampalace-pc.tail65f3f9.ts.net:5173/"
-Write-Host "Keep this terminal open. If the workbench exits, it will restart automatically."
+Write-Host "Checking the PuzzleScript website, workbench API, and game services." -ForegroundColor Green
+Write-Host "The Workbench launcher will print the URLs after its health checks pass."
+Write-Host "Keep this terminal open; missing services will be started automatically."
 
 while ($true) {
     try {

@@ -52,7 +52,8 @@ function init() {
     render();
   });
 
-  state.selectedGameId = filteredGames()[0]?.game_id || data.games[0]?.game_id || null;
+  const requestedGame = new URLSearchParams(window.location.search).get('game');
+  state.selectedGameId = data.games.find(game => game.game_id === requestedGame)?.game_id || filteredGames()[0]?.game_id || data.games[0]?.game_id || null;
   render();
 }
 

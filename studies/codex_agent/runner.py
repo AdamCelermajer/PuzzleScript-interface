@@ -101,7 +101,19 @@ class CodexAgentRunner:
             if prior_history and decisions == 0:
                 from studies.codex_agent.continuation import history_prompt
                 prompt = history_prompt(prior_history) + prompt
-            response = self.session.next_action(prompt, image_path=image_path)
+            try:
+                response = self.session.next_action(prompt, image_path=image_path)
+            except ValueError as exc:
+                decisions += 1
+                feedback = (
+                    f"Your last reply could not be used: {exc}. The game has not advanced. "
+                    'Return one available action name or JSON with an "action" field. '
+                    "Do not repeat note updates just to correct the reply format."
+                )
+                self._emit(f"Decision {decisions}: reply correction; game unchanged.")
+                self._append_transcript(decision=decisions, frame=frame, prompt=prompt,
+                    response={"error": str(exc)}, result={"accepted": False, "reason": feedback})
+                continue
             decisions += 1
 
             operation = str(response.get("operation", "ACT")).upper()
@@ -151,6 +163,15 @@ class CodexAgentRunner:
                 continue
 
             action = GameAction[action_name]
+            available = list(getattr(frame, "available_actions", []) or [])
+            if available and action not in available:
+                feedback = (
+                    f"{action.name} is not available in this game. The game has not advanced. "
+                    f"Choose one of: {', '.join(item.name for item in available)}."
+                )
+                self._append_transcript(decision=decisions, frame=frame, prompt=prompt,
+                    response=response, result={"accepted": False, "reason": feedback})
+                continue
             before_grid = last_grid(frame.frame)
             next_frame = self.env.step(action)
             after_grid = last_grid(next_frame.frame)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import filecmp
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
@@ -48,6 +49,8 @@ class RunStore:
                 target = destination / relative
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(source, target)
+                if not filecmp.cmp(source, target, shallow=False):
+                    raise OSError("Workspace archive verification failed")
                 report["copied"].append(name)
             except OSError as exc:
                 if (destination / relative).is_file():

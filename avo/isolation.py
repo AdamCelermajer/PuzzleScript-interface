@@ -33,9 +33,20 @@ def runtime_root() -> Path:
 
 
 def new_workspace() -> Path:
-    # Retain agent-created files: synchronous removal of restricted-token files
-    # caused Windows ACL hangs. Trusted archives remain separate from this root.
+    # Callers archive before Linux cleanup; Windows retains restricted-token
+    # files to avoid ACL hangs. Trusted archives remain separate from this root.
     return _new_private_directory("w-")
+
+
+def cleanup_private_directory(path: Path) -> None:
+    """Remove one finished Linux runtime directory; retain Windows ACL behavior."""
+    if os.name == "nt":
+        return
+    root = runtime_root()
+    if path.is_symlink() or path.resolve().parent != root or not path.name.startswith(("w-", "c-")):
+        raise IsolationError("Cleanup target is not an owned runtime directory")
+    if path.exists():
+        shutil.rmtree(path)
 
 
 def _new_private_directory(prefix: str) -> Path:
@@ -112,7 +123,9 @@ class IsolatedRuntime:
         })
         if os.name != "nt":
             env["PATH"] = os.pathsep.join((str(self.python.parent), "/usr/local/bin", "/usr/bin", "/bin"))
-            env["HOME"] = str(self.private)
+            # A PTY can fall back to HOME when given an invalid workdir. Keep
+            # that fallback in the public workspace, never the private config.
+            env["HOME"] = str(self.workspace)
             env["LANG"] = "C.UTF-8"
         (self.workspace / ".tmp").mkdir(exist_ok=True)
         return env
@@ -269,7 +282,8 @@ class IsolatedRuntime:
                 path.unlink(missing_ok=True)
 
     def close(self) -> None:
-        # Exact private credential target, not recursive cleanup of restricted
-        # agent workspaces. Preserve non-secret config for reproducibility.
+        # Revoke credentials first, then remove the finished Linux private home.
+        # Native Windows retains non-secret files because of restricted ACLs.
         (self.private / "auth.json").unlink(missing_ok=True)
         self.env.pop("OPENROUTER_API_KEY", None)
+        cleanup_private_directory(self.private)

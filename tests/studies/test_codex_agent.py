@@ -63,10 +63,25 @@ class FakeSession:
 
     def next_action(self, prompt: str, image_path=None) -> dict[str, str]:
         self.calls.append({"prompt": prompt, "image_path": image_path})
-        return self.responses.pop(0)
+        response = self.responses.pop(0)
+        if isinstance(response, Exception):
+            raise response
+        return response
 
 
 class CodexAgentTests(unittest.TestCase):
+    def test_unusable_reply_gets_corrected_without_advancing_the_game(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            frame = _frame([[2, 0]], image=True)
+            env = FakeEnv(frame, [_frame([[0, 2]], state=GameState.WIN, levels_completed=1)])
+            session = FakeSession([ValueError("No action in reply"), {"action": "ACTION4", "note": "move"}])
+            result = CodexAgentRunner(env, session, tmpdir, max_steps=1).run()
+            self.assertTrue(result.solved)
+            self.assertEqual(env.step_actions, [GameAction.ACTION4])
+            self.assertEqual(result.decisions, 2)
+            self.assertIn("The game has not advanced", session.calls[1]["prompt"])
+            self.assertEqual(Path(session.calls[0]["image_path"]).read_bytes(), Path(session.calls[1]["image_path"]).read_bytes())
+
     def test_grid_encoding_instructions_are_only_given_for_hex_projection(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             frame = _frame([[0, 0], [1, 2]])
@@ -187,6 +202,24 @@ class CodexAgentTests(unittest.TestCase):
 
 
 class ContinuationTests(unittest.TestCase):
+    def test_failed_run_restores_progress_without_rewriting_the_parent(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            parent = root / "parent"
+            parent.mkdir()
+            before = {"grid": [[2, 0, 0]], "state": "PLAYING", "levels_completed": 0, "win_levels": 1}
+            after = {**before, "grid": [[0, 2, 0]]}
+            (parent / "error.json").write_text(json.dumps({"type": "ValueError", "message": "Codex returned invalid action JSON: explanation"}))
+            (parent / "run_config.json").write_text(json.dumps({"max_steps": 2}))
+            (parent / "transitions.jsonl").write_text(json.dumps({"action_index": 1, "action": "ACTION4", "before": before, "after": after}) + "\n")
+            env = FakeEnv(_frame(before["grid"]), [_frame(after["grid"]), _frame([[0, 0, 2]], state=GameState.WIN, levels_completed=1)])
+            result = CodexAgentRunner(env, FakeSession([{"action": "ACTION4", "note": ""}]), root / "child", max_steps=1, continuation_from=parent).run()
+            self.assertTrue(result.solved)
+            self.assertEqual(len(result.actions), 1)
+            self.assertEqual(len(env.step_actions), 2)
+            self.assertFalse((parent / "result.json").exists())
+            self.assertTrue((parent / "error.json").exists())
+
     def test_restore_does_not_consume_additional_budget(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

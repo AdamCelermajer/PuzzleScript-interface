@@ -1,5 +1,6 @@
 import json
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -97,13 +98,26 @@ class FakeProxy:
         self.guard = guard
 
     def start(self):
-        self.guard.check({"input": []})
+        pass
 
     def stop(self):
         pass
 
 
 class CodexOAuthAgentTests(unittest.TestCase):
+    def test_stale_tool_failure_flag_does_not_abort_the_model_turn(self):
+        class FailedServer(RecordingToolServer):
+            isolation_failure = "Old tool error"
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            environment = IdleEnvironment()
+            gateway = AvoToolGateway(AvoLaboratory(environment, [], root / "evidence"), IdleProfile(environment))
+            server = FailedServer()
+            with patch("openai_codex.Codex", FakeCodex), patch("avo.client.codex_oauth_agent._find_codex_bin", return_value="codex"):
+                result = CodexOAuthAgent(CodexOAuthConfig(max_turns=1, analysis_dir=root / "analysis")).run(gateway, root / "workspace", tool_server=server)
+            self.assertEqual(result.turns, 1)
+            self.assertTrue(server.stopped)
+
     def test_openrouter_uses_same_codex_thread_and_permissions_with_qualified_provenance(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -141,9 +155,13 @@ class CodexOAuthAgentTests(unittest.TestCase):
                 result = CodexOAuthAgent(CodexOAuthConfig(max_turns=1)).run(
                     gateway, root / "workspace", tool_server=RecordingToolServer()
                 )
-            self.assertEqual(result.turns, 2)
-            self.assertEqual(len(FakeCodex.instance.thread.calls), 2)
+            self.assertEqual(result.turns, 4)
+            self.assertEqual(len(FakeCodex.instance.thread.calls), 4)
             self.assertIn("Write world_model.md", str(FakeCodex.instance.thread.calls[1]))
+            self.assertIn("was not saved", str(FakeCodex.instance.thread.calls[2]))
+            self.assertIn("was not saved", str(FakeCodex.instance.thread.calls[3]))
+            self.assertIn("research-note style", str(FakeCodex.instance.thread.calls[2]))
+            self.assertIn("research-note style", str(FakeCodex.instance.thread.calls[3]))
             self.assertNotIn("world_model.md", str(FakeCodex.instance.thread.calls[0]))
             self.assertIsNone(gateway.finalization_instruction())
             with self.assertRaises(RuntimeError):

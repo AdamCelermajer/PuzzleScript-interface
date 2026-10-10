@@ -12,7 +12,7 @@ from avo.core.profile import load_profile
 from avo.evolution.candidate import CandidateEvaluation, RunCandidate
 from avo.evolution.solver_evaluation import evaluate_solver_workspace
 from avo.run_once import PlayerRunSettings, execute_player_run
-from avo.isolation import new_workspace
+from avo.isolation import new_workspace, cleanup_private_directory
 
 
 class RunCandidateEvaluator(Protocol):
@@ -55,8 +55,8 @@ class CandidateEvaluator:
         )
         research_dir.mkdir(parents=True, exist_ok=True)
         evaluation_dir.mkdir(parents=True, exist_ok=True)
-        # Opaque external directory, retained to avoid restricted-token ACL
-        # cleanup hangs. Never inherit the repository's AGENTS/config chain.
+        # Keep work outside the repository's AGENTS/config chain. Linux cleanup
+        # follows verified archival; Windows retains its ACL-safe behavior.
         with nullcontext(new_workspace()) as raw:
             workspace = Path(raw).resolve()
             if candidate.workspace_path.is_dir():
@@ -70,6 +70,13 @@ class CandidateEvaluator:
                 candidate_strategy=candidate.strategy(),
                 run_metadata={"parent_ids": list(candidate.parent_ids)},
             )
+            archive_path = research_dir / "workspace_archive.json"
+            if archive_path.is_file():
+                archive_report = json.loads(archive_path.read_text(encoding="utf-8"))
+                unarchived = [name for name in archive_report["skipped"]
+                              if name != ".avo_rpc" and not name.startswith(".avo_rpc/")]
+                if not unarchived and not archive_report["preserved"]:
+                    cleanup_private_directory(workspace)
 
             # The researching Codex player's progress is evidence, not fitness.
             # Reloading the profile creates a second fresh game in which only the

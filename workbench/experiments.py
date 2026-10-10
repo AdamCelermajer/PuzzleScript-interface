@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import sys
+import threading
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,20 +17,25 @@ from fastapi import APIRouter, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from workbench.catalog import ROOT, last_record, read_json, run_path, snapshot
+from workbench.catalog import ROOT, last_record, legacy_enqueue_backend, read_json, run_path, snapshot
 
 
 class ExperimentRequest(BaseModel):
     kind: Literal["avo", "codex"]
-    agent_backend: Literal["codex"] = "codex"
+    # Harness ladder: codex = H2 (Codex SDK), tools = H1 (OpenRouter native tools), raw = H0 (text only).
+    agent_backend: Literal["codex", "tools", "raw"] = "codex"
+    # Pinned OpenRouter provider slug for every OpenRouter agent; empty keeps OpenRouter routing.
+    provider: str = Field(default="", pattern=r"^[a-z0-9][a-z0-9._/-]{0,63}$|^$")
     comparison: bool = False
     game_ids: list[str] = Field(min_length=1, max_length=30)
     models: list[str] = Field(default_factory=lambda: ["gpt-5.6-sol"], min_length=1, max_length=8)
-    efforts: list[Literal["minimal", "low", "medium", "high", "xhigh"]] = Field(default_factory=lambda: ["low"], min_length=1, max_length=5)
+    efforts: list[Literal["minimal", "low", "medium", "high", "xhigh", "max"]] = Field(default_factory=lambda: ["low"], min_length=1, max_length=6)
     conditions: list[Literal["baseline", "baseline-plus"]] = Field(default_factory=lambda: ["baseline-plus"], min_length=1, max_length=2)
     world_model_modes: list[Literal["final-only", "between-hypotheses"]] = Field(default_factory=lambda: ["final-only"], min_length=1, max_length=2)
     optimizer_model: str = "gpt-6-astra"
-    optimizer_effort: Literal["low", "medium", "high", "xhigh"] = "low"
+    optimizer_effort: Literal["low", "medium", "high", "xhigh", "max"] = "low"
+    trace_detail: Literal["compact", "full"] = "compact"
+    optimizer_service_tier: Literal["", "priority"] = ""
     service_tier: Literal["", "priority"] = ""
     backend_url: str = "http://localhost:8000"
     repeats: int = Field(default=1, ge=1, le=20)
@@ -63,6 +70,13 @@ class ExperimentRequest(BaseModel):
 
     @model_validator(mode="after")
     def validate_size(self):
+        if "ps_enqueue-v1" in self.game_ids:
+            if len(self.game_ids) != 1:
+                raise ValueError("Enqueue uses its dedicated engine backend; launch it separately from other games")
+            from urllib.parse import urlparse
+            backend = urlparse(self.backend_url)
+            if backend.port == 8000 and backend.hostname in {"localhost", "127.0.0.1", "host.docker.internal"}:
+                raise ValueError("Enqueue requires the dedicated backend on port 8001; start scripts/start-enqueue-backend.ps1 first")
         if self.comparison:
             if self.kind != "avo":
                 raise ValueError("Matched world-model comparisons are available for AVO only")
@@ -71,9 +85,11 @@ class ExperimentRequest(BaseModel):
                 raise ValueError("Comparisons need 2, 4 or 6 parallel slots so each pair starts together")
         from avo.client.model_provider import resolve_model
         for model in [*self.models, self.optimizer_model]:
-            provider, _ = resolve_model(model)
-            if provider == "openrouter" and self.kind != "avo":
-                raise ValueError("OpenRouter through Codex is currently available for AVO only")
+            resolve_model(model)
+        if self.agent_backend != "codex":
+            agents = [*self.models, *([self.optimizer_model] if self.kind == "avo" else [])]
+            if any(resolve_model(m)[0] != "openrouter" for m in agents):
+                raise ValueError("The tools and raw harnesses run on OpenRouter; use openrouter/vendor/model IDs")
         if self.service_tier and any(resolve_model(m)[0] == "openrouter" for m in self.models):
             raise ValueError("OpenRouter players do not support the Codex service tier setting")
         count = len(self.game_ids) * len(self.models) * len(self.efforts) * self.repeats
@@ -90,6 +106,74 @@ class ExperimentRequest(BaseModel):
         return self
 
 
+class ResumeRequest(BaseModel):
+    service_tier: Literal["", "priority"] = ""
+    optimizer_service_tier: Literal["", "priority"] = ""
+
+
+def _avo_recovery_command(saved: dict, output: Path, service_tier: str, optimizer_service_tier: str, trace_detail: str = "compact") -> list[str]:
+    player = saved.get("player") or {}
+    settings = saved.get("profile_settings") or {}
+    command = [sys.executable, "-m", "avo.docker.launch", "--campaign", "--resume-saved-campaign",
+               "--game-id", settings["game_id"], "--backend-url", settings["backend_url"],
+               "--optimizer-model", saved["optimizer_model"], "--player-model", player["model"],
+               "--optimizer-effort", saved.get("optimizer_effort", "low"),
+               "--player-effort", player.get("effort", "low"),
+               "--trace-detail", trace_detail,
+               "--optimizer-service-tier", optimizer_service_tier,
+               "--player-service-tier", service_tier,
+               "--max-evaluations", str(saved["max_evaluations"]),
+               "--world-model-mode", saved.get("world_model_mode", "final-only"),
+               "--harness", saved.get("harness", "codex"), "--provider", saved.get("provider", ""),
+               "--research-moves", str(player["max_environment_steps"]),
+               "--solver-moves", str(saved["fresh_solver_max_environment_steps"]),
+               "--max-wall-seconds", str(int(saved["max_wall_seconds"])),
+               "--output-dir", str(output)]
+    return command
+
+
+def prepare_avo_recovery(source: Path, target: Path) -> tuple[dict, bool]:
+    source_campaign, target_campaign = source / "campaign", target / "campaign"
+    saved = read_json(source_campaign / "evolution_config.json")
+    lineage = read_json(source_campaign / "lineage.json")
+    if not saved or not lineage:
+        raise ValueError(f"Saved AVO campaign is incomplete: {source.name}")
+    from avo.evolution.candidate import validate_candidate_id
+    candidate_ids = [validate_candidate_id(item["candidate_id"])
+                     for item in lineage.get("candidates", []) if isinstance(item, dict)]
+    if any(path.is_symlink() for path in source_campaign.rglob("*")):
+        raise ValueError("Saved campaign contains a symlink")
+    shutil.copytree(source_campaign, target_campaign)
+    evaluated = {item.get("candidate_id") for item in lineage.get("evaluations", []) if isinstance(item, dict)}
+    summary = read_json(source_campaign / "evolution_summary.json")
+    needs_report = saved.get("world_model_mode", "off") != "off"
+    report = source_campaign / "world_model.md"
+    report_present = report.is_file() and bool(report.read_text(encoding="utf-8").strip())
+    complete = (bool(summary) or len(evaluated) >= int(saved["max_evaluations"])) and (
+        not needs_report or report_present
+    )
+    if not complete:
+        # The original run keeps its failed session for inspection. The new
+        # optimizer must record a separate trace, not append to that session.
+        shutil.rmtree(target_campaign / "optimizer_analysis", ignore_errors=True)
+        for name in ("error.json", "world_model.json", "world_model.md"):
+            (target_campaign / name).unlink(missing_ok=True)
+        # Retain the registered candidate and immutable seed, but discard only
+        # interrupted runtime evidence in the recovery copy so retry is clean.
+        target_root = target_campaign.resolve()
+        for candidate_id in candidate_ids:
+            if candidate_id in evaluated:
+                continue
+            candidate = target_campaign / candidate_id
+            if candidate.resolve().parent != target_root:
+                raise ValueError("Candidate recovery path is outside its campaign")
+            for name in ("research", "evaluation", "solver"):
+                shutil.rmtree(candidate / name, ignore_errors=True)
+            for name in ("summary.json", "error.json"):
+                (candidate / name).unlink(missing_ok=True)
+    return saved, complete
+
+
 def plan_runs(config: ExperimentRequest, directory: Path, root: Path = ROOT) -> list[dict]:
     from itertools import product
     parent = None
@@ -99,6 +183,8 @@ def plan_runs(config: ExperimentRequest, directory: Path, root: Path = ROOT) -> 
         load_parent(parent)
         saved = read_json(parent / "run_config.json")
         expected = {"game_id": config.game_ids[0], "model": config.models[0], "reasoning_effort": config.efforts[0], "condition": config.conditions[0]}
+        if saved.get("harness", "codex") != config.agent_backend or saved.get("provider", "") != config.provider:
+            raise ValueError("Continuation must retain the parent harness and provider")
         if any(saved.get(key) != value for key, value in expected.items()):
             raise ValueError("Continuation must retain the parent game, model, effort and condition")
     conditions = config.conditions if config.kind == "codex" else config.world_model_modes
@@ -113,20 +199,23 @@ def plan_runs(config: ExperimentRequest, directory: Path, root: Path = ROOT) -> 
             command += ["avo.docker.launch", "--campaign", "--game-id", game, "--backend-url", config.backend_url,
                         "--optimizer-model", config.optimizer_model, "--player-model", model,
                         "--optimizer-effort", config.optimizer_effort, "--player-effort", effort,
+                        "--trace-detail", config.trace_detail,
+                        "--optimizer-service-tier", config.optimizer_service_tier,
                         "--player-service-tier", config.service_tier, "--max-evaluations", str(config.max_evaluations),
-                        "--world-model-mode", condition,
+                        "--world-model-mode", condition, "--harness", config.agent_backend, "--provider", config.provider,
                         "--research-moves", str(config.research_moves), "--solver-moves", str(config.solver_moves),
                         "--max-wall-seconds", str(int(config.max_hours * 3600)), "--output-dir", str(output)]
             artifact = output / "campaign"
         else:
             command += ["studies.codex_agent.run", "--no-window", "--game-id", game,
                         "--backend-url", config.backend_url, "--model", model, "--effort", effort,
-                        "--condition", condition, "--max-steps", str(config.max_steps), "--output-dir", str(output)]
+                        "--condition", condition, "--harness", config.agent_backend, "--provider", config.provider,
+                        "--max-steps", str(config.max_steps), "--output-dir", str(output)]
             if parent:
                 command += ["--continue-from", str(parent)]
             artifact = output
         rows.append({"id": artifact.relative_to(root).as_posix(), "kind": config.kind, "game_id": game,
-                     "agent_backend": config.agent_backend,
+                     "agent_backend": config.agent_backend, "provider": config.provider or None,
                      "pair_id": pairs[pair_key] if config.comparison else None,
                      "model_provider": "openrouter" if model.startswith("openrouter/") else "openai",
                      "optimizer_model": config.optimizer_model if config.kind == "avo" else None,
@@ -152,6 +241,7 @@ def write_json(path: Path, value: dict) -> None:
 def create_router(root: Path = ROOT) -> APIRouter:
     router = APIRouter(prefix="/api/workbench")
     cache: dict = {}
+    resume_run_lock = threading.Lock()
 
     @router.get("/model-catalog")
     def models(provider: Literal["openrouter"] = "openrouter"):
@@ -169,14 +259,37 @@ def create_router(root: Path = ROOT) -> APIRouter:
         except ValueError as exc:
             raise HTTPException(400, str(exc)) from exc
 
-    @router.get("/catalog")
-    def catalog(response: Response):
-        response.headers["Cache-Control"] = "no-store"
-        if time.monotonic() - cache.get("at", 0) > 3:
-            cache.update(data=snapshot(root), at=time.monotonic())
+    catalog_lock = threading.Lock()
+
+    def build_catalog(token: object) -> bytes:
+        data = snapshot(root)
         # Do not expose saved process commands through the public listing.
-        data = cache["data"]
-        return {**data, "jobs": [{**job, "runs": [{k: v for k, v in row.items() if k not in {"command", "output"}} for row in job["runs"]]} for job in data["jobs"]]}
+        public = {**data, "jobs": [{**job, "runs": [{k: v for k, v in row.items() if k not in {"command", "output"}} for row in job["runs"]]} for job in data["jobs"]]}
+        body = json.dumps(public, allow_nan=False, default=str).encode()
+        # A launch/stop clears the cache (and its token); an older rebuild must not repopulate it.
+        if token is not None and cache.get("token") is token:
+            cache.update(body=body, at=time.monotonic())
+        return body
+
+    def refresh_in_background(token: object) -> None:
+        try:
+            build_catalog(token)
+        except Exception:  # Keep serving the previous snapshot; the next request retries.
+            pass
+        finally:
+            catalog_lock.release()
+
+    @router.get("/catalog")
+    def catalog():
+        # Stale-while-revalidate: pollers get the last snapshot at once while one
+        # background rebuild (filesystem walk + Docker probe) refreshes it.
+        body = cache.get("body")
+        if body is None:
+            with catalog_lock:
+                body = cache.get("body") or build_catalog(cache.setdefault("token", object()))
+        elif time.monotonic() - cache.get("at", 0) > 2 and catalog_lock.acquire(blocking=False):
+            threading.Thread(target=refresh_in_background, args=(cache.get("token"),), daemon=True).start()
+        return Response(body, media_type="application/json", headers={"Cache-Control": "no-store"})
 
     @router.post("/experiments/preview")
     def preview(config: ExperimentRequest):
@@ -221,6 +334,150 @@ def create_router(root: Path = ROOT) -> APIRouter:
             raise HTTPException(400, str(exc)) from exc
         (path / "stop.request").touch()
         return {"stop_requested": True}
+
+    @router.post("/experiments/pause", status_code=202)
+    def pause(job: str = Query(...)):
+        try:
+            path = run_path(job, root)
+            manifest = read_json(path / "job.json")
+            if path.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") != "avo":
+                raise ValueError("Only active workbench-owned AVO batches can be paused here")
+            if manifest.get("status") not in {"starting", "running"}:
+                raise ValueError("Only an active AVO batch can be paused")
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        (path / "pause.request").touch()
+        return {"pause_requested": True}
+
+    @router.post("/experiments/dismiss")
+    def dismiss(job: str = Query(...)):
+        try:
+            path = run_path(job, root)
+            manifest = read_json(path / "job.json")
+            if path.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") != "avo":
+                raise ValueError("Only workbench-owned AVO batches can be removed from Runs")
+            if manifest.get("status") not in {"paused", "cancelled", "failed"} or manifest.get("resumed_as"):
+                raise ValueError("Only an inactive resumable batch can be removed from Runs")
+            manifest["dismissed_from_runs_at"] = datetime.now(timezone.utc).isoformat()
+            write_json(path / "job.json", manifest)
+        except (ValueError, OSError) as exc:
+            raise HTTPException(400, str(exc)) from exc
+        cache.clear()
+        return {"dismissed_from_runs": True}
+
+    @router.post("/experiments/resume", status_code=202)
+    def resume(config: ResumeRequest, job: str = Query(...)):
+        try:
+            source = run_path(job, root)
+            manifest = read_json(source / "job.json")
+            if source.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") != "avo":
+                raise ValueError("Only workbench-owned AVO batches can be resumed here")
+            if manifest.get("status") not in {"paused", "cancelled", "failed"}:
+                raise ValueError("Only a paused, cancelled, or failed AVO batch can be resumed")
+            if manifest.get("resumed_as"):
+                raise ValueError(f"This batch was already resumed as {manifest['resumed_as']}")
+            if any(read_json(Path(row["output"]) / "campaign/error.json").get("status") == "needs_assistance"
+                   for row in manifest.get("runs", [])):
+                raise ValueError("Backend needs assistance; inspect the error and start a new campaign after repair")
+            if any(legacy_enqueue_backend(read_json(Path(row["output"]) / "campaign/evolution_config.json"))
+                   for row in manifest.get("runs", [])):
+                raise ValueError("Legacy Enqueue engine cannot be resumed; start a new campaign on port 8001")
+            directory = root / "output/workbench" / (datetime.now().strftime("%Y%m%dT%H%M%S") + "-resume-" + uuid4().hex[:8])
+            directory.mkdir(parents=True, exist_ok=False)
+            rows = []
+            for index, old in enumerate(manifest.get("runs", []), 1):
+                old_output = Path(old["output"]).resolve()
+                if not old_output.is_relative_to(source.resolve()):
+                    raise ValueError("Saved campaign output is outside its batch")
+                if read_json(old_output / "recovery.json").get("resumed_as"):
+                    continue
+                output = directory / f"run-{index:04d}"
+                saved, complete = prepare_avo_recovery(old_output, output)
+                artifact = output / "campaign"
+                rows.append({**{k: v for k, v in old.items() if k not in {"id", "output", "command", "pid", "started_at", "returncode"}},
+                             "id": artifact.relative_to(root).as_posix(), "output": str(output),
+                             "command": _avo_recovery_command(saved, output, config.service_tier, config.optimizer_service_tier,
+                                                               manifest["config"].get("trace_detail", "compact")),
+                             "status": "completed" if complete else "queued"})
+            if not rows:
+                raise ValueError("Every run in this batch already has a separate recovery")
+            recovery_config = {**manifest["config"], "service_tier": config.service_tier,
+                               "optimizer_service_tier": config.optimizer_service_tier}
+            recovery = {"created_at": datetime.now(timezone.utc).isoformat(), "heartbeat": time.time(),
+                        "status": "starting", "config": recovery_config, "runs": rows,
+                        "recovery_of": job}
+            write_json(directory / "job.json", recovery)
+            with (directory / "worker.log").open("wb") as log:
+                subprocess.Popen([sys.executable, "-m", "workbench.experiment_job", str(directory)], cwd=root,
+                                 stdout=log, stderr=log, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+            recovery_id = directory.relative_to(root).as_posix()
+            manifest["resumed_as"] = recovery_id
+            write_json(source / "job.json", manifest)
+        except (ValueError, OSError, KeyError) as exc:
+            if 'directory' in locals() and directory.is_dir() and not (directory / "job.json").is_file():
+                shutil.rmtree(directory, ignore_errors=True)
+            raise HTTPException(400, str(exc)) from exc
+        cache.clear()
+        return {"id": recovery_id, "count": len(rows)}
+
+    @router.post("/experiments/resume-run", status_code=202)
+    def resume_run(config: ResumeRequest, run: str = Query(...)):
+        with resume_run_lock:
+            try:
+                campaign = run_path(run, root)
+                old_output = campaign.parent
+                source_job = old_output.parent
+                if (campaign.name != "campaign" or source_job.parent != root / "output/workbench"
+                        or not (source_job / "job.json").is_file()):
+                    raise ValueError("Only a Workbench-owned AVO run can be resumed")
+                manifest = read_json(source_job / "job.json")
+                old = next((row for row in manifest.get("runs", []) if row.get("id") == run), None)
+                if (manifest.get("config", {}).get("kind") != "avo" or not old
+                        or Path(old.get("output", "")).resolve() != old_output.resolve()
+                        or old.get("status") != "failed"):
+                    raise ValueError("Only a failed Workbench AVO run can be resumed")
+                if read_json(old_output / "recovery.json").get("resumed_as"):
+                    raise HTTPException(409, "This run already has a recovery")
+                if read_json(campaign / "error.json").get("status") == "needs_assistance":
+                    raise HTTPException(409, "Backend needs assistance; inspect the error and start a new campaign after repair")
+                if legacy_enqueue_backend(read_json(campaign / "evolution_config.json")):
+                    raise HTTPException(409, "Legacy Enqueue engine cannot be resumed; start a new campaign on port 8001")
+                directory = root / "output/workbench" / (datetime.now().strftime("%Y%m%dT%H%M%S") + "-resume-" + uuid4().hex[:8])
+                output = directory / "run-0001"
+                if not output.resolve().is_relative_to((root / "output/workbench").resolve()):
+                    raise ValueError("Recovery output is outside Workbench")
+                saved, complete = prepare_avo_recovery(old_output, output)
+                if complete:
+                    raise ValueError("This campaign already has a final result")
+                recovery_id = directory.relative_to(root).as_posix()
+                artifact = output / "campaign"
+                row = {**{k: v for k, v in old.items() if k not in {"id", "output", "command", "pid", "started_at", "returncode"}},
+                       "id": artifact.relative_to(root).as_posix(), "output": str(output),
+                       "command": _avo_recovery_command(saved, output, config.service_tier, config.optimizer_service_tier,
+                                                        manifest["config"].get("trace_detail", "compact")),
+                       "status": "queued", "repeat": 1, "pair_id": None}
+                recovery_config = {**manifest["config"], "game_ids": [old["game_id"]], "parallel": 1, "repeats": 1,
+                                   "comparison": False, "service_tier": config.service_tier,
+                                   "optimizer_service_tier": config.optimizer_service_tier}
+                write_json(directory / "job.json", {
+                    "created_at": datetime.now(timezone.utc).isoformat(), "heartbeat": time.time(),
+                    "status": "starting", "config": recovery_config, "runs": [row], "recovery_of": run,
+                })
+                marker = old_output / "recovery.json"
+                write_json(marker, {"resumed_as": row["id"], "created_at": datetime.now(timezone.utc).isoformat()})
+                try:
+                    with (directory / "worker.log").open("wb") as log:
+                        subprocess.Popen([sys.executable, "-m", "workbench.experiment_job", str(directory)], cwd=root,
+                                         stdout=log, stderr=log, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+                except OSError:
+                    marker.unlink(missing_ok=True)
+                    raise
+            except HTTPException:
+                raise
+            except (ValueError, OSError, KeyError) as exc:
+                raise HTTPException(400, str(exc)) from exc
+            cache.clear()
+            return {"id": recovery_id, "run": row["id"]}
 
     @router.get("/submission")
     def get_submission(run: str = Query(...), candidate: str = ""):
@@ -276,7 +533,7 @@ def create_router(root: Path = ROOT) -> APIRouter:
             raise HTTPException(400, str(exc)) from exc
         if not (path / "run_config.json").is_file():
             raise HTTPException(404, "Direct-player run not found")
-        names = ["run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl", "transcript.jsonl", "codex_session.jsonl", "isolation_manifest.json"]
+        names = ["run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl", "transcript.jsonl", "codex_session.jsonl", "model_session.jsonl", "isolation_manifest.json"]
         notes = []
         for note in (path / "workspace").glob("*.md"):
             if not note.is_symlink():
@@ -329,9 +586,10 @@ def create_router(root: Path = ROOT) -> APIRouter:
         try:
             path = run_path(run, root)
             target = run_path(run + "/" + file, root)
-            allowed = {"run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl", "transcript.jsonl", "codex_session.jsonl", "isolation_manifest.json"}
+            allowed = {"run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl", "transcript.jsonl", "codex_session.jsonl", "model_session.jsonl", "isolation_manifest.json"}
             note = len(Path(file).parts) == 2 and Path(file).parts[0] == "workspace" and target.suffix == ".md"
-            if not target.is_relative_to(path) or not (file in allowed or note):
+            frame = re.fullmatch(r"frames/[0-9]{3,}\.png", file) is not None
+            if not target.is_relative_to(path) or not (file in allowed or note or frame):
                 raise ValueError("Invalid artifact")
             if any(p.startswith(".") for p in Path(file).parts) or "model_requests" in Path(file).parts:
                 raise ValueError("Artifact is not available here")
@@ -339,6 +597,8 @@ def create_router(root: Path = ROOT) -> APIRouter:
             raise HTTPException(400, str(exc)) from exc
         if not target.is_file():
             raise HTTPException(404, "Artifact not found")
+        if frame:
+            return FileResponse(target, media_type="image/png")
         return FileResponse(target, filename=target.name)
 
     return router

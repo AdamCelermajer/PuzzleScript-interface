@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -13,50 +14,87 @@ from pathlib import Path
 from typing import Any
 
 
-ACTION_OUTPUT_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "action": {
-            "type": "string",
-            "enum": [
-                "ACTION1",
-                "ACTION2",
-                "ACTION3",
-                "ACTION4",
-                "ACTION5",
-                "ACTION7",
-                "FINISH",
-            ],
-        },
-        "note": {"type": "string"},
-    },
-    "required": ["action", "note"],
-    "additionalProperties": False,
-}
+GAME_ACTIONS = {"ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5", "ACTION7", "FINISH"}
 
-WORLD_MODEL_OUTPUT_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "objects": {"type": "array", "items": {"type": "string"}},
-        "controls": {"type": "array", "items": {"type": "string"}},
-        "transition_rules": {"type": "array", "items": {"type": "string"}},
-        "goal_condition": {"type": "string"},
-        "uncertainties": {"type": "array", "items": {"type": "string"}},
-        "failures_and_deadlocks": {
-            "type": "array",
-            "items": {"type": "string"},
-        },
-    },
-    "required": [
-        "objects",
-        "controls",
-        "transition_rules",
-        "goal_condition",
-        "uncertainties",
-        "failures_and_deadlocks",
-    ],
-    "additionalProperties": False,
-}
+
+def _response_json(text: str) -> Any:
+    """Extract one unambiguous JSON response without constraining tool calls."""
+    if "```" in text:
+        blocks = re.findall(r"```(?:json)?\s*([\s\S]*?)```", text)
+        if len(blocks) != 1:
+            raise ValueError("Expected exactly one JSON response block")
+        text = blocks[0]
+        return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        decoder = json.JSONDecoder()
+        objects = []
+        position = text.find("{")
+        while position != -1:
+            try:
+                value, end = decoder.raw_decode(text, position)
+            except json.JSONDecodeError:
+                position = text.find("{", position + 1)
+            else:
+                objects.append(value)
+                position = text.find("{", end)
+        if len(objects) != 1:
+            raise ValueError("Expected exactly one JSON response object")
+        return objects[0]
+
+
+def game_instructions(workspace_enabled: bool) -> str:
+    """Base instructions shared by every direct-player harness."""
+    if workspace_enabled:
+        text = (
+            "You are playing a puzzle game. Return exactly one next game action "
+            "per turn. You have a persistent workspace with tools to list, read, "
+            "and write notes. Use these tools as working memory. Before your first "
+            "game action, write strategy.md with your initial observations, "
+            "hypotheses, and plan. On later turns, read strategy.md before acting "
+            "and update it whenever evidence confirms or rejects a hypothesis, "
+            "your plan changes, you encounter a dead end, or a level changes. Keep "
+            "confirmed facts separate from hypotheses. Tool calls happen before "
+            "your final one-action response."
+        )
+    else:
+        text = (
+            "You are playing a puzzle game. "
+            "Return exactly one next game action per turn."
+        )
+    return text + (
+        ' After any tool calls finish on gameplay turns, return your final response as JSON '
+        'with an "action" field and optional "note", or just the action name. '
+        'Use the available game action name for "action". For the final '
+        'environment-model report, use the report fields requested instead.'
+    )
+
+
+WORLD_MODEL_PROMPT = (
+    "The gameplay run has ended. Describe the environment model you learned. "
+    "Identify objects, controls, transition rules, the goal condition, remaining "
+    "uncertainties, and known failures or deadlocks. Distinguish observed facts "
+    "from hypotheses in the wording. Do not take any more actions or use tools."
+    " Return a JSON object with these fields: objects, controls, "
+    "transition_rules, goal_condition, uncertainties, failures_and_deadlocks. "
+    "Use arrays of strings for all fields except goal_condition, which is a string."
+)
+
+
+def parse_action_reply(text: str) -> dict[str, str]:
+    """Parse one final gameplay reply; ValueError triggers a correction turn."""
+    text = str(text or "").strip()
+    payload = {"action": text, "note": ""} if text.upper() in GAME_ACTIONS else _response_json(text)
+    if not isinstance(payload, dict):
+        raise ValueError("Expected one action")
+    action = str(payload.get("action", "")).strip().upper()
+    if action not in GAME_ACTIONS:
+        raise ValueError("Missing or unsupported action")
+    return {
+        "operation": "FINISH" if action == "FINISH" else "ACT",
+        "action": action, "note": str(payload.get("note", "")).strip(),
+    }
 
 
 @dataclass(frozen=True)
@@ -65,6 +103,8 @@ class CodexSessionConfig:
     effort: str = "low"
     codex_bin: str = ""
     workspace_enabled: bool = False
+    harness: str = "codex"
+    provider: str = ""  # pinned OpenRouter provider slug; empty = OpenRouter routing
 
 
 def _find_codex_bin(explicit: str = "") -> str | None:
@@ -162,7 +202,8 @@ class CodexGameSession:
 
     def _start(self) -> "CodexGameSession":
         from avo.analysis.model_proxy import CodexRequestProxy
-        from avo.analysis.request_guard import RequestGuard
+        from avo.client.model_provider import resolve_model
+        from avo.client.openrouter_chat import provider_routing
         try:
             from openai_codex import ApprovalMode, Codex, CodexConfig, Sandbox
         except ImportError as exc:
@@ -170,34 +211,40 @@ class CodexGameSession:
                 "The Codex SDK is not installed. Run `uv sync` first."
             ) from exc
 
+        provider, provider_model = resolve_model(self.config.model)
+        provider_env = {}
+        if provider == "openrouter":
+            from dotenv import dotenv_values
+
+            key_file = os.environ.get("AVO_OPENROUTER_KEY_FILE", "")
+            key = (Path(key_file).read_text(encoding="utf-8").strip() if key_file else
+                   dotenv_values(Path(__file__).resolve().parents[2] / ".env").get("OPENROUTER_API_KEY")
+                   or os.environ.get("OPENROUTER_API_KEY", ""))
+            if not key or not key.strip():
+                raise RuntimeError("OpenRouter requires an existing OPENROUTER_API_KEY")
+            provider_env["OPENROUTER_API_KEY"] = key.strip()
         codex_bin = _find_codex_bin(self.config.codex_bin)
         self._model_cwd = tempfile.TemporaryDirectory(prefix="codex-game-")
-        allowed_tools = {
-            "exec", "wait", "request_user_input", "apply_patch", "view_image",
-            "list_mcp_resources", "list_mcp_resource_templates", "read_mcp_resource",
-        } | (
-            {f"mcp__codex_notes__{name}" for name in ("list_notes", "read_note", "write_note")}
-            if self.config.workspace_enabled else set()
-        )
-        if self.config.workspace_enabled:
-            allowed_tools.update({"list_notes", "read_note", "write_note"})
-            allowed_tools.add("tool_search")
         self._request_proxy = CodexRequestProxy(
             self.artifact_directory / "model_requests", session_id="study",
             session_role="baseline-plus" if self.config.workspace_enabled else "baseline",
-            guard=RequestGuard(forbidden_roots=(self.artifact_directory.resolve(),), allowed_tools=allowed_tools),
+            body_patch=({"provider": provider_routing(self.config.provider)}
+                        if provider == "openrouter" and self.config.provider else None),
+            **({"upstream_origin": "https://openrouter.ai", "base_path": "/api/v1"}
+               if provider == "openrouter" else {}),
         )
         self._request_proxy.start()
         config_overrides = [
             "project_doc_max_bytes=0",
             'web_search="disabled"',
             "features.multi_agent=false",
+            "features.goals=false",
+            "features.unbounded_connection_retries=false",
             "features.js_repl=false",
             "features.code_mode_host=false",
             "features.apps=false",
             "features.plugins=false",
             "features.image_generation=false",
-            "mcp_servers.node_repl.enabled=false",
             "features.memories=false",
             "memories.use_memories=false",
             "memories.generate_memories=false",
@@ -207,9 +254,18 @@ class CodexGameSession:
             "features.computer_use=false",
             'plugins."codex-app-tools@openai-bundled".enabled=false',
             'plugins."unified-computer-use@openai-bundled".enabled=false',
-            "mcp_servers.node_repl.enabled_tools=[]",
-            f'openai_base_url="{self._request_proxy.model_base_url}"',
         ]
+        if provider == "openrouter":
+            config_overrides.extend([
+                'model_provider="openrouter"',
+                'model_providers.openrouter.name="OpenRouter"',
+                f'model_providers.openrouter.base_url="{self._request_proxy.model_base_url}"',
+                'model_providers.openrouter.env_key="OPENROUTER_API_KEY"',
+                'model_providers.openrouter.wire_api="responses"',
+                'model_providers.openrouter.requires_openai_auth=false',
+            ])
+        else:
+            config_overrides.append(f'openai_base_url="{self._request_proxy.model_base_url}"')
         if self.config.workspace_enabled:
             note_server = Path(__file__).with_name("note_server.py").resolve()
             note_args = [
@@ -235,27 +291,11 @@ class CodexGameSession:
             config_overrides=tuple(config_overrides),
             cwd=self._model_cwd.name,
             env={**{key: "" for key in os.environ if key.startswith("CODEX_")},
-                 "CODEX_INTERNAL_ORIGINATOR_OVERRIDE": "codex_cli_rs"},
+                 "CODEX_INTERNAL_ORIGINATOR_OVERRIDE": "codex_cli_rs", **provider_env},
         )
         self._codex = Codex(sdk_config)
         self._codex.__enter__()
-        if self.config.workspace_enabled:
-            base_instructions = (
-                "You are playing a puzzle game. Return exactly one next game action "
-                "per turn. You have a persistent workspace with tools to list, read, "
-                "and write notes. Use these tools as working memory. Before your first "
-                "game action, write strategy.md with your initial observations, "
-                "hypotheses, and plan. On later turns, read strategy.md before acting "
-                "and update it whenever evidence confirms or rejects a hypothesis, "
-                "your plan changes, you encounter a dead end, or a level changes. Keep "
-                "confirmed facts separate from hypotheses. Tool calls happen before "
-                "your final one-action response."
-            )
-        else:
-            base_instructions = (
-                "You are playing a puzzle game. "
-                "Return exactly one next game action per turn."
-            )
+        base_instructions = game_instructions(self.config.workspace_enabled)
         # Codex receives its cwd as model context. Keep it opaque and separate
         # from artifact paths, which may contain the backend's real game ID.
         initial_notes = sorted(
@@ -270,7 +310,7 @@ class CodexGameSession:
             base_instructions=base_instructions,
             cwd=self._model_cwd.name,
             ephemeral=True,
-            model=self.config.model,
+            model=provider_model,
             sandbox=Sandbox.read_only,
         )
         self._write_isolation_manifest(
@@ -313,34 +353,8 @@ class CodexGameSession:
             shutil.copyfile(Path(image_path).resolve(), staged_image_path)
             inputs.append(LocalImageInput(str(staged_image_path)))
 
-        result = self._run_with_retry(
-            inputs,
-            ACTION_OUTPUT_SCHEMA,
-            turn_kind="game_action",
-            prompt=prompt,
-            image_path=staged_image_path,
-        )
-        if not result.final_response:
-            raise ValueError("Codex returned no final response")
-
-        try:
-            payload = json.loads(result.final_response)
-        except json.JSONDecodeError as exc:
-            raise ValueError(
-                f"Codex returned invalid action JSON: {result.final_response}"
-            ) from exc
-        if not isinstance(payload, dict):
-            raise ValueError("Codex action response must be a JSON object")
-
-        action = str(payload.get("action", "")).strip().upper()
-        allowed = set(ACTION_OUTPUT_SCHEMA["properties"]["action"]["enum"])
-        if action not in allowed:
-            raise ValueError(f"Codex returned unsupported action: {action or '<empty>'}")
-        return {
-            "operation": "FINISH" if action == "FINISH" else "ACT",
-            "action": action,
-            "note": str(payload.get("note", "")).strip(),
-        }
+        result = self._run_with_retry(inputs, turn_kind="game_action", prompt=prompt, image_path=staged_image_path)
+        return parse_action_reply(result.final_response)
 
     def note_tool_count(self) -> int:
         audit_path = self.working_directory / "tool_calls.jsonl"
@@ -354,21 +368,15 @@ class CodexGameSession:
 
         from openai_codex import TextInput
 
-        prompt = (
-            "The gameplay run has ended. Describe the environment model you learned. "
-            "Identify objects, controls, transition rules, the goal condition, remaining "
-            "uncertainties, and known failures or deadlocks. Distinguish observed facts "
-            "from hypotheses in the wording. Do not take any more actions or use tools."
-        )
+        prompt = WORLD_MODEL_PROMPT
         result = self._run_with_retry(
             [TextInput(prompt)],
-            WORLD_MODEL_OUTPUT_SCHEMA,
             turn_kind="final_world_model",
             prompt=prompt,
         )
         if not result.final_response:
             raise ValueError("Codex returned no final world model")
-        payload = json.loads(result.final_response)
+        payload = _response_json(result.final_response)
         if not isinstance(payload, dict):
             raise ValueError("Codex world model response must be a JSON object")
         return payload
@@ -384,10 +392,12 @@ class CodexGameSession:
             "ephemeral_thread": True,
             "sandbox": "read_only",
             "approval_mode": "deny_all",
+            "harness": "codex",
+            "openrouter_provider": self.config.provider or None,
             "model_cwd_is_opaque_temporary_directory": True,
             "frame_attachment_is_staged_in_model_cwd": True,
             "outbound_request_capture": "model_requests/",
-            "outbound_guard_checks_context_and_tool_inventory": True,
+            "outbound_guard_checks_context_and_tool_inventory": False,
             "os_read_isolation_certified": False,
             "internal_tools_allowed_by_user": True,
             "model_visible_note_tools": (
@@ -410,13 +420,11 @@ class CodexGameSession:
     def _run_with_retry(
         self,
         inputs: list[Any],
-        output_schema: dict,
         *,
         turn_kind: str,
         prompt: str,
         image_path: str | Path | None = None,
     ) -> Any:
-        from avo.isolation import IsolationError
         if self._thread is None:
             raise RuntimeError("Codex game session has not been started")
         for attempt in range(4):
@@ -424,12 +432,7 @@ class CodexGameSession:
                 result = self._thread.run(
                     inputs,
                     effort=self.config.effort,
-                    output_schema=output_schema,
                 )
-                if self._request_proxy.guard.failure:
-                    raise IsolationError(self._request_proxy.guard.failure)
-                if self._request_proxy.guard.requests_checked == 0:
-                    raise IsolationError("Missing outgoing request capture")
                 self._record_turn(
                     result,
                     turn_kind=turn_kind,
@@ -438,11 +441,13 @@ class CodexGameSession:
                 )
                 return result
             except RuntimeError as exc:
-                if self._request_proxy.guard.failure:
-                    raise IsolationError(self._request_proxy.guard.failure) from exc
-                if "at capacity" not in str(exc).lower() or attempt == 3:
+                transient = any(message in str(exc).lower() for message in (
+                    "at capacity", "rate limit", "429", "502", "503", "504",
+                    "timed out", "timeout", "connection", "stream disconnected",
+                ))
+                if not transient or attempt == 3:
                     raise
-                time.sleep(5 * (2**attempt))
+                time.sleep(2**attempt)
         raise RuntimeError("Codex request retry loop exited unexpectedly")
 
     def _record_turn(

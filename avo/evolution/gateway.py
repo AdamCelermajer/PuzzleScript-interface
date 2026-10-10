@@ -16,6 +16,23 @@ class EvolutionBudget:
     max_wall_seconds: float = 14_400
 
 
+FINAL_WORLD_MODEL_PROMPT = (
+    "Write world_model.md in your current workspace now. Describe your inferred game rules "
+    "for a reader who has not seen the run. Use a concise Markdown research-note style: "
+    "start with the objective and the best evaluated outcome, then explain the objects and "
+    "state, controls, movement and interactions, goal and level transitions, and any undo or "
+    "history effects. Include observation quirks only when they matter to the rules. "
+    "Describe any critical discovery, and end with remaining uncertainty. Use only headings "
+    "relevant to this game. "
+    "Explain important interactions step by step and give a few decisive observations, while "
+    "keeping exhaustive traces, level maps, RGB values, API schemas, and solver implementation "
+    "details out of the main report. Clearly separate observed rules from hypotheses; do not "
+    "invent behavior for unseen situations. Aim for roughly 400–900 words unless the game's "
+    "complexity requires more. Save the file before optional further checking, then refine it "
+    "with any remaining time."
+)
+
+
 class EvolutionGateway:
     """Trusted tools for the outer variation operator; it has no game controls."""
 
@@ -49,10 +66,7 @@ class EvolutionGateway:
             return None
         self.handle("finish", {"reason": self.finish_reason or "search finished"})
         self._final_report_requested = True
-        return (
-            "Write world_model.md in your current workspace describing your understanding "
-            "of the game's rules."
-        )
+        return FINAL_WORLD_MODEL_PROMPT
 
     @property
     def success(self) -> bool:

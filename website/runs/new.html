@@ -29,8 +29,11 @@
 <label>Total launch limit (hours)<input name="max_hours" type="number" value="4" min="0.1" step="0.1" max="24" required><small>Includes queued campaigns.</small></label>
 <label>Campaigns at once<select name="parallel"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select><small data-parallel-help>Separate campaigns, independent workspaces.</small></label>
 <label data-avo>Fresh solver actions<input name="solver_moves" type="number" value="1500" min="1" max="20000"></label>
-<label>Player reasoning<select name="efforts"><option>minimal</option><option>low</option><option>medium</option><option>high</option><option>xhigh</option></select></label>
-<label data-avo>Optimizer reasoning<select name="optimizer_effort"><option>low</option><option>medium</option><option>high</option><option>xhigh</option></select></label>
+<label class="wide">Harness<select name="agent_backend"><option value="codex">H2 · Codex agent</option><option value="tools">H1 · OpenRouter with minimal native tools</option><option value="raw">H0 · OpenRouter raw model, text-only tools</option></select><small>H0 and H1 need OpenRouter models for every agent.</small></label>
+<label>OpenRouter provider<input name="provider" placeholder="e.g. alibaba, deepinfra" pattern="[a-z0-9][a-z0-9._/-]{0,63}"><small>Pins one provider, no fallback. Empty uses OpenRouter routing.</small></label>
+<label>Player reasoning<select name="efforts"><option>minimal</option><option>low</option><option>medium</option><option>high</option><option>xhigh</option><option>max</option></select></label>
+<label data-avo>Optimizer reasoning<select name="optimizer_effort"><option>low</option><option>medium</option><option>high</option><option>xhigh</option><option>max</option></select></label>
+<label data-avo>Trace detail<select name="trace_detail"><option value="compact">Conversation and reasoning</option><option value="full">Full events and reasoning</option></select><small>Full also saves raw app events and workspace snapshots.</small></label>
 <label data-avo>Inner service tier<select name="service_tier"><option value="">Normal</option><option value="priority">Priority (Codex)</option></select></label>
 <label class="wide">Backend URL<input name="backend_url" value="http://host.docker.internal:8000" required></label>
 <label data-codex>Condition<select name="conditions"><option value="baseline-plus">Baseline+ · notes</option><option value="baseline">Baseline · no notes</option></select></label>
