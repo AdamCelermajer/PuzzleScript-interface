@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from harnesses.codex import codex_oauth_status  # noqa: F401  (re-exported for the workbench)
+from harnesses.codex import find_codex_bin as _find_codex_bin  # noqa: F401  (avo/legacy imports it)
 
 GAME_ACTIONS = {"ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5", "ACTION7", "FINISH"}
 FRAME_NAME = "frame.png"

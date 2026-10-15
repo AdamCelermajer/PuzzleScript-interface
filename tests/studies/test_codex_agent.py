@@ -259,8 +259,10 @@ class ContinuationTests(unittest.TestCase):
             (source / "strategy.md").write_text("learned plan")
             (source / "tool_calls.jsonl").write_text("private log")
             seed_notes(root / "parent", root / "child")
-            self.assertEqual((root / "child/strategy.md").read_text(), "learned plan")
+            # Notes persist only under notes/ (older runs kept them at the root).
+            self.assertEqual((root / "child/notes/strategy.md").read_text(), "learned plan")
             self.assertFalse((root / "child/tool_calls.jsonl").exists())
+            self.assertFalse((root / "child/notes/tool_calls.jsonl").exists())
 
 
 if __name__ == "__main__":

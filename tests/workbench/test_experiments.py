@@ -455,7 +455,7 @@ class ExperimentTests(unittest.TestCase):
         self.assertNotIn("pid", data["runs"][1])
 
     def test_docker_launch_preserves_role_settings_and_cleans_temporary_credentials(self):
-        from avo.docker import launch
+        from harnesses import launch
         auth_dir = self.root / "fake-codex"
         auth_dir.mkdir()
         (auth_dir / "auth.json").write_text(json.dumps({"tokens":{"dummy":"test-only"}}))
@@ -464,24 +464,24 @@ class ExperimentTests(unittest.TestCase):
 
         def subprocess_run(command, **kwargs):
             calls.append(command)
-            if command[:2] == ["docker", "run"]:
-                (output / "isolation_preflight.json").write_text('{"passed":true}')
             return subprocess.CompletedProcess(command, 0)
 
-        args = ["launch", "--campaign", "--output-dir", str(output), "--game-id", "test-game",
-                "--backend-url", "http://host.docker.internal:8000", "--optimizer-model", "outer",
-                "--player-model", "inner", "--optimizer-effort", "low", "--player-effort", "high",
+        args = ["--mode", "campaign", "--harness", "codex", "--output-dir", str(output), "--game-id", "test-game",
+                "--backend-url", "http://host.docker.internal:8000", "--optimizer-model", "gpt-5.6-sol",
+                "--model", "gpt-5.6-luna", "--optimizer-effort", "low", "--effort", "high",
                 "--max-evaluations", "2", "--research-moves", "30", "--solver-moves", "50"]
-        with patch.object(sys, "argv", args), patch.dict("os.environ", {"CODEX_HOME":str(auth_dir)}), patch.object(launch, "stage_controller"), patch.object(launch.subprocess, "run", side_effect=subprocess_run):
-            launch.main()
-        self.assertEqual(calls[0][calls[0].index("--optimizer-effort")+1], "low")
-        self.assertEqual(calls[0][calls[0].index("--player-effort")+1], "high")
+        with patch.dict("os.environ", {"CODEX_HOME":str(auth_dir)}), patch.object(launch, "stage_controller"), \
+                patch.object(launch.subprocess, "run", side_effect=subprocess_run):
+            self.assertEqual(launch.launch(args), 0)
+        spec = json.loads((output / "run_spec.json").read_text())
+        self.assertEqual((spec["optimizer_effort"], spec["effort"]), ("low", "high"))
+        self.assertEqual((spec["optimizer_model"], spec["model"]), ("gpt-5.6-sol", "gpt-5.6-luna"))
+        self.assertEqual(calls[0][:2], ["docker", "run"])
         self.assertEqual(calls[-1][:3], ["docker", "rm", "-f"])
         self.assertEqual(calls[-1][-1], json.loads((output / "launcher.json").read_text())["container"])
         credential_mount = next(x for x in calls[0] if "dst=/credentials," in x)
         credentials = Path(credential_mount.split("src=",1)[1].split(",dst=",1)[0])
         self.assertFalse(credentials.exists())
-
 
 if __name__ == "__main__":
     unittest.main()

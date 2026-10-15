@@ -120,7 +120,7 @@ def test_execute_player_run_preserves_single_run_behavior_and_fitness() -> None:
             prompt_hash="prompt-hash",
         )
 
-        with patch("avo.run_once.CodexOAuthAgent", ScriptedAgent):
+        with patch("avo.run_once.CliAgent", ScriptedAgent):
             result = execute_player_run(
                 loaded_profile=loaded,
                 output_dir=root / "run",
@@ -156,7 +156,7 @@ def test_player_run_has_no_internal_theory_budget() -> None:
             prompt_hash="prompt-hash",
         )
 
-        with patch("avo.run_once.CodexOAuthAgent", ScriptedAgent):
+        with patch("avo.run_once.CliAgent", ScriptedAgent):
             result = execute_player_run(
                 loaded_profile=loaded,
                 output_dir=root / "run",
@@ -192,11 +192,9 @@ def test_player_can_run_two_fresh_solver_self_checks_without_research_steps() ->
                 prompt_hash="prompt-hash",
             )
 
-        with patch("avo.run_once.CodexOAuthAgent", SelfCheckingAgent), patch(
+        with patch("avo.run_once.CliAgent", SelfCheckingAgent), patch(
             "avo.run_once.load_profile", side_effect=lambda *_: loaded_profile()
-        ), patch("avo.evolution.solver_evaluation.IsolatedRuntime.preflight"), patch(
-            "avo.evolution.solver_evaluation.IsolatedRuntime.command", side_effect=lambda *args: list(args)
-        ), patch("avo.evolution.solver_evaluation._find_codex_bin", return_value="codex"):
+        ):
             result = execute_player_run(
                 loaded_profile=loaded_profile(),
                 output_dir=root / "run",

@@ -73,6 +73,7 @@ export interface CatalogRun {
   pair_id?: string | null
   match_id?: string | null
   recorded_win_levels?: number | null
+  config?: Record<string, unknown>
   result_inputs?: { config: Record<string, unknown>; evaluations: EvaluationInput[]; finalized: boolean }
 }
 
@@ -424,6 +425,7 @@ export interface BenchmarkDetail extends BenchmarkGame {
   bfs_searches: { source: string; level: number; status: string; solved: boolean; depth: number | null; expanded_states: number | null }[]
   reference: { artifact_status?: string; levels: { level: number; solution_actions: unknown; replay_verified: boolean }[] } | null
   reviewed_rules: string[]
+  rules_source: string
   level_annotations: { methodology?: string; levels?: Record<string, unknown>[] }
   rule_archives: { id: string; model: string | null }[]
   goal_studies: { id: string; source: string; answers: number }[]

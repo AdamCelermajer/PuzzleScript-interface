@@ -111,9 +111,7 @@ class EvolutionTests(unittest.TestCase):
 
     def test_final_world_model_prompt_is_shared_and_rules_first(self):
         from avo.evolution.gateway import FINAL_WORLD_MODEL_PROMPT
-        from avo.report_saved_world_model import FINAL_PROMPT
 
-        self.assertEqual(FINAL_PROMPT, FINAL_WORLD_MODEL_PROMPT)
         self.assertIn("start with the objective", FINAL_WORLD_MODEL_PROMPT)
         self.assertIn("movement and interactions", FINAL_WORLD_MODEL_PROMPT)
         self.assertIn("remaining uncertainty", FINAL_WORLD_MODEL_PROMPT)
@@ -615,28 +613,23 @@ else:
             workspace = root / "workspace"
             workspace.mkdir()
             (workspace / "solver.py").write_text(solver_source, encoding="utf-8")
-            # This tests the solver protocol, not native OS isolation. The real
-            # sandbox is separately exercised by the mandatory launch preflight.
-            with patch("avo.evolution.solver_evaluation.IsolatedRuntime.preflight"), patch(
-                "avo.evolution.solver_evaluation.IsolatedRuntime.command",
-                side_effect=lambda *args: list(args),
-            ), patch("avo.evolution.solver_evaluation._find_codex_bin", return_value="codex"):
-                result = evaluate_solver_workspace(
-                    loaded_profile=SimpleNamespace(implementation=CounterProfile()),
-                    workspace=workspace,
-                    output_dir=root / "evaluation",
-                    max_environment_steps=10,
-                    max_wall_seconds=10,
-                )
-                unlimited = evaluate_solver_workspace(
-                    loaded_profile=SimpleNamespace(implementation=CounterProfile()),
-                    workspace=workspace,
-                    output_dir=root / "evaluation-no-wall-limit",
-                    max_environment_steps=10,
-                    max_wall_seconds=0,
-                )
-                self.assertTrue(unlimited.success)
-                self.assertEqual(unlimited.environment_steps, 2)
+            # The solver runs as a plain subprocess in its own scratch copy.
+            result = evaluate_solver_workspace(
+                loaded_profile=SimpleNamespace(implementation=CounterProfile()),
+                workspace=workspace,
+                output_dir=root / "evaluation",
+                max_environment_steps=10,
+                max_wall_seconds=10,
+            )
+            unlimited = evaluate_solver_workspace(
+                loaded_profile=SimpleNamespace(implementation=CounterProfile()),
+                workspace=workspace,
+                output_dir=root / "evaluation-no-wall-limit",
+                max_environment_steps=10,
+                max_wall_seconds=0,
+            )
+            self.assertTrue(unlimited.success)
+            self.assertEqual(unlimited.environment_steps, 2)
 
             self.assertEqual(result.score["solver_levels_completed"], 2)
             self.assertEqual(result.score["solver_environment_actions"], 2)

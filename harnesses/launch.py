@@ -48,6 +48,19 @@ SKIPPED_PARTS = {"output", "outputs", "__pycache__", ".venv", "rules", "tests", 
                  "node_modules", "codex_request_capture"}
 SUFFIXES = {".py", ".md", ".txt", ".toml"}
 CONTAINER_GEMINI = "/home/agent/.gemini"
+LOGIN_MARKER = ".puzzlescript-login-ok"
+# Default: print mode (verified to show the sign-in URL and read a pasted code, but
+# agy gives it only 60 s). --tui runs the interactive CLI instead (no such timeout;
+# quit it with /quit). Afterwards a probe verifies the login and marks the volume.
+LOGIN_PRINT = "agy -p 'Reply with the single word READY.' --model gemini-3.8-flash-low --output-format text"
+
+
+def login_script(tui: bool = False) -> str:
+    return (f"mkdir -p ~/.gemini/xdg-antigravity && cd /tmp && {'agy' if tui else LOGIN_PRINT}; "
+            f"rm -f ~/.gemini/{LOGIN_MARKER}; "
+            f"if timeout 60 agy models </dev/null 2>&1 | grep -v 'TLS handshake' | grep -qi gemini; then "
+            f"touch ~/.gemini/{LOGIN_MARKER} && echo 'Antigravity login verified.'; "
+            f"else echo 'Antigravity login NOT verified: run login again.'; exit 1; fi")
 
 
 def stage_controller(destination: Path, root: Path = ROOT) -> None:
@@ -153,6 +166,10 @@ def stage_credentials(harness: str, models: list[str], credentials: Path,
             shutil.copyfile(source, credentials / "auth.json")
             options += ["--mount", f"type=bind,src={credentials},dst=/credentials,readonly"]
         elif need == "agy-volume":
+            # Never let `docker run` silently create an empty (logged-out) volume.
+            if docker_object_exists("volume", AGY_VOLUME) is False:
+                raise HarnessError(f"antigravity needs the {AGY_VOLUME} volume: run "
+                                   "`uv run python -m harnesses.launch login antigravity` first")
             options += ["--mount", f"type=volume,src={AGY_VOLUME},dst={CONTAINER_GEMINI}"]
         else:
             if not values.get(need):
@@ -168,7 +185,7 @@ def docker_command(name: str, controller: Path, output: Path, extra: list[str], 
                "--cap-drop", "ALL", "--security-opt", "no-new-privileges",
                "--memory", memory, "--cpus", cpus, "--pids-limit", "1024",
                "--tmpfs", "/tmp:rw,exec,nosuid,size=1g",
-               "--add-host", "host.docker.internal:host-gateway"]
+               "--add-host", "host.docker.internal:host-gateway", "--env", "HARNESS_CONTAINER=1"]
     if interactive:
         command.append("-it")
     if controller is not None:
@@ -274,15 +291,16 @@ def launch(argv: list[str]) -> int:
 def login(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="python -m harnesses.launch login")
     parser.add_argument("harness", choices=["antigravity"])
-    parser.parse_args(argv)
+    parser.add_argument("--tui", action="store_true", help="interactive agy instead of print mode (no 60 s limit)")
+    options = parser.parse_args(argv)
     print(f"Signing Antigravity into the Docker volume {AGY_VOLUME}.\n"
-          "agy prints a Google sign-in URL: open it in a browser, approve, paste the code back here.\n"
-          "After agy answers, the login is stored in the volume; type /quit (or Ctrl+C twice) to exit.",
+          "agy prints a Google sign-in URL: open it in a browser, approve, and paste the code back here"
+          + (" (then type /quit)." if options.tui else " within 60 seconds (or rerun with --tui)."),
           flush=True)
     name = "ps-agy-login-" + uuid4().hex[:8]
     command = docker_command(name, None, None, ["--mount", f"type=volume,src={AGY_VOLUME},dst={CONTAINER_GEMINI}",
                                                 "--entrypoint", "bash"],
-                             ["-lc", "mkdir -p ~/.gemini/xdg-antigravity && cd /tmp && agy"], interactive=True)
+                             ["-lc", login_script(options.tui)], interactive=True)
     return _run_owned(command, name)
 
 
@@ -302,7 +320,7 @@ def check(argv: list[str]) -> int:
         name = "ps-agy-check-" + uuid4().hex[:8]
         command = docker_command(name, None, None, ["--mount", f"type=volume,src={AGY_VOLUME},dst={CONTAINER_GEMINI}",
                                                     "--entrypoint", "bash"],
-                                 ["-lc", "mkdir -p ~/.gemini/xdg-antigravity && cd /tmp && timeout 40 agy models </dev/null"])
+                                 ["-lc", f"test -f ~/.gemini/{LOGIN_MARKER} && cd /tmp && timeout 40 agy models </dev/null"])
         try:
             probe = subprocess.run(command, capture_output=True, text=True, timeout=90)
             text = probe.stdout + probe.stderr
@@ -313,12 +331,36 @@ def check(argv: list[str]) -> int:
     return 0 if all(entry["ready"] for entry in harnesses) else 1
 
 
+def smoke(argv: list[str]) -> int:
+    """Two tiny real turns of one harness inside the image (costs one cheap model call pair)."""
+    parser = argparse.ArgumentParser(prog="python -m harnesses.launch smoke")
+    parser.add_argument("--harness", required=True, choices=HARNESS_IDS)
+    parser.add_argument("--model", required=True)
+    parser.add_argument("--effort", default="low", choices=EFFORTS)
+    parser.add_argument("--output-dir", default=str(ROOT / "output" / "harness-smoke"))
+    options = parser.parse_args(argv)
+    resolve_model_for(options.harness, options.model)
+    output = Path(options.output_dir).resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    name = "ps-agent-smoke-" + uuid4().hex[:8]
+    with tempfile.TemporaryDirectory(prefix="ps-controller-") as controller, \
+            tempfile.TemporaryDirectory(prefix="ps-credentials-") as credentials:
+        stage_controller(Path(controller))
+        extra, child_env = stage_credentials(options.harness, [options.model], Path(credentials))
+        command = docker_command(name, Path(controller), output, extra,
+                                 ["-m", "harnesses.smoke", "--harness", options.harness, "--model", options.model,
+                                  "--effort", options.effort, "--analysis-dir", "/results"])
+        return _run_owned(command, name, child_env)
+
+
 def main(argv: list[str] | None = None) -> None:
     argv = list(sys.argv[1:] if argv is None else argv)
     if argv[:1] == ["login"]:
         raise SystemExit(login(argv[1:]))
     if argv[:1] == ["check"]:
         raise SystemExit(check(argv[1:]))
+    if argv[:1] == ["smoke"]:
+        raise SystemExit(smoke(argv[1:]))
     try:
         code = launch(argv)
     except HarnessError as exc:

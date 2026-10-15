@@ -44,7 +44,7 @@ export function Tag({ children, title, active, onClick }: { children: ReactNode;
       onClick={onClick}
       className={cx(
         'inline-flex items-center rounded px-1.5 py-px text-[11.5px] whitespace-nowrap border',
-        active ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-sunken text-muted',
+        active ? 'border-accent bg-accent text-accent-fg' : 'border-line bg-sunken text-muted',
         onClick && 'cursor-pointer hover:border-line-strong',
       )}
     >

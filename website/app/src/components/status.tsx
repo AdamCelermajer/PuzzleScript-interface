@@ -18,7 +18,7 @@ export function OutcomeCell({ outcome, campaign }: { outcome: Outcome; campaign:
   return (
     <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
       {hasScore && (
-        <span className="font-mono text-[12px] tabular-nums" title={campaign ? 'Best fresh-solver fitness / levels' : 'Levels completed / levels'}>
+        <span className="text-[12.5px] font-medium tabular-nums" title={campaign ? 'Best fresh-solver fitness / levels' : 'Levels completed / levels'}>
           {scoreText(outcome)}
         </span>
       )}
@@ -35,9 +35,9 @@ export function ProgressText({ run }: { run: RunView }) {
   const { used, budget, unit } = run.progress
   if (used === null && budget === null) return <span className="text-faint">—</span>
   return (
-    <span className="font-mono text-[12px] tabular-nums text-muted" title={unit}>
+    <span className="whitespace-nowrap text-[12.5px] tabular-nums text-muted" title={unit}>
       {used ?? '—'}
-      {budget ? ` / ${budget}` : ''} <span className="font-sans text-faint">{unit === 'actions' ? 'act' : 'eval'}</span>
+      {budget ? ` / ${budget}` : ''} <span className="text-[11px] text-faint">{unit === 'actions' ? 'actions' : 'evals'}</span>
     </span>
   )
 }

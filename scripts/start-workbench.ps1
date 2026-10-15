@@ -138,7 +138,7 @@ try {
             $webUrl = "http://127.0.0.1:$webPort/"
             $webPattern = '<title>[^<]*Research Workbench'
             if (-not (Test-KnownPortOwner -Port $webPort -AllowedCommandParts @("vite.js", "vite/bin/vite") -HealthUrl $webUrl -HealthPattern $webPattern)) {
-                [void](Start-OwnedProcess -FileName "node" -Arguments "node_modules/vite/bin/vite.js --config website/vite.config.js --host 127.0.0.1 --port $webPort --strictPort" -Environment @{
+                [void](Start-OwnedProcess -FileName "node" -Arguments "website/app/node_modules/vite/bin/vite.js --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment @{
                     WORKBENCH_API_PORT = $apiPort
                     WORKBENCH_ALLOWED_HOSTS = $tailscaleDnsName
                 })

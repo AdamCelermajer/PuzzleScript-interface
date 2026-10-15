@@ -114,6 +114,13 @@ export function distinct(runs: RunView[], key: (r: RunView) => string): string[]
   return [...new Set(runs.map(key).filter((v) => v && v !== '—'))].sort((a, b) => a.localeCompare(b))
 }
 
+/** `openrouter/qwen/qwen3.8-27b` → name `qwen3.8-27b`, provider `openrouter/qwen`; bare ids keep the name. */
+export function modelParts(model: string): { name: string; provider: string } {
+  const parts = model.split('/')
+  if (parts.length < 2) return { name: model, provider: '' }
+  return { name: parts.at(-1)!, provider: parts.slice(0, -1).join('/') }
+}
+
 export function jobLabel(job: Pick<CatalogJob, 'id'>): string {
   return job.id.split('/').at(-1) ?? job.id
 }

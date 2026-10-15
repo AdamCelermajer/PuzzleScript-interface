@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+import { StrictMode, Suspense, lazy } from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
@@ -11,7 +11,11 @@ import { CompareView } from './views/Compare'
 import { BenchmarksView } from './views/Benchmarks'
 import { DiaryView, DiaryEntryView, DiaryEditView } from './views/Diary'
 import { ToolsView } from './views/Tools'
-import { Empty } from './components/ui'
+import { NotesView } from './views/Notes'
+// pdf.js + KaTeX are large: load the paper investigation only when it is opened.
+const PapersView = lazy(() => import('./views/Papers').then((m) => ({ default: m.PapersView })))
+import { OptimalPathView } from './views/OptimalPath'
+import { Empty, Loading } from './components/ui'
 
 const client = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
@@ -35,6 +39,9 @@ createRoot(document.getElementById('root')!).render(
             <Route path="diary/:slug" element={<DiaryEntryView />} />
             <Route path="diary/:slug/edit" element={<DiaryEditView />} />
             <Route path="tools" element={<ToolsView />} />
+            <Route path="tools/notes" element={<NotesView />} />
+            <Route path="tools/papers" element={<Suspense fallback={<Loading label="Loading the PDF reader…" />}><PapersView /></Suspense>} />
+            <Route path="tools/optimal-path" element={<OptimalPathView />} />
             <Route path="*" element={<Empty title="Page not found">Use the navigation on the left.</Empty>} />
           </Route>
         </Routes>

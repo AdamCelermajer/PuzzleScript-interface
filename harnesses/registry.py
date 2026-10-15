@@ -152,7 +152,8 @@ def docker_object_exists(kind: str, name: str) -> bool | None:
                                 stderr=subprocess.PIPE, text=True, timeout=20)
     except (OSError, subprocess.SubprocessError):
         return None
-    if result.returncode and "daemon" in (result.stderr or "").lower():
+    stderr = (result.stderr or "").lower()
+    if result.returncode and ("cannot connect" in stderr or "error during connect" in stderr):
         return None
     return result.returncode == 0
 

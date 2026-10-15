@@ -18,6 +18,15 @@ export function dateTime(value: number | string | null | undefined): string {
   return date.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
+/** Compact launch time: no year for the current year. */
+export function shortTime(value: number | string | null | undefined): string {
+  if (!value) return '—'
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return String(value)
+  const sameYear = date.getFullYear() === new Date().getFullYear()
+  return date.toLocaleString(undefined, { ...(sameYear ? {} : { year: '2-digit' }), month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+}
+
 export function shortDate(value: number | string | null | undefined): string {
   if (!value) return '—'
   const date = new Date(value)

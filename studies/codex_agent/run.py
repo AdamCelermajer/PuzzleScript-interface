@@ -31,7 +31,7 @@ def _run_id() -> str:
 
 def _print_event(message: str) -> None:
     safe = str(message).encode("ascii", errors="replace").decode("ascii")
-    print(f"[codex] {safe}")
+    print(f"[agent] {safe}")
 
 
 def main() -> None:

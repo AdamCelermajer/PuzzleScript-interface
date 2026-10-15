@@ -188,6 +188,17 @@ def run_streaming(command: Sequence[str], *, cwd: Path, env: dict[str, str], tim
     return process.returncode, timed_out, tail
 
 
+def in_container() -> bool:
+    return os.environ.get("HARNESS_CONTAINER") == "1" or Path("/.dockerenv").exists()
+
+
+def require_container() -> None:
+    """Permission prompts are off in every harness: never run one on the host by accident."""
+    if not in_container() and os.environ.get("HARNESS_ALLOW_HOST") != "1":
+        raise HarnessError("Agent harnesses run inside the agents container; launch with "
+                           "`python -m harnesses.launch` (set HARNESS_ALLOW_HOST=1 to override)")
+
+
 def private_root() -> Path:
     """Per-session CLI state (config, session stores) lives outside the workspace."""
     root = Path(os.environ.get("HARNESS_PRIVATE_ROOT") or tempfile.gettempdir())
@@ -227,6 +238,7 @@ class CliSession:
               analysis_dir: str | Path, *, provider: str = "") -> "CliSession":
         from harnesses.registry import resolve_model_for
 
+        require_container()
         if effort not in EFFORTS:
             raise HarnessError(f"Unsupported effort {effort!r}; use one of {', '.join(EFFORTS)}")
         self.provider, self.native_model = resolve_model_for(self.harness_id, model)

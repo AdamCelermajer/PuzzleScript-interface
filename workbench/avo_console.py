@@ -108,7 +108,7 @@ def resolve_avo_run(root: Path, run_id) -> Path | None:
     base = os.path.abspath(root)
     candidate = os.path.normpath(os.path.join(base, run_id) if "/" in run_id
                                  else os.path.join(base, "avo", "output", "evolution", run_id))
-    roots = [os.path.normpath(os.path.join(base, *b.split("/"))) for b in ("avo/output/evolution", "output")]
+    roots = [os.path.normpath(os.path.join(base, *b.split("/"))) for b in ("avo/output", "output")]
     if not any(candidate.startswith(r + os.sep) for r in roots):
         return None
     try:
@@ -872,6 +872,12 @@ def add_routes(router: APIRouter, root: Path, catalog_runs: Callable[[], list[di
     @router.get("/avo/artifact")
     def artifact(run: str | None = None, path: str | None = Query(None)):
         return guarded("Could not read AVO artifact", lambda: read_artifact(root, run, path))
+
+    @router.get("/notes")
+    def read_notes():
+        folder = root / "docs/notes"
+        return {"files": [{"file": name, "markdown": (folder / name).read_text(encoding="utf-8")
+                           if (folder / name).is_file() else ""} for name in sorted(NOTES_FILES)]}
 
     @router.post("/notes")
     async def save_notes(request: Request):

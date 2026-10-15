@@ -42,4 +42,4 @@ The maintained AVO implementation lives under top-level `avo/`,
 including its Codex client, generic kernel, profiles, prompts, tests, and run
 artifacts.
 
-Use `/runs/avo.html` for supported Docker launches. See `avo/docker/README.md` for isolation setup. The native Windows AVO preflight currently fails closed; do not present a native `avo.run` launch as the supported Windows workflow.
+Launch AVO campaigns and direct-play runs with `python -m harnesses.launch` (one Docker container per run); see `harnesses/README.md`.

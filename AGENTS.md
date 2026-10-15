@@ -10,10 +10,11 @@ A research framework for LLM agents that learn puzzle game mechanics by observin
 
 ## Repo Layout
 
-The maintained workflows are AVO campaigns and the direct Codex player. The browser homepage is a run catalog, not the historical rule agent.
+The maintained workflows are AVO campaigns and the direct player (baseline / baseline-plus). The browser homepage is a run catalog, not the historical rule agent.
 
 - `website/` and `workbench/` — run discovery, launch forms, API and bounded batch workers.
-- `avo/` — AVO research/evolution, Docker isolation, prompts and evaluation.
+- `avo/` — AVO research/evolution, prompts and evaluation.
+- `harnesses/` — agent harnesses (codex, claude-code, opencode, antigravity, bare) and `python -m harnesses.launch`, which runs every campaign or direct-play run in one Docker container. See `harnesses/README.md`.
 - `studies/codex_agent/` — maintained persistent direct player, baseline+, continuation and batches.
 
 Shared environment code and historical client:
