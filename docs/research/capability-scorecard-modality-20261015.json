@@ -1,0 +1,452 @@
+{
+  "title": "Capability scorecard: Qwen 3.8 Max, Flash and 27B on Modality",
+  "date": "2026-10-15",
+  "game_id": "ps_modality-v1",
+  "report": "docs/research/capability-scorecard-modality-20261015.md",
+  "evidence_policy": "Existing artifacts only; no new runs or paid calls. Ratings describe recorded behaviour, not causes of score gaps (see docs/research/qwen-modality-claim-audit-20261015.md).",
+  "rating_scale": ["strong", "partial", "weak", "no evidence"],
+  "capabilities": [
+    "Perception",
+    "Action interpretation",
+    "Rule induction",
+    "Goal recognition",
+    "Planning",
+    "Transfer",
+    "Credit assignment",
+    "Verification/grounding"
+  ],
+  "process_capabilities": ["Verification/grounding"],
+  "models": ["Max", "Flash", "27B"],
+  "model_ids": {
+    "Max": "openrouter/qwen/qwen3.8-max-0902",
+    "Flash": "openrouter/qwen/qwen3.8-flash",
+    "27B": "openrouter/qwen/qwen3.8-27b"
+  },
+  "runs": {
+    "Max": {
+      "baseline_plus": {"job": "20261013T150245-989f6c8b", "levels": "1/4", "actions": 100},
+      "avo": {"job": "20261013T152559-avo-max-92c30e52", "research_levels": "3/4", "research_actions": 123, "final_levels": "4/4", "final_actions": 265, "real_self_checks": 2}
+    },
+    "Flash": {
+      "baseline_plus": {"job": "20261013T150241-d07d5558", "levels": "1/4", "actions": 100},
+      "avo": {"job": "20261013T173422-avo-flash-modality-recovery", "research_levels": "3/4", "research_actions": 160, "final_levels": "1/4", "final_actions": 1500, "real_self_checks": 0}
+    },
+    "27B": {
+      "baseline_plus": {"job": "20261008T112945-f705fa9a", "levels": "0/4", "actions": 100},
+      "avo": {"job": "20261013T165330-avo-27b-modality", "research_levels": "1/4", "research_actions": 234, "final_levels": "2/4", "final_actions": 1500, "real_self_checks": 0},
+      "historical_avo": {"job": "20260930T183705-133bda45", "real_self_checks": 2, "check_scores": ["0/4", "1/4 (solver crashed)"]}
+    }
+  },
+  "caveats": [
+    "One recorded run per model and condition; not success rates.",
+    "Baseline+ and AVO differ in tools, budgets, instructions and output; not a matched comparison.",
+    "The 27B baseline+ run dates from 8 Oct; the Max and Flash baseline+ runs from 13 Oct.",
+    "Level 4 is not held out: its initial board was visible at the end of Max's research, and self-check 2 played it before final evaluation.",
+    "Ratings are one analyst's reading; no second annotator has checked them.",
+    "Offline ablations are simulator results, not real-service reruns."
+  ],
+  "cells": {
+    "Max|Perception": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "strong"},
+      "evidence": [
+        "Noticed the 2-frame window ('first diff attempt compared stale frame[0]'); the solver parses frame[-1] (solver.py:48).",
+        "Resolved player/crate sprite aliasing (shared orange band) by full colour sets (world_model.md, Observation quirks).",
+        "Baseline+: identified composite IDs for player on dark/checker/white (strategy v10)."
+      ],
+      "sources": [
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/x_0001/solver/NOTES.md",
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/x_0001/solver/solver.py",
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/world_model.md",
+        "output/workbench/20261013T150245-989f6c8b/run-0001/note_history/strategy.md.versions/000010.md"
+      ]
+    },
+    "Flash|Perception": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "strong"},
+      "evidence": [
+        "First read layer[0], then retracted it ('Reading layer[0] was a decoding bug and is retracted'); switched to PNG-decoded and last-layer states.",
+        "Final solver reads frame[-1] and builds object identity from observed displacements.",
+        "Baseline+: identified player-on-terrain composite IDs 5/6/7 by step 8."
+      ],
+      "sources": [
+        "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign/x_0001/solver/solver.py",
+        "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign/x_0001/research/evidence.jsonl",
+        "output/workbench/20261013T150241-d07d5558/run-0001/note_history/strategy.md.versions/000008.md"
+      ]
+    },
+    "27B|Perception": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "baseline_plus": "partial"},
+      "evidence": [
+        "Final parser reads obs['payload']['frame'][0], the older frame (solver.py:107); its own docstring says frame[0] is stale after level transitions, yet it kept that parser.",
+        "Offline snapshots show the believed player position differing from the real one at steps 10 and 100.",
+        "Offline latest-frame patch scored 1/4 versus 2/4 unchanged, so this error is not shown to be the whole cause. In baseline+ (current grid only) it tracked coordinates correctly."
+      ],
+      "sources": [
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/solver.py",
+        "output/investigations/qwen-modality-20261014/deep-checks.json",
+        "output/investigations/qwen-modality-20261014/offline-ablation.json"
+      ]
+    },
+    "Max|Action interpretation": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "strong"},
+      "evidence": [
+        "Baseline+: undo confirmed at T12; the rival 'character swap' model was falsified by a targeted test at T47 (strategy v16).",
+        "AVO: ACTION1-4 directions and ACTION7 = undo established by research events 4-17."
+      ],
+      "sources": [
+        "output/workbench/20261013T150245-989f6c8b/run-0001/note_history/strategy.md.versions/000016.md",
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/world_model.md"
+      ]
+    },
+    "Flash|Action interpretation": {
+      "rating": "partial",
+      "condition_ratings": {"avo": "partial", "baseline_plus": "strong"},
+      "evidence": [
+        "Baseline+: 'ACTION7 = UNDO (confirmed twice)' at T15-16, then used undo to recover a misplaced crate (strategy v20).",
+        "AVO research: began testing undo only in the last few actions ('confirm ACTION7 = undo').",
+        "Final solver calibrated ACTION7 as a (0,-1) translation, then dropped it ('ACTION7 duplicates ACTION3 ... never planned'), so the program has no undo."
+      ],
+      "sources": [
+        "output/workbench/20261013T150241-d07d5558/run-0001/note_history/strategy.md.versions/000020.md",
+        "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign/x_0001/research/evidence.jsonl",
+        "output/investigations/qwen-modality-20261014/deep-checks.json"
+      ]
+    },
+    "27B|Action interpretation": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "baseline_plus": "weak"},
+      "evidence": [
+        "Baseline+: ACTION7 read as 'JUMP 1 tile opposite last move' (13 presses); after deadlocking the crate at t23 it concluded 'No reset exists'.",
+        "AVO model M5: each move's direction depends on the previous action b; ACTION7 = opposite of the last direction."
+      ],
+      "sources": [
+        "output/workbench/20261008T112945-f705fa9a/run-0001/note_history/strategy.md.versions/",
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/NOTES.md"
+      ]
+    },
+    "Max|Rule induction": {
+      "rating": "partial",
+      "condition_ratings": {"avo": "partial", "baseline_plus": "weak"},
+      "evidence": [
+        "Explicitly falsified 'dark = wall', 'checker = decoration', 'pushes ignore phase' and 'blue ring solid'; the model replays 122/122 recorded transitions.",
+        "Grey modelled as a global phase toggle; native counterfactuals find 32/1,060 wrong alternatives (listed examples start on grey). The model fits all recorded transitions, so the experiment separating global phase from local terrain compatibility was never run.",
+        "Baseline+: 33 hypotheses (hidden passages and boxes); never found the colour rule."
+      ],
+      "sources": [
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/x_0001/solver/agent_transcript.jsonl",
+        "output/investigations/qwen-modality-claim-audit-20261015/native-verification.json",
+        "output/workbench/20261013T150245-989f6c8b/run-0001/workspace/strategy.md"
+      ]
+    },
+    "Flash|Rule induction": {
+      "rating": "partial",
+      "condition_ratings": {"avo": "partial", "baseline_plus": "partial"},
+      "evidence": [
+        "Research planner exp/plan.py encodes allowed(a,b) = not ({a,b}=={'dark','white'}), the source's player-movement rule with checker compatible with both; it planned research levels 2-3.",
+        "The final solver's online pair table converges to the same white/dark exclusion, but the rule was never written down: NOTES.md and world_model.md are byte-identical to the seed.",
+        "Baseline+: per-edge 'directional entrance' and 'gate' maps plus an 'invisible box' idea, not a global rule."
+      ],
+      "sources": [
+        "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign/x_0001/solver/exp/plan.py",
+        "output/investigations/qwen-modality-20261014/deep-checks.json",
+        "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign/world_model.md",
+        "output/workbench/20261013T150241-d07d5558/run-0001/note_history/strategy.md.versions/000045.md"
+      ]
+    },
+    "27B|Rule induction": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "baseline_plus": "weak"},
+      "evidence": [
+        "Invented hidden state (b, d, d7moved), 'first action absorbed' and spontaneous 'episode resets'; walls learned as a per-edge door map, not a terrain rule.",
+        "'Verified against ALL 143 observed transitions', but on stale-frame data, so the check agreed with its own misreading. It did write explicit retractions and ran structured experiments (E-map, E-cycle) on cycle theories.",
+        "Baseline+: jump, pit and trampoline theories."
+      ],
+      "sources": [
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/NOTES.md",
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/research/evidence.jsonl",
+        "output/workbench/20261008T112945-f705fa9a/run-0001/note_history/strategy.md.versions/"
+      ]
+    },
+    "Max|Goal recognition": {
+      "rating": "partial",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "weak"},
+      "evidence": [
+        "AVO: 'Pushing a crate onto the blue target wins the level immediately'.",
+        "Baseline+: 'L1 win: enter orange-hollow from below'; on level 2 it called the crate 'door ID8' and tested the blue tile and map edges as exits (T41-T83)."
+      ],
+      "sources": [
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/world_model.md",
+        "output/workbench/20261013T150245-989f6c8b/run-0001/note_history/strategy.md.versions/000016.md",
+        "output/workbench/20261013T150245-989f6c8b/run-0001/transitions.jsonl"
+      ]
+    },
+    "Flash|Goal recognition": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "strong"},
+      "evidence": [
+        "Baseline+: 'L1 win = orange box on the blue target decal'.",
+        "AVO final solver confirmed the goal key 'orange-ring identity on blue-target identity' from the level-1 win."
+      ],
+      "sources": [
+        "output/workbench/20261013T150241-d07d5558/run-0001/workspace/strategy.md",
+        "output/investigations/qwen-modality-20261014/deep-checks.json"
+      ]
+    },
+    "27B|Goal recognition": {
+      "rating": "partial",
+      "condition_ratings": {"avo": "partial", "baseline_plus": "partial"},
+      "evidence": [
+        "Baseline+: 'Target almost surely = blue (0,0)', but only after deadlocking the crate.",
+        "AVO notes: 'Win condition UNKNOWN' after 143 actions; leading hypothesis 'push RING onto blue'. The final solver's goal is a time-shifted 'pose' rule plus ball-on-blue."
+      ],
+      "sources": [
+        "output/workbench/20261008T112945-f705fa9a/run-0001/note_history/strategy.md.versions/",
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/NOTES.md",
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/solver.py"
+      ]
+    },
+    "Max|Planning": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "partial"},
+      "evidence": [
+        "BFS over (player, crate, phase), replanning from every live observation; 265 actions with no position no-ops among chosen actions.",
+        "Research plans executed with '0 unexpected transitions'."
+      ],
+      "sources": [
+        "output/investigations/qwen-modality-20261014/audit.json",
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/x_0001/solver/NOTES.md"
+      ]
+    },
+    "Flash|Planning": {
+      "rating": "weak",
+      "condition_ratings": {"avo_final_solver": "weak", "avo_research": "partial", "baseline_plus": "partial"},
+      "evidence": [
+        "Final solver: 1,490 actions on level 2, including 740 down and 736 up; 732 fallback calls.",
+        "Offline visit-key fix and goal fix both still give 1/4.",
+        "Research model-planned routes won levels 2-3; in baseline+ it found a correct 13-action level-2 plan with only 3 actions left."
+      ],
+      "sources": [
+        "output/investigations/qwen-modality-20261014/audit.json",
+        "output/investigations/qwen-modality-20261014/offline-ablation.json",
+        "output/workbench/20261013T150241-d07d5558/run-0001/workspace/strategy.md"
+      ]
+    },
+    "27B|Planning": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "baseline_plus": "weak"},
+      "evidence": [
+        "Final solver: 1,420 actions on level 3, including 1,405 position no-ops (ACTION1 x1,400); with an empty plan the code defaults to 'ACTION1' (plan_length 0 at steps 500 and 1500).",
+        "Baseline+: pushed the crate into a corner at t23. Research: 52 of 151 level-1 actions were no-ops."
+      ],
+      "sources": [
+        "output/investigations/qwen-modality-20261014/audit.json",
+        "output/investigations/qwen-modality-20261014/deep-checks.json",
+        "output/workbench/20261008T112945-f705fa9a/run-0001/workspace/strategy.md"
+      ]
+    },
+    "Max|Transfer": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "weak"},
+      "evidence": [
+        "One rule-based 233-line solver with no per-level layouts solved levels 2-4 (level 4 in 160 actions, 0 no-ops).",
+        "Not held out: level 4's initial board was seen at the end of research, and self-check 2 played it before final evaluation."
+      ],
+      "sources": [
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/x_0001/solver/solver.py",
+        "output/investigations/qwen-modality-20261014/audit.json",
+        "docs/research/qwen-modality-claim-audit-20261015.md"
+      ]
+    },
+    "Flash|Transfer": {
+      "rating": "partial",
+      "condition_ratings": {"avo": "partial", "baseline_plus": "weak"},
+      "evidence": [
+        "Research: the rule learned on level 2 also planned level 3 (66 actions, 0 no-ops).",
+        "Final solver reused the level-1 goal but failed on level 2. Baseline+: 'dark = WALL' on level 2 contradicts level 1 and was never reconciled."
+      ],
+      "sources": [
+        "output/investigations/qwen-modality-20261014/audit.json",
+        "output/workbench/20261013T150241-d07d5558/run-0001/note_history/strategy.md.versions/000035.md"
+      ]
+    },
+    "27B|Transfer": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "baseline_plus": "no evidence"},
+      "evidence": [
+        "Door maps stored per level (R, C, lv); the simulator invents synthetic levels 3-4 (sim_game.py).",
+        "Evaluation: cleared level 2 by learning doors online (70 actions, 21 no-ops), then stalled on level 3."
+      ],
+      "sources": [
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/solver.py",
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/sim_game.py",
+        "output/investigations/qwen-modality-20261014/audit.json"
+      ]
+    },
+    "Max|Credit assignment": {
+      "rating": "partial",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "weak"},
+      "evidence": [
+        "AVO: each level win explained from cited transition events (34-35, 172-174, 376-379).",
+        "Baseline+: credited the level-1 push to 'enter orange-hollow from below'."
+      ],
+      "sources": [
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/world_model.md",
+        "output/workbench/20261013T150245-989f6c8b/run-0001/note_history/strategy.md.versions/000016.md"
+      ]
+    },
+    "Flash|Credit assignment": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "partial", "baseline_plus": "strong"},
+      "evidence": [
+        "Baseline+: 'L1 won by pushing the ORANGE box onto the BLUE target'.",
+        "AVO: the solver attributes wins programmatically (on_transition, 'goal ... confirmed'), but no written explanation of any win (notes unchanged from seed)."
+      ],
+      "sources": [
+        "output/workbench/20261013T150241-d07d5558/run-0001/note_history/strategy.md.versions/000035.md",
+        "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign/x_0001/solver/solver.py"
+      ]
+    },
+    "27B|Credit assignment": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "baseline_plus": "no evidence"},
+      "evidence": [
+        "AVO win theory is shifted by one step ('the next action completes the level'), matching what the stale frame would show.",
+        "Earlier 30 Sep-1 Oct runs credited an accidental level-1 win to the wrong cause; the 8 Oct baseline+ run never won."
+      ],
+      "sources": [
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/solver.py",
+        "docs/research/qwen27b-modality-failure-analysis.md"
+      ]
+    },
+    "Max|Verification/grounding": {
+      "rating": "strong",
+      "condition_ratings": {"avo": "strong", "baseline_plus": "no evidence"},
+      "evidence": [
+        "Two real self-checks: 0/4 (KeyError: metadata crash), then fixed, then 4/4; also exact replay and a hybrid real-pixel stream.",
+        "The replay covers only observed transitions, so it could not catch the grey error."
+      ],
+      "sources": [
+        "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign/x_0001/research/self_check/",
+        "output/investigations/qwen-modality-claim-audit-20261015/facts.json"
+      ]
+    },
+    "Flash|Verification/grounding": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "baseline_plus": "no evidence"},
+      "evidence": [
+        "0 real self-checks; the transcript ends at the wall-clock limit mid-edit ('Several concrete bugs identified. Let me rewrite the Controller...'); testing used its own mock (exp/mock.py).",
+        "It did check predictions against the real last-layer frame during research play."
+      ],
+      "sources": [
+        "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign/x_0001/solver/agent_transcript.jsonl",
+        "output/investigations/qwen-modality-claim-audit-20261015/facts.json"
+      ]
+    },
+    "27B|Verification/grounding": {
+      "rating": "weak",
+      "condition_ratings": {"avo": "weak", "historical_avo_20260930": "partial", "baseline_plus": "no evidence"},
+      "evidence": [
+        "0 real self-checks in the recent run; check.py 'verified' the stale-frame model; the synthetic-level simulator reported a mock 4/4; the session ended mid-task at the time limit.",
+        "The 30 Sep campaign used both real checks (0/4, then 1/4 with a crash), so it invokes checks under other settings, and those checks did not produce a solve."
+      ],
+      "sources": [
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/check.py",
+        "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign/x_0001/solver/agent_transcript.jsonl",
+        "output/investigations/qwen-modality-claim-audit-20261015/historical-comparison.json"
+      ]
+    }
+  },
+  "summary": {
+    "Max": "Good at perception, controls, predictive modelling, planning and real self-checks. Its rules are still imperfect (grey treated as a global phase; the discriminating test was never run). In baseline+ it misread the goal and credited its win to the wrong cause.",
+    "Flash": "Good at goal recognition, credit assignment and finding undo in direct play; found a near-exact colour rule in research. Weak at consolidating: no written rules, a re-learning solver without real self-checks, and a level-2 loop. The cause of its 1/4 is not isolated.",
+    "27B": "Weakest at the start of the pipeline: reads the older frame and misreads undo, then builds hidden-state rules that agree with its own misreading. Eventually forms the right goal hypothesis and runs structured experiments; its solvers loop on no-ops and the recent run made no real checks."
+  },
+  "interventions": [
+    {
+      "rank": 1,
+      "name": "Enforced real self-check before finish",
+      "capability": "Verification/grounding",
+      "description": "Reserve wall time; the harness runs evaluate_solver automatically if the model has not, then returns the result for at least one repair turn.",
+      "evidence": "Max used 2 checks (check 1 caught a crash); Flash and 27B used 0 and timed out mid-edit. The 30 Sep 27B run used checks and still did not solve, so checks are not sufficient on their own.",
+      "test": {"models": ["27B", "Flash"], "game": "ps_modality-v1", "harness": "AVO + check gate vs current AVO", "repeats": 3, "runs": 12},
+      "cost_order": "~$10-100",
+      "status": "not scheduled"
+    },
+    {
+      "rank": 2,
+      "name": "Latest-frame-only observation API",
+      "capability": "Perception",
+      "description": "Return only the post-action frame, or label frames explicitly as before/after.",
+      "evidence": "The 27B parser reads frame[0] and builds delayed-action theories; the offline parser patch alone scored 1/4, so this tests learning from clean observations, not repairing the old solver.",
+      "test": {"models": ["27B"], "game": "ps_modality-v1", "harness": "AVO latest-frame vs current", "repeats": 3, "runs": 6},
+      "cost_order": "~$10-60",
+      "status": "not scheduled"
+    },
+    {
+      "rank": 3,
+      "name": "Rival-hypothesis step with a discriminating probe",
+      "capability": "Rule induction",
+      "secondary_capabilities": ["Action interpretation"],
+      "description": "For each surprising transition, list at least two explanations (including undo/reset and local vs global causes) and choose the action that tells them apart.",
+      "evidence": "Max never separated global phase from local compatibility (32/1,060 wrong); 27B read undo as a jump; Flash's rules stayed edge-local in baseline+.",
+      "test": {"models": ["27B", "Flash"], "game": "ps_modality-v1", "harness": "baseline+ (100 actions) with step vs control", "repeats": 3, "runs": 12},
+      "cost_order": "~$12-25",
+      "status": "not scheduled"
+    },
+    {
+      "rank": 4,
+      "name": "Supplied action meanings",
+      "capability": "Action interpretation",
+      "description": "Say that ACTION1-4 are directions and ACTION7 is undo; rules and goal stay hidden.",
+      "evidence": "27B baseline+ jump theory led to 'No reset exists' after a recoverable deadlock.",
+      "test": {"models": ["27B"], "game": "ps_modality-v1", "harness": "baseline+ supplied-actions vs control", "repeats": 3, "runs": 6},
+      "cost_order": "~$6-12",
+      "status": "not scheduled"
+    },
+    {
+      "rank": 5,
+      "name": "Supplied goal",
+      "capability": "Goal recognition",
+      "description": "State that the goal is to put the crate on the target.",
+      "evidence": "Max baseline+ treated the crate as a door; 27B confirmed the goal only late.",
+      "test": {"models": ["27B", "Max"], "game": "ps_modality-v1", "harness": "baseline+ supplied-goal vs control", "repeats": 3, "runs": 6},
+      "cost_order": "~$6 (27B); ~$60 (Max)",
+      "status": "not scheduled"
+    },
+    {
+      "rank": 6,
+      "name": "Consolidate research into the solver",
+      "capability": "Transfer",
+      "secondary_capabilities": ["Planning"],
+      "description": "Require writing confirmed rules into world_model.md and building the solver on the validated research model.",
+      "evidence": "Flash's research plan.py held the right movement rule, but its notes were unchanged and its solver re-learned online. Whether this caused its 1/4 is untested.",
+      "test": {"models": ["Flash"], "game": "ps_modality-v1", "harness": "AVO + consolidation instruction vs current", "repeats": 3, "runs": 6},
+      "cost_order": "~$10-60",
+      "status": "not scheduled"
+    },
+    {
+      "rank": 7,
+      "name": "Supplied true mechanics plus a planner (diagnostic ceiling)",
+      "capability": "Planning",
+      "description": "Supply the true rules, used with the model's own planner or a deterministic one; any gap that remains points to planning or implementation.",
+      "evidence": "Flash and 27B solvers loop even with partly correct rules.",
+      "test": {"models": ["27B", "Flash"], "game": "ps_modality-v1", "harness": "AVO supplied-mechanics", "repeats": 3, "runs": 6},
+      "cost_order": "~$10-60",
+      "status": "not scheduled"
+    },
+    {
+      "rank": 8,
+      "name": "No-op watchdog and an explicit policy for unknown moves",
+      "capability": "Planning",
+      "description": "Force a replan or probe after k position no-ops. Variant A treats unverified moves as blocked; variant B leaves them unknown and probes them explicitly.",
+      "evidence": "27B: 1,405 no-ops; Flash: a 740/736 loop. There is a tension: Max's conservative but wrong model still won, Flash found that treating untested objects as blockers stopped the push to the target, and the proposal's ledger says unknown moves must not be recorded as walls.",
+      "test": {"models": ["27B", "Flash"], "game": "ps_modality-v1", "harness": "offline replay of saved solvers with the watchdog first ($0); then AVO x3 if trajectories change", "repeats": 3, "runs": "0 then 6"},
+      "cost_order": "$0, then ~$10-60",
+      "status": "not scheduled"
+    }
+  ],
+  "cost_basis": "Max about $20/run ($6/M output; input-dominated). Flash/27B AVO runs used 22-34M input and 0.5-0.7M output tokens; at $0.47/M output, output costs under $0.40; the Alibaba input price is not recorded in the repo, so the estimate is ~$1-10/run. Baseline+ Flash/27B ~$1-2/run."
+}

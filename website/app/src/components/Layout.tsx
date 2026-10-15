@@ -8,6 +8,7 @@ import { useTheme, type ThemeChoice } from '../theme'
 
 const NAV: { to: string; label: string; icon: ReactNode; end?: boolean }[] = [
   { to: '/', label: 'Results', icon: <Icon d="M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z" />, end: true },
+  { to: '/board', label: 'Board', icon: <Icon d="M2.5 3h3v10h-3zM6.5 3h3v6h-3zM10.5 3h3v8h-3z" /> },
   { to: '/runs', label: 'Runs', icon: <Icon d="M3 4h10M3 8h10M3 12h6" /> },
   { to: '/launch', label: 'Launch', icon: <Icon d="M8 3v10M3 8h10" /> },
   { to: '/compare', label: 'Compare', icon: <Icon d="M3 13V8M8 13V3M13 13V6" /> },

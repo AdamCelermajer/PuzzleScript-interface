@@ -14,11 +14,11 @@ Design: `revamp-contract.md`. Branch `workbench-revamp`.
   `scripts/start-workbench.ps1`; `allowedHosts: true`.
 - Benchmarks: `benchmark/games.json`, 193 drafted tag sets awaiting review.
 - Diary: `docs/diary/`.
+- Board: `/board` in the SPA, `workbench/board.py`, cards in `docs/board/` (Present mode, PDF export).
+- Antigravity: Docker login done, smoke passed.
 
 ## Open
-- Antigravity: Docker login (`uv run python -m harnesses.launch login antigravity`), then
-  `uv run python -m harnesses.launch smoke --harness antigravity --model gemini-3.8-flash-low`;
-  confirm the web-blocking hook fires.
+- Antigravity: confirm the web-blocking hook fires.
 - OpenCode provider pin and `--variant` values unverified.
 - Old `website/` pages (and `website/vite.config.js`, `game-library-server.mjs`) are unused;
   delete when no longer wanted.

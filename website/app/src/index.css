@@ -123,7 +123,7 @@ body {
 
 a { color: inherit; text-decoration: none; }
 a:hover { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
-.prose-md a, a.link { color: var(--link); }
+.prose-md a, .link { color: var(--link); }
 ::selection { background: color-mix(in srgb, var(--run) 30%, transparent); }
 
 /* Small caps section labels. */
@@ -171,3 +171,23 @@ a:hover { text-decoration: underline; text-decoration-color: var(--line-strong);
 .pdf-underline-segment.linked { --underline-color: var(--run); }
 .pdf-underline-segment:hover { filter: brightness(0.82); }
 .paper-underline { text-decoration-line: underline; text-decoration-color: #c58a00; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+.prose-md.inline, .prose-md.inline p { display: inline; margin: 0; }
+
+/* Board present mode: the print container holds every slide; one A4 landscape page each. */
+.present-print { display: none; }
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  :root, :root[data-theme="dark"] {
+    --bg: #ffffff; --panel: #ffffff; --raised: #ffffff; --sunken: #f4f4f5; --hover: #f4f4f5; --line: #e4e4e7; --line-strong: #d4d4d8;
+    --fg: #09090b; --muted: #3f3f46; --faint: #71717a; --ok: #15803d; --ok-soft: #e8f6ed; --bad: #c42020; --bad-soft: #fdecec;
+    --warn: #a35a00; --warn-soft: #fdf3e1; --run: #2563eb; --run-soft: #e8efff; --neutral-soft: #f1f1f3; --shadow: none;
+    color-scheme: light;
+  }
+  html, body, #root { height: auto; background: #fff; }
+  .present-root { position: static; display: block; }
+  .present-chrome, .present-screen { display: none !important; }
+  .present-print { display: block; }
+  .slide-print { zoom: 0.5; max-width: none; padding: 0; gap: 14px; break-after: page; page-break-after: always; }
+  .slide-print:last-child { break-after: auto; page-break-after: auto; }
+}

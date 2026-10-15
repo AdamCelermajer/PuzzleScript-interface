@@ -12,6 +12,7 @@ import { CompareView } from './views/Compare'
 import { BenchmarksView } from './views/Benchmarks'
 import { DiaryView, DiaryEntryView, DiaryEditView } from './views/Diary'
 import { ToolsView } from './views/Tools'
+import { BoardCardView, BoardNewView, BoardPresentView, BoardView } from './views/Board'
 import { NotesView } from './views/Notes'
 // pdf.js + KaTeX are large: load the paper investigation only when it is opened.
 const PapersView = lazy(() => import('./views/Papers').then((m) => ({ default: m.PapersView })))
@@ -27,8 +28,12 @@ createRoot(document.getElementById('root')!).render(
     <QueryClientProvider client={client}>
       <BrowserRouter>
         <Routes>
+          <Route path="board/present" element={<BoardPresentView />} />
           <Route element={<Layout />}>
             <Route index element={<ResultsView />} />
+            <Route path="board" element={<BoardView />} />
+            <Route path="board/new" element={<BoardNewView />} />
+            <Route path="board/:slug" element={<BoardCardView />} />
             <Route path="runs" element={<RunsView />} />
             <Route path="runs/*" element={<RunDetailView />} />
             <Route path="launch" element={<LaunchView />} />
