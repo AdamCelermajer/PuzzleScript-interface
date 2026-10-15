@@ -5,11 +5,12 @@ import { api, q } from '../api/client'
 import { useCatalog } from '../api/hooks'
 import type { JobComparison } from '../api/types'
 import { LineChart, MAX_SERIES, seriesColor, type Series } from '../components/LineChart'
+import { GameThumb, HarnessChip, RunId } from '../components/identity'
 import { OutcomeCell, ProcessPill } from '../components/status'
 import { Button, Card, Empty, ErrorBox, Input, Loading, Notice, PageHeader, Pill, Select, cx } from '../components/ui'
 import { bestSoFar, firstSuccess, levelCurve } from '../lib/compare'
 import { dateTime, duration, gameName, shortId } from '../lib/format'
-import { MODE_LABEL, distinct, gameHref, jobLabel, runHref, type RunView } from '../lib/runs'
+import { MODE_LABEL, distinct, jobLabel, runHref, type RunView } from '../lib/runs'
 
 const shortLabel = (r: RunView) => `${r.model.split('/').at(-1)} · ${r.effort}`
 const seriesLabel = (r: RunView) => `${MODE_LABEL[r.mode]} · ${r.harness} · ${r.model.split('/').at(-1)} · ${r.effort}${r.worldModel && r.worldModel !== 'not-recorded' ? ` · ${r.worldModel}` : ''}`
@@ -97,7 +98,7 @@ function Picker({ runs, selected, onChange }: { runs: RunView[]; selected: strin
                   <td><input type="checkbox" readOnly checked={set.has(r.id)} /></td>
                   <td><OutcomeCell outcome={r.outcome} campaign={r.kind === 'avo'} /></td>
                   <td>{MODE_LABEL[r.mode]}</td>
-                  <td>{r.harness}</td>
+                  <td><HarnessChip harness={r.harness} legacy={r.legacy} /></td>
                   <td className="max-w-64 truncate">{r.model} <span className="text-faint">· {r.effort}</span></td>
                   <td>{gameName(r.game)}</td>
                   <td className="text-[12px] text-muted">{dateTime(r.started)}</td>
@@ -141,7 +142,7 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
         <div className="overflow-auto">
           <table className="data-table">
             <thead>
-              <tr><th /><th>Run</th><th>Mode</th><th>Harness</th><th>Model · effort</th><th>Game</th><th>Outcome</th><th>Process</th><th>Used</th><th>First solve</th><th>Search time</th></tr>
+              <tr><th /><th>Game · run</th><th>Mode</th><th>Harness</th><th>Model · effort</th><th>Outcome</th><th>Process</th><th>Used</th><th>First solve</th><th>Search time</th></tr>
             </thead>
             <tbody>
               {runs.map((r, i) => {
@@ -152,11 +153,10 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
                 return (
                   <tr key={r.id}>
                     <td>{i < MAX_SERIES && <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: seriesColor(i) }} />}</td>
-                    <td className="max-w-64 text-[12px]"><Link to={runHref(r.id)} className="break-all" title={r.id}>{shortId(r.id, 2)}</Link></td>
+                    <td><div className="flex items-center gap-2.5"><GameThumb gameId={r.game} size={28} /><div className="min-w-0"><Link to={runHref(r.id)} className="block text-[13px] font-semibold">{gameName(r.game)}</Link><RunId id={r.id} className="w-44" /></div></div></td>
                     <td>{MODE_LABEL[r.mode]}{r.worldModel && r.worldModel !== 'not-recorded' && <div className="text-[11px] text-faint">{r.worldModel}</div>}</td>
-                    <td>{r.harness}</td>
+                    <td><HarnessChip harness={r.harness} legacy={r.legacy} /></td>
                     <td className="max-w-64 truncate">{r.model} <span className="text-faint">· {r.effort}</span></td>
-                    <td><Link to={gameHref(r.game)}>{gameName(r.game)}</Link></td>
                     <td><OutcomeCell outcome={r.outcome} campaign={r.kind === 'avo'} /></td>
                     <td><ProcessPill status={r.process} /></td>
                     <td className="whitespace-nowrap text-[12.5px] tabular-nums text-muted">{r.progress.used ?? '—'}{r.progress.budget ? ` / ${r.progress.budget}` : ''} {r.progress.unit === 'actions' ? 'act' : 'eval'}</td>

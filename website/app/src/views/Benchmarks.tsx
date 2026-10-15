@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import { useBenchmarks } from '../api/hooks'
 import type { BenchmarkDetail, BenchmarkGame, BenchmarkList, PlayFrame } from '../api/types'
 import { GridCanvas, PixelImage, toGrid } from '../components/Frame'
+import { GameThumb, TierBadge, harnessColor } from '../components/identity'
 import { Button, Empty, ErrorBox, Field, Input, Loading, Notice, PageHeader, Pill, Pre, Select, Tabs, Tag, cx } from '../components/ui'
 import { dateTime, gameName } from '../lib/format'
 import { runHref } from '../lib/runs'
@@ -42,10 +43,11 @@ export function BenchmarksView() {
   const harnesses = useMemo(() => [...new Set((data?.games ?? []).flatMap((g) => Object.keys(g.measured.by_harness)))].sort(), [data])
   const collections = useMemo(() => [...new Set((data?.games ?? []).flatMap((g) => g.collections))].sort(), [data])
   const drafts = (data?.games ?? []).filter((g) => g.tags_status === 'draft').length
+  const view = params.get('view') === 'list' ? 'list' : 'grid'
   const open = (id: string) => navigate(`/benchmarks/${encodeURIComponent(id)}?${params.toString()}`)
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mx-auto flex max-w-[1680px] flex-col gap-5">
       <PageHeader
         title="Benchmarks"
         subtitle={data ? `${data.count} games in benchmark/games.json · solve rates computed live from the run catalog` : 'Game metadata, tags and measured solve rates'}
@@ -75,31 +77,45 @@ export function BenchmarksView() {
             <option value="none">No tags</option>
           </Select>
           <span className="ml-auto text-[12px] text-muted">{games.length} shown</span>
+          <div className="flex rounded-lg border border-line bg-panel p-0.5">
+            {(['grid', 'list'] as const).map((v) => (
+              <button key={v} type="button" onClick={() => setOne('view', v === 'grid' ? '' : v)} className={cx('rounded-md px-2.5 py-1 text-[12px] capitalize', view === v ? 'bg-accent text-accent-fg' : 'text-muted hover:text-fg')}>{v}</button>
+            ))}
+          </div>
         </div>
         {data && <TagFilter vocabulary={data.tag_vocabulary} definitions={data.tag_definitions} selected={filters.tags} onToggle={toggleTag} />}
       </div>
       <div className="grid grid-cols-1 gap-4" style={gameId ? { gridTemplateColumns: 'minmax(0,1fr) minmax(460px,44%)' } : undefined}>
-        <div className="min-w-0 overflow-hidden rounded-lg border border-line bg-panel">
+        <div className={cx('min-w-0', view === 'list' && 'overflow-hidden rounded-xl border border-line bg-panel')}>
           {list.isLoading ? <Loading label="Loading benchmark metadata…" /> : list.error ? <div className="p-3"><ErrorBox error={list.error} retry={() => list.refetch()} /></div> : !games.length ? (
             <Empty title="No game matches these filters" />
+          ) : view === 'grid' ? (
+            <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${gameId ? 200 : 232}px, 1fr))` }}>
+              {games.map((g) => <GameCard key={g.game_id} game={g} active={g.game_id === gameId} definitions={data?.tag_definitions ?? {}} onOpen={() => open(g.game_id)} />)}
+            </div>
           ) : (
             <div className="max-h-[calc(100vh-270px)] overflow-auto">
               <table className="data-table">
                 <thead>
                   <tr>
                     <th>Game</th><th>Tier</th><th>Levels</th><th>Tags</th><th>BFS depth</th>
-                    {!gameId && harnesses.map((h) => <th key={h} title="Solved runs / runs with artifacts">{h}</th>)}
+                    {!gameId && harnesses.map((h) => <th key={h} title="Solved runs / runs with artifacts"><span className="inline-flex items-center gap-1.5"><span className="h-2 w-2 rounded-[2px]" style={{ background: harnessColor(h) }} />{h}</span></th>)}
                     {gameId && <th>Solved</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {games.map((g) => (
                     <tr key={g.game_id} className={cx(g.game_id === gameId && 'selected')} style={{ cursor: 'pointer' }} onClick={() => open(g.game_id)}>
-                      <td className="max-w-72">
-                        <div className="flex items-center gap-1.5"><span className="font-medium">{g.title}</span>{g.status === 'excluded' && <Pill tone="neutral">excluded</Pill>}</div>
-                        <div className="truncate text-[11.5px] text-muted" title={g.summary}>{g.summary || <span className="font-mono text-faint">{g.game_id}</span>}</div>
+                      <td className="max-w-80">
+                        <div className="flex items-center gap-3">
+                          <GameThumb gameId={g.game_id} size={32} />
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5"><span className="font-semibold">{g.title}</span>{g.status === 'excluded' && <Pill tone="neutral">excluded</Pill>}</div>
+                            <div className="truncate text-[11.5px] text-muted" title={g.summary}>{g.summary || <span className="font-mono text-faint">{g.game_id}</span>}</div>
+                          </div>
+                        </div>
                       </td>
-                      <td className="whitespace-nowrap">{g.tier ?? <span className="text-faint">—</span>}{g.tier_source && <div className="text-[11px] text-faint">{g.tier_source}</div>}</td>
+                      <td className="whitespace-nowrap">{g.tier ? <TierBadge tier={g.tier} /> : <span className="text-faint">—</span>}{g.tier_source && <div className="text-[11px] text-faint">{g.tier_source}</div>}</td>
                       <td className="text-muted">{g.levels ?? '—'}</td>
                       <td className="max-w-72">
                         <div className="flex flex-wrap gap-1">
@@ -123,6 +139,50 @@ export function BenchmarksView() {
         {gameId && data && <BenchmarkDrawer key={gameId} gameId={gameId} list={data} onClose={() => navigate(`/benchmarks?${params.toString()}`)} />}
       </div>
     </div>
+  )
+}
+
+function GameCard({ game, active, definitions, onOpen }: { game: BenchmarkGame; active: boolean; definitions: Record<string, string>; onOpen: () => void }) {
+  const m = game.measured
+  const tags = [...game.tags.mechanics, ...game.tags.properties]
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className={cx('group flex flex-col overflow-hidden rounded-xl border bg-panel text-left shadow-[var(--shadow)] transition-colors', active ? 'border-fg' : 'border-line hover:border-line-strong')}
+    >
+      <div className="relative border-b border-line">
+        <GameThumb gameId={game.game_id} aspect="16 / 10" rounded="rounded-none" />
+        {m.runs > 0 && (
+          <span className={cx('absolute top-2 right-2 rounded-md px-1.5 py-px text-[11px] font-semibold', m.solved_runs ? 'bg-ok-soft text-ok' : 'bg-panel text-muted')}>
+            {m.solved_runs}/{m.runs} solved
+          </span>
+        )}
+        {game.status === 'excluded' && <span className="absolute top-2 left-2 rounded-md bg-panel px-1.5 py-px text-[11px] text-muted">excluded</span>}
+      </div>
+      <div className="flex flex-1 flex-col gap-1.5 p-3">
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="truncate text-[14px] font-semibold tracking-tight">{game.title}</span>
+          <span className="shrink-0 text-[11.5px] text-faint">{game.levels ?? '?'} levels</span>
+        </div>
+        <div className="flex items-center gap-2"><TierBadge tier={game.tier} />{game.bfs?.solved && <span className="text-[11px] text-faint">BFS depth {game.bfs.depth}</span>}</div>
+        {game.summary && <p className="line-clamp-2 text-[12px] leading-snug text-muted">{game.summary}</p>}
+        <div className="mt-auto flex flex-wrap items-center gap-1 pt-1">
+          {tags.slice(0, 3).map((t) => <span key={t} title={definitions[t]} className="rounded-md bg-neutral-soft px-1.5 py-px text-[11px] text-muted">{t}</span>)}
+          {tags.length > 3 && <span className="text-[11px] text-faint">+{tags.length - 3}</span>}
+          {game.tags_status === 'draft' && <span className="ml-auto text-[10.5px] text-warn" title="Tags drafted by a model; not yet reviewed">draft</span>}
+        </div>
+        {Object.keys(m.by_harness).length > 0 && (
+          <div className="flex flex-wrap gap-x-3 gap-y-1 border-t border-line pt-2">
+            {Object.entries(m.by_harness).map(([h, v]) => (
+              <span key={h} className="inline-flex items-center gap-1 text-[11px] text-muted tabular-nums" title={`${h}: ${v.solved_runs} of ${v.runs} runs solved`}>
+                <span className="h-1.5 w-1.5 rounded-[2px]" style={{ background: harnessColor(h) }} />{v.solved_runs}/{v.runs}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </button>
   )
 }
 
@@ -151,10 +211,11 @@ function BenchmarkDrawer({ gameId, list, onClose }: { gameId: string; list: Benc
   const detail = useQuery({ queryKey: ['benchmark', gameId], queryFn: ({ signal }) => api.get<BenchmarkDetail>(`/benchmarks/${encodeURIComponent(gameId)}`, signal) })
   const game = detail.data
   return (
-    <aside className="flex min-w-0 flex-col gap-3 self-start rounded-lg border border-line bg-panel p-4 xl:sticky xl:top-0">
+    <aside className="flex min-w-0 flex-col gap-3 self-start rounded-xl border border-line bg-panel p-5 shadow-[var(--shadow)] xl:sticky xl:top-0">
+      <GameThumb gameId={gameId} aspect="16 / 9" rounded="rounded-lg" className="max-h-[220px]" />
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h2 className="text-[16px] font-semibold">{game?.title ?? gameName(gameId)}</h2>
+          <h2 className="text-[20px] font-semibold tracking-tight">{game?.title ?? gameName(gameId)}</h2>
           <div className="font-mono text-[11.5px] text-muted">{gameId}</div>
           {game?.author && <div className="text-[12px] text-muted">by {game.author}{game.homepage ? ` · ${game.homepage}` : ''}</div>}
         </div>

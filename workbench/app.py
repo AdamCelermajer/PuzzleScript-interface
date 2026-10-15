@@ -195,11 +195,13 @@ def create_app(
 
     from workbench.benchmarks import router as benchmarks_router
     from workbench.diary import router as diary_router
+    from workbench.results import router as results_router
 
     app.include_router(create_optimal_path_router(path_manager))
     app.include_router(create_experiments_router(legacy_start=start_rule_agent_run))
     app.include_router(benchmarks_router)
     app.include_router(diary_router)
+    app.include_router(results_router)
 
     @app.get("/api/workbench/health")
     def health() -> dict:

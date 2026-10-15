@@ -3,8 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, q } from '../api/client'
 import { useCatalog } from '../api/hooks'
 import type { CatalogJob, ResumeResult } from '../api/types'
-import { OutcomeCell, ProcessPill, ProgressText } from '../components/status'
-import { Button, ErrorBox, Loading, Mono, Notice, Pill } from '../components/ui'
+import { GameThumb, HarnessChip, LevelPips, RunId, StatusDot } from '../components/identity'
+import { ProgressText } from '../components/status'
+import { Button, ErrorBox, Loading, Notice } from '../components/ui'
 import { dateTime, gameName, relativeTime } from '../lib/format'
 import { MODE_LABEL, gameHref, normalizeRun, runHref, type RunView } from '../lib/runs'
 import { BaselineDetail } from './BaselineDetail'
@@ -21,7 +22,7 @@ export function RunDetailView() {
 
   if (!id) return <ErrorBox error="No run id in the URL" />
   return (
-    <div className="flex flex-col gap-4">
+    <div className="mx-auto flex max-w-[1680px] flex-col gap-5">
       <Link to="/runs" className="text-[12px] text-muted">← Runs</Link>
       {run ? <RunHeader run={run} job={job} /> : catalog.isLoading ? <Loading label="Reading the run catalog…" /> : (
         <div className="flex flex-col gap-1">
@@ -48,16 +49,21 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
   })
   const budget = raw.run_budget ?? {}
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-line bg-panel p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-[17px] font-semibold"><Link to={gameHref(run.game)} className="text-fg">{gameName(run.game)}</Link></h1>
-            <Pill tone="accent">{MODE_LABEL[run.mode]}</Pill>
-            <ProcessPill status={run.process} />
-            <OutcomeCell outcome={run.outcome} campaign={run.kind === 'avo'} />
+    <div className="flex flex-col gap-4 rounded-xl border border-line bg-panel p-5 shadow-[var(--shadow)]">
+      <div className="flex flex-wrap items-start gap-5">
+        <Link to={gameHref(run.game)} className="shrink-0"><GameThumb gameId={run.game} size={88} rounded="rounded-lg" /></Link>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <h1 className="text-[26px] leading-tight font-semibold tracking-[-0.02em]"><Link to={gameHref(run.game)} className="text-fg">{gameName(run.game)}</Link></h1>
+            <span className="rounded-md bg-neutral-soft px-1.5 py-px text-[12px] font-medium text-muted">{MODE_LABEL[run.mode]}</span>
+            <HarnessChip harness={run.harness} legacy={run.legacy} />
+            <StatusDot status={run.process} />
           </div>
-          <Mono className="mt-1 block break-all text-muted">{run.id}</Mono>
+          <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
+            <LevelPips levels={run.outcome.score} total={run.outcome.total} solved={run.outcome.tone === 'solved'} size="lg" />
+            <span className="text-[13px] text-muted"><span className="font-medium text-fg">{run.model}</span> · {run.effort}</span>
+          </div>
+          <RunId id={run.id} className="mt-2" />
         </div>
         <div className="flex items-center gap-2">
           {job?.can_stop && <Button variant="danger" disabled={stop.isPending} onClick={() => window.confirm('Stop the whole batch this run belongs to?') && stop.mutate(job.id)}>Stop batch</Button>}
@@ -72,10 +78,7 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
       {(resume.error || stop.error) && <ErrorBox error={resume.error ?? stop.error} />}
       {raw.failure_reason && <Notice tone="warn">{raw.failure_reason}</Notice>}
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[12.5px] md:grid-cols-4 xl:grid-cols-6">
-        <Fact label="Harness" value={`${run.harness}${run.legacy ? ' (legacy record)' : ''}`} />
-        <Fact label="Model" value={<Mono className="break-all">{run.model}</Mono>} />
-        <Fact label="Effort" value={run.effort} />
-        {run.kind === 'avo' && <Fact label="Optimizer" value={<Mono className="break-all">{run.optimizerModel ?? '—'} · {raw.optimizer_effort ?? '—'}</Mono>} />}
+        {run.kind === 'avo' && <Fact label="Optimizer" value={<span className="break-all">{run.optimizerModel ?? "—"} · {raw.optimizer_effort ?? "—"}</span>} />}
         {run.worldModel && <Fact label="World model" value={run.worldModel} />}
         <Fact label="Progress" value={<ProgressText run={run} />} />
         <Fact label="Wall budget" value={budget.max_wall_seconds === 0 ? 'unlimited' : budget.max_wall_seconds ? `${(budget.max_wall_seconds / 3600).toFixed(1)}h` : '—'} />
@@ -95,7 +98,7 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
 function Fact({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="min-w-0">
-      <div className="text-[11px] text-faint">{label}</div>
+      <div className="section-label !text-[10.5px]">{label}</div>
       <div className="break-words">{value}</div>
     </div>
   )

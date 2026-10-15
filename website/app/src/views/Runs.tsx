@@ -4,102 +4,97 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { api, q } from '../api/client'
 import { useCatalog } from '../api/hooks'
 import type { CatalogJob, ResumeResult } from '../api/types'
-import { OutcomeCell, ProcessPill, ProgressText } from '../components/status'
-import { Button, Empty, ErrorBox, Input, Loading, Notice, PageHeader, Pill, Select, cx } from '../components/ui'
-import { dateTime, gameName, relativeTime, shortId, shortTime } from '../lib/format'
-import { EMPTY_FILTERS, MODE_LABEL, distinct, modelParts, gameHref, jobLabel, matchesFilters, runHref, type RunFilters, type RunView } from '../lib/runs'
+import { GameThumb, HarnessChip, LevelPips, RunId, SectionLabel, StatusDot } from '../components/identity'
+import { Button, Empty, ErrorBox, Input, Loading, Notice, Select, cx } from '../components/ui'
+import { gameName, relativeTime, shortTime } from '../lib/format'
+import { EMPTY_FILTERS, MODE_LABEL, distinct, groupLaunches, matchesFilters, modelParts, runHref, type Launch, type RunFilters, type RunView } from '../lib/runs'
 import { processStatus } from '../lib/status'
 
 const STATUS_OPTIONS: [string, string][] = [
-  ['', 'Any status'], ['active', 'Active (running or queued)'], ['running', 'Running'], ['queued', 'Queued'], ['paused', 'Paused'],
+  ['', 'Any status'], ['active', 'Active'], ['running', 'Running'], ['queued', 'Queued'], ['paused', 'Paused'],
   ['finished', 'Finished'], ['stopped', 'Stopped'], ['failed', 'Failed'], ['attention', 'Needs assistance'], ['unconfirmed', 'Unconfirmed'],
-  ['solved', 'Outcome: solved'],
+  ['solved', 'Solved'],
 ]
-const PAGE = 200
+const ARCHIVE_PAGE = 12
 
-function useJobAction() {
-  const client = useQueryClient()
-  return useMutation({
-    mutationFn: ({ action, job }: { action: 'stop' | 'pause' | 'dismiss' | 'resume'; job: string }) => api.post<Record<string, unknown>>(`/experiments/${action}${q({ job })}`),
-    onSettled: () => client.invalidateQueries({ queryKey: ['catalog'] }),
-  })
-}
+type JobVerb = 'stop' | 'pause' | 'dismiss' | 'resume'
 
 export function RunsView() {
   const [params, setParams] = useSearchParams()
   const filters: RunFilters = { ...EMPTY_FILTERS, ...Object.fromEntries([...params.entries()].filter(([k]) => k in EMPTY_FILTERS)) }
   const catalog = useCatalog(5000)
   const navigate = useNavigate()
-  const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [limit, setLimit] = useState(PAGE)
   const client = useQueryClient()
-  const jobAction = useJobAction()
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [archiveOpen, setArchiveOpen] = useState(false)
+  const [archiveLimit, setArchiveLimit] = useState(ARCHIVE_PAGE)
+  const jobAction = useMutation({
+    mutationFn: ({ verb, job }: { verb: JobVerb; job: string }) => api.post(`/experiments/${verb}${q({ job })}`),
+    onSettled: () => client.invalidateQueries({ queryKey: ['catalog'] }),
+  })
   const resume = useMutation({
     mutationFn: (runId: string) => api.post<ResumeResult>('/runs/resume', { run_id: runId }),
-    onSuccess: (result) => {
-      client.invalidateQueries({ queryKey: ['catalog'] })
-      navigate(`/runs${q({ job: result.job_id })}`)
-    },
+    onSuccess: (result) => { client.invalidateQueries({ queryKey: ['catalog'] }); navigate(`/runs${q({ job: result.job_id })}`) },
   })
-
   const setFilter = (key: keyof RunFilters, value: string) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
     else next.delete(key)
     setParams(next, { replace: true })
-    setLimit(PAGE)
   }
 
   const runs = catalog.views
-  const visible = useMemo(() => runs.filter((r) => matchesFilters(r, filters)), [runs, params]) // eslint-disable-line react-hooks/exhaustive-deps
   const jobs = catalog.data?.jobs ?? []
   const jobById = useMemo(() => new Map(jobs.map((j) => [j.id, j])), [jobs])
-  const options = useMemo(() => ({
-    harness: distinct(runs, (r) => r.harness),
-    model: distinct(runs, (r) => r.model),
-    game: distinct(runs, (r) => r.game),
-  }), [runs])
-  const activeJobs = jobs
-    .filter((j) => ['starting', 'running', 'stopping', 'paused'].includes(j.status) || (j.can_resume && !j.dismissed_from_runs_at && j.status === 'paused'))
-    .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
-  const focusedJob = filters.job ? jobById.get(filters.job) : undefined
+  const visible = useMemo(() => runs.filter((r) => matchesFilters(r, filters)), [runs, params]) // eslint-disable-line react-hooks/exhaustive-deps
+  const launches = useMemo(() => groupLaunches(visible, jobById), [visible, jobById])
+  const current = launches.filter((l) => !l.archive)
+  const archive = launches.filter((l) => l.archive)
+  const archiveRuns = archive.reduce((n, l) => n + l.runs.length, 0)
+  const options = useMemo(() => ({ harness: distinct(runs, (r) => r.harness), model: distinct(runs, (r) => r.model), game: distinct(runs, (r) => r.game) }), [runs])
   const anyFilter = Object.values(filters).some(Boolean)
-  const error = jobAction.error ?? resume.error
+  const toggle = (id: string, on: boolean) => setSelected((s) => { const n = new Set(s); if (on) n.add(id); else n.delete(id); return n })
+  const onJob = (verb: JobVerb, job: CatalogJob) => {
+    const name = job.id.split('/').at(-1)
+    const prompts: Partial<Record<JobVerb, string>> = {
+      stop: `Stop ${name}? Queued runs are cancelled and owned containers stopped.`,
+      dismiss: `Remove ${name} from the active list? Artifacts are kept.`,
+      resume: `Resume ${name}? This starts paid model calls.`,
+    }
+    if (!prompts[verb] || window.confirm(prompts[verb])) jobAction.mutate({ verb, job: job.id })
+  }
+  const card = (launch: Launch, compact = false) => (
+    <LaunchCard
+      key={launch.id}
+      launch={launch}
+      compact={compact}
+      selected={selected}
+      onSelect={toggle}
+      busy={jobAction.isPending}
+      onJob={onJob}
+      onResume={(id) => window.confirm('Resume this run in a new batch? This starts paid model calls.') && resume.mutate(id)}
+      onFocus={() => setFilter('job', launch.id)}
+    />
+  )
 
   return (
-    <div className="flex flex-col gap-4">
-      <PageHeader
-        title="Runs"
-        subtitle={catalog.data ? `${runs.length} runs · ${jobs.length} launches · catalog checked ${relativeTime(catalog.data.checked_at * 1000)}` : 'Every mode and harness, live and finished'}
-        actions={
-          <>
-            {selected.size >= 2 && (
-              <Button onClick={() => navigate(`/compare?${[...selected].map((id) => `run=${encodeURIComponent(id)}`).join('&')}`)}>Compare {selected.size} runs</Button>
-            )}
-            {selected.size > 0 && <Button variant="ghost" onClick={() => setSelected(new Set())}>Clear selection</Button>}
-            <Link to="/launch"><Button variant="primary">New launch</Button></Link>
-          </>
-        }
-      />
-
-      {catalog.data?.warnings.map((w) => <Notice key={w} tone="warn">{w}</Notice>)}
-      {error && <ErrorBox error={error} />}
-
-      {focusedJob ? (
-        <JobBanner job={focusedJob} busy={jobAction.isPending} onAction={(action) => confirmJob(action, focusedJob) && jobAction.mutate({ action, job: focusedJob.id })} onClear={() => setFilter('job', '')} />
-      ) : (
-        activeJobs.length > 0 && (
-          <div className="flex flex-col gap-1.5">
-            <div className="text-[12px] font-medium text-muted">Active launches</div>
-            {activeJobs.map((job) => (
-              <JobBanner key={job.id} job={job} compact busy={jobAction.isPending} onOpen={() => setFilter('job', job.id)} onAction={(action) => confirmJob(action, job) && jobAction.mutate({ action, job: job.id })} />
-            ))}
-          </div>
-        )
-      )}
+    <div className="mx-auto flex max-w-[1680px] flex-col gap-6">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-[28px] leading-tight font-semibold tracking-[-0.02em]">Runs</h1>
+          <p className="mt-1 text-[13.5px] text-muted">
+            {catalog.data ? `${runs.length} runs in ${launches.length} launches · updated ${relativeTime(catalog.data.checked_at * 1000)}` : 'Every launch, live and finished'}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {selected.size > 0 && <Button variant="ghost" onClick={() => setSelected(new Set())}>Clear {selected.size}</Button>}
+          {selected.size >= 2 && <Button onClick={() => navigate(`/compare?${[...selected].map((id) => `run=${encodeURIComponent(id)}`).join('&')}`)}>Compare {selected.size}</Button>}
+          <Link to="/launch"><Button variant="primary">New launch</Button></Link>
+        </div>
+      </header>
 
       <div className="flex flex-wrap items-center gap-2">
-        <Input placeholder="Filter by id, game, model…" value={filters.q} onChange={(e) => setFilter('q', e.target.value)} className="w-56" />
+        <Input placeholder="Filter id, game, model…" value={filters.q} onChange={(e) => setFilter('q', e.target.value)} className="w-60" />
         <Select value={filters.mode} onChange={(e) => setFilter('mode', e.target.value)}>
           <option value="">Any mode</option>
           {Object.entries(MODE_LABEL).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
@@ -119,148 +114,152 @@ export function RunsView() {
         <Select value={filters.status} onChange={(e) => setFilter('status', e.target.value)}>
           {STATUS_OPTIONS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
         </Select>
-        {anyFilter && <Button variant="ghost" onClick={() => setParams(new URLSearchParams(), { replace: true })}>Reset filters</Button>}
-        <span className="ml-auto text-[12px] text-muted">{visible.length} shown</span>
+        {anyFilter && <Button variant="ghost" onClick={() => setParams(new URLSearchParams(), { replace: true })}>Reset</Button>}
+        {filters.job && <span className="ml-auto text-[12px] text-muted">Showing one launch</span>}
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-line bg-panel">
-        {catalog.isLoading ? (
-          <Loading label="Reading the run catalog…" />
-        ) : catalog.error ? (
-          <div className="p-3"><ErrorBox error={catalog.error} retry={() => catalog.refetch()} /></div>
-        ) : !visible.length ? (
-          <Empty title={runs.length ? 'No runs match these filters' : 'No runs yet'}>
-            {runs.length ? 'Loosen a filter or reset them.' : <Link to="/launch">Launch the first run.</Link>}
-          </Empty>
-        ) : (
-          <div className="max-h-[calc(100vh-260px)] overflow-auto">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th className="w-6"><span className="sr-only">Select</span></th>
-                  <th>Process</th>
-                  <th>Outcome</th>
-                  <th>Mode</th>
-                  <th>Harness</th>
-                  <th>Model · effort</th>
-                  <th>Game</th>
-                  <th>Progress</th>
-                  <th>Launched</th>
-                  <th>Run</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {visible.slice(0, limit).map((run) => (
-                  <RunRow
-                    key={run.id}
-                    run={run}
-                    selected={selected.has(run.id)}
-                    onSelect={(on) => setSelected((s) => { const n = new Set(s); if (on) n.add(run.id); else n.delete(run.id); return n })}
-                    onResume={() => window.confirm(`Resume ${shortId(run.id, 3)} in a new batch? This starts paid model calls.`) && resume.mutate(run.id)}
-                    resuming={resume.isPending && resume.variables === run.id}
-                    onJob={() => setFilter('job', run.batch)}
-                  />
-                ))}
-              </tbody>
-            </table>
-            {visible.length > limit && (
-              <div className="flex justify-center border-t border-line p-2">
-                <Button variant="ghost" onClick={() => setLimit(limit + PAGE)}>Show {Math.min(PAGE, visible.length - limit)} more</Button>
-              </div>
+      {catalog.data?.warnings.map((w) => <Notice key={w} tone="warn">{w}</Notice>)}
+      {(jobAction.error || resume.error) && <ErrorBox error={jobAction.error ?? resume.error} />}
+
+      {catalog.isLoading ? <Loading label="Reading the run catalog…" /> : catalog.error ? <ErrorBox error={catalog.error} retry={() => catalog.refetch()} /> : !visible.length ? (
+        <div className="rounded-xl border border-dashed border-line-strong"><Empty title={runs.length ? 'No runs match these filters' : 'No runs yet'}>{runs.length ? 'Loosen a filter or reset them.' : <Link to="/launch">Launch the first run.</Link>}</Empty></div>
+      ) : (
+        <>
+          <section className="flex flex-col gap-3">
+            <SectionLabel>Launches {current.length > 0 && <span className="ml-1 text-faint">{current.length}</span>}</SectionLabel>
+            {current.length ? current.map((l) => card(l)) : (
+              <div className="rounded-xl border border-dashed border-line-strong px-5 py-4 text-[13px] text-muted">No launch from the new harnesses matches. {archiveRuns > 0 && 'Older runs are in the archive below.'}</div>
             )}
-          </div>
-        )}
-      </div>
+          </section>
+          {archive.length > 0 && (
+            <section className="flex flex-col gap-3">
+              <button type="button" onClick={() => setArchiveOpen(!archiveOpen || Boolean(filters.job))} className="flex items-center justify-between rounded-xl border border-line bg-panel px-4 py-3 text-left hover:bg-hover">
+                <span>
+                  <span className="section-label">{archiveOpen || filters.job ? '▾' : '▸'} Archive</span>
+                  <span className="ml-3 text-[13px] text-muted">{archiveRuns} runs in {archive.length} folders · recorded before the harness revamp (no run_spec.json)</span>
+                </span>
+                <span className="text-[12px] text-faint">{archiveOpen ? 'Hide' : 'Show'}</span>
+              </button>
+              {(archiveOpen || filters.job) && (
+                <>
+                  {archive.slice(0, filters.job ? undefined : archiveLimit).map((l) => card(l, true))}
+                  {!filters.job && archive.length > archiveLimit && <Button variant="ghost" onClick={() => setArchiveLimit(archiveLimit + ARCHIVE_PAGE)}>Show {Math.min(ARCHIVE_PAGE, archive.length - archiveLimit)} more folders</Button>}
+                </>
+              )}
+            </section>
+          )}
+        </>
+      )}
     </div>
   )
 }
 
-function confirmJob(action: string, job: CatalogJob): boolean {
-  const name = jobLabel(job)
-  if (action === 'stop') return window.confirm(`Stop batch ${name}? Queued runs are cancelled and owned containers stopped.`)
-  if (action === 'dismiss') return window.confirm(`Remove ${name} from the active list? Artifacts and results are kept.`)
-  if (action === 'resume') return window.confirm(`Resume batch ${name}? This starts paid model calls.`)
-  return true
-}
-
-function JobBanner({ job, compact, busy, onAction, onOpen, onClear }: {
-  job: CatalogJob
+function LaunchCard({ launch, compact, selected, onSelect, busy, onJob, onResume, onFocus }: {
+  launch: Launch
   compact?: boolean
+  selected: Set<string>
+  onSelect: (id: string, on: boolean) => void
   busy: boolean
-  onAction: (action: 'stop' | 'pause' | 'dismiss' | 'resume') => void
-  onOpen?: () => void
-  onClear?: () => void
+  onJob: (verb: JobVerb, job: CatalogJob) => void
+  onResume: (id: string) => void
+  onFocus: () => void
 }) {
-  const status = processStatus({ status: job.status, status_source: job.status_source ?? (job.can_stop ? 'Batch worker heartbeat' : ''), needs_assistance: job.needs_assistance })
-  const counts = job.runs.reduce<Record<string, number>>((acc, r) => { const s = r.status ?? 'queued'; acc[s] = (acc[s] ?? 0) + 1; return acc }, {})
+  const [open, setOpen] = useState(!compact)
+  const job = launch.job
+  const status = job ? processStatus({ status: job.status, status_source: job.can_stop ? 'Batch worker heartbeat' : 'Saved batch record', needs_assistance: job.needs_assistance }) : null
+  const games = [...new Set(launch.runs.map((r) => r.game))]
+  const solved = launch.runs.filter((r) => r.outcome.tone === 'solved').length
   return (
-    <div className={cx('flex flex-wrap items-center gap-3 rounded-lg border border-line bg-panel px-3', compact ? 'py-1.5' : 'py-2.5')}>
-      <ProcessPill status={status} />
-      <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          {onOpen ? <button type="button" onClick={onOpen} className="truncate font-medium text-accent hover:underline">{jobLabel(job)}</button> : <span className="truncate font-medium">{jobLabel(job)}</span>}
-          {job.comparison && <Pill tone="accent">paired comparison</Pill>}
-          {job.recovery_of && <Pill tone="neutral">recovery</Pill>}
+    <article className="overflow-hidden rounded-xl border border-line bg-panel shadow-[var(--shadow)]">
+      <header className="flex flex-wrap items-center gap-4 px-4 py-3">
+        <div className="flex -space-x-2">
+          {games.slice(0, 3).map((g) => <GameThumb key={g} gameId={g} size={36} className="ring-2 ring-panel" />)}
         </div>
-        <div className="text-[11.5px] text-muted">
-          {dateTime(job.created_at)} · {job.runs.length} runs · {Object.entries(counts).map(([s, n]) => `${n} ${s === 'cancelled' ? 'stopped' : s}`).join(', ')}
-          {job.parallel ? ` · ${job.parallel} at once` : ''}
-          {job.error ? ` · ${job.error}` : ''}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <button type="button" onClick={onFocus} className="truncate text-left text-[15px] font-semibold tracking-tight hover:underline">{launch.label}</button>
+            {status && <StatusDot status={status} />}
+            <span className="text-[12px] text-faint">{launch.started ? shortTime(launch.started) : ''}</span>
+          </div>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[12px] text-muted">
+            {launch.modes.map((m) => <span key={m} className="rounded-md bg-neutral-soft px-1.5 py-px">{MODE_LABEL[m]}</span>)}
+            {launch.harnesses.map((h) => <HarnessChip key={h} harness={h} legacy={launch.archive} />)}
+            <span className="truncate" title={launch.models.join(', ')}>{launch.models.map((m) => modelParts(m).name).slice(0, 3).join(', ')}{launch.models.length > 3 ? ` +${launch.models.length - 3}` : ''}</span>
+            {launch.budget && <span className="text-faint">· {launch.budget}</span>}
+          </div>
         </div>
-      </div>
-      <div className="ml-auto flex items-center gap-1.5">
-        {!compact && job.comparison && <Link to={`/compare?job=${encodeURIComponent(job.id)}`}><Button size="sm">Compare pairs</Button></Link>}
-        {job.can_pause && <Button size="sm" disabled={busy} onClick={() => onAction('pause')}>Pause</Button>}
-        {job.can_stop && <Button size="sm" variant="danger" disabled={busy} onClick={() => onAction('stop')}>Stop</Button>}
-        {job.can_resume && <Button size="sm" disabled={busy} onClick={() => onAction('resume')}>Resume batch</Button>}
-        {job.can_dismiss && <Button size="sm" variant="ghost" disabled={busy} onClick={() => onAction('dismiss')}>Dismiss</Button>}
-        {onClear && <Button size="sm" variant="ghost" onClick={onClear}>Show all runs</Button>}
-      </div>
-    </div>
+        <div className="flex items-center gap-5">
+          <div className="text-right">
+            <div className="text-[15px] font-semibold tabular-nums">{solved}<span className="text-faint">/{launch.runs.length}</span></div>
+            <div className="section-label">solved</div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            {job?.can_pause && <Button size="sm" disabled={busy} onClick={() => onJob('pause', job)}>Pause</Button>}
+            {job?.can_stop && <Button size="sm" variant="danger" disabled={busy} onClick={() => onJob('stop', job)}>Stop</Button>}
+            {job?.can_resume && <Button size="sm" disabled={busy} onClick={() => onJob('resume', job)}>Resume</Button>}
+            {job?.can_dismiss && <Button size="sm" variant="ghost" disabled={busy} onClick={() => onJob('dismiss', job)}>Dismiss</Button>}
+            {job?.comparison && <Link to={`/compare?job=${encodeURIComponent(job.id)}`}><Button size="sm">Compare</Button></Link>}
+            <Button size="sm" variant="ghost" onClick={() => setOpen(!open)} aria-expanded={open}>{open ? '▾' : '▸'} {launch.runs.length} run{launch.runs.length === 1 ? '' : 's'}</Button>
+          </div>
+        </div>
+      </header>
+      {open && (
+        <div className="overflow-x-auto border-t border-line">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th className="w-8" />
+                <th>Game</th>
+                <th>Levels</th>
+                <th>Harness</th>
+                <th>Model</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Run</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {launch.runs.map((run) => <RunRow key={run.id} run={run} selected={selected.has(run.id)} onSelect={(on) => onSelect(run.id, on)} onResume={() => onResume(run.id)} />)}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </article>
   )
 }
 
-function RunRow({ run, selected, onSelect, onResume, resuming, onJob }: {
-  run: RunView
-  selected: boolean
-  onSelect: (on: boolean) => void
-  onResume: () => void
-  resuming: boolean
-  onJob: () => void
-}) {
+function RunRow({ run, selected, onSelect, onResume }: { run: RunView; selected: boolean; onSelect: (on: boolean) => void; onResume: () => void }) {
   const raw = run.raw
   return (
     <tr className={cx(selected && 'selected')}>
-      <td><input type="checkbox" checked={selected} onChange={(e) => onSelect(e.target.checked)} aria-label={`Select ${run.id}`} /></td>
-      <td>
-        <div className="flex flex-col items-start gap-0.5">
-          <ProcessPill status={run.process} />
-          {raw.failure_reason && <span className="max-w-36 truncate text-[11px] text-warn" title={raw.failure_reason}>{raw.failure_reason}</span>}
+      <td><input type="checkbox" checked={selected} onChange={(e) => onSelect(e.target.checked)} aria-label={`Select ${run.id}`} className="accent-[var(--fg)]" /></td>
+      <td className="min-w-52">
+        <div className="flex items-center gap-3">
+          <GameThumb gameId={run.game} size={30} />
+          <div className="min-w-0">
+            <Link to={runHref(run.id)} className="block truncate text-[13.5px] font-semibold text-fg">{gameName(run.game)}</Link>
+            <div className="truncate text-[11.5px] text-faint">{MODE_LABEL[run.mode]}{run.worldModel && run.worldModel !== 'not-recorded' ? ` · ${run.worldModel}` : ''}</div>
+          </div>
         </div>
       </td>
-      <td><OutcomeCell outcome={run.outcome} campaign={run.kind === 'avo'} /></td>
-      <td>
-        <span className="whitespace-nowrap">{MODE_LABEL[run.mode]}</span>
-        {run.worldModel && run.worldModel !== 'not-recorded' && <div className="text-[11px] text-faint">{run.worldModel}</div>}
+      <td><LevelPips levels={run.outcome.score} total={run.outcome.total} solved={run.outcome.tone === 'solved'} /></td>
+      <td><HarnessChip harness={run.harness} legacy={run.legacy} /></td>
+      <td className="max-w-56">
+        <div className="truncate text-[13px]" title={run.model}>{modelParts(run.model).name}</div>
+        <div className="truncate text-[11.5px] text-faint">{[modelParts(run.model).provider, run.effort].filter((x) => x && x !== '—').join(' · ')}</div>
+      </td>
+      <td className="whitespace-nowrap text-[12px] tabular-nums text-muted">
+        {run.progress.used ?? '–'}{run.progress.budget ? <span className="text-faint">/{run.progress.budget}</span> : null} <span className="text-[11px] text-faint">{run.progress.unit}</span>
       </td>
       <td>
-        <span className="whitespace-nowrap" title={run.legacy ? 'Identity normalized from a pre-revamp config (no run_spec.json)' : 'run_spec.json'}>{run.harness}{run.legacy && <span className="text-faint">*</span>}</span>
+        <StatusDot status={run.process} />
+        <div className="text-[11px] text-faint" title={raw.failure_reason ?? undefined}>{raw.failure_reason ? 'needs attention' : relativeTime(run.activity)}</div>
       </td>
-      <td className="max-w-48">
-        <div className="truncate" title={run.model}>{modelParts(run.model).name}</div>
-        <div className="truncate text-[11px] text-faint" title={run.optimizerModel ?? undefined}>{[modelParts(run.model).provider, run.effort].filter(Boolean).join(' · ')}{run.optimizerModel && run.optimizerModel !== run.model ? ` · opt ${modelParts(run.optimizerModel).name}` : ''}</div>
-      </td>
-      <td className="whitespace-nowrap"><Link to={gameHref(run.game)}>{gameName(run.game)}</Link></td>
-      <td><ProgressText run={run} /></td>
-      <td className="whitespace-nowrap text-[12px] text-muted" title={`Last activity ${dateTime(run.activity)}`}>{run.started ? shortTime(run.started) : '—'}</td>
-      <td className="max-w-40">
-        <Link to={runHref(run.id)} className="block truncate text-[12px]" title={run.id}>{shortId(run.id, 1)}</Link>
-        {run.batch && <button type="button" onClick={onJob} className="block max-w-40 truncate text-left text-[11px] text-faint hover:text-accent" title={run.batch}>{run.batch.split('/').at(-1)}</button>}
-      </td>
-      <td className="whitespace-nowrap text-right">
-        {raw.resumable && !raw.resumed_as && <Button size="sm" disabled={resuming} onClick={onResume}>{run.kind === 'avo' ? 'Resume' : 'Continue'}</Button>}
-        {raw.resumed_as && <Link to={runHref(raw.resumed_as)} className="text-[11.5px]">resumed →</Link>}
+      <td><RunId id={run.id} className="w-44" /></td>
+      <td className="text-right whitespace-nowrap">
+        {raw.resumable && !raw.resumed_as && <Button size="sm" onClick={onResume}>{run.kind === 'avo' ? 'Resume' : 'Continue'}</Button>}
+        {raw.resumed_as && <Link to={runHref(raw.resumed_as)} className="text-[12px]">continued →</Link>}
       </td>
     </tr>
   )

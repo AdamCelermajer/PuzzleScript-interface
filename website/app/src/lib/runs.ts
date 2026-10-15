@@ -128,3 +128,68 @@ export function jobLabel(job: Pick<CatalogJob, 'id'>): string {
 /** Workbench-internal detail link (run ids contain slashes; they become the route splat). */
 export const runHref = (id: string) => `/runs/${id.split('/').map(encodeURIComponent).join('/')}`
 export const gameHref = (id: string) => `/benchmarks/${encodeURIComponent(id)}`
+
+/** One launch (workbench batch or legacy output folder) with its runs and a spec summary. */
+export interface Launch {
+  id: string
+  label: string
+  started: number
+  archive: boolean
+  job?: CatalogJob
+  runs: RunView[]
+  modes: Mode[]
+  harnesses: string[]
+  models: string[]
+  budget: string
+}
+
+/** `output/workbench/20261015T012502-nano-modality-714e64` → `nano-modality`. */
+export function launchLabel(batch: string): string {
+  const parts = batch.split('/').filter(Boolean)
+  const name = (['output', 'campaign'].includes(parts.at(-1) ?? '') ? parts.slice(-2).join('/') : parts.at(-1)) ?? batch
+  const stripped = name.replace(/^\d{8}T\d{6}Z?-?/, '').replace(/-?[0-9a-f]{8}$/, '').replace(/-?[0-9a-f]{6}$/, '')
+  const time = batchTime(name)
+  return stripped || (time ? `Launch · ${new Date(time).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}` : name)
+}
+
+function budgetSummary(run: RunView): string {
+  const b = run.raw.run_budget
+  if (!b) return ''
+  const wall = b.max_wall_seconds === 0 ? 'unlimited wall' : b.max_wall_seconds ? `${Math.round((b.max_wall_seconds / 3600) * 10) / 10}h wall` : ''
+  const work = run.mode === 'campaign'
+    ? [b.max_evaluations && `${b.max_evaluations} evals`, b.research_moves && `${b.research_moves}/${b.solver_moves ?? '?'} moves`]
+    : [b.max_steps && `${b.max_steps} steps`]
+  return [...work, wall].filter(Boolean).join(' · ')
+}
+
+/**
+ * Group runs by launch, newest first. A launch is archive when none of its runs has
+ * run_spec.json (everything recorded before the harness revamp).
+ */
+export function groupLaunches(runs: RunView[], jobs: Map<string, CatalogJob>): Launch[] {
+  const groups = new Map<string, RunView[]>()
+  for (const run of runs) {
+    const key = `${run.batch || run.id}|${run.legacy ? 'a' : 'n'}`
+    groups.set(key, [...(groups.get(key) ?? []), run])
+  }
+  const launches: Launch[] = []
+  for (const [key, members] of groups) {
+    const id = key.split('|')[0]
+    const job = jobs.get(id)
+    const ordered = [...members].sort((a, b) => a.id.localeCompare(b.id))
+    const created = job?.created_at ? Date.parse(job.created_at) : NaN
+    launches.push({
+      id,
+      label: launchLabel(id),
+      started: Number.isFinite(created) ? created : Math.max(...members.map((r) => r.started || r.activity || 0)),
+      archive: members.every((r) => r.legacy),
+      job,
+      runs: ordered,
+      modes: MODES.filter((m) => members.some((r) => r.mode === m)),
+      harnesses: [...new Set(members.map((r) => r.harness))],
+      models: [...new Set(members.map((r) => r.model).filter((m) => m && m !== '—'))],
+      budget: budgetSummary(ordered[0]),
+    })
+  }
+  return launches.sort((a, b) => b.started - a.started)
+}

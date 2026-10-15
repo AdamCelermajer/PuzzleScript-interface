@@ -110,7 +110,7 @@ function Replay({ runId, record, live }: { runId: string; record: RunRecord; liv
         <div className="flex items-center gap-1.5">
           <Button size="sm" onClick={() => setIndex(1)} disabled={position <= 1}>⏮</Button>
           <Button size="sm" onClick={() => setIndex(Math.max(1, position - 1))} disabled={position <= 1}>← Prev</Button>
-          <span className="w-28 text-center font-mono text-[12px] tabular-nums">{position} / {total}</span>
+          <span className="w-28 text-center text-[12.5px] font-medium tabular-nums">{position} / {total}</span>
           <Button size="sm" onClick={() => setIndex(position + 1 >= total ? null : position + 1)} disabled={position >= total}>Next →</Button>
           <Button size="sm" variant={index === null ? 'primary' : 'default'} onClick={() => setIndex(null)}>{live ? 'Follow live' : 'Latest'}</Button>
         </div>

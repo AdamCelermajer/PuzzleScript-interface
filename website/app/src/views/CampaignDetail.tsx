@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { api, q } from '../api/client'
 import type { AvoArtifact, AvoFrame, AvoLogs, AvoSnapshot, Submission } from '../api/types'
 import { GridCanvas, PixelImage, toGrid } from '../components/Frame'
+import { LevelPips } from '../components/identity'
 import { Markdown } from '../components/Markdown'
 import { Timeline } from '../components/Timeline'
 import { Button, Card, Empty, ErrorBox, Input, Loading, Notice, Pill, Pre, Select, Tabs, cx } from '../components/ui'
@@ -49,15 +50,15 @@ export function CampaignDetail({ runId, live }: { runId: string; live?: boolean 
                 <tbody>
                   {data.candidates.map((c) => (
                     <tr key={c.candidate_id} className={cx(c.candidate_id === selected && 'selected')} style={{ cursor: 'pointer' }} onClick={() => setCandidate(c.candidate_id)}>
-                      <td className="font-mono text-[12px]">{c.candidate_id}{c.candidate_id === data.current && <span className="ml-1 text-[11px] text-accent">current</span>}</td>
-                      <td className="font-mono text-[11.5px] text-muted">{c.parent_ids.join(', ') || 'seed'}</td>
+                      <td className="text-[12.5px] font-medium">{c.candidate_id}{c.candidate_id === data.current && <span className="ml-1 text-[11px] text-accent">current</span>}</td>
+                      <td className="text-[12px] text-muted">{c.parent_ids.join(', ') || 'seed'}</td>
                       <td>
                         {c.evaluated ? (
-                          <span className="inline-flex items-center gap-1.5"><span className="font-mono text-[12px]">{c.fitness ?? '—'} / {c.win_levels ?? '—'}</span>{c.success && <Pill tone="solved">solved</Pill>}</span>
+                          <span className="inline-flex items-center gap-1.5"><LevelPips levels={c.fitness} total={c.win_levels} solved={Boolean(c.success)} size="sm" /></span>
                         ) : <span className="text-[12px] text-faint">not evaluated</span>}
                       </td>
-                      <td className="font-mono text-[12px] text-muted">{c.research.actions} act · L{c.research.levels}</td>
-                      <td className="font-mono text-[12px] text-muted">{c.evaluation.actions} act · L{c.evaluation.levels}</td>
+                      <td className="text-[12px] tabular-nums text-muted">{c.research.actions} actions · level {c.research.levels}</td>
+                      <td className="text-[12px] tabular-nums text-muted">{c.evaluation.actions} actions · level {c.evaluation.levels}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -80,7 +81,7 @@ function Stat({ label, value, sub }: { label: string; value: string; sub?: strin
   return (
     <div className="rounded-lg border border-line bg-panel px-3 py-2">
       <div className="text-[11px] text-faint">{label}</div>
-      <div className="font-mono text-[15px] font-semibold tabular-nums">{value}</div>
+      <div className="text-[18px] font-semibold tracking-tight tabular-nums">{value}</div>
       {sub && <div className="truncate text-[11.5px] text-muted">{sub}</div>}
     </div>
   )
@@ -120,7 +121,7 @@ function FrameReplay({ runId, snapshot, candidate, live }: { runId: string; snap
           <div className="flex items-center gap-1.5">
             <Button size="sm" onClick={() => setStep(0)} disabled={position <= 0}>Initial</Button>
             <Button size="sm" onClick={() => setStep(Math.max(0, position - 1))} disabled={position <= 0}>← Prev</Button>
-            <span className="w-24 text-center font-mono text-[12px] tabular-nums">{position} / {max}</span>
+            <span className="w-24 text-center text-[12.5px] font-medium tabular-nums">{position} / {max}</span>
             <Button size="sm" onClick={() => setStep(position + 1 >= max ? null : position + 1)} disabled={position >= max}>Next →</Button>
             <Button size="sm" variant={step === null ? 'primary' : 'default'} onClick={() => setStep(null)}>{live ? 'Follow live' : 'Latest'}</Button>
           </div>
@@ -247,8 +248,8 @@ function SolverPanel({ runId }: { runId: string }) {
               <tbody>
                 {data.evaluations.map((e) => (
                   <tr key={e.candidate_id} className={cx(e.candidate_id === data.best?.candidate_id && 'selected')} style={{ cursor: 'pointer' }} onClick={() => setCandidate(e.candidate_id ?? '')}>
-                    <td className="font-mono text-[12px]">{e.candidate_id}</td>
-                    <td className="font-mono text-[12px]">{e.fitness}</td>
+                    <td className="text-[12.5px] font-medium">{e.candidate_id}</td>
+                    <td className="text-[12.5px] tabular-nums">{e.fitness}</td>
                     <td className="text-muted">{e.environment_steps ?? '—'}</td>
                     <td>{e.success ? <Pill tone="solved">solved</Pill> : <span className="text-[12px] text-muted">not solved</span>}</td>
                     <td className="max-w-80 truncate text-[12px] text-muted" title={e.finish_reason ?? ''}>{e.finish_reason}</td>

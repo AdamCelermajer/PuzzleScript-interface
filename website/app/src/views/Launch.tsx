@@ -11,6 +11,7 @@ import {
   requestKey, usesBaseline, usesCampaign, type LaunchForm,
 } from '../lib/launch'
 import { MODE_LABEL } from '../lib/runs'
+import { harnessColor } from '../components/identity'
 
 const MODES: Mode[] = ['baseline', 'baseline-plus', 'campaign']
 const MODE_HELP: Record<Mode, string> = {
@@ -237,7 +238,7 @@ function HarnessCard({ harness, on, onToggle }: { harness: Harness; on: boolean;
       title={harness.missing.length ? `Missing: ${harness.missing.join('; ')}` : 'Credentials and image present'}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className={cx('text-[13px] font-medium', on && 'text-accent')}>{on ? '✓ ' : ''}{harness.label}</span>
+        <span className="inline-flex items-center gap-2 text-[13px] font-medium"><span className="h-2.5 w-2.5 rounded-[3px]" style={{ background: harnessColor(harness.id) }} />{harness.label}{on ? ' ✓' : ''}</span>
         {harness.ready ? <Pill tone="ok">ready</Pill> : <Pill tone="warn">not ready</Pill>}
       </div>
       <div className="text-[11.5px] text-muted">{harness.id} · {harness.providers.join(', ')}</div>

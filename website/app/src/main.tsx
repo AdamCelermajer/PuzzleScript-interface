@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './index.css'
 import { Layout } from './components/Layout'
 import { RunsView } from './views/Runs'
+import { ResultsView } from './views/Results'
 import { LaunchView } from './views/Launch'
 import { RunDetailView } from './views/RunDetail'
 import { CompareView } from './views/Compare'
@@ -27,7 +28,7 @@ createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
-            <Route index element={<RunsView />} />
+            <Route index element={<ResultsView />} />
             <Route path="runs" element={<RunsView />} />
             <Route path="runs/*" element={<RunDetailView />} />
             <Route path="launch" element={<LaunchView />} />

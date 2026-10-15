@@ -7,6 +7,7 @@ Script source is never returned: it is the answer key for agents.
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -18,7 +19,7 @@ from pathlib import Path
 from typing import Any, Callable, Literal
 
 import requests
-from fastapi import APIRouter, Body, HTTPException, Query
+from fastapi import APIRouter, Body, HTTPException, Query, Response
 from pydantic import BaseModel, ConfigDict, Field
 
 from workbench.catalog import ROOT, read_json, snapshot
@@ -29,6 +30,9 @@ PLAY_ACTIONS = {"ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5", "ACTION7"
 MAX_PLAY_SESSIONS = 24
 PLAY_IDLE_SECONDS = 30 * 60
 MEASURED_TTL_SECONDS = 30
+THUMBNAILS = Path("output/thumbnails")
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+THUMBNAIL_RETRY_SECONDS = 600
 
 
 class TagSet(BaseModel):
@@ -275,6 +279,56 @@ def create_router(root: Path = ROOT, backend_url: str | None = None,
         detail = read_json(root / "output/game-selection-20/level-annotation-detail.json")
         levels = [level for level in detail.get("levels", []) if level.get("game_id") == game_id]
         return {"methodology": detail.get("methodology"), "levels": levels} if levels else {}
+
+    thumbnail_slots = threading.Semaphore(4)
+    thumbnail_failures: dict[str, float] = {}
+
+    def render_thumbnail(game_id: str) -> bytes | None:
+        """First frame of the first level as PNG, rendered once by the ARC service."""
+        card = post("/api/scorecard/open", {"tags": ["workbench-thumbnail"]})
+        try:
+            response = post("/api/cmd/RESET", {"game_id": game_id, "card_id": card["card_id"]})
+        finally:
+            close_scorecard({"card_id": card["card_id"]})
+        data_url = str((response.get("rendered_frame") or {}).get("data_url") or "")
+        head, _, payload = data_url.partition(",")
+        if head != "data:image/png;base64" or not payload:
+            return None
+        png = base64.b64decode(payload, validate=False)
+        return png if png.startswith(PNG_SIGNATURE) else None
+
+    def thumbnail_bytes(game_id: str) -> bytes | None:
+        path = root / THUMBNAILS / f"{game_id}.png"
+        if path.is_file():
+            return path.read_bytes()
+        if time.monotonic() - thumbnail_failures.get(game_id, -1e9) < THUMBNAIL_RETRY_SECONDS:
+            return None
+        with thumbnail_slots:
+            if path.is_file():
+                return path.read_bytes()
+            try:
+                png = render_thumbnail(game_id)
+            except HTTPException:
+                png = None
+            if png is None:
+                thumbnail_failures[game_id] = time.monotonic()
+                return None
+            path.parent.mkdir(parents=True, exist_ok=True)
+            temp = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
+            temp.write_bytes(png)
+            os.replace(temp, path)
+            return png
+
+    @router.get("/benchmarks/{game_id}/thumbnail.png")
+    def benchmark_thumbnail(game_id: str):
+        _check_id(game_id)
+        entry = load()["games"].get(game_id)
+        if entry is None or not entry.get("arc_catalog", True):
+            raise HTTPException(404, "No thumbnail for this game")
+        png = thumbnail_bytes(game_id)
+        if png is None:
+            raise HTTPException(404, "Thumbnail could not be rendered")
+        return Response(png, media_type="image/png", headers={"Cache-Control": "public, max-age=604800"})
 
     @router.get("/benchmarks/{game_id}")
     def benchmark_detail(game_id: str):

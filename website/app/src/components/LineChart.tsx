@@ -7,7 +7,7 @@ const DARK = ['#3987e5', '#d95926', '#199e70', '#c98500', '#d55181', '#008300', 
 export const MAX_SERIES = LIGHT.length
 
 export function seriesColor(index: number): string {
-  const dark = typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches
+  const dark = typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark'
   return (dark ? DARK : LIGHT)[index] ?? 'transparent'
 }
 

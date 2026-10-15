@@ -1,62 +1,94 @@
 @import "tailwindcss";
 
-/* One neutral palette + one accent. Dark mode follows the OS (prefers-color-scheme). */
+/*
+ * Design tokens. Neutral surfaces; color is reserved for status and harness identity.
+ * Light is crisp white (Linear/Vercel-like); dark is designed, not inverted: near-black
+ * canvas, slightly raised panels, primary text >= 7:1. data-theme is set by src/theme.ts.
+ */
 :root {
-  --bg: #f7f7f8;
+  --bg: #fafafa;
   --panel: #ffffff;
-  --sunken: #f1f2f4;
-  --line: #e3e5e8;
-  --line-strong: #cfd3d8;
-  --fg: #1c1f24;
-  --muted: #5d6470;
-  --faint: #8a919c;
-  --accent: #2f5bd3;
-  --accent-soft: #e8eefc;
+  --raised: #ffffff;
+  --sunken: #f4f4f5;
+  --hover: #f4f4f5;
+  --line: #e8e8eb;
+  --line-strong: #d4d4d8;
+  --fg: #09090b;
+  --muted: #52525b;
+  --faint: #8b8b93;
+  --accent: #18181b;
+  --accent-soft: #f1f1f3;
   --accent-fg: #ffffff;
-  --ok: #1f7a4a;
-  --ok-soft: #e3f3ea;
-  --bad: #b3261e;
-  --bad-soft: #fbe9e7;
-  --warn: #8a5a00;
-  --warn-soft: #fbf0d9;
-  --run: #2f5bd3;
-  --run-soft: #e8eefc;
-  --neutral-soft: #eceef1;
+  --link: #1d4ed8;
+  --ok: #15803d;
+  --ok-soft: #e8f6ed;
+  --bad: #c42020;
+  --bad-soft: #fdecec;
+  --warn: #a35a00;
+  --warn-soft: #fdf3e1;
+  --run: #2563eb;
+  --run-soft: #e8efff;
+  --neutral-soft: #f1f1f3;
+  --pip: #2563eb;
+  --pip-solved: #16a34a;
+  --pip-empty: #d4d4d8;
+  --thumb-bg: #e4e4e7;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.02);
+  --h-codex: #0f9d74;
+  --h-claude-code: #d9622b;
+  --h-opencode: #2a78d6;
+  --h-antigravity: #d4558a;
+  --h-bare: #c99000;
+  --h-legacy: #8b8b93;
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #131519;
-    --panel: #1a1d22;
-    --sunken: #15171b;
-    --line: #2a2e35;
-    --line-strong: #3a3f48;
-    --fg: #e6e8eb;
-    --muted: #a2a9b4;
-    --faint: #737b87;
-    --accent: #7c9cf5;
-    --accent-soft: #1f2a45;
-    --accent-fg: #0d1222;
-    --ok: #5cc48a;
-    --ok-soft: #173326;
-    --bad: #f08a80;
-    --bad-soft: #3a1d1b;
-    --warn: #e2b15a;
-    --warn-soft: #362a12;
-    --run: #7c9cf5;
-    --run-soft: #1f2a45;
-    --neutral-soft: #252930;
-    color-scheme: dark;
-  }
+:root[data-theme="dark"] {
+  --bg: #0b0c0e;
+  --panel: #121316;
+  --raised: #17181c;
+  --sunken: #0f1012;
+  --hover: #1b1c21;
+  --line: #222429;
+  --line-strong: #31343b;
+  --fg: #f4f4f5;
+  --muted: #b4b4bd;
+  --faint: #7d7d87;
+  --accent: #f4f4f5;
+  --accent-soft: #1e1f24;
+  --accent-fg: #0b0c0e;
+  --link: #8ab4ff;
+  --ok: #4ade80;
+  --ok-soft: #0f2a1a;
+  --bad: #ff7b7b;
+  --bad-soft: #2d1414;
+  --warn: #fbbf24;
+  --warn-soft: #2b2110;
+  --run: #6ea8ff;
+  --run-soft: #142240;
+  --neutral-soft: #1c1d22;
+  --pip: #6ea8ff;
+  --pip-solved: #4ade80;
+  --pip-empty: #3a3d45;
+  --thumb-bg: #1c1d22;
+  --shadow: none;
+  --h-codex: #199e70;
+  --h-claude-code: #d95926;
+  --h-opencode: #3987e5;
+  --h-antigravity: #d55181;
+  --h-bare: #c98500;
+  --h-legacy: #7d7d87;
+  color-scheme: dark;
 }
 
 @theme {
-  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-sans: "Inter", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
   --color-bg: var(--bg);
   --color-panel: var(--panel);
+  --color-raised: var(--raised);
   --color-sunken: var(--sunken);
+  --color-hover: var(--hover);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-fg: var(--fg);
@@ -65,6 +97,7 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --color-accent-fg: var(--accent-fg);
+  --color-link: var(--link);
   --color-ok: var(--ok);
   --color-ok-soft: var(--ok-soft);
   --color-bad: var(--bad);
@@ -85,25 +118,31 @@ body {
   font-size: 13.5px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
+  font-feature-settings: "cv11", "ss01";
 }
 
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a { color: inherit; text-decoration: none; }
+a:hover { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+.prose-md a, a.link { color: var(--link); }
+::selection { background: color-mix(in srgb, var(--run) 30%, transparent); }
+
+/* Small caps section labels. */
+.section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--faint); }
 
 /* Dense data tables with sticky headers. */
 .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 .data-table th {
   position: sticky; top: 0; z-index: 1;
-  background: var(--sunken); color: var(--muted);
-  font-weight: 500; font-size: 12px; text-align: left; white-space: nowrap;
-  padding: 6px 10px; border-bottom: 1px solid var(--line);
+  background: var(--panel); color: var(--faint);
+  font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; text-align: left; white-space: nowrap;
+  padding: 8px 12px; border-bottom: 1px solid var(--line);
 }
-.data-table td { padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-.data-table tbody tr:hover td { background: var(--sunken); }
+.data-table td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: var(--hover); }
 .data-table tr.selected td { background: var(--accent-soft); }
 
 .pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
-
 /* Rendered markdown (diary, notes, world models). */
 .prose-md { line-height: 1.55; overflow-wrap: anywhere; }
 .prose-md h1 { font-size: 1.35em; font-weight: 600; margin: 0.6em 0 0.4em; }
@@ -129,6 +168,6 @@ a:hover { text-decoration: underline; }
 .pdf-page .textLayer { inset: 0; overflow: hidden; opacity: 1; line-height: 1; }
 .pdf-page .textLayer span { cursor: text; }
 .pdf-underline-segment { --underline-color: #c58a00; position: absolute; z-index: 4; height: 14px; transform: translateY(-6px); border-radius: 999px; background: linear-gradient(to bottom, transparent 0 6px, var(--underline-color) 6px 9px, transparent 9px); cursor: pointer; }
-.pdf-underline-segment.linked { --underline-color: var(--accent); }
+.pdf-underline-segment.linked { --underline-color: var(--run); }
 .pdf-underline-segment:hover { filter: brightness(0.82); }
 .paper-underline { text-decoration-line: underline; text-decoration-color: #c58a00; text-decoration-thickness: 2px; text-underline-offset: 3px; }
