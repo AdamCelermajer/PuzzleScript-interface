@@ -1,24 +1,27 @@
-# Revamp status (2026-10-15, paused on usage limit)
+# Revamp status (2026-10-15)
 
 Design: `revamp-contract.md`. Branch `workbench-revamp`.
 
 ## Done
-- Phase 0 committed (`94086fe`).
-- Benchmarks: `benchmark/games.json` (206 games, 24 mechanic + 12 property tags, 193 drafted),
-  `scripts/build_game_metadata.py`, `scripts/draft_game_tags.py`, `workbench/benchmarks.py` router, tests pass.
-- Diary: `docs/diary/` (32 entries, 31 reconstructed), `workbench/diary.py` router, AGENTS.md Diary section, tests pass.
+- Harnesses (`harnesses/`): codex, claude-code, opencode, bare verified in Docker
+  (smoke + one baseline-plus run + one tiny campaign). One image `puzzlescript-agents:local`
+  (`docker build -t puzzlescript-agents:local harnesses/docker`). Plain container, no
+  firewall: containers can reach host services, accepted for simplicity.
+- Workbench API: `/harnesses`, `/runs` (matrix), `/runs/resume`, normalized catalog,
+  Vite dev routes ported to FastAPI, benchmarks/diary/runs routers registered.
+- SPA (`website/app/`): Runs, Launch, Run detail, Compare, Benchmarks (+ Play, tag review),
+  Diary (+ export), Tools (Notes, Paper investigation, BFS). Served on 5173 by
+  `scripts/start-workbench.ps1`; `allowedHosts: true`.
+- Benchmarks: `benchmark/games.json`, 193 drafted tag sets awaiting review.
+- Diary: `docs/diary/`.
 
-## Interrupted mid-work (WIP, not verified)
-- Harnesses: `harnesses/` has base, codex, claude_code, opencode, antigravity, chat (moved from
-  `avo/client/openrouter_chat.py`), `docker/` image in progress. Missing: `bare.py`, `registry.py`,
-  `launch.py`, `entry.py`, AVO/direct-player integration, deletion of the Codex isolation stack, tests, smoke.
-- Workbench API: `workbench/runs.py`, `harness_catalog.py`, `avo_console.py`, `avo_replay_worker.cjs`,
-  edits to `experiments.py`/`catalog.py`/`experiment_job.py`. Was splicing out the old resume
-  handlers in `experiments.py` when stopped — check that file first.
-
-## Next
-1. Run `uv run python -m pytest -q tests avo/tests`; fix `workbench/experiments.py` and `avo/client/*` imports of the moved chat module.
-2. Finish harnesses (contract §1–3), then register `benchmarks`, `diary`, `runs` routers in `workbench/app.py`.
-3. Check whether containers can reach the workbench port (8010); block it if so (benchmark rules/summaries would leak).
-4. Antigravity Docker login (`python -m harnesses.launch login antigravity`) needs Adam in a terminal.
-5. Phase 3: React SPA.
+## Open
+- Antigravity: Docker login (`uv run python -m harnesses.launch login antigravity`), then
+  `uv run python -m harnesses.launch smoke --harness antigravity --model gemini-3.8-flash-low`;
+  confirm the web-blocking hook fires.
+- OpenCode provider pin and `--variant` values unverified.
+- Old `website/` pages (and `website/vite.config.js`, `game-library-server.mjs`) are unused;
+  delete when no longer wanted.
+- `aiohttp` unused in the lockfile; `openai-codex` still used by `workbench/paper_investigation.py`.
+- Tags: review drafts in Benchmarks → filter "draft".
+- Note the harness change (OpenCode / bare replace the old OpenRouter H0/H1 loops) in the Qwen research docs.

@@ -12,7 +12,7 @@ A research framework for LLM agents that learn puzzle game mechanics by observin
 
 The maintained workflows are AVO campaigns and the direct player (baseline / baseline-plus). The browser homepage is a run catalog, not the historical rule agent.
 
-- `website/` and `workbench/` — run discovery, launch forms, API and bounded batch workers.
+- `website/app/` and `workbench/` — the workbench single-page app (React) and its FastAPI backend: runs, launch, benchmarks, diary, tools. The older `website/` pages are kept on disk but no longer served.
 - `avo/` — AVO research/evolution, prompts and evaluation.
 - `harnesses/` — agent harnesses (codex, claude-code, opencode, antigravity, bare) and `python -m harnesses.launch`, which runs every campaign or direct-play run in one Docker container. See `harnesses/README.md`.
 - `studies/codex_agent/` — maintained persistent direct player, baseline+, continuation and batches.
@@ -44,7 +44,7 @@ npm install        # Node.js deps
 uv sync            # Python deps (pip fallback: `pip install -r requirements.txt`)
 ```
 
-**Environment variables** — maintained OpenAI models use the existing Codex OAuth login. AVO also accepts `openrouter/vendor/model` through the same Codex sandbox. Optional `.env.example` settings:
+**Environment variables** — each harness has one provider: Codex uses the existing Codex OAuth login (`~/.codex/auth.json`), Claude Code uses `CLAUDE_CODE_OAUTH_TOKEN`, OpenCode and bare use `OPENROUTER_API_KEY` / `NANOGPT_API_KEY`, Antigravity uses the `puzzlescript-agy-home` Docker volume (`uv run python -m harnesses.launch login antigravity`). Optional `.env.example` settings:
 - `OPENROUTER_API_KEY` — OpenRouter API (AVO OpenRouter models and the historical rule agent)
 - `ARC_API_KEY` — ARC-AGI-3 official API (required only for official ARC-AGI-3 runs)
 - `OPENAI_API_KEY` — legacy, unused
@@ -157,7 +157,7 @@ The public ARC surface returns ARC fields (`frame`, `state`, `levels_completed`,
 
 ## Current workbench
 
-`npm run workbench` starts or reuses the local services. `/` lists runs; `/runs/avo.html` and `/runs/codex.html` launch maintained workflows. `/experiments/rule-agent.html` preserves the older client. `workbench/catalog.py` discovers existing output paths without moving them; Docker process status and worker heartbeats are distinct from recorded solver success. `workbench/experiment_job.py` runs bounded subprocess batches with persistent manifests and exact ownership for stops. Never restart shared game services as part of a website refresh. See `docs/architecture/workbench.md`.
+`npm run workbench` starts or reuses the local services and serves the SPA (`website/app/`) on port 5173 (any hostname, e.g. Tailscale). Sections: Runs, Launch, Run detail, Compare, Benchmarks, Diary, Tools. Every launch goes through `POST /api/workbench/runs` → `python -m harnesses.launch`. `workbench/catalog.py` discovers existing output paths without moving them; Docker process status and worker heartbeats are distinct from recorded solver success. `workbench/experiment_job.py` runs bounded subprocess batches with persistent manifests and exact ownership for stops. Never restart shared game services as part of a website refresh. See `docs/architecture/workbench.md`.
 
 ## Diary
 

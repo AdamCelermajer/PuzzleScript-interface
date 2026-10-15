@@ -2,27 +2,27 @@
 date: 2026-10-15
 title: Workbench and harness revamp
 threads: [harness-revamp, workbench, benchmark-curation]
-runs: []
-commits: [94086fe]
-docs: [docs/architecture/revamp-contract.md, docs/diary/README.md]
+runs: [harness-smoke-*]
+commits: [94086fe, f5ead4f, 951ced8, 9bfd741]
+docs: [docs/architecture/revamp-contract.md, docs/architecture/revamp-status.md, harnesses/README.md, docs/diary/README.md]
 reconstructed: false
 ---
 ## Did
 - Committed the in-flight work as phase 0 (`94086fe`): NanoGPT provider, `image` gateway tool, `max_wall_seconds=0` = unlimited.
-- Wrote the revamp contract (`docs/architecture/revamp-contract.md`) that the parallel revamp builds against.
-- Installed Antigravity CLI 1.3.5 and logged it in; set up a long-lived Claude Code token (`CLAUDE_CODE_OAUTH_TOKEN`).
-- Started this research diary: entries in `docs/diary/`, `workbench/diary.py` API, backfill from git history and research docs.
+- Built `harnesses/`: codex, claude-code, opencode, antigravity and `bare` behind one session interface, one Docker image, one launcher (`python -m harnesses.launch`) for baseline, baseline-plus and campaign. Deleted the Codex sandbox, request proxy and the old OpenRouter H0/H1 loops.
+- Unified the workbench API (`/runs` matrix launch, `/runs/resume`, `/harnesses`) and moved the Vite-only routes into FastAPI.
+- Replaced the multi-page site with one React app (`website/app/`) on port 5173: Runs, Launch, Run detail, Compare, Benchmarks, Diary, Tools.
+- Built `benchmark/games.json` (206 games, 24 mechanic + 12 property tags, drafted for 193 games by Claude).
+- Started this diary with 31 reconstructed entries.
 ## Found
-- All four CLIs (codex, claude-code, opencode, antigravity) ran headless on Windows, made a shell tool call and returned session ids.
-- OpenCode needs models unknown to models.dev (e.g. `qwen/qwen3.8-27b`) declared in `opencode.json`.
+- All four CLIs run headless with JSON events and resumable sessions; Qwen 3.8 27B made a correct tool call through OpenCode on the first try.
+- Smoke in Docker passed for codex, claude-code, opencode and bare; a 3-step baseline-plus run (claude-code haiku, modality) and a tiny opencode campaign completed.
+- Docker Desktop containers can reach every host port, even ones bound to 127.0.0.1; the server sees them as 127.0.0.1.
 ## Decided
-- Four CLI harnesses (codex, claude-code, opencode, antigravity) plus an in-process `bare` loop, all resumable, permission prompts off, web tools off, same system prompt, one effort scale.
-- Plain Docker isolation: one container per run, `--cap-drop ALL`, no Codex sandbox, no request proxy.
-- One run spec (`run_spec.json`) and one launcher (`harnesses.launch`) for baseline, baseline-plus and campaign modes; one normalized `agent_events.jsonl`.
-- Workbench becomes a React SPA that talks only to FastAPI.
-- Games get metadata and benchmark tags in `benchmark/games.json`; solve rates are computed live from the run catalog.
+- Simplicity over security: plain containers, no firewall, workbench open to any hostname (Tailscale laptop).
+- `bare` (ex-H1) stays as the minimal research harness; H0 dropped. OpenCode replaces the custom OpenRouter loop for Qwen runs, so later Qwen results come from a different harness.
 - Never touch the host OpenCode install (T3 Code depends on it).
-- Keep this diary: one terse entry per substantial session, with a supervisor export.
 ## Next
-- Land the harness launcher, SPA, benchmark tags and diary routes, then smoke-test each harness end to end.
-- Check that old run folders still appear in the catalog next to `run_spec.json` runs.
+- Antigravity Docker login, then its smoke run.
+- Review the drafted benchmark tags; assign tiers to the 174 untiered games.
+- Re-run the Qwen baselines through OpenCode and bare to compare with the old harness results.
