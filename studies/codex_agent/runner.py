@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from threading import Event
+import time
 from typing import Callable, Protocol
 
 from client.arc.types import FrameData, GameAction, GameState
@@ -55,6 +56,7 @@ class CodexAgentRunner:
     actions: list[GameAction] = field(default_factory=list)
     workspace_enabled: bool = False
     continuation_from: str | Path | None = None
+    max_wall_seconds: float = 0  # 0 = unlimited
 
     def __post_init__(self) -> None:
         self.output_dir = Path(self.output_dir)
@@ -87,6 +89,8 @@ class CodexAgentRunner:
         decisions = 0
         feedback = "This is the initial frame. Solve the game."
         stopped = False
+        wall_deadline = time.monotonic() + self.max_wall_seconds if self.max_wall_seconds else None
+        wall_exhausted = False
 
         while (
             not solved
@@ -95,6 +99,9 @@ class CodexAgentRunner:
         ):
             if self.stop_event.is_set():
                 stopped = True
+                break
+            if wall_deadline is not None and time.monotonic() >= wall_deadline:
+                wall_exhausted = True
                 break
             image_path = self._save_frame_image(frame, decisions)
             prompt = self._turn_prompt(frame, feedback, initial=(decisions == 0))
@@ -236,6 +243,10 @@ class CodexAgentRunner:
             status = "completed"
             reason = "task_goal_reached"
             self._emit("World completed successfully!")
+        elif wall_exhausted:
+            status = "completed"
+            reason = "wall_budget_exhausted"
+            self._emit("Wall-clock budget reached.")
         elif len(self.actions) >= self.max_steps:
             status = "completed"
             reason = "step_budget_exhausted"
@@ -341,7 +352,7 @@ class CodexAgentRunner:
             "world_model": str(result.world_model_path) if result.world_model_path else None,
             "transcript": str(result.transcript_path),
             "transitions": str(result.transitions_path),
-            "codex_session_log": str(
+            "agent_events": str(
                 getattr(self.session, "session_log_path", "") or ""
             )
             or None,

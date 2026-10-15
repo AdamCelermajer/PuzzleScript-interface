@@ -4,7 +4,7 @@ import tempfile
 from pathlib import Path
 from typing import Protocol
 
-from studies.codex_agent.session import _find_codex_bin
+from harnesses.codex import find_codex_bin as _find_codex_bin
 
 
 SOURCE_BRIEF = """

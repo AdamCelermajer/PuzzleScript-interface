@@ -31,10 +31,13 @@ RUN npm install -g --no-fund --no-audit \
 RUN curl -fsSL https://antigravity.google/cli/install.sh | bash -s -- --dir /usr/local/bin \
  && /usr/local/bin/agy --version
 
-# Claude Code refuses --dangerously-skip-permissions as root: run everything as `agent`.
+# Claude Code refuses --dangerously-skip-permissions as root: everything runs as `agent`.
+# ~/.config/antigravity points into the ~/.gemini volume so an agy login persists
+# wherever the CLI keeps its file-based token store.
 RUN useradd -m -u 1000 -s /bin/bash agent \
- && mkdir -p /results /home/agent/.gemini \
- && chown agent:agent /results /home/agent/.gemini
+ && mkdir -p /results /home/agent/.gemini /home/agent/.config \
+ && ln -s ../.gemini/xdg-antigravity /home/agent/.config/antigravity \
+ && chown -R agent:agent /results /home/agent
 USER agent
 ENV PATH="/opt/venv/bin:/usr/local/bin:/usr/bin:/bin" \
     HOME="/home/agent" \
@@ -43,6 +46,7 @@ ENV PATH="/opt/venv/bin:/usr/local/bin:/usr/bin:/bin" \
     PYTHONUTF8=1 \
     LANG=C.UTF-8 \
     DISABLE_AUTOUPDATER=1 \
-    OPENCODE_DISABLE_AUTOUPDATE=1
+    OPENCODE_DISABLE_AUTOUPDATE=1 \
+    AGY_CLI_DISABLE_AUTO_UPDATE=1
 WORKDIR /controller
 ENTRYPOINT ["/opt/venv/bin/python"]

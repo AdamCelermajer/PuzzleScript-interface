@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+/* One neutral palette + one accent. Dark mode follows the OS (prefers-color-scheme). */
+:root {
+  --bg: #f7f7f8;
+  --panel: #ffffff;
+  --sunken: #f1f2f4;
+  --line: #e3e5e8;
+  --line-strong: #cfd3d8;
+  --fg: #1c1f24;
+  --muted: #5d6470;
+  --faint: #8a919c;
+  --accent: #2f5bd3;
+  --accent-soft: #e8eefc;
+  --accent-fg: #ffffff;
+  --ok: #1f7a4a;
+  --ok-soft: #e3f3ea;
+  --bad: #b3261e;
+  --bad-soft: #fbe9e7;
+  --warn: #8a5a00;
+  --warn-soft: #fbf0d9;
+  --run: #2f5bd3;
+  --run-soft: #e8eefc;
+  --neutral-soft: #eceef1;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #131519;
+    --panel: #1a1d22;
+    --sunken: #15171b;
+    --line: #2a2e35;
+    --line-strong: #3a3f48;
+    --fg: #e6e8eb;
+    --muted: #a2a9b4;
+    --faint: #737b87;
+    --accent: #7c9cf5;
+    --accent-soft: #1f2a45;
+    --accent-fg: #0d1222;
+    --ok: #5cc48a;
+    --ok-soft: #173326;
+    --bad: #f08a80;
+    --bad-soft: #3a1d1b;
+    --warn: #e2b15a;
+    --warn-soft: #362a12;
+    --run: #7c9cf5;
+    --run-soft: #1f2a45;
+    --neutral-soft: #252930;
+    color-scheme: dark;
+  }
+}
+
+@theme {
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-run: var(--run);
+  --color-run-soft: var(--run-soft);
+  --color-neutral-soft: var(--neutral-soft);
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Dense data tables with sticky headers. */
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.data-table th {
+  position: sticky; top: 0; z-index: 1;
+  background: var(--sunken); color: var(--muted);
+  font-weight: 500; font-size: 12px; text-align: left; white-space: nowrap;
+  padding: 6px 10px; border-bottom: 1px solid var(--line);
+}
+.data-table td { padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.data-table tbody tr:hover td { background: var(--sunken); }
+.data-table tr.selected td { background: var(--accent-soft); }
+
+.pixelated { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* Rendered markdown (diary, notes, world models). */
+.prose-md { line-height: 1.55; overflow-wrap: anywhere; }
+.prose-md h1 { font-size: 1.35em; font-weight: 600; margin: 0.6em 0 0.4em; }
+.prose-md h2 { font-size: 1.15em; font-weight: 600; margin: 1em 0 0.35em; padding-bottom: 2px; border-bottom: 1px solid var(--line); }
+.prose-md h3 { font-size: 1.02em; font-weight: 600; margin: 0.9em 0 0.3em; }
+.prose-md p { margin: 0.4em 0; }
+.prose-md ul { list-style: disc; padding-left: 1.3em; margin: 0.3em 0; }
+.prose-md ol { list-style: decimal; padding-left: 1.4em; margin: 0.3em 0; }
+.prose-md li { margin: 0.15em 0; }
+.prose-md code { font-family: var(--font-mono); font-size: 0.88em; background: var(--sunken); padding: 0 3px; border-radius: 3px; }
+.prose-md pre { background: var(--sunken); padding: 8px 10px; border-radius: 6px; overflow: auto; }
+.prose-md pre code { background: none; padding: 0; }
+.prose-md table { border-collapse: collapse; margin: 0.5em 0; font-size: 0.95em; }
+.prose-md th, .prose-md td { border: 1px solid var(--line); padding: 3px 7px; text-align: left; }
+.prose-md blockquote { border-left: 3px solid var(--line-strong); padding-left: 10px; color: var(--muted); }
+
+@keyframes pulse-dot { 0%, 100% { opacity: 1 } 50% { opacity: 0.35 } }
+.pulse-dot { animation: pulse-dot 1.6s ease-in-out infinite; }

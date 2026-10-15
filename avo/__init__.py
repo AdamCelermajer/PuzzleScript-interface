@@ -1,6 +1,6 @@
 """Self-contained general-purpose Agentic Variation Operator framework."""
 
-from avo.client.codex_oauth_agent import CodexOAuthAgent, CodexOAuthConfig
+from avo.client.turns import AgentConfig, CliAgent
 from avo.core.framework import (
     Action,
     AvoLaboratory,
@@ -20,9 +20,9 @@ from avo.core.tool_gateway import AvoToolGateway, GatewayBudget
 __all__ = [
     "Action",
     "AvoLaboratory",
+    "AgentConfig",
     "AvoToolGateway",
-    "CodexOAuthAgent",
-    "CodexOAuthConfig",
+    "CliAgent",
     "Comparison",
     "DeterministicSupervisor",
     "EnvironmentProfile",

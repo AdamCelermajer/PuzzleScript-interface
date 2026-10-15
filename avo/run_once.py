@@ -5,8 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Mapping
 
-from avo.client.codex_oauth_agent import CodexOAuthAgent, CodexOAuthConfig
-from avo.client.openrouter_agent import OpenRouterShellAgent
+from avo.client.turns import DEFAULT_PROMPT_PATH, AgentConfig, CliAgent
 from avo.core.framework import AvoLaboratory, JsonValue, _jsonable
 from avo.core.profile import LoadedProfile, TaskEvaluation, load_profile
 from avo.core.run_store import RunStore
@@ -17,9 +16,7 @@ from avo.core.tool_gateway import AvoToolGateway, GatewayBudget
 class PlayerRunSettings:
     model: str = "gpt-5.6-sol"
     effort: str = "high"
-    service_tier: str = ""
-    codex_bin: str = ""
-    base_prompt: str | Path = CodexOAuthConfig.prompt_path
+    base_prompt: str | Path = DEFAULT_PROMPT_PATH
     max_environment_steps: int = 200
     max_wall_seconds: float = 3600
     max_agent_turns: int = 4
@@ -64,7 +61,7 @@ def execute_player_run(
         "profile_prompt_hash": loaded_profile.prompt_hash,
         "profile_settings": _jsonable(loaded_profile.settings),
         "objective": loaded_profile.implementation.objective,
-        "agent_backend": "CodexOAuthAgent" if settings.harness == "codex" else "OpenRouterShellAgent",
+        "agent_backend": "CliAgent",
         "harness": settings.harness,
         "provider": settings.provider,
         "model": settings.model,
@@ -78,7 +75,7 @@ def execute_player_run(
         "solver_self_check_max_environment_steps": (
             settings.solver_self_check_max_environment_steps
         ),
-        "workspace_isolation": "external temporary directory",
+        "workspace_isolation": "temporary directory in the run's Docker container",
     }
     if candidate_id is not None:
         config["run_candidate_id"] = candidate_id
@@ -141,11 +138,9 @@ def execute_player_run(
             "but trust real environment evidence over unsupported claims.\n\n"
             + candidate_strategy.strip()
         )
-    agent_config = CodexOAuthConfig(
+    agent_config = AgentConfig(
         model=settings.model,
         effort=settings.effort,
-        service_tier=settings.service_tier,
-        codex_bin=settings.codex_bin,
         prompt_path=base_prompt_path,
         task_instructions="\n\n".join(instructions),
         max_turns=settings.max_agent_turns,
@@ -159,7 +154,7 @@ def execute_player_run(
             "run_metadata": _jsonable(run_metadata or {}),
         },
     )
-    agent = CodexOAuthAgent(agent_config) if settings.harness == "codex" else OpenRouterShellAgent(agent_config)
+    agent = CliAgent(agent_config)
     agent_result = agent.run(gateway, workspace_path)
     store.archive_agent_workspace(workspace_path)
 
@@ -182,6 +177,7 @@ def execute_player_run(
         "evidence": str(store.evidence_file),
         "analysis": str(store.root / "analysis"),
         "session_manifest": str(store.root / "analysis" / "session.json"),
+        "agent_events": str(store.root / "analysis" / "agent_events.jsonl"),
         "output_dir": str(store.root),
     }
     store.write_json("final_summary.json", summary)

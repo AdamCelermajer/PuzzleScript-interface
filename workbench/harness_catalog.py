@@ -160,7 +160,13 @@ def harness_listing(root: Path = ROOT, include_public_catalogs: bool = True) -> 
     for harness in HARNESS_IDS:
         entry = {"id": harness, **HARNESSES[harness], "efforts": list(EFFORTS),
                  "models": static_models.get(harness) or [m for p in HARNESSES[harness]["providers"] for m in public.get(p, [])]}
-        entry.update(overrides.get(harness, {}))
+        override = dict(overrides.get(harness, {}))
+        if override.get("models"):
+            # Union by id: registry entries first, then the workbench's known ids.
+            known = {m["id"] for m in override["models"] if isinstance(m, dict) and m.get("id")}
+            override["models"] = [m for m in override["models"] if isinstance(m, dict) and m.get("id")] + \
+                [m for m in entry["models"] if m["id"] not in known]
+        entry.update(override)
         missing = []
         if registry_error:
             missing.append("harnesses package")

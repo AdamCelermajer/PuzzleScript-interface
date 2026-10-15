@@ -10,8 +10,7 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from avo.client.codex_oauth_agent import CodexOAuthAgent, CodexOAuthConfig
-from avo.client.openrouter_agent import OpenRouterShellAgent
+from avo.client.turns import AgentConfig, CliAgent
 from avo.core.framework import _jsonable
 from avo.core.profile import load_profile
 from avo.evolution.evaluator import CandidateEvaluator, PlayerEvaluationConfig
@@ -20,6 +19,10 @@ from avo.evolution.store import EvolutionStore
 from avo.evolution.tool_server import EvolutionFileToolServer
 from avo.run_once import PlayerRunSettings
 from avo.isolation import ISOLATION_VERSION, IsolationError, new_workspace
+from harnesses.registry import HARNESS_IDS
+
+# Recorded harness names of campaigns launched before the harnesses package.
+LEGACY_HARNESS = {"tools": "bare"}
 
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output" / "evolution"
@@ -57,7 +60,6 @@ def main() -> None:
     parser.add_argument("--player-base-prompt", default="")
     parser.add_argument("--player-model", default="gpt-5.3-codex-spark")
     parser.add_argument("--player-effort", default="high")
-    parser.add_argument("--player-service-tier", default="")
     parser.add_argument("--player-max-environment-steps", type=int, default=500)
     parser.add_argument("--fresh-solver-max-environment-steps", type=int, default=1_500)
     parser.add_argument("--player-max-wall-seconds", type=float, default=3600)
@@ -68,14 +70,12 @@ def main() -> None:
     )
     parser.add_argument("--optimizer-model", default="gpt-5.6-sol")
     parser.add_argument("--optimizer-effort", default="high")
-    parser.add_argument("--optimizer-service-tier", default="")
     parser.add_argument("--optimizer-max-agent-turns", type=int, default=30)
     parser.add_argument("--max-evaluations", type=int, default=10)
     parser.add_argument("--max-wall-seconds", type=float, default=14_400)
     parser.add_argument("--world-model-mode", choices=("off", "final-only", "between-hypotheses"), default=None)
-    parser.add_argument("--codex-bin", default="")
-    parser.add_argument("--harness", choices=("codex", "tools", "raw"), default="codex",
-                        help="Agent harness for both optimizer and player: H2 codex, H1 tools, H0 raw")
+    parser.add_argument("--harness", choices=HARNESS_IDS, default="codex",
+                        help="Agent harness for both optimizer and player")
     parser.add_argument("--provider", default="", help="Pin one OpenRouter provider slug for all agents")
     args = parser.parse_args()
 
@@ -99,7 +99,8 @@ def main() -> None:
             args.world_model_mode = saved.get("world_model_mode", "off")
         if saved.get("world_model_mode", "off") != args.world_model_mode:
             raise ValueError("Cannot change world-model condition while continuing a campaign")
-        if saved.get("harness", "codex") != args.harness or saved.get("provider", "") != args.provider:
+        saved_harness = LEGACY_HARNESS.get(saved.get("harness", "codex"), saved.get("harness", "codex"))
+        if saved_harness != args.harness or saved.get("provider", "") != args.provider:
             raise ValueError("Cannot change the agent harness while continuing a campaign")
     elif args.world_model_mode is None:
         args.world_model_mode = "final-only"
@@ -135,8 +136,6 @@ def main() -> None:
     player_settings = PlayerRunSettings(
         model=args.player_model,
         effort=args.player_effort,
-        service_tier=args.player_service_tier,
-        codex_bin=args.codex_bin,
         base_prompt=args.player_base_prompt or PlayerRunSettings.base_prompt,
         max_environment_steps=args.player_max_environment_steps,
         max_wall_seconds=args.player_max_wall_seconds,
@@ -213,7 +212,6 @@ def main() -> None:
         "provider": args.provider,
         "optimizer_model": args.optimizer_model,
         "optimizer_effort": args.optimizer_effort,
-        "optimizer_service_tier": args.optimizer_service_tier,
         "optimizer_max_agent_turns": args.optimizer_max_agent_turns,
         "max_evaluations": args.max_evaluations,
         "max_wall_seconds": args.max_wall_seconds,
@@ -225,12 +223,10 @@ def main() -> None:
     )
 
     tool_server = EvolutionFileToolServer(gateway, optimizer_workspace)
-    optimizer = (CodexOAuthAgent if args.harness == "codex" else OpenRouterShellAgent)(
-        CodexOAuthConfig(
+    optimizer = CliAgent(
+        AgentConfig(
             model=args.optimizer_model,
             effort=args.optimizer_effort,
-            service_tier=args.optimizer_service_tier,
-            codex_bin=args.codex_bin,
             prompt_path=OUTER_PROMPT,
             task_instructions=gateway.mission,
             max_turns=args.optimizer_max_agent_turns,
@@ -273,6 +269,7 @@ def main() -> None:
         "optimizer_turns": result.turns,
         "population": store.population_summary(),
         "optimizer_session_manifest": str(root / "optimizer_analysis" / "session.json"),
+        "optimizer_events": str(root / "optimizer_analysis" / "agent_events.jsonl"),
         "output_dir": str(root),
         "world_model": report_record,
     }

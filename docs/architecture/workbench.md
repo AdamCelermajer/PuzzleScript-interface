@@ -9,9 +9,14 @@ Setting `max_hours` to zero disables the scheduled batch cutoff. For AVO this
 passes zero wall limits to the campaign and research player as well; action,
 candidate, and solver self-check budgets still apply. Manual stops remain active.
 
-AVO children invoke `avo.docker.launch --campaign`; that launcher retains the
+New batches (`POST /api/workbench/runs`, below) invoke `uv run python -m harnesses.launch`
+and have no batch cutoff: each run owns `budget.max_wall_seconds` (0 = unlimited), and the
+worker only backstops a child that outlives its wall by the 600 s report grace. Legacy
+`/experiments` batches keep `max_hours`, as described above.
+
+Legacy AVO children invoke `avo.docker.launch --campaign`; that launcher retains the
 the existing Linux sandbox, temporary OAuth credentials and cleanup. Isolation probes are explicit diagnostics.
-Codex children invoke `studies.codex_agent.run --no-window`. Game/model/effort/
+Legacy Codex children invoke `studies.codex_agent.run --no-window`. Game/model/effort/
 condition/repeat combinations are separate child runs, with configurable bounded
 concurrency. The workbench does not introduce shared model memory or change fitness.
 
@@ -46,8 +51,10 @@ AVO recovery/continuation remains a separate workflow; the new AVO form launches
 fresh campaigns only. Imported external jobs are monitor-only, so a workbench
 button cannot stop an experiment owned by another launcher.
 
-Static build output still requires local services for live APIs. Vite serves the
-AVO trace bridge; FastAPI serves run catalogs, launch controls and paper storage.
+Static build output still requires local services for live APIs. FastAPI serves run
+catalogs, launch controls, the AVO trace bridge (`/api/workbench/avo/*`), notebook saves
+and paper storage; Vite only proxies (the old `/__avo/*`, `/__notes/save` and
+`/__pseudocode/save` paths are proxy rewrites until the UI calls the new paths).
 The workbench launcher reuses recognized occupied service ports and refuses an
 unknown owner rather than killing it. A frontend-only server is insufficient.
 
@@ -82,6 +89,54 @@ edits regenerate `level-annotation-detail.json` and apply across the listed leve
 Writes are serialized, check the original value for conflicts and replace files
 atomically. Agent-produced experiment reports remain read-only.
 
+
+## Harness run API (revamp contract §4)
+
+All routes are under `/api/workbench`; the contract is `docs/architecture/revamp-contract.md`.
+
+- `GET /harnesses[?catalogs=false]` → `[{id, label, providers, models:[{id,label,...}], efforts,
+  ready, missing, ...}]` for `codex`, `claude-code`, `opencode`, `antigravity`, `bare`
+  (`workbench/harness_catalog.py`). Codex/Claude/Antigravity model lists are static; opencode
+  and bare list the public OpenRouter/NanoGPT catalogs (`catalogs=false` skips that fetch).
+  `harnesses.registry` is imported lazily and may override labels/models; when it cannot be
+  imported every entry reports `missing: ["harnesses package", ...]`. Readiness checks only that
+  credentials exist (`.env`/environment key names, `~/.codex/auth.json`), the Docker image
+  `puzzlescript-agents:local` and the volume `puzzlescript-agy-home`. Values are never returned.
+- `POST /runs/preview` and `POST /runs` take a RunRequest: `{modes[], harnesses[], models[],
+  optimizer_model?, optimizer_effort?, efforts[], games[], repeats, parallel, budget{max_wall_seconds,
+  max_steps, max_evaluations, research_moves, solver_moves}, world_model_modes[], provider?, label?,
+  backend_url?}`. The matrix is games × modes × (harness, model) × efforts × repeats, times
+  world-model modes for campaigns (at most 120 runs). (harness, model) pairs whose provider does
+  not match are skipped with a warning; a model no selected harness runs is an error. Campaign-only
+  fields (optimizer, world-model modes, evaluation/move budgets) and `max_steps` are rejected when
+  explicitly set without a mode they apply to, and omitted from commands of modes they do not
+  apply to. `provider` (OpenRouter upstream pin) is accepted only when every harness is opencode
+  or bare, and only with OpenRouter models. Preview returns `{runs:[{mode, harness, model, game_id,
+  command, ...}], warnings, count, parallel}` and starts nothing; launch returns `{job_id, count,
+  warnings}` and detaches one `workbench.experiment_job` worker. Rows sharing game/harness/model/
+  effort/repeat share a `match_id`, so baseline, baseline+ and campaign compare within one launch.
+  `POST /runs` without `modes` is still the historical rule-agent start.
+- Backend URL: one setting, `backend_url` or `WORKBENCH_BACKEND_URL`, default
+  `http://host.docker.internal:8000` (every harness runs in Docker). `ps_enqueue-v1` is routed to
+  port 8001 on a local host because only the dedicated runtime runs `PUZZLESCRIPT_METHOD=ondemand`.
+- `POST /runs/resume {run_id}` → `{job_id, run_id, ...}`. A campaign is copied (as recovery
+  always did) into a new batch and continued with `--resume`; a baseline run gets a new directory
+  with `--continue-from <parent>`. Settings come from `run_spec.json`, else the legacy config.
+  Active, already-resumed, solved/finalized, needs-assistance, legacy-Enqueue and `bare-raw`/
+  `opencode (legacy)` runs are refused (409/400). `/experiments/resume?job=` and
+  `/experiments/resume-run?run=` remain as aliases of this path (service tiers are ignored).
+- Catalog rows read `run_spec.json` first (also from a campaign's parent run directory) and add
+  `mode` (baseline|baseline-plus|campaign), `harness` (legacy `tools`→`bare`, `raw`→`bare-raw
+  (legacy)`, `opencode`→`opencode (legacy)`), `effort`, `optimizer_effort`, `run_budget`,
+  `provider`, `spec_source`, `continued_from`, `resumable`. A run directory with only a baseline
+  `run_spec.json` is discovered too. `/record` adds `run_spec`, `normalized` and `agent_events`
+  (`{total, invalid_lines, truncated, events}`, tail of `agent_events.jsonl`, `events_limit`
+  default 500) when present; otherwise `agent_events` is null and legacy files are listed.
+- `/avo/{runs,run,frame,logs,artifacts,artifact}`, `POST /notes`, `POST /pseudocode`
+  (`workbench/avo_console.py`) are ports of the former Vite middleware with the same shapes and
+  `{error}` bodies. Live (latest) frames without a stored PNG are replayed by one persistent
+  Node worker (`workbench/avo_replay_worker.cjs`) from saved evidence only. AVO logs fall back
+  to `agent_events.jsonl` when an analysis directory has no `conversation.jsonl`.
 
 ## Campaigns and final submissions
 

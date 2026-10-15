@@ -4,9 +4,10 @@ from pathlib import Path
 from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 
 from workbench.models import (
     CODEX_PROVIDER_ID,
@@ -180,8 +181,25 @@ def create_app(
     app.state.optimal_path_manager = path_manager
     app.state.paper_assistant = research_assistant
     app.state.paper_library = library
+    def start_rule_agent_run(payload: dict) -> dict:
+        # `POST /api/workbench/runs` without `modes` is the historical rule-agent start.
+        try:
+            request = StartRunRequest.model_validate(payload)
+        except ValidationError as exc:
+            raise RequestValidationError(exc.errors(include_url=False, include_context=False)) from exc
+        try:
+            run = run_manager.start(request.model_dump())
+        except RuntimeError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return run.snapshot()
+
+    from workbench.benchmarks import router as benchmarks_router
+    from workbench.diary import router as diary_router
+
     app.include_router(create_optimal_path_router(path_manager))
-    app.include_router(create_experiments_router())
+    app.include_router(create_experiments_router(legacy_start=start_rule_agent_run))
+    app.include_router(benchmarks_router)
+    app.include_router(diary_router)
 
     @app.get("/api/workbench/health")
     def health() -> dict:
@@ -420,15 +438,6 @@ def create_app(
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"saved": True, "status": status}
-
-    @app.post("/api/workbench/runs", status_code=202)
-    def start_run(request: StartRunRequest) -> dict:
-        payload = request.model_dump()
-        try:
-            run = run_manager.start(payload)
-        except RuntimeError as exc:
-            raise HTTPException(status_code=409, detail=str(exc)) from exc
-        return run.snapshot()
 
     @app.get("/api/workbench/runs/current")
     def current_run(response: Response) -> dict:

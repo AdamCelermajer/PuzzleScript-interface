@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import sys
+import tempfile
+import time
 import traceback
 from argparse import ArgumentParser
 from datetime import datetime
@@ -11,11 +13,13 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from client.arc.arcade_env import ArcadeEnv
-from client.screen_dashboard import ScreenDashboard
 
+from harnesses.registry import HARNESS_IDS
 from studies.codex_agent.runner import CodexAgentRunner
-from studies.codex_agent.openrouter_session import open_game_session
-from studies.codex_agent.session import CodexSessionConfig
+from studies.codex_agent.session import CliGameSession, GameSessionConfig
+
+# Recorded harness names of runs launched before the harnesses package.
+LEGACY_HARNESS = {"tools": "bare"}
 
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
@@ -32,24 +36,15 @@ def _print_event(message: str) -> None:
 
 def main() -> None:
     parser = ArgumentParser(
-        description="Persistent Codex SDK PuzzleScript agent"
+        description="Persistent direct-play PuzzleScript agent over any harness (run inside the agents container)"
     )
     parser.add_argument("--backend-url", default="http://localhost:8000")
     parser.add_argument("--game-id", default="ps_sokoban_basic-v1")
     parser.add_argument("--model", default="gpt-5.6-sol")
-    parser.add_argument(
-        "--codex-bin",
-        default="",
-        help="Optional Codex CLI path. By default the installed Codex app is detected.",
-    )
-    parser.add_argument(
-        "--effort",
-        default="low",
-        choices=["minimal", "low", "medium", "high", "xhigh", "max"],
-        help="Codex SDK reasoning effort. The app's Light setting is low here.",
-    )
+    parser.add_argument("--effort", default="low", choices=["low", "medium", "high", "xhigh", "max"])
     parser.add_argument("--max-steps", type=int, default=50)
     parser.add_argument("--max-decisions", type=int, default=None)
+    parser.add_argument("--max-wall-seconds", type=int, default=0, help="0 = unlimited")
     parser.add_argument("--output-dir", default="")
     parser.add_argument("--continue-from", default="", help="Restore an unsolved completed run in a new session; max-steps is the additional budget.")
     parser.add_argument(
@@ -57,12 +52,7 @@ def main() -> None:
         choices=["baseline", "baseline-plus"],
         default="baseline",
     )
-    parser.add_argument(
-        "--harness",
-        choices=["codex", "tools", "raw"],
-        default="codex",
-        help="H2 codex (Codex SDK), H1 tools (native tools), H0 raw (text-only tools). H0/H1 use OpenRouter or NanoGPT.",
-    )
+    parser.add_argument("--harness", choices=HARNESS_IDS, default="codex")
     parser.add_argument("--provider", default="",
                         help="Pin one OpenRouter provider slug (no fallback), e.g. alibaba or deepinfra.")
     parser.add_argument(
@@ -84,17 +74,19 @@ def main() -> None:
         if any(parent_config[key] != value for key, value in {
             "model": args.model, "reasoning_effort": args.effort,
             "condition": args.condition, "game_id": args.game_id,
-        }.items()) or parent_config.get("harness", "codex") != args.harness or parent_config.get("provider", "") != args.provider:
+        }.items()) or LEGACY_HARNESS.get(parent_config.get("harness", "codex"), parent_config.get("harness", "codex")) != args.harness or parent_config.get("provider", "") != args.provider:
             raise ValueError("Continuation must preserve the parent model, effort, condition, harness, and game")
         if output_dir.resolve() == Path(args.continue_from).resolve() or output_dir.exists():
             raise ValueError("Continuation requires a fresh separate output directory")
     dashboard = None
     event_sink = _print_event
     if not args.no_window:
+        from client.screen_dashboard import ScreenDashboard
+
         dashboard = ScreenDashboard(
             game_id=args.game_id,
-            mode="CODEX",
-            controls="One persistent Codex SDK session. Close or press Ctrl+C to stop.",
+            mode=args.harness.upper(),
+            controls="One persistent agent session. Close or press Ctrl+C to stop.",
         )
         event_sink = dashboard.push_event
 
@@ -103,10 +95,9 @@ def main() -> None:
         backend_url=args.backend_url,
         renderer=dashboard.render if dashboard is not None else None,
     )
-    config = CodexSessionConfig(
+    config = GameSessionConfig(
         model=args.model,
         effort=args.effort,
-        codex_bin=args.codex_bin,
         workspace_enabled=(args.condition == "baseline-plus"),
         harness=args.harness,
         provider=args.provider,
@@ -124,6 +115,7 @@ def main() -> None:
                 "backend_url": args.backend_url,
                 "max_steps": args.max_steps,
                 "max_decisions": args.max_decisions,
+                "max_wall_seconds": args.max_wall_seconds,
                 "continuation_from": str(Path(args.continue_from).resolve()) if args.continue_from else None,
             },
             indent=2,
@@ -134,17 +126,20 @@ def main() -> None:
 
     def run_agent() -> None:
         try:
-            session_workspace = output_dir / (
-                "workspace" if config.workspace_enabled else "codex_workspace"
-            )
+            # The agent works outside the results tree; baseline-plus notes are
+            # mirrored to output_dir/workspace after every turn.
+            session_workspace = Path(tempfile.mkdtemp(prefix="play-"))
             if args.continue_from:
                 from studies.codex_agent.continuation import seed_notes
                 seed_notes(args.continue_from, session_workspace)
-            with open_game_session(
+            with CliGameSession(
                 config,
                 session_workspace,
                 artifact_directory=output_dir,
+                mirror_directory=output_dir / "workspace",
             ) as session:
+                if args.max_wall_seconds > 0:
+                    session.deadline = time.monotonic() + args.max_wall_seconds
                 runner = CodexAgentRunner(
                     env=env,
                     session=session,
@@ -154,6 +149,7 @@ def main() -> None:
                     event_sink=event_sink,
                     workspace_enabled=config.workspace_enabled,
                     continuation_from=args.continue_from or None,
+                    max_wall_seconds=args.max_wall_seconds,
                 )
                 result_holder["result"] = runner.run()
         except BaseException as exc:
@@ -180,7 +176,7 @@ def main() -> None:
 
     result = result_holder.get("result")
     if result is None:
-        print("Codex agent run interrupted before completion.")
+        print("Agent run interrupted before completion.")
         print(f"output_dir={output_dir}")
         return
 
@@ -194,7 +190,7 @@ def main() -> None:
     print(f"output_dir={result.output_dir}")
     print(f"transcript={result.transcript_path}")
     print(f"transitions={result.transitions_path}")
-    print(f"session_log={output_dir / ('codex_session.jsonl' if args.harness == 'codex' else 'model_session.jsonl')}")
+    print(f"agent_events={output_dir / 'agent_events.jsonl'}")
 
 
 if __name__ == "__main__":

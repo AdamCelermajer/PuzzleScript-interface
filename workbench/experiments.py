@@ -22,6 +22,20 @@ from workbench.catalog import (ROOT, last_record, legacy_enqueue_backend, normal
                                run_path, snapshot)
 
 
+def resolve_model(model: str) -> tuple[str, str]:
+    """Provider and native ID; mirrors avo.client.model_provider without importing avo."""
+    for provider in ("nanogpt", "openrouter"):
+        if model.startswith(provider + "/"):
+            native = model.removeprefix(provider + "/")
+            if not native or any(not part for part in native.split("/")) or (provider == "openrouter" and "/" not in native):
+                raise ValueError("Use openrouter/vendor/model for OpenRouter models" if provider == "openrouter"
+                                 else "Use nanogpt/model with a model ID from the NanoGPT catalog")
+            return provider, native
+    if model.startswith("opencode/"):
+        raise ValueError("OpenCode is retired; use a Codex model or openrouter/vendor/model")
+    return "openai", model
+
+
 class ExperimentRequest(BaseModel):
     kind: Literal["avo", "codex"]
     # Harness ladder: codex = H2 (Codex SDK), tools = H1 (OpenRouter native tools), raw = H0 (text only).
@@ -85,7 +99,6 @@ class ExperimentRequest(BaseModel):
             self.world_model_modes = ["final-only", "between-hypotheses"]
             if self.parallel not in {2, 4, 6}:
                 raise ValueError("Comparisons need 2, 4 or 6 parallel slots so each pair starts together")
-        from avo.client.model_provider import resolve_model
         for model in [*self.models, self.optimizer_model]:
             resolve_model(model)
         agents = [*self.models, *([self.optimizer_model] if self.kind == "avo" else [])]
@@ -110,30 +123,24 @@ class ExperimentRequest(BaseModel):
         return self
 
 
+class RunResumeRequest(BaseModel):
+    run_id: str = Field(min_length=1, max_length=400)
+
+
 class ResumeRequest(BaseModel):
     service_tier: Literal["", "priority"] = ""
     optimizer_service_tier: Literal["", "priority"] = ""
 
 
-def _avo_recovery_command(saved: dict, output: Path, service_tier: str, optimizer_service_tier: str, trace_detail: str = "compact") -> list[str]:
-    player = saved.get("player") or {}
-    settings = saved.get("profile_settings") or {}
-    command = [sys.executable, "-m", "avo.docker.launch", "--campaign", "--resume-saved-campaign",
-               "--game-id", settings["game_id"], "--backend-url", settings["backend_url"],
-               "--optimizer-model", saved["optimizer_model"], "--player-model", player["model"],
-               "--optimizer-effort", saved.get("optimizer_effort", "low"),
-               "--player-effort", player.get("effort", "low"),
-               "--trace-detail", trace_detail,
-               "--optimizer-service-tier", optimizer_service_tier,
-               "--player-service-tier", service_tier,
-               "--max-evaluations", str(saved["max_evaluations"]),
-               "--world-model-mode", saved.get("world_model_mode", "final-only"),
-               "--harness", saved.get("harness", "codex"), "--provider", saved.get("provider", ""),
-               "--research-moves", str(player["max_environment_steps"]),
-               "--solver-moves", str(saved["fresh_solver_max_environment_steps"]),
-               "--max-wall-seconds", str(int(saved["max_wall_seconds"])),
-               "--output-dir", str(output)]
-    return command
+CANDIDATE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}")
+
+
+def validate_candidate_id(candidate_id: str) -> str:
+    """Same rule as avo.evolution.candidate, without importing the avo package."""
+    value = str(candidate_id).strip()
+    if not CANDIDATE_ID.fullmatch(value):
+        raise ValueError("candidate_id must be a safe 1-80 character identifier")
+    return value
 
 
 def prepare_avo_recovery(source: Path, target: Path) -> tuple[dict, bool]:
@@ -142,7 +149,6 @@ def prepare_avo_recovery(source: Path, target: Path) -> tuple[dict, bool]:
     lineage = read_json(source_campaign / "lineage.json")
     if not saved or not lineage:
         raise ValueError(f"Saved AVO campaign is incomplete: {source.name}")
-    from avo.evolution.candidate import validate_candidate_id
     candidate_ids = [validate_candidate_id(item["candidate_id"])
                      for item in lineage.get("candidates", []) if isinstance(item, dict)]
     if any(path.is_symlink() for path in source_campaign.rglob("*")):
@@ -247,6 +253,9 @@ def write_json(path: Path, value: dict) -> None:
         temporary.unlink(missing_ok=True)
 
 
+RECORD_FILES = ("run_spec.json", "run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl",
+                "transcript.jsonl", "codex_session.jsonl", "model_session.jsonl", "isolation_manifest.json",
+                "agent_events.jsonl", "analysis/agent_events.jsonl")
 AGENT_EVENT_FIELDS = ("schema", "t", "session", "role", "turn", "type", "text", "output", "exit_code", "tool",
                       "usage", "harness", "model")
 
@@ -386,9 +395,6 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         cache.clear()
         return launched
 
-    class RunResumeRequest(BaseModel):
-        run_id: str = Field(min_length=1, max_length=400)
-
     @router.post("/runs/resume", status_code=202)
     def resume_harness_run(request: RunResumeRequest):
         with resume_run_lock:
@@ -473,119 +479,38 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         cache.clear()
         return {"dismissed_from_runs": True}
 
+    # Former recovery routes are thin aliases of the unified resume (harnesses.launch
+    # `--resume` / `--continue-from`). Service tiers no longer exist; the body is ignored.
     @router.post("/experiments/resume", status_code=202)
-    def resume(config: ResumeRequest, job: str = Query(...)):
-        try:
-            source = run_path(job, root)
-            manifest = read_json(source / "job.json")
-            if source.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") != "avo":
-                raise ValueError("Only workbench-owned AVO batches can be resumed here")
-            if manifest.get("status") not in {"paused", "cancelled", "failed"}:
-                raise ValueError("Only a paused, cancelled, or failed AVO batch can be resumed")
-            if manifest.get("resumed_as"):
-                raise ValueError(f"This batch was already resumed as {manifest['resumed_as']}")
-            if any(read_json(Path(row["output"]) / "campaign/error.json").get("status") == "needs_assistance"
-                   for row in manifest.get("runs", [])):
-                raise ValueError("Backend needs assistance; inspect the error and start a new campaign after repair")
-            if any(legacy_enqueue_backend(read_json(Path(row["output"]) / "campaign/evolution_config.json"))
-                   for row in manifest.get("runs", [])):
-                raise ValueError("Legacy Enqueue engine cannot be resumed; start a new campaign on port 8001")
-            directory = root / "output/workbench" / (datetime.now().strftime("%Y%m%dT%H%M%S") + "-resume-" + uuid4().hex[:8])
-            directory.mkdir(parents=True, exist_ok=False)
-            rows = []
-            for index, old in enumerate(manifest.get("runs", []), 1):
-                old_output = Path(old["output"]).resolve()
-                if not old_output.is_relative_to(source.resolve()):
-                    raise ValueError("Saved campaign output is outside its batch")
-                if read_json(old_output / "recovery.json").get("resumed_as"):
-                    continue
-                output = directory / f"run-{index:04d}"
-                saved, complete = prepare_avo_recovery(old_output, output)
-                artifact = output / "campaign"
-                rows.append({**{k: v for k, v in old.items() if k not in {"id", "output", "command", "pid", "started_at", "returncode"}},
-                             "id": artifact.relative_to(root).as_posix(), "output": str(output),
-                             "command": _avo_recovery_command(saved, output, config.service_tier, config.optimizer_service_tier,
-                                                               manifest["config"].get("trace_detail", "compact")),
-                             "status": "completed" if complete else "queued"})
-            if not rows:
-                raise ValueError("Every run in this batch already has a separate recovery")
-            recovery_config = {**manifest["config"], "service_tier": config.service_tier,
-                               "optimizer_service_tier": config.optimizer_service_tier}
-            recovery = {"created_at": datetime.now(timezone.utc).isoformat(), "heartbeat": time.time(),
-                        "status": "starting", "config": recovery_config, "runs": rows,
-                        "recovery_of": job}
-            write_json(directory / "job.json", recovery)
-            with (directory / "worker.log").open("wb") as log:
-                subprocess.Popen([sys.executable, "-m", "workbench.experiment_job", str(directory)], cwd=root,
-                                 stdout=log, stderr=log, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-            recovery_id = directory.relative_to(root).as_posix()
-            manifest["resumed_as"] = recovery_id
-            write_json(source / "job.json", manifest)
-        except (ValueError, OSError, KeyError) as exc:
-            if 'directory' in locals() and directory.is_dir() and not (directory / "job.json").is_file():
-                shutil.rmtree(directory, ignore_errors=True)
-            raise HTTPException(400, str(exc)) from exc
-        cache.clear()
-        return {"id": recovery_id, "count": len(rows)}
-
-    @router.post("/experiments/resume-run", status_code=202)
-    def resume_run(config: ResumeRequest, run: str = Query(...)):
+    def resume(config: ResumeRequest | None = None, job: str = Query(...)):
         with resume_run_lock:
             try:
-                campaign = run_path(run, root)
-                old_output = campaign.parent
-                source_job = old_output.parent
-                if (campaign.name != "campaign" or source_job.parent != root / "output/workbench"
-                        or not (source_job / "job.json").is_file()):
-                    raise ValueError("Only a Workbench-owned AVO run can be resumed")
-                manifest = read_json(source_job / "job.json")
-                old = next((row for row in manifest.get("runs", []) if row.get("id") == run), None)
-                if (manifest.get("config", {}).get("kind") != "avo" or not old
-                        or Path(old.get("output", "")).resolve() != old_output.resolve()
-                        or old.get("status") != "failed"):
-                    raise ValueError("Only a failed Workbench AVO run can be resumed")
-                if read_json(old_output / "recovery.json").get("resumed_as"):
-                    raise HTTPException(409, "This run already has a recovery")
-                if read_json(campaign / "error.json").get("status") == "needs_assistance":
-                    raise HTTPException(409, "Backend needs assistance; inspect the error and start a new campaign after repair")
-                if legacy_enqueue_backend(read_json(campaign / "evolution_config.json")):
-                    raise HTTPException(409, "Legacy Enqueue engine cannot be resumed; start a new campaign on port 8001")
-                directory = root / "output/workbench" / (datetime.now().strftime("%Y%m%dT%H%M%S") + "-resume-" + uuid4().hex[:8])
-                output = directory / "run-0001"
-                if not output.resolve().is_relative_to((root / "output/workbench").resolve()):
-                    raise ValueError("Recovery output is outside Workbench")
-                saved, complete = prepare_avo_recovery(old_output, output)
-                if complete:
-                    raise ValueError("This campaign already has a final result")
-                recovery_id = directory.relative_to(root).as_posix()
-                artifact = output / "campaign"
-                row = {**{k: v for k, v in old.items() if k not in {"id", "output", "command", "pid", "started_at", "returncode"}},
-                       "id": artifact.relative_to(root).as_posix(), "output": str(output),
-                       "command": _avo_recovery_command(saved, output, config.service_tier, config.optimizer_service_tier,
-                                                        manifest["config"].get("trace_detail", "compact")),
-                       "status": "queued", "repeat": 1, "pair_id": None}
-                recovery_config = {**manifest["config"], "game_ids": [old["game_id"]], "parallel": 1, "repeats": 1,
-                                   "comparison": False, "service_tier": config.service_tier,
-                                   "optimizer_service_tier": config.optimizer_service_tier}
-                write_json(directory / "job.json", {
-                    "created_at": datetime.now(timezone.utc).isoformat(), "heartbeat": time.time(),
-                    "status": "starting", "config": recovery_config, "runs": [row], "recovery_of": run,
-                })
-                marker = old_output / "recovery.json"
-                write_json(marker, {"resumed_as": row["id"], "created_at": datetime.now(timezone.utc).isoformat()})
-                try:
-                    with (directory / "worker.log").open("wb") as log:
-                        subprocess.Popen([sys.executable, "-m", "workbench.experiment_job", str(directory)], cwd=root,
-                                         stdout=log, stderr=log, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
-                except OSError:
-                    marker.unlink(missing_ok=True)
-                    raise
-            except HTTPException:
-                raise
+                source = run_path(job, root)
+                manifest = read_json(source / "job.json")
+                if source.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") not in {"avo", "matrix"}:
+                    raise ValueError("Only workbench-owned AVO or harness batches can be resumed here")
+                if manifest.get("status") not in {"paused", "cancelled", "failed"}:
+                    raise ValueError("Only a paused, cancelled, or failed batch can be resumed")
+                if manifest.get("resumed_as"):
+                    raise ValueError(f"This batch was already resumed as {manifest['resumed_as']}")
+                resumed = harness_runs.resume_runs([row["id"] for row in manifest.get("runs", []) if row.get("id")],
+                                                   root, recovery_of=job, skip_unavailable=True)
+                manifest["resumed_as"] = resumed["job_id"]
+                write_json(source / "job.json", manifest)
             except (ValueError, OSError, KeyError) as exc:
-                raise HTTPException(400, str(exc)) from exc
-            cache.clear()
-            return {"id": recovery_id, "run": row["id"]}
+                raise run_error(exc) from exc
+        cache.clear()
+        return resumed
+
+    @router.post("/experiments/resume-run", status_code=202)
+    def resume_run(config: ResumeRequest | None = None, run: str = Query(...)):
+        with resume_run_lock:
+            try:
+                resumed = harness_runs.resume_runs([run], root)
+            except (ValueError, OSError, KeyError) as exc:
+                raise run_error(exc) from exc
+        cache.clear()
+        return resumed
 
     @router.get("/submission")
     def get_submission(run: str = Query(...), candidate: str = ""):
@@ -634,20 +559,29 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
             raise HTTPException(400, str(exc)) from exc
 
     @router.get("/record")
-    def record(run: str = Query(...)):
+    def record(run: str = Query(...), events_limit: int = Query(500, ge=0, le=5000)):
         try:
             path = run_path(run, root)
         except ValueError as exc:
             raise HTTPException(400, str(exc)) from exc
-        if not (path / "run_config.json").is_file():
+        spec = read_run_spec(path)
+        if not (path / "run_config.json").is_file() and not spec:
             raise HTTPException(404, "Direct-player run not found")
-        names = ["run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl", "transcript.jsonl", "codex_session.jsonl", "model_session.jsonl", "isolation_manifest.json"]
+        config = read_json(path / "run_config.json")
+        names = [*RECORD_FILES]
         notes = []
         for note in (path / "workspace").glob("*.md"):
             if not note.is_symlink():
                 notes.append(note.relative_to(path).as_posix())
-        return {"id": run, "config": read_json(path / "run_config.json"), "result": read_json(path / "result.json"),
+        for note in (path / "workspace/notes").glob("*.md"):
+            if not note.is_symlink():
+                notes.append(note.relative_to(path).as_posix())
+        events = agent_events_path(path)
+        return {"id": run, "config": config, "run_spec": spec or None,
+                "normalized": normalized_spec(path, config, False), "result": read_json(path / "result.json"),
                 "error": read_json(path / "error.json"), "latest_transition": last_record(path / "transitions.jsonl"),
+                # Normalized harness events when present; otherwise the legacy session files above.
+                "agent_events": read_agent_events(events, events_limit) if events else None,
                 "files": [name for name in names + notes if (path / name).is_file()]}
 
     @router.get("/experiments/log")
@@ -694,10 +628,13 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         try:
             path = run_path(run, root)
             target = run_path(run + "/" + file, root)
-            allowed = {"run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl", "transcript.jsonl", "codex_session.jsonl", "model_session.jsonl", "isolation_manifest.json"}
-            note = len(Path(file).parts) == 2 and Path(file).parts[0] == "workspace" and target.suffix == ".md"
+            allowed = set(RECORD_FILES)
+            parts = Path(file).parts
+            note = target.suffix == ".md" and (
+                (len(parts) == 2 and parts[0] == "workspace") or (len(parts) == 3 and parts[:2] == ("workspace", "notes")))
             frame = re.fullmatch(r"frames/[0-9]{3,}\.png", file) is not None
-            if not target.is_relative_to(path) or not (file in allowed or note or frame):
+            raw_turn = re.fullmatch(r"(?:analysis/)?raw/turn-[0-9]{1,6}\.jsonl", file) is not None
+            if not target.is_relative_to(path) or not (file in allowed or note or frame or raw_turn):
                 raise ValueError("Invalid artifact")
             if any(p.startswith(".") for p in Path(file).parts) or "model_requests" in Path(file).parts:
                 raise ValueError("Artifact is not available here")

@@ -119,10 +119,13 @@ test("local pseudocode editor buffers Markdown and saves only manifest files", (
   assert.match(shell, /pseudocodeSavePath/);
   assert.equal(manifest.at(-1).file, "perception.md");
   assert.match(read("docs/pseudocode/perception.md"), /legend_inferer\.infer/);
-  assert.match(config, /pseudocodeSaveRoute/);
-  assert.match(config, /manifest\.some\(\(item\) => item\.file === file\)/);
-  assert.match(config, /extname\(filePath\).*\.md/);
-  assert.match(config, /fsp\.writeFile\(filePath, markdown, ['"]utf8['"]\)/);
+  // The save route moved to FastAPI (workbench/avo_console.py); Vite only proxies it.
+  const api = read("workbench/avo_console.py");
+  assert.match(config, /'\/__pseudocode\/save'/);
+  assert.match(config, /\/api\/workbench\/pseudocode/);
+  assert.match(api, /@router\.post\("\/pseudocode"\)/);
+  assert.match(api, /Only pseudocode files listed in the manifest can be saved/);
+  assert.match(api, /suffix\.lower\(\) != "\.md"/);
   assert.match(architecture, /\.pseudocode-editor textarea/);
   assert.match(architecture, /\.pseudocode-editor-actions/);
 });
@@ -144,9 +147,10 @@ test("notes page loads and persists its repository Markdown source", () => {
   assert.match(notes, /\/__notes\/save/);
   assert.match(notes, /import\.meta\.env\.DEV/);
   assert.match(notes, /makeSectionsCollapsible/);
-  assert.match(config, /notesSaveRoute/);
-  assert.match(config, /saveNotesMarkdown/);
-  assert.match(config, /allowedNotesFiles/);
+  const api = read("workbench/avo_console.py");
+  assert.match(config, /'\/__notes\/save'/);
+  assert.match(config, /\/api\/workbench\/notes/);
+  assert.match(api, /NOTES_FILES = \{"workbench-notes\.md", "todo\.md", "benchmark-positioning\.md"\}/);
   assert.match(config, /notes:\s*resolve\(__dirname, 'notes\.html'\)/);
   assert.match(markdown, /# Project Notes/);
   assert.match(markdown, /## Rule Induction/);

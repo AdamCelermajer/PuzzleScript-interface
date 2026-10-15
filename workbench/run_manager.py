@@ -23,8 +23,8 @@ from client.engine.utils import last_grid
 from client.runtime.runner import RuleReasoningLoop
 from studies.codex_agent.runner import CodexAgentRunner
 from studies.codex_agent.session import (
-    CodexGameSession,
-    CodexSessionConfig,
+    CliGameSession as CodexGameSession,
+    GameSessionConfig as CodexSessionConfig,
     codex_oauth_status,
 )
 from workbench.models import (

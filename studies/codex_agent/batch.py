@@ -14,7 +14,7 @@ import requests
 
 
 DEFAULT_OUTPUT_ROOT = Path(__file__).resolve().parent / "output"
-EFFORTS = ["minimal", "low", "medium", "high", "xhigh", "max"]
+EFFORTS = ["low", "medium", "high", "xhigh", "max"]
 CONDITIONS = ["baseline", "baseline-plus"]
 
 
@@ -83,35 +83,18 @@ async def _run_one(
     game_id: str,
     backend_url: str,
     max_steps: int,
-    max_decisions: int | None,
-    codex_bin: str,
+    harness: str,
 ) -> dict[str, Any]:
     async with semaphore:
         spec.output_dir.mkdir(parents=True, exist_ok=False)
+        # Every run is one agents container (harnesses.launch).
         command = [
-            sys.executable,
-            "-m",
-            "studies.codex_agent.run",
-            "--backend-url",
-            backend_url,
-            "--game-id",
-            game_id,
-            "--model",
-            spec.model,
-            "--effort",
-            spec.effort,
-            "--condition",
-            spec.condition,
-            "--max-steps",
-            str(max_steps),
-            "--output-dir",
-            str(spec.output_dir),
-            "--no-window",
+            sys.executable, "-m", "harnesses.launch",
+            "--mode", spec.condition, "--harness", harness,
+            "--model", spec.model, "--effort", spec.effort,
+            "--game-id", game_id, "--backend-url", backend_url,
+            "--max-steps", str(max_steps), "--output-dir", str(spec.output_dir),
         ]
-        if max_decisions is not None:
-            command.extend(["--max-decisions", str(max_decisions)])
-        if codex_bin:
-            command.extend(["--codex-bin", codex_bin])
 
         print(
             f"[{spec.index}/{total}] START model={spec.model} "
@@ -169,7 +152,7 @@ async def run_batch(args: argparse.Namespace) -> list[dict[str, Any]]:
         "repeats": args.repeats,
         "parallel": args.parallel,
         "max_steps": args.max_steps,
-        "max_decisions": args.max_decisions,
+        "harness": args.harness,
         "runs": [
             {**asdict(spec), "output_dir": str(spec.output_dir)} for spec in specs
         ],
@@ -186,8 +169,7 @@ async def run_batch(args: argparse.Namespace) -> list[dict[str, Any]]:
                 game_id=args.game_id,
                 backend_url=args.backend_url,
                 max_steps=args.max_steps,
-                max_decisions=args.max_decisions,
-                codex_bin=args.codex_bin,
+                harness=args.harness,
             )
         )
         for spec in specs
@@ -217,7 +199,8 @@ async def run_batch(args: argparse.Namespace) -> list[dict[str, Any]]:
 
 
 def _check_backend(backend_url: str, game_id: str) -> None:
-    response = requests.get(f"{backend_url.rstrip('/')}/api/games", timeout=5)
+    host_url = backend_url.replace("host.docker.internal", "localhost")
+    response = requests.get(f"{host_url.rstrip('/')}/api/games", timeout=5)
     response.raise_for_status()
     games = response.json()
     if not any(item.get("game_id") == game_id for item in games):
@@ -226,9 +209,11 @@ def _check_backend(backend_url: str, game_id: str) -> None:
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run an isolated Codex experiment matrix with bounded concurrency"
+        description="Run a direct-play experiment matrix (one agents container per run) with bounded concurrency"
     )
-    parser.add_argument("--backend-url", default="http://localhost:8000")
+    parser.add_argument("--backend-url", default="http://host.docker.internal:8000")
+    parser.add_argument("--harness", default="codex",
+                        choices=["codex", "claude-code", "opencode", "antigravity", "bare"])
     parser.add_argument("--game-id", default="ps_sokoban_basic-v1")
     parser.add_argument("--model", action="append", help="Repeat to test multiple models")
     parser.add_argument(
@@ -246,9 +231,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--repeats", type=int, default=1)
     parser.add_argument("--parallel", type=int, default=2)
     parser.add_argument("--max-steps", type=int, default=100)
-    parser.add_argument("--max-decisions", type=int, default=None)
     parser.add_argument("--output-dir", default="")
-    parser.add_argument("--codex-bin", default="")
     args = parser.parse_args(argv)
     if args.repeats < 1:
         parser.error("--repeats must be at least 1")

@@ -47,7 +47,9 @@ def main() -> None:
     parser.add_argument("--base-prompt", default="")
     parser.add_argument("--model", default="gpt-5.6-sol")
     parser.add_argument("--effort", default="high")
-    parser.add_argument("--codex-bin", default="")
+    parser.add_argument("--harness", default="codex",
+                        choices=("codex", "claude-code", "opencode", "antigravity", "bare"))
+    parser.add_argument("--provider", default="")
     parser.add_argument("--max-environment-steps", type=int, default=200)
     parser.add_argument("--max-wall-seconds", type=float, default=3600)
     parser.add_argument("--max-agent-turns", type=int, default=4)
@@ -68,7 +70,8 @@ def main() -> None:
         settings=PlayerRunSettings(
             model=args.model,
             effort=args.effort,
-            codex_bin=args.codex_bin,
+            harness=args.harness,
+            provider=args.provider,
             base_prompt=args.base_prompt or PlayerRunSettings.base_prompt,
             max_environment_steps=args.max_environment_steps,
             max_wall_seconds=args.max_wall_seconds,

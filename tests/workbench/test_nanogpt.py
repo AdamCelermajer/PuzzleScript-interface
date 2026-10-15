@@ -7,10 +7,9 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from avo.client.model_provider import api_key, resolve_model
-from avo.client.openrouter_chat import OpenRouterChat, ProviderError
-from avo.docker.launch import stage_credentials
-from avo.isolation import IsolatedRuntime
-from studies.codex_agent.session import CodexSessionConfig
+from harnesses.chat import OpenRouterChat, ProviderError
+from harnesses.launch import stage_credentials
+from studies.codex_agent.session import GameSessionConfig
 from workbench.catalog import agent_identity
 from workbench.experiments import ExperimentRequest, create_router, plan_runs
 from workbench.model_catalog import catalog, normalize
@@ -44,7 +43,7 @@ def test_nanogpt_ids_and_unsupported_settings():
         with pytest.raises(ValueError):
             ExperimentRequest(kind="codex", game_ids=["a"], models=[MODEL], **settings)
     with pytest.raises(ValueError, match="pinning"):
-        CodexSessionConfig(model=MODEL, provider="deepinfra")
+        GameSessionConfig(model=MODEL, provider="deepinfra")
 
 
 def test_catalog_keeps_nanogpt_per_million_prices_and_filters_non_tools():
@@ -106,28 +105,9 @@ def test_nanogpt_chat_uses_own_key_endpoint_and_preserves_max(tmp_path, monkeypa
             OpenRouterChat("vendor/model", "low", tmp_path, model_provider="nanogpt")
 
 
-def test_nanogpt_credentials_stage_and_stay_out_of_shell(tmp_path, monkeypatch):
-    root = tmp_path / "project"
-    root.mkdir()
-    (root / ".env").write_text("NANOGPT_API_KEY=project-secret\n")
-    credentials = tmp_path / "credentials"
-    credentials.mkdir()
-    monkeypatch.setenv("NANOGPT_API_KEY", "environment-secret")
-    monkeypatch.delenv("AVO_NANOGPT_KEY_FILE", raising=False)
-    with patch("avo.docker.launch.ROOT", root):
-        options = stage_credentials(credentials, [MODEL])
-    assert (credentials / "nanogpt.key").read_text() == "project-secret"
-    assert not (credentials / "auth.json").exists() and not (credentials / "openrouter.key").exists()
-    assert "AVO_NANOGPT_KEY_FILE=/credentials/nanogpt.key" in options
-    assert "project-secret" not in str(options)
-    monkeypatch.setenv("AVO_NANOGPT_KEY_FILE", str(credentials / "nanogpt.key"))
-    assert api_key("nanogpt") == "project-secret"
-    runtime = IsolatedRuntime(tmp_path / "workspace", tmp_path / "artifacts", "codex")
-    try:
-        runtime.authenticate_api_provider("nanogpt")
-        assert runtime.env["NANOGPT_API_KEY"] == "project-secret"
-        config = (runtime.private / "config.toml").read_text()
-        assert "NANOGPT_API_KEY" not in config and "project-secret" not in config
-    finally:
-        runtime.close()
-    assert "NANOGPT_API_KEY" not in runtime.env
+def test_nanogpt_credentials_stage_as_named_env_only(tmp_path):
+    options, child_env = stage_credentials("bare", [MODEL], tmp_path, env={"NANOGPT_API_KEY": "project-secret",
+                                                                         "OPENROUTER_API_KEY": "other"})
+    assert options == ["--env", "NANOGPT_API_KEY"]
+    assert child_env == {"NANOGPT_API_KEY": "project-secret"}
+    assert "project-secret" not in str(options) and not list(tmp_path.iterdir())

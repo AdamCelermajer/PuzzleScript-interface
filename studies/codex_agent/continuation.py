@@ -36,7 +36,11 @@ def seed_notes(parent: str | Path, target: Path) -> None:
         if path.is_symlink() or path.is_junction():
             raise ValueError("Parent notes contain a link")
         if path.is_file() and path.suffix.lower() in {".md", ".txt"}:
-            destination = target / path.relative_to(source)
+            relative = path.relative_to(source)
+            # Notes persist only under notes/; older runs kept them at the workspace root.
+            if relative.parts[0] != "notes":
+                relative = Path("notes") / relative
+            destination = target / relative
             if destination.exists():
                 raise ValueError("Continuation requires an empty note workspace")
             destination.parent.mkdir(parents=True, exist_ok=True)

@@ -1,8 +1,7 @@
-"""Plain OpenRouter chat-completions client for the non-Codex harnesses (H0/H1).
+"""Plain chat-completions transport (OpenRouter or NanoGPT) for the ``bare`` harness.
 
-H0 (``raw``) sends no tool schema; any tools are reached through a text protocol
-parsed by the caller. H1 (``tools``) sends a minimal native function-tool list.
-Both share this transport, its retry policy, request recording and context policy.
+Retry policy, request recording and the context-window policy live here; the
+tool-calling loop lives in ``harnesses/bare.py``.
 """
 from __future__ import annotations
 

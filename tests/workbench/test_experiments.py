@@ -301,7 +301,7 @@ class ExperimentTests(unittest.TestCase):
                "world_model_mode":"final-only", "status":"paused"}
         self.put("output/workbench/owned/job.json", {"status":"paused", "config":{"kind":"avo", "parallel":1,
                  "max_hours":1, "service_tier":"priority", "optimizer_service_tier":"priority"}, "runs":[row]})
-        with self.client() as client, patch("workbench.experiments.subprocess.Popen") as popen:
+        with self.client() as client, patch("workbench.experiments.subprocess.Popen") as popen, patch("workbench.runs.live_containers", return_value=({}, None)):
             response = client.post("/api/workbench/experiments/resume", params={"job":"output/workbench/owned"},
                                    json={"service_tier":"", "optimizer_service_tier":""})
         self.assertEqual(response.status_code, 202)
@@ -309,9 +309,11 @@ class ExperimentTests(unittest.TestCase):
         recovery_id = response.json()["id"]
         recovery = json.loads((self.root / recovery_id / "job.json").read_text())
         command = recovery["runs"][0]["command"]
-        self.assertIn("--resume-saved-campaign", command)
-        self.assertEqual(command[command.index("--player-service-tier") + 1], "")
-        self.assertEqual(command[command.index("--optimizer-service-tier") + 1], "")
+        # The batch alias resumes through harnesses.launch with the saved settings.
+        self.assertEqual(command[:5], ["uv", "run", "python", "-m", "harnesses.launch"])
+        self.assertIn("--resume", command)
+        self.assertEqual(command[command.index("--optimizer-effort") + 1], "high")
+        self.assertEqual(command[command.index("--max-wall-seconds") + 1], "600")
         self.assertEqual(json.loads((source / "job.json").read_text())["resumed_as"], recovery_id)
 
     def test_inactive_resumable_batch_can_be_removed_from_runs_without_deleting_artifacts(self):
@@ -364,7 +366,7 @@ class ExperimentTests(unittest.TestCase):
                  "game_id":"ps_knightoban-v1", "model":saved["player"]["model"], "effort":"max"}]
         self.put("output/workbench/owned/job.json", {"status":"running", "config":{"kind":"avo", "parallel":2,
                  "trace_detail":"full", "max_hours":24}, "runs":rows})
-        with self.client() as client, patch("workbench.experiments.subprocess.Popen") as popen:
+        with self.client() as client, patch("workbench.experiments.subprocess.Popen") as popen, patch("workbench.runs.live_containers", return_value=({}, None)):
             response = client.post("/api/workbench/experiments/resume-run", params={"run":run_id}, json={})
             self.assertEqual(response.status_code, 202)
             self.assertEqual(client.post("/api/workbench/experiments/resume-run", params={"run":run_id}, json={}).status_code, 409)
@@ -373,9 +375,9 @@ class ExperimentTests(unittest.TestCase):
         target = self.root / response.json()["run"]
         self.assertEqual(recovery["recovery_of"], run_id)
         self.assertEqual(len(recovery["runs"]), 1)
-        self.assertIn("--resume-saved-campaign", recovery["runs"][0]["command"])
+        self.assertIn("--resume", recovery["runs"][0]["command"])
+        self.assertIn("harnesses.launch", recovery["runs"][0]["command"])
         self.assertEqual(recovery["config"]["parallel"], 1)
-        self.assertEqual(recovery["config"]["trace_detail"], "full")
         self.assertEqual((target / "x_0001/STRATEGY.md").read_text(), "Saved hypothesis")
         self.assertFalse((target / "x_0001/research").exists())
         self.assertFalse((target / "optimizer_analysis").exists())
