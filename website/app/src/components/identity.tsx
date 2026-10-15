@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import type { ProcessStatus } from '../lib/status'
+import { canonicalGameId } from '../lib/runs'
 import { cx } from './ui'
 
 // ---- harness identity: the only categorical color in the app (validated palette, labels always shown)
@@ -108,7 +109,7 @@ export function StatusDot({ status, className }: { status: ProcessStatus; classN
 
 // ---- game thumbnails (first frame of level 1, cached server side)
 
-export const thumbnailUrl = (gameId: string) => `/api/workbench/benchmarks/${encodeURIComponent(gameId)}/thumbnail.png`
+export const thumbnailUrl = (gameId: string) => `/api/workbench/benchmarks/${encodeURIComponent(canonicalGameId(gameId))}/thumbnail.png`
 
 export function GameThumb({ gameId, size = 32, className, rounded = 'rounded-md', aspect }: { gameId: string | null | undefined; size?: number; className?: string; rounded?: string; aspect?: string }) {
   const [failed, setFailed] = useState(false)

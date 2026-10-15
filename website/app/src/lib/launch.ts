@@ -96,7 +96,7 @@ export function formProblems(f: LaunchForm): string[] {
   if (!f.models.length) problems.push('Choose at least one model')
   if (!f.efforts.length) problems.push('Choose at least one effort')
   if (!f.games.length) problems.push('Choose at least one game')
-  if (usesCampaign(f) && !f.worldModelModes.length) problems.push('Choose a world-model condition for campaigns')
+  if (usesCampaign(f) && !f.worldModelModes.length) problems.push('Choose a world-model condition for AVO runs')
   if (!f.unlimitedWall && !(f.wallHours > 0)) problems.push('Wall time must be positive, or switch on unlimited')
   return problems
 }

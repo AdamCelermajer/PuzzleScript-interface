@@ -21,14 +21,23 @@ describe('launch grouping', () => {
     ].map(normalizeRun)
     const job = { id: 'output/workbench/20261015T012502-x-abcdef12', created_at: '2026-10-15T00:25:02Z' } as CatalogJob
     const launches = groupLaunches(views, new Map([[job.id, job]]))
+    // A shared output folder is not a launch: its runs stay separate rows.
     expect(launches.map((l) => [l.id, l.archive, l.runs.length])).toEqual([
       ['output/workbench/20261015T012502-x-abcdef12', false, 1],
-      ['f', false, 1],
-      ['f', true, 1],
+      ['f/new', false, 1],
+      ['f/old', true, 1],
     ])
     const campaign = launches[0]
     expect(campaign).toMatchObject({ label: 'x', modes: ['campaign'], harnesses: ['opencode'], budget: '5 evals · 4/6 moves · unlimited wall' })
     expect(campaign.job).toBe(job)
+  })
+})
+
+describe('launch groups', () => {
+  it('groups a <batch>/run-NNNN matrix folder even without job.json', () => {
+    const views = ['run-0001/campaign', 'run-0002/campaign'].map((r) => normalizeRun(run({ id: `output/avo-six/${r}`, batch: 'output/avo-six', kind: 'avo' })))
+    const launches = groupLaunches(views, new Map())
+    expect(launches.map((l) => [l.id, l.runs.length, l.archive])).toEqual([['output/avo-six', 2, true]])
   })
 })
 

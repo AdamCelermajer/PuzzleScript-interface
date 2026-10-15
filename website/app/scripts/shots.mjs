@@ -19,6 +19,11 @@ for (const theme of themes.split(',')) {
       await page.goto(base + path, { waitUntil: 'networkidle', timeout: 120_000 }).catch((e) => console.error(name, e.message))
       await page.waitForTimeout(Number(process.env.WAIT ?? 2500))
       if (scroll) { await page.locator('main').evaluate((m, y) => m.scrollTo(0, y), Number(scroll)); await page.waitForTimeout(400) }
+      // Report any horizontal scrollbar (page or scroll containers).
+      const overflow = await page.evaluate(() => [...document.querySelectorAll('main, main *')]
+        .filter((el) => { const s = getComputedStyle(el); return (el.tagName === 'MAIN' || ['auto', 'scroll'].includes(s.overflowX)) && el.scrollWidth > el.clientWidth + 1 })
+        .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).slice(0, 40)} ${el.scrollWidth}>${el.clientWidth}`))
+      if (overflow.length) console.log(`HSCROLL ${name} ${theme} ${width}:`, overflow.join(' | '))
       const file = `screenshots/${name}-${theme}-${width}.png`
       await page.screenshot({ path: file })
       console.log('saved', file)

@@ -170,7 +170,7 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
         </div>
       </Card>
       {campaigns.length > 0 && (
-        <Card title="Campaigns · best fresh fitness by completed evaluation">
+        <Card title="AVO · best fresh-solver fitness by completed evaluation">
           <LineChart series={campaignSeries} xDomain={Math.max(0, ...campaigns.map((r) => r.progress.budget ?? 0))} xLabel="Evaluation" yLabel="Levels (fitness)" />
         </Card>
       )}

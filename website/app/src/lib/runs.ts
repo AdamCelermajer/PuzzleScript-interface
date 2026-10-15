@@ -2,7 +2,7 @@ import type { Catalog, CatalogJob, CatalogRun, Mode } from '../api/types'
 import { outcome, processStatus, type Outcome, type ProcessStatus } from './status'
 
 export const MODES: Mode[] = ['baseline', 'baseline-plus', 'campaign']
-export const MODE_LABEL: Record<string, string> = { baseline: 'Baseline', 'baseline-plus': 'Baseline+', campaign: 'Campaign' }
+export const MODE_LABEL: Record<string, string> = { baseline: 'Baseline', 'baseline-plus': 'Baseline+', campaign: 'AVO' }
 
 /** A catalog row with one normalized identity, regardless of run_spec.json vs legacy config. */
 export interface RunView {
@@ -127,7 +127,7 @@ export function jobLabel(job: Pick<CatalogJob, 'id'>): string {
 
 /** Workbench-internal detail link (run ids contain slashes; they become the route splat). */
 export const runHref = (id: string) => `/runs/${id.split('/').map(encodeURIComponent).join('/')}`
-export const gameHref = (id: string) => `/benchmarks/${encodeURIComponent(id)}`
+export const gameHref = (id: string) => `/benchmarks/${encodeURIComponent(canonicalGameId(id))}`
 
 /** One launch (workbench batch or legacy output folder) with its runs and a spec summary. */
 export interface Launch {
@@ -169,7 +169,10 @@ function budgetSummary(run: RunView): string {
 export function groupLaunches(runs: RunView[], jobs: Map<string, CatalogJob>): Launch[] {
   const groups = new Map<string, RunView[]>()
   for (const run of runs) {
-    const key = `${run.batch || run.id}|${run.legacy ? 'a' : 'n'}`
+    // Only real launches group runs: a workbench batch (job.json) or a `<batch>/run-NNNN` matrix folder.
+    // Shared output folders (e.g. output/codex_agent) are not launches; their runs stay separate.
+    const launch = run.batch && (jobs.has(run.batch) || new RegExp(`^${escapeRegExp(run.batch)}/run-\\d+`).test(run.id))
+    const key = `${launch ? run.batch : run.id}|${run.legacy ? 'a' : 'n'}`
     groups.set(key, [...(groups.get(key) ?? []), run])
   }
   const launches: Launch[] = []
@@ -193,3 +196,13 @@ export function groupLaunches(runs: RunView[], jobs: Map<string, CatalogJob>): L
   }
   return launches.sort((a, b) => b.started - a.started)
 }
+
+/** `modality`, `ps_modality` and `ps_modality-v1` all name `ps_modality-v1` (mirrors workbench/catalog.py). */
+export function canonicalGameId(id: string): string {
+  let game = id.trim()
+  if (!game.startsWith('ps_')) game = `ps_${game}`
+  if (!/-v\d+$/.test(game)) game += '-v1'
+  return game
+}
+
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

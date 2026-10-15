@@ -52,7 +52,7 @@ describe('matrix preview helpers', () => {
 
   it('reports missing selections before calling the API', () => {
     expect(formProblems({ ...DEFAULT_FORM })).toEqual(['Choose at least one harness', 'Choose at least one model', 'Choose at least one game'])
-    expect(formProblems(form({ modes: ['campaign'], worldModelModes: [] }))).toContain('Choose a world-model condition for campaigns')
+    expect(formProblems(form({ modes: ['campaign'], worldModelModes: [] }))).toContain('Choose a world-model condition for AVO runs')
   })
 
   it('groups preview rows by game and describes budgets', () => {

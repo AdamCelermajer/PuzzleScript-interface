@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { catalogViews } from '../lib/runs'
+import { canonicalGameId, catalogViews } from '../lib/runs'
+import { gameName } from '../lib/format'
 import { api } from './client'
 import type { BenchmarkList, Catalog, Harness } from './types'
 
@@ -30,4 +31,13 @@ export function useBenchmarks() {
     queryFn: ({ signal }) => api.get<BenchmarkList>('/benchmarks', signal),
     staleTime: 30_000,
   })
+}
+
+/** Display title for a game id (benchmark title when known, else a readable id). */
+export function useGameTitle(): (id: string) => string {
+  const benchmarks = useBenchmarks()
+  return useMemo(() => {
+    const titles = new Map((benchmarks.data?.games ?? []).map((g) => [g.game_id, g.title]))
+    return (id: string) => titles.get(canonicalGameId(id)) ?? gameName(id)
+  }, [benchmarks.data])
 }

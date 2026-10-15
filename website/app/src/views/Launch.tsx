@@ -128,7 +128,7 @@ export function LaunchView() {
           </Card>
 
           {campaign && (
-            <Card title="4 · Campaign settings">
+            <Card title="4 · AVO settings">
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 <Field label="Optimizer model" hint="Outer AVO loop. Empty = same as each player model.">
                   <Select value={form.optimizerModel} onChange={(e) => set('optimizerModel', e.target.value)}>
@@ -169,10 +169,10 @@ export function LaunchView() {
               )}
               {campaign && (
                 <>
-                  <Field label="Max evaluations" hint="Campaign">
+                  <Field label="Max evaluations" hint="AVO">
                     <Input type="number" min={1} max={100} value={form.maxEvaluations} onChange={(e) => set('maxEvaluations', Number(e.target.value))} />
                   </Field>
-                  <Field label="Research moves" hint="Campaign player">
+                  <Field label="Research moves" hint="AVO player">
                     <Input type="number" min={1} value={form.researchMoves} onChange={(e) => set('researchMoves', Number(e.target.value))} />
                   </Field>
                   <Field label="Solver moves" hint="Fresh evaluation">

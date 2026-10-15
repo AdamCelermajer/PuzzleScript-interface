@@ -1,15 +1,14 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { api, ApiError, q } from '../api/client'
 import { useCatalog } from '../api/hooks'
-import type { CatalogJob } from '../api/types'
-import { GameThumb, HarnessChip, LevelPips, SectionLabel, StatusDot, TierBadge, harnessColor, harnessLabel } from '../components/identity'
-import { ProgressBar } from '../components/status'
+import { GameThumb, LevelPips, SectionLabel, TierBadge, harnessColor, harnessLabel } from '../components/identity'
+import { RunList } from '../components/RunList'
 import { Button, Empty, ErrorBox, Loading, Notice, Toggle, cx } from '../components/ui'
-import { gameName, relativeTime } from '../lib/format'
-import { MODE_LABEL, gameHref, jobLabel, launchLabel, modelParts, runHref, type RunView } from '../lib/runs'
-import { processStatus } from '../lib/status'
+import { relativeTime } from '../lib/format'
+import { MODE_LABEL, gameHref, groupLaunches, runHref, type RunView } from '../lib/runs'
+import { useJobActions } from './Runs'
 
 export interface MatrixCell {
   best_levels: number | null
@@ -29,7 +28,7 @@ export interface ResultsMatrix {
 }
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
-const MODES = [['', 'All modes'], ['baseline', 'Baseline'], ['baseline-plus', 'Baseline+'], ['campaign', 'Campaign']] as const
+const MODES = [['', 'All modes'], ['baseline', 'Baseline'], ['baseline-plus', 'Baseline+'], ['campaign', 'AVO']] as const
 
 /** Consecutive columns of the same harness, for the grouped header. */
 export function harnessGroups(columns: ResultsMatrix['columns']): { harness: string; span: number }[] {
@@ -110,99 +109,39 @@ export function ResultsView() {
 }
 
 function RunningNow({ catalog }: { catalog: ReturnType<typeof useCatalog> }) {
-  const client = useQueryClient()
-  const action = useMutation({
-    mutationFn: ({ verb, job }: { verb: 'stop' | 'pause' | 'resume'; job: string }) => api.post(`/experiments/${verb}${q({ job })}`),
-    onSettled: () => client.invalidateQueries({ queryKey: ['catalog'] }),
-  })
-  const all = (catalog.data?.jobs ?? []).slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
-  const live = all.filter((j) => ['starting', 'running', 'stopping'].includes(j.status))
-  const paused = all.filter((j) => j.status === 'paused' && !j.dismissed_from_runs_at)
-  const owned = new Set(live.map((j) => j.id))
-  const loose = catalog.views.filter((r) => r.process.tone === 'running' && r.process.live && !owned.has(r.batch))
-  const act = (verb: 'stop' | 'pause' | 'resume', job: CatalogJob) =>
-    (verb !== 'stop' || window.confirm(`Stop ${jobLabel(job)}? Queued runs are cancelled.`)) &&
-    (verb !== 'resume' || window.confirm('Resume this batch? This starts paid model calls.')) &&
-    action.mutate({ verb, job: job.id })
-  const count = live.length + (loose.length ? 1 : 0)
+  const actions = useJobActions()
+  const jobs = catalog.data?.jobs ?? []
+  const jobById = useMemo(() => new Map(jobs.map((j) => [j.id, j])), [jobs])
+  const liveJobs = new Set(jobs.filter((j) => ['starting', 'running', 'stopping'].includes(j.status)).map((j) => j.id))
+  const pausedJobs = new Set(jobs.filter((j) => j.status === 'paused' && !j.dismissed_from_runs_at).map((j) => j.id))
+  const live = groupLaunches(catalog.views.filter((r) => liveJobs.has(r.batch) || (r.process.tone === 'running' && r.process.live)), jobById)
+  const paused = groupLaunches(catalog.views.filter((r) => pausedJobs.has(r.batch)), jobById)
+  const props = { onJob: actions.onJob, onResume: actions.onResume, busy: actions.busy, expanded: () => true }
   return (
     <section className="flex flex-col gap-3">
       <SectionLabel right={catalog.data && <span className="text-[11.5px] tracking-normal normal-case text-faint">updated {relativeTime(catalog.data.checked_at * 1000)}</span>}>
-        Running now {count > 0 && <span className="ml-1.5 rounded-full bg-run-soft px-1.5 py-px text-[10.5px] text-run">{count}</span>}
+        Running now {live.length > 0 && <span className="ml-1.5 rounded-full bg-run-soft px-1.5 py-px text-[10.5px] text-run">{live.reduce((n, l) => n + l.runs.length, 0)}</span>}
       </SectionLabel>
-      {action.error ? <ErrorBox error={action.error} /> : null}
-      {catalog.isLoading ? <Loading /> : !count ? (
-        <div className="flex items-center justify-between rounded-xl border border-dashed border-line-strong px-5 py-4 text-[13px] text-muted">
-          Nothing is running right now.
-          <Link to="/launch" className="text-[13px] font-medium text-fg">Start a launch →</Link>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-3 2xl:grid-cols-2">
-          {live.map((job) => <LiveJob key={job.id} job={job} runs={catalog.views.filter((r) => r.batch === job.id)} busy={action.isPending} onAction={(verb) => act(verb, job)} />)}
-          {loose.length > 0 && <LiveJob runs={loose} busy={false} onAction={() => undefined} />}
-        </div>
+      {actions.error ? <ErrorBox error={actions.error} /> : null}
+      {catalog.isLoading ? <Loading /> : (
+        <RunList
+          launches={live}
+          {...props}
+          empty={
+            <div className="flex items-center justify-between rounded-xl border border-dashed border-line-strong px-5 py-4 text-[13px] text-muted">
+              Nothing is running right now.
+              <Link to="/launch" className="text-[13px] font-medium text-fg">Start a launch →</Link>
+            </div>
+          }
+        />
       )}
       {paused.length > 0 && (
-        <div className="flex flex-col divide-y divide-line rounded-xl border border-line bg-panel">
-          {paused.map((job) => {
-            const runs = catalog.views.filter((r) => r.batch === job.id)
-            return (
-              <div key={job.id} className="flex items-center gap-3 px-4 py-2">
-                <span className="h-2 w-2 rounded-full bg-warn" />
-                <span className="text-[12px] text-muted">paused</span>
-                <Link to={`/runs${q({ job: job.id })}`} className="truncate text-[13px] font-medium">{launchLabel(job.id)}</Link>
-                <span className="text-[12px] text-faint">{plural(runs.length, 'run')} · {[...new Set(runs.map((r) => gameName(r.game)))].join(', ')} · {relativeTime(job.created_at ? Date.parse(job.created_at) : 0)}</span>
-                <span className="ml-auto flex gap-1.5">
-                  {job.can_resume && <Button size="sm" disabled={action.isPending} onClick={() => act('resume', job)}>Resume</Button>}
-                </span>
-              </div>
-            )
-          })}
-        </div>
+        <>
+          <span className="section-label mt-2">Paused</span>
+          <RunList launches={paused} {...props} expanded={() => false} />
+        </>
       )}
     </section>
-  )
-}
-
-function LiveJob({ job, runs, busy, onAction }: { job?: CatalogJob; runs: RunView[]; busy: boolean; onAction: (verb: 'stop' | 'pause' | 'resume') => void }) {
-  const status = job ? processStatus({ status: job.status, status_source: job.can_stop ? 'Batch worker heartbeat' : '', needs_assistance: job.needs_assistance }) : null
-  const label = job ? launchLabel(job.id) : 'Other live containers'
-  const ordered = [...runs].sort((a, b) => Number(b.process.tone === 'running') - Number(a.process.tone === 'running'))
-  return (
-    <div className="overflow-hidden rounded-xl border border-line bg-panel shadow-[var(--shadow)]">
-      <div className="flex items-center gap-3 border-b border-line px-4 py-2.5">
-        {status && <StatusDot status={status} />}
-        <Link to={job ? `/runs${q({ job: job.id })}` : '/runs?status=running'} className="min-w-0 truncate text-[13.5px] font-semibold text-fg">{label}</Link>
-        <span className="text-[12px] text-faint">{job ? relativeTime(job.created_at ? Date.parse(job.created_at) : 0) : ''}</span>
-        <div className="ml-auto flex items-center gap-1.5">
-          {job?.can_pause && <Button size="sm" disabled={busy} onClick={() => onAction('pause')}>Pause</Button>}
-          {job?.can_stop && <Button size="sm" variant="danger" disabled={busy} onClick={() => onAction('stop')}>Stop</Button>}
-          {job?.can_resume && <Button size="sm" disabled={busy} onClick={() => onAction('resume')}>Resume</Button>}
-        </div>
-      </div>
-      <div className="divide-y divide-line">
-        {ordered.slice(0, 8).map((run) => (
-          <Link key={run.id} to={runHref(run.id)} className="grid grid-cols-[28px_minmax(0,1.2fr)_minmax(0,1fr)_110px_minmax(80px,0.8fr)_96px] items-center gap-3 px-4 py-2 text-fg hover:bg-hover hover:no-underline">
-            <GameThumb gameId={run.game} size={28} />
-            <span className="min-w-0">
-              <span className="block truncate text-[13px] font-medium">{gameName(run.game)}</span>
-              <span className="block truncate text-[11.5px] text-faint">{MODE_LABEL[run.mode]} · {modelParts(run.model).name}</span>
-            </span>
-            <HarnessChip harness={run.harness} legacy={run.legacy} className="justify-self-start" />
-            <LevelPips levels={run.outcome.score} total={run.outcome.total} solved={run.outcome.tone === 'solved'} size="sm" />
-            <span className="flex flex-col gap-1">
-              <ProgressBar used={run.progress.used} budget={run.progress.budget} tone={run.process.tone === 'running' ? 'run' : 'muted'} />
-              <span className="text-[11px] text-faint tabular-nums">{run.progress.used ?? 0}{run.progress.budget ? `/${run.progress.budget}` : ''} {run.progress.unit}</span>
-            </span>
-            <span className="flex flex-col items-end gap-0.5">
-              <StatusDot status={run.process} />
-              <span className="text-[11px] text-faint">{relativeTime(run.activity)}</span>
-            </span>
-          </Link>
-        ))}
-        {ordered.length > 8 && <Link to={job ? `/runs${q({ job: job.id })}` : '/runs'} className="block px-4 py-2 text-[12px]">{ordered.length - 8} more runs →</Link>}
-      </div>
-    </div>
   )
 }
 
