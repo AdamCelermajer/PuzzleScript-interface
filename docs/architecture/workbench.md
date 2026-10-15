@@ -5,6 +5,9 @@ and launch plans; `workbench.experiment_job` owns each launched batch as a separ
 process. Its `job.json` records the configuration, children, heartbeat, statuses
 and exit codes. API restarts leave those workers running. Stop requests and the
 batch time limit cancel queued children and stop only owned processes/containers.
+Setting `max_hours` to zero disables the scheduled batch cutoff. For AVO this
+passes zero wall limits to the campaign and research player as well; action,
+candidate, and solver self-check budgets still apply. Manual stops remain active.
 
 AVO children invoke `avo.docker.launch --campaign`; that launcher retains the
 the existing Linux sandbox, temporary OAuth credentials and cleanup. Isolation probes are explicit diagnostics.
@@ -146,9 +149,10 @@ downloads are secondary controls in a collapsed section.
 ## Codex and model providers
 
 Codex is the sole maintained coding-agent runtime. AVO uses the existing Docker
-launcher, sandbox, request capture and fresh-solver evaluator for both OpenAI and
-OpenRouter models. Unprefixed model IDs use the existing Codex OAuth login;
-`openrouter/vendor/model` uses the project OpenRouter API key. Player and optimizer
+launcher, sandbox, request capture and fresh-solver evaluator for OpenAI, OpenRouter, and
+NanoGPT models. Unprefixed model IDs use the existing Codex OAuth login;
+`openrouter/vendor/model` uses `OPENROUTER_API_KEY`; `nanogpt/model` uses
+`NANOGPT_API_KEY`. Keys are read from the project `.env` or environment. Player and optimizer
 can select providers independently. See [AVO Docker setup](../../avo/docker/README.md).
 
 The OpenCode POC launcher, Zen catalog and separate replica are retired. New
@@ -160,15 +164,18 @@ results retain their recorded identities. A small reader in
 
 The builder groups game selection, models, condition and budgets into separate
 sections. Codex is used throughout; the model picker offers OpenAI via Codex login
-and OpenRouter for AVO. Baseline+ retains its existing OpenAI path. Search,
-free-only filtering, context limits and prices apply to the OpenRouter catalog;
+and OpenRouter / NanoGPT for both AVO and the direct player, including baseline+. Search,
+free-only filtering, context limits and prices apply to both public catalogs;
 a manual model ID remains available. Tool support alone does not establish full
 Codex compatibility. DeepSeek V4.1 Flash was live-tested on September 14.
 
-`GET /api/workbench/model-catalog?provider=openrouter` fetches the public catalog
+`GET /api/workbench/model-catalog?provider=openrouter` (or `provider=nanogpt`) fetches the public catalog
 without credentials. Responses are cached for ten minutes; failed refreshes retain
 the previous list with a stale notice. No model calls happen during catalog
-browsing or launch preview. The historical rule-agent model endpoint is unchanged.
+browsing or launch preview. NanoGPT uses the same API host for catalog discovery and inference (`https://nano-gpt.com`),
+and detailed catalog prices are already USD per million tokens. OpenRouter provider
+pinning is rejected for NanoGPT; leave that field empty. All three harnesses
+(`codex`, `tools`, `raw`) support NanoGPT. The historical rule-agent model endpoint is unchanged.
 
 Selecting **Compare conditions** sends `comparison: true`, fixes the conditions
 to `final-only` and `between-hypotheses`, and defaults to two parallel slots.

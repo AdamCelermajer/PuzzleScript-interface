@@ -218,14 +218,17 @@ class IsolatedRuntime:
         target.chmod(0o600)
 
     def authenticate_openrouter(self) -> None:
-        key_file = os.environ.get("AVO_OPENROUTER_KEY_FILE", "")
-        key = (Path(key_file).read_text(encoding="utf-8").strip() if key_file
-               else os.environ.get("OPENROUTER_API_KEY", "").strip())
-        if not key:
-            raise IsolationError("OpenRouter requires OPENROUTER_API_KEY or AVO_OPENROUTER_KEY_FILE")
+        self.authenticate_api_provider("openrouter")
+
+    def authenticate_api_provider(self, provider: str) -> None:
+        from avo.client.model_provider import API_PROVIDERS, api_key
+        try:
+            key = api_key(provider)
+        except RuntimeError as exc:
+            raise IsolationError(str(exc)) from None
         # _write_config already fixed the shell's explicit allowlist. The key
         # belongs only to the trusted Codex process, never shell tools or TOML.
-        self.env["OPENROUTER_API_KEY"] = key
+        self.env[API_PROVIDERS[provider]["env_key"]] = key
 
     def command(self, *args: str) -> list[str]:
         return [self.codex_bin, "sandbox", "--permission-profile", "avo", "--cd", str(self.workspace), "--", *args]
@@ -286,4 +289,5 @@ class IsolatedRuntime:
         # Native Windows retains non-secret files because of restricted ACLs.
         (self.private / "auth.json").unlink(missing_ok=True)
         self.env.pop("OPENROUTER_API_KEY", None)
+        self.env.pop("NANOGPT_API_KEY", None)
         cleanup_private_directory(self.private)

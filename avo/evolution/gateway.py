@@ -77,7 +77,7 @@ class EvolutionGateway:
         return (
             self.success
             or len(self.store.evaluations()) >= self.budget.max_evaluations
-            or time.monotonic() - self.started_at >= self.budget.max_wall_seconds
+            or (self.budget.max_wall_seconds > 0 and time.monotonic() - self.started_at >= self.budget.max_wall_seconds)
         )
 
     def _budgets(self) -> dict[str, float | int]:
@@ -85,7 +85,7 @@ class EvolutionGateway:
         return {
             "evaluations_used": used,
             "evaluations_remaining": max(0, self.budget.max_evaluations - used),
-            "wall_seconds_remaining": max(
+            "wall_seconds_remaining": None if self.budget.max_wall_seconds == 0 else max(
                 0.0,
                 self.budget.max_wall_seconds - (time.monotonic() - self.started_at),
             ),
@@ -98,7 +98,7 @@ class EvolutionGateway:
         if not self.finished and len(self.store.evaluations()) >= self.budget.max_evaluations:
             self.finished = True
             self.finish_reason = "candidate evaluation budget exhausted"
-        if not self.finished and time.monotonic() - self.started_at >= self.budget.max_wall_seconds:
+        if not self.finished and self.budget.max_wall_seconds > 0 and time.monotonic() - self.started_at >= self.budget.max_wall_seconds:
             self.finished = True
             self.finish_reason = "outer wall-time budget exhausted"
         population = self.store.population_summary()

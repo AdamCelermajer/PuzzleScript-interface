@@ -106,6 +106,10 @@ class CodexSessionConfig:
     harness: str = "codex"
     provider: str = ""  # pinned OpenRouter provider slug; empty = OpenRouter routing
 
+    def __post_init__(self) -> None:
+        if self.provider and self.model.startswith("nanogpt/"):
+            raise ValueError("Provider pinning is only supported for OpenRouter")
+
 
 def _find_codex_bin(explicit: str = "") -> str | None:
     requested = explicit.strip() or os.getenv("CODEX_BIN", "").strip()
@@ -202,7 +206,7 @@ class CodexGameSession:
 
     def _start(self) -> "CodexGameSession":
         from avo.analysis.model_proxy import CodexRequestProxy
-        from avo.client.model_provider import resolve_model
+        from avo.client.model_provider import API_PROVIDERS, api_key, codex_provider_overrides, resolve_model
         from avo.client.openrouter_chat import provider_routing
         try:
             from openai_codex import ApprovalMode, Codex, CodexConfig, Sandbox
@@ -213,16 +217,9 @@ class CodexGameSession:
 
         provider, provider_model = resolve_model(self.config.model)
         provider_env = {}
-        if provider == "openrouter":
-            from dotenv import dotenv_values
-
-            key_file = os.environ.get("AVO_OPENROUTER_KEY_FILE", "")
-            key = (Path(key_file).read_text(encoding="utf-8").strip() if key_file else
-                   dotenv_values(Path(__file__).resolve().parents[2] / ".env").get("OPENROUTER_API_KEY")
-                   or os.environ.get("OPENROUTER_API_KEY", ""))
-            if not key or not key.strip():
-                raise RuntimeError("OpenRouter requires an existing OPENROUTER_API_KEY")
-            provider_env["OPENROUTER_API_KEY"] = key.strip()
+        if provider in API_PROVIDERS:
+            provider_env[API_PROVIDERS[provider]["env_key"]] = api_key(
+                provider, env_file=Path(__file__).resolve().parents[2] / ".env")
         codex_bin = _find_codex_bin(self.config.codex_bin)
         self._model_cwd = tempfile.TemporaryDirectory(prefix="codex-game-")
         self._request_proxy = CodexRequestProxy(
@@ -230,8 +227,8 @@ class CodexGameSession:
             session_role="baseline-plus" if self.config.workspace_enabled else "baseline",
             body_patch=({"provider": provider_routing(self.config.provider)}
                         if provider == "openrouter" and self.config.provider else None),
-            **({"upstream_origin": "https://openrouter.ai", "base_path": "/api/v1"}
-               if provider == "openrouter" else {}),
+            **({"upstream_origin": API_PROVIDERS[provider]["origin"], "base_path": "/api/v1"}
+               if provider in API_PROVIDERS else {}),
         )
         self._request_proxy.start()
         config_overrides = [
@@ -255,15 +252,8 @@ class CodexGameSession:
             'plugins."codex-app-tools@openai-bundled".enabled=false',
             'plugins."unified-computer-use@openai-bundled".enabled=false',
         ]
-        if provider == "openrouter":
-            config_overrides.extend([
-                'model_provider="openrouter"',
-                'model_providers.openrouter.name="OpenRouter"',
-                f'model_providers.openrouter.base_url="{self._request_proxy.model_base_url}"',
-                'model_providers.openrouter.env_key="OPENROUTER_API_KEY"',
-                'model_providers.openrouter.wire_api="responses"',
-                'model_providers.openrouter.requires_openai_auth=false',
-            ])
+        if provider in API_PROVIDERS:
+            config_overrides.extend(codex_provider_overrides(provider, self._request_proxy.model_base_url))
         else:
             config_overrides.append(f'openai_base_url="{self._request_proxy.model_base_url}"')
         if self.config.workspace_enabled:
@@ -388,7 +378,9 @@ class CodexGameSession:
         config_overrides: list[str],
         initial_notes: list[str],
     ) -> None:
+        from avo.client.model_provider import resolve_model
         payload = {
+            "model_provider": resolve_model(self.config.model)[0],
             "ephemeral_thread": True,
             "sandbox": "read_only",
             "approval_mode": "deny_all",

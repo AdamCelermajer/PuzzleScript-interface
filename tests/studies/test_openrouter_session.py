@@ -22,9 +22,9 @@ class ScriptedChat:
         return self.replies.pop(0), {"reasoning": ""}
 
 
-def session(tmp_path, harness, condition, script):
+def session(tmp_path, harness, condition, script, model="openrouter/vendor/model"):
     ScriptedChat.script = script
-    config = CodexSessionConfig(model="openrouter/vendor/model", effort="high", harness=harness,
+    config = CodexSessionConfig(model=model, effort="high", harness=harness,
                                 workspace_enabled=condition == "baseline-plus")
     with patch("studies.codex_agent.openrouter_session.OpenRouterChat", ScriptedChat):
         game = open_game_session(config, tmp_path / "workspace", artifact_directory=tmp_path)
@@ -111,3 +111,14 @@ def test_runner_turns_unavailable_action_into_a_correction(tmp_path):
     assert Env.steps == [GameAction.ACTION1]
     assert result.decisions == 2
     assert "ACTION5 is not available" in prompts[1]
+
+
+@pytest.mark.parametrize("harness", ["raw", "tools"])
+def test_nanogpt_direct_chat_harness_and_manifest(tmp_path, harness):
+    game = session(tmp_path, harness, "baseline-plus", [
+        {"role": "assistant", "content": '{"action":"ACTION1"}'},
+    ], model="nanogpt/vendor/model")
+    assert game.next_action("frame")["action"] == "ACTION1"
+    manifest = json.loads((tmp_path / "isolation_manifest.json").read_text())
+    assert manifest["model_provider"] == "nanogpt"
+    assert manifest["transport"] == "nanogpt chat completions"

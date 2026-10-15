@@ -44,5 +44,7 @@ When `metadata.projection.mode` is `object-cell-v1`, each grid cell is one visib
 game tile. Values are anonymous object-combination IDs, not texture or color IDs.
 Overlapping gameplay objects remain distinct combinations.
 
-Every observation's `metadata.rendered_frame.path` points to the lossless PNG of its final
-visible state. Inspect these images directly when visual shapes, colors, or overlays matter.
+Run `python avo_tool.py image` to request the current visible state's lossless PNG, then
+open the returned `rendered_frame.path` with `view_image` when shapes, colors, or overlays
+matter. This does not take a game action. Earlier observations' images remain available
+through their `metadata.rendered_frame.path` for visual comparisons.

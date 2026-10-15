@@ -52,9 +52,9 @@ class OpenRouterGameSession:
                  artifact_directory: str | Path | None = None) -> None:
         if config.harness not in {"raw", "tools"}:
             raise ValueError("OpenRouterGameSession implements the raw and tools harnesses")
-        provider, self.provider_model = resolve_model(config.model)
-        if provider != "openrouter":
-            raise ValueError("The raw and tools harnesses require an openrouter/vendor/model ID")
+        self.model_provider, self.provider_model = resolve_model(config.model)
+        if self.model_provider not in {"openrouter", "nanogpt"}:
+            raise ValueError("The raw and tools harnesses require an OpenRouter or NanoGPT model ID")
         self.config = config
         self.working_directory = Path(working_directory)
         self.working_directory.mkdir(parents=True, exist_ok=True)
@@ -69,13 +69,14 @@ class OpenRouterGameSession:
 
     def __enter__(self) -> "OpenRouterGameSession":
         self.chat = OpenRouterChat(self.provider_model, self.config.effort,
-                                   self.artifact_directory / "model_requests", provider=self.config.provider)
+                                   self.artifact_directory / "model_requests", provider=self.config.provider,
+                                   **({"model_provider": self.model_provider} if self.model_provider != "openrouter" else {}))
         instructions = game_instructions(self.config.workspace_enabled)
         if self.notes is not None and self.config.harness == "raw":
             instructions += RAW_NOTE_PROTOCOL
         self.messages = [{"role": "system", "content": instructions}]
         (self.artifact_directory / "isolation_manifest.json").write_text(json.dumps({
-            "harness": self.config.harness, "transport": "openrouter chat completions",
+            "harness": self.config.harness, "transport": f"{self.model_provider} chat completions", "model_provider": self.model_provider,
             "model": self.provider_model, "effort_requested": self.chat.effort,
             "effort_sent": self.chat.effort_sent, "context_chars": self.chat.context_chars,
             "openrouter_provider": self.config.provider or None,

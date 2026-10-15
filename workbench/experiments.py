@@ -44,7 +44,7 @@ class ExperimentRequest(BaseModel):
     max_evaluations: int = Field(default=10, ge=1, le=100)
     research_moves: int = Field(default=300, ge=1, le=10000)
     solver_moves: int = Field(default=1500, ge=1, le=20000)
-    max_hours: float = Field(default=4, gt=0, le=24)
+    max_hours: float = Field(default=4, ge=0, le=24, description="Wall limit in hours; zero disables the scheduled cutoff")
     continue_from: str = ""
 
     @field_validator("game_ids", "models")
@@ -86,12 +86,14 @@ class ExperimentRequest(BaseModel):
         from avo.client.model_provider import resolve_model
         for model in [*self.models, self.optimizer_model]:
             resolve_model(model)
+        agents = [*self.models, *([self.optimizer_model] if self.kind == "avo" else [])]
+        if self.provider and any(resolve_model(m)[0] == "nanogpt" for m in agents):
+            raise ValueError("Provider pinning is only supported for OpenRouter")
         if self.agent_backend != "codex":
-            agents = [*self.models, *([self.optimizer_model] if self.kind == "avo" else [])]
-            if any(resolve_model(m)[0] != "openrouter" for m in agents):
-                raise ValueError("The tools and raw harnesses run on OpenRouter; use openrouter/vendor/model IDs")
-        if self.service_tier and any(resolve_model(m)[0] == "openrouter" for m in self.models):
-            raise ValueError("OpenRouter players do not support the Codex service tier setting")
+            if any(resolve_model(m)[0] not in {"openrouter", "nanogpt"} for m in agents):
+                raise ValueError("The tools and raw harnesses run on OpenRouter or NanoGPT; use provider-qualified model IDs")
+        if self.service_tier and any(resolve_model(m)[0] in {"openrouter", "nanogpt"} for m in self.models):
+            raise ValueError("OpenRouter and NanoGPT players do not support the Codex service tier setting")
         count = len(self.game_ids) * len(self.models) * len(self.efforts) * self.repeats
         if self.kind == "codex":
             count *= len(self.conditions)
@@ -217,7 +219,7 @@ def plan_runs(config: ExperimentRequest, directory: Path, root: Path = ROOT) -> 
         rows.append({"id": artifact.relative_to(root).as_posix(), "kind": config.kind, "game_id": game,
                      "agent_backend": config.agent_backend, "provider": config.provider or None,
                      "pair_id": pairs[pair_key] if config.comparison else None,
-                     "model_provider": "openrouter" if model.startswith("openrouter/") else "openai",
+                     "model_provider": model.split("/", 1)[0] if model.startswith(("openrouter/", "nanogpt/")) else "openai",
                      "optimizer_model": config.optimizer_model if config.kind == "avo" else None,
                      "model": model, "effort": effort, "condition": condition if config.kind == "codex" else None,
                      "world_model_mode": condition if config.kind == "avo" else None, "repeat": repeat + 1,
@@ -226,16 +228,21 @@ def plan_runs(config: ExperimentRequest, directory: Path, root: Path = ROOT) -> 
 
 
 def write_json(path: Path, value: dict) -> None:
-    temporary = path.with_suffix(".tmp")
+    # A separate staging file prevents concurrent saves from replacing each
+    # other's payload. Windows readers and sync tools can briefly deny replace.
+    temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
     temporary.write_text(json.dumps(value, indent=2), encoding="utf-8")
-    for attempt in range(10):
-        try:
-            temporary.replace(path)
-            return
-        except PermissionError:
-            if attempt == 9:
-                raise
-            time.sleep(.1)
+    try:
+        for attempt in range(40):
+            try:
+                temporary.replace(path)
+                return
+            except PermissionError:
+                if attempt == 39:
+                    raise
+                time.sleep(.25)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def create_router(root: Path = ROOT) -> APIRouter:
@@ -244,7 +251,7 @@ def create_router(root: Path = ROOT) -> APIRouter:
     resume_run_lock = threading.Lock()
 
     @router.get("/model-catalog")
-    def models(provider: Literal["openrouter"] = "openrouter"):
+    def models(provider: Literal["openrouter", "nanogpt"] = "openrouter"):
         from workbench.model_catalog import catalog as model_catalog
         try:
             return model_catalog(provider)

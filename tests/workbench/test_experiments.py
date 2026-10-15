@@ -16,6 +16,63 @@ from workbench.experiment_job import run_job
 
 
 class ExperimentTests(unittest.TestCase):
+    def test_no_scheduled_cutoff_keeps_job_alive_when_clock_advances(self):
+        config = ExperimentRequest(kind="codex", game_ids=["ps_modality-v1"], max_hours=0)
+        self.assertEqual(config.max_hours, 0)
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            marker = directory / "finished"
+            command = [sys.executable, "-c", "import time; from pathlib import Path; time.sleep(.1); Path(" + repr(str(marker)) + ").touch()"]
+            write_json(directory / "job.json", {"config": {"parallel": 1, "max_hours": 0},
+                "runs": [{"kind": "codex", "output": str(directory / "run-0001"), "command": command, "status": "queued"}]})
+            with patch("workbench.experiment_job.time.time", side_effect=range(1000, 100000, 1000)):
+                run_job(directory)
+            self.assertTrue(marker.exists())
+            self.assertEqual(json.loads((directory / "job.json").read_text())["status"], "completed")
+
+    def test_manifest_replace_retries_windows_lock_and_keeps_old_json_readable(self):
+        with tempfile.TemporaryDirectory() as raw:
+            target = Path(raw) / "job.json"
+            target.write_text('{"status":"running"}', encoding="utf-8")
+            replace = Path.replace
+            attempts = []
+
+            def locked_replace(source, destination):
+                attempts.append(source)
+                if len(attempts) <= 12:
+                    self.assertEqual(json.loads(target.read_text())["status"], "running")
+                    raise PermissionError("simulated Windows sharing lock")
+                return replace(source, destination)
+
+            with patch.object(Path, "replace", locked_replace), patch("workbench.experiments.time.sleep"):
+                write_json(target, {"status":"completed"})
+            self.assertEqual(json.loads(target.read_text())["status"], "completed")
+            self.assertEqual(len(attempts), 13)
+            self.assertEqual(list(Path(raw).glob("*.tmp")), [])
+
+    def test_worker_keeps_solver_alive_when_heartbeat_save_is_locked(self):
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            marker = directory / "solver-finished"
+            command = [sys.executable, "-c", "import time; from pathlib import Path; "
+                       "time.sleep(.2); Path(" + repr(str(marker)) + ").touch()"]
+            write_json(directory / "job.json", {
+                "config":{"parallel":1,"max_hours":.1},
+                "runs":[{"kind":"codex", "output":str(directory/"run-0001"),
+                         "command":command, "status":"queued"}]})
+            real_write = write_json
+            calls = []
+
+            def blocked_heartbeat(path, value):
+                calls.append(value["status"])
+                if len(calls) == 1: raise PermissionError("simulated lock after retries")
+                return real_write(path, value)
+
+            with patch("workbench.experiment_job.write_json", side_effect=blocked_heartbeat):
+                run_job(directory)
+            self.assertTrue(marker.exists())
+            self.assertEqual(json.loads((directory / "job.json").read_text())["status"], "completed")
+
     def test_backend_failure_is_visible_and_not_resumable(self):
         from workbench.catalog import snapshot
 

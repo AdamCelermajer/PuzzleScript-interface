@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import subprocess
+import os
 import sys
 import time
 from pathlib import Path
@@ -58,17 +59,20 @@ def run_job(directory: Path):
     job = read_json(manifest_path)
     config = job["config"]
     # Campaigns use max_hours as their search budget; keep room for the final report turn.
-    deadline = time.time() + config["max_hours"] * 3600 + REPORT_GRACE_SECONDS
+    deadline = (time.time() + config["max_hours"] * 3600 + REPORT_GRACE_SECONDS
+                if config["max_hours"] > 0 else None)
     active = []
     cancelled = False
     paused = False
     job["status"] = "running"
+    job["worker_pid"] = os.getpid()
+    manifest_blocked = False
     try:
         while True:
             if (directory / "pause.request").exists():
                 paused = True
                 break
-            if (directory / "stop.request").exists() or time.time() >= deadline:
+            if (directory / "stop.request").exists() or (deadline is not None and time.time() >= deadline):
                 cancelled = True
                 break
             for entry in active[:]:
@@ -93,7 +97,16 @@ def run_job(directory: Path):
                 row.update(status="running", pid=proc.pid, started_at=time.time())
                 active.append((row, proc, log))
             job["heartbeat"] = time.time()
-            write_json(manifest_path, job)
+            try:
+                write_json(manifest_path, job)
+                manifest_blocked = False
+            except PermissionError:
+                # A status-file lock must not kill an otherwise healthy solver.
+                # Stop requests and the deadline are still checked next cycle.
+                if not manifest_blocked:
+                    print("Manifest replacement is blocked; keeping owned runs alive and retrying.",
+                          file=sys.stderr, flush=True)
+                manifest_blocked = True
             if not active and all(row["status"] != "queued" for row in job["runs"]):
                 break
             time.sleep(1)

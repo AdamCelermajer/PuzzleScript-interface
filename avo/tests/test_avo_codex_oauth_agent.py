@@ -12,7 +12,7 @@ from avo.client.codex_oauth_agent import (
 )
 from avo.core.framework import Action, AvoLaboratory, Comparison, Observation
 from avo.core.profile import TaskEvaluation
-from avo.core.tool_gateway import AvoToolGateway
+from avo.core.tool_gateway import AvoToolGateway, GatewayBudget
 from avo.isolation import IsolatedRuntime, IsolationError
 
 
@@ -105,6 +105,18 @@ class FakeProxy:
 
 
 class CodexOAuthAgentTests(unittest.TestCase):
+    def test_zero_wall_limit_does_not_schedule_an_interrupt(self):
+        with tempfile.TemporaryDirectory() as root:
+            environment = IdleEnvironment()
+            gateway = AvoToolGateway(AvoLaboratory(environment, [], Path(root) / "evidence"),
+                                     IdleProfile(environment), budget=GatewayBudget(max_wall_seconds=0))
+            with patch("openai_codex.Codex", FakeCodex), patch(
+                "avo.client.codex_oauth_agent._find_codex_bin", return_value="codex"
+            ), patch("avo.client.codex_oauth_agent.threading.Timer") as timer:
+                CodexOAuthAgent(CodexOAuthConfig(max_turns=1)).run(gateway, Path(root) / "workspace")
+            timer.assert_not_called()
+            self.assertIn("agent turn budget exhausted", gateway.finish_reason)
+
     def test_stale_tool_failure_flag_does_not_abort_the_model_turn(self):
         class FailedServer(RecordingToolServer):
             isolation_failure = "Old tool error"
@@ -141,6 +153,30 @@ class CodexOAuthAgentTests(unittest.TestCase):
             manifest = json.loads((root/'analysis/session.json').read_text())
             self.assertEqual(manifest['model'], 'openrouter/vendor/model')
             self.assertEqual(manifest['metadata']['model_provider'], 'openrouter')
+
+    def test_nanogpt_uses_same_codex_thread_and_permissions_with_qualified_provenance(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            environment = IdleEnvironment()
+            gateway = AvoToolGateway(AvoLaboratory(environment, [], root/'evidence'), IdleProfile(environment))
+            with patch('openai_codex.Codex', FakeCodex), patch(
+                'avo.client.codex_oauth_agent._find_codex_bin', return_value='codex'
+            ), patch.object(IsolatedRuntime, 'authenticate_api_provider') as router_auth, patch.object(
+                IsolatedRuntime, 'authenticate'
+            ) as oauth_auth:
+                CodexOAuthAgent(CodexOAuthConfig(model='nanogpt/vendor/model', max_turns=1,
+                    analysis_dir=root/'analysis')).run(gateway, root/'workspace')
+            router_auth.assert_called_once()
+            oauth_auth.assert_not_called()
+            self.assertEqual(FakeCodex.instance.thread_settings['model'], 'vendor/model')
+            self.assertNotIn('sandbox', FakeCodex.instance.thread_settings)
+            overrides = FakeCodex.instance.config.config_overrides
+            self.assertIn('model_provider="nanogpt"', overrides)
+            self.assertIn('model_providers.nanogpt.env_key="NANOGPT_API_KEY"', overrides)
+            self.assertFalse(any(value.startswith('openai_base_url=') for value in overrides))
+            manifest = json.loads((root/'analysis/session.json').read_text())
+            self.assertEqual(manifest['model'], 'nanogpt/vendor/model')
+            self.assertEqual(manifest['metadata']['model_provider'], 'nanogpt')
 
     def test_outer_final_report_is_one_extra_turn_in_same_thread_after_search_closes(self):
         from avo.evolution.gateway import EvolutionGateway

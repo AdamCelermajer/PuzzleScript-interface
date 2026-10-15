@@ -61,7 +61,7 @@ def main() -> None:
         "--harness",
         choices=["codex", "tools", "raw"],
         default="codex",
-        help="H2 codex (Codex SDK), H1 tools (OpenRouter native tools), H0 raw (OpenRouter, text-only tools).",
+        help="H2 codex (Codex SDK), H1 tools (native tools), H0 raw (text-only tools). H0/H1 use OpenRouter or NanoGPT.",
     )
     parser.add_argument("--provider", default="",
                         help="Pin one OpenRouter provider slug (no fallback), e.g. alibaba or deepinfra.")

@@ -132,10 +132,10 @@ def _evaluate_solver(*, loaded_profile: LoadedProfile, workspace: str | Path,
     threading.Thread(target=read_stdout, daemon=True).start()
     threading.Thread(target=read_stderr, daemon=True).start()
     laboratory.reset()
-    deadline = time.monotonic() + max_wall_seconds
+    deadline = time.monotonic() + max_wall_seconds if max_wall_seconds > 0 else None
     try:
         for _ in range(max_environment_steps):
-            remaining = deadline - time.monotonic()
+            remaining = deadline - time.monotonic() if deadline is not None else 60.0
             if remaining <= 0:
                 process_status = "solver.py timed out"
                 break

@@ -19,14 +19,14 @@ const list = value => value.split(',').map(s => s.trim()).filter(Boolean)
 const currentModel = role => field(role === 'player' ? 'models' : 'optimizer_model').value
 function modelMarkup(id) {
   const model = details.get(id), p = id.includes('/') ? id.split('/')[0] : 'openai'
-  return `<strong>${e(model?.name || id.split('/').slice(p === 'openrouter' ? 1 : -1).join('/'))}</strong><small>${e(providerName(p))}${model?.free ? ' · Free' : ''} · ${e(id)}</small>`
+  return `<strong>${e(model?.name || id.split('/').slice(['openrouter','nanogpt'].includes(p) ? 1 : -1).join('/'))}</strong><small>${e(providerName(p))}${model?.free ? ' · Free' : ''} · ${e(id)}</small>`
 }
 function renderModels() {
   if (kind === 'avo' && field('same_model').checked) field('optimizer_model').value = field('models').value
   get('[data-player-model]').innerHTML = modelMarkup(currentModel('player'))
   get('[data-optimizer-model]').innerHTML = modelMarkup(currentModel('optimizer'))
   get('[data-outer-model]').hidden = kind !== 'avo' || field('same_model').checked
-  const routerPlayer = kind === 'avo' && currentModel('player').startsWith('openrouter/')
+  const routerPlayer = /^(openrouter|nanogpt)\//.test(currentModel('player'))
   field('service_tier').disabled = routerPlayer
   if (field('service_tier').disabled) field('service_tier').value = ''
 }
@@ -37,7 +37,7 @@ function setModels() {
   field('efforts').value = kind === 'avo' ? 'high' : 'low'
   field('optimizer_effort').value = 'low'
   field('service_tier').value = ''
-  get('[data-agent-help]').textContent = kind === 'avo' ? 'Codex runs the tools in the AVO sandbox. Choose an OpenAI model using your login, or an OpenRouter model using the project API key.' : 'Uses your existing Codex login.'
+  get('[data-agent-help]').textContent = kind === 'avo' ? 'Codex runs the tools in the AVO sandbox. Choose OpenAI with your login, or OpenRouter / NanoGPT with a project API key.' : 'Choose OpenAI with your Codex login, or OpenRouter / NanoGPT with a project API key.'
   renderModels(); update()
 }
 function setApproach() {
@@ -108,17 +108,17 @@ get('[data-game-search]').addEventListener('input', renderGames)
 get('[data-selected-games]').addEventListener('click', event => {const b=event.target.closest('[data-remove-game]');if(b){selectedGames.delete(b.dataset.removeGame);syncBackendForGame();renderGames();update()}})
 function renderModelList() {
   const needle=get('[data-model-search]').value.trim().toLowerCase(), free=get('[data-free-only]').checked
-  const models=catalog.filter(m=>(!free || provider!=='openrouter' || m.free) && `${m.name} ${m.id}`.toLowerCase().includes(needle))
-  get('[data-model-status]').textContent = modelError || `${models.length} models${provider === 'openrouter' ? ' with tool support' : ''}`
+  const models=catalog.filter(m=>(!free || provider==='codex' || m.free) && `${m.name} ${m.id}`.toLowerCase().includes(needle))
+  get('[data-model-status]').textContent = modelError || `${models.length} models${provider !== 'codex' ? ' with tool support' : ''}`
   get('[data-model-results]').innerHTML = models.map(m=>`<button type="button" class="model-option" data-select-model="${e(m.id)}" aria-pressed="${m.id === currentModel(modelRole)}"><span><strong>${e(m.name)}</strong><small>${e(m.id)}${m.context ? ` · ${Math.round(m.context/1000)}k context` : ''}</small></span><span class="model-price">${m.free ? '<span class="free-badge">Free</span>' : m.input_price != null ? `$${e(m.input_price.toFixed(2))} / $${e(m.output_price?.toFixed(2) ?? '—')}<small>in / out · per 1M tokens</small>` : 'Select →'}</span></button>`).join('') || `<p class="run-empty">${e(modelError || 'No models match this search.')}</p>`
 }
 async function loadModels(refresh=false) {
   const request=++modelRequest, selectedProvider=provider
   modelError=''; catalog=[]; get('[data-model-status]').textContent='Loading model catalog…';get('[data-model-results]').innerHTML='<p class="run-empty">Loading models…</p>'
-  root.querySelectorAll('[data-provider]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.provider===provider));b.hidden = kind!=='avo' && b.dataset.provider==='openrouter'})
-  get('[data-free-filter]').hidden=provider!=='openrouter'
-  get('[data-model-note]').textContent=provider==='openrouter' ? 'OpenRouter through Codex. DeepSeek V4.1 Flash passed our sandbox and tool test; other listed models need compatibility testing. Prices are USD per million tokens.' : 'OpenAI models available through your Codex login. You can also enter a model ID.'
-  get('[data-manual-model]').placeholder=provider==='openrouter' ? 'deepseek/deepseek-v4.1-flash' : 'gpt-5.6-sol'
+  root.querySelectorAll('[data-provider]').forEach(b=>{b.setAttribute('aria-pressed',String(b.dataset.provider===provider))})
+  get('[data-free-filter]').hidden=provider==='codex'
+  get('[data-model-note]').textContent=provider==='nanogpt' ? 'NanoGPT uses NANOGPT_API_KEY from the project .env or environment. Prices are USD per million tokens. Model compatibility depends on the harness.' : provider==='openrouter' ? 'OpenRouter through Codex. DeepSeek V4.1 Flash passed our sandbox and tool test; other listed models need compatibility testing. Prices are USD per million tokens.' : 'OpenAI models available through your Codex login. You can also enter a model ID.'
+  get('[data-manual-model]').placeholder=provider!=='codex' ? 'deepseek/deepseek-v4.1-flash' : 'gpt-5.6-sol'
   try {
     const data = provider==='codex' ? {models:codexModels} : !refresh && catalogs.has(provider) ? catalogs.get(provider) : await api(`/model-catalog?provider=${provider}`)
     if(request!==modelRequest || selectedProvider!==provider) return
@@ -134,7 +134,7 @@ function chooseModel(id) {
   renderModels();update();dialog.close()
 }
 root.querySelectorAll('[data-pick-model]').forEach(b=>b.addEventListener('click',()=>{
-  modelRole=b.dataset.pickModel;provider=kind==='avo' && currentModel(modelRole).startsWith('openrouter/') ? 'openrouter' : 'codex'
+  modelRole=b.dataset.pickModel;provider=/^(openrouter|nanogpt)\//.test(currentModel(modelRole)) ? currentModel(modelRole).split('/')[0] : 'codex'
   get('#model-dialog-title').textContent=`Choose ${modelRole==='player'?'a player':'an optimizer'} model`
   get('[data-model-search]').value='';get('[data-free-only]').checked=false;get('[data-manual-model]').value=''
   dialog.showModal();get('[data-model-search]').focus();loadModels()
@@ -148,7 +148,7 @@ get('[data-model-results]').addEventListener('click',event=>{const b=event.targe
 get('[data-use-manual]').addEventListener('click',()=>{
   let id=get('[data-manual-model]').value.trim()
   if(!/^[a-zA-Z0-9][a-zA-Z0-9._/:-]{0,159}$/.test(id)){get('[data-model-status]').textContent='Enter a valid model ID.';return}
-  if(provider==='openrouter' && !id.startsWith('openrouter/')) id='openrouter/'+id
+  if(provider!=='codex' && !id.startsWith(provider+'/')) id=provider+'/'+id
   if(id.length>160){get('[data-model-status]').textContent='Model ID is too long.';return}
   chooseModel(id)
 })

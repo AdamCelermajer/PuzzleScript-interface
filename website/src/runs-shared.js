@@ -9,7 +9,7 @@ export async function api(path, options = {}) {
 }
 
 export const agentName = value => ({opencode:'OpenCode', tools:'H1 · OpenRouter tools', raw:'H0 · raw model'}[value] || 'H2 · Codex')
-export const providerName = value => ({opencode:'OpenCode Zen',openrouter:'OpenRouter',openai:'OpenAI'}[value] || value || '—')
+export const providerName = value => ({opencode:'OpenCode Zen',openrouter:'OpenRouter',nanogpt:'NanoGPT',openai:'OpenAI'}[value] || value || '—')
 
 export function enableRunRowNavigation(root) {
   const navigate = event => {

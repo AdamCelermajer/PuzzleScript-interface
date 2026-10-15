@@ -41,6 +41,9 @@ evidence, scores and final workspace artifacts remain; duplicate raw/compact SDK
 event streams and intermediate workspace snapshots are omitted. Set
 `$env:AVO_TRACE_DETAIL = 'full'` before launching to enable full diagnostic capture.
 Existing saved runs are never deleted or rewritten by these changes.
+Full tracing also retains raw upstream response bodies in `model_requests/`,
+including all reasoning the provider exposes. Response metadata links each body
+to its request; authorization headers are not captured.
 
 ```powershell
 docker build -t avo-puzzlescript-isolated:local avo/docker
@@ -79,6 +82,9 @@ requires explicit `--game-id`, `--backend-url`, `--optimizer-model`,
 `--player-model`, `--max-evaluations`, `--research-moves`, `--solver-moves`, and
 a fresh `--output-dir`. The backend URL must be reachable from Docker, usually
 `http://host.docker.internal:PORT` for the host ARC service.
+`--max-wall-seconds 0` disables the campaign and player wall cutoff; the optional
+`--player-max-wall-seconds` sets a separate research limit. Move and candidate
+budgets and explicit stop requests remain in force.
 
 The launcher stages only a temporary copy of the existing ChatGPT OAuth login
 for the trusted controller. It never mounts or edits personal Codex config.

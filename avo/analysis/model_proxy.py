@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import base64
 import json
+import os
 import threading
 import time
 from pathlib import Path
@@ -40,6 +41,7 @@ class CodexRequestProxy:
         base_path: str = "/backend-api/codex",
         guard: RequestGuard | None = None,
         body_patch: dict[str, Any] | None = None,
+        namespace_compat: bool | None = None,
     ) -> None:
         self.output_dir = Path(output_dir).resolve()
         self.session_id = session_id
@@ -57,6 +59,8 @@ class CodexRequestProxy:
         self.guard = guard
         # Top-level fields merged into every Responses request (e.g. provider pinning).
         self.body_patch = dict(body_patch or {})
+        self.capture_responses = os.environ.get("AVO_TRACE_DETAIL") == "full"
+        self.namespace_compat = self.upstream_origin == "https://nano-gpt.com" if namespace_compat is None else namespace_compat
 
     @property
     def model_base_url(self) -> str:
@@ -136,6 +140,8 @@ class CodexRequestProxy:
     async def _handle_http(self, request: web.Request) -> web.StreamResponse:
         assert self._session is not None
         body = await request.read()
+        original_body = body
+        aliases: dict[str, tuple[str, str]] = {}
         if request.method == "POST" and request.path.endswith("/responses") and self.body_patch:
             try:
                 parsed = json.loads(body)
@@ -143,12 +149,19 @@ class CodexRequestProxy:
                 parsed = None
             if isinstance(parsed, dict):
                 body = json.dumps({**parsed, **self.body_patch}).encode("utf-8")
+        if request.method == "POST" and request.path.endswith("/responses") and self.namespace_compat:
+            parsed = json.loads(body)
+            parsed, aliases = self._flatten_namespaces(parsed)
+            body = json.dumps(parsed).encode("utf-8")
         if request.method == "POST" and request.path.endswith("/responses"):
             try:
-                self._record_request("responses_http", body)
+                self._record_request("responses_http", body, original_body=original_body if aliases else None)
             except (IsolationError, OSError):
                 return web.json_response({"error": {"message": "AVO isolation validation failed", "type": "isolation_error"}}, status=400)
+        request_sequence = self._sequence
         headers = self._forward_headers(request.headers)
+        if aliases:
+            headers["Accept-Encoding"] = "identity"
         upstream_url = self.upstream_origin + request.path_qs
         async with self._session.request(
             request.method,
@@ -157,14 +170,67 @@ class CodexRequestProxy:
             data=body or None,
             allow_redirects=False,
         ) as upstream:
+            response_headers = self._response_headers(upstream.headers)
+            if aliases:
+                response_headers = {k: v for k, v in response_headers.items() if k.lower() != "content-encoding"}
             response = web.StreamResponse(
                 status=upstream.status,
                 reason=upstream.reason,
-                headers=self._response_headers(upstream.headers),
+                headers=response_headers,
             )
             await response.prepare(request)
-            async for chunk in upstream.content.iter_any():
-                await response.write(chunk)
+            capture = None
+            capture_path = self.output_dir / f"response-{time.time_ns()}-{request_sequence:06d}.body"
+            metadata = {"request_sequence": request_sequence, "status": upstream.status,
+                        "content_type": upstream.headers.get("Content-Type", ""),
+                        "content_encoding": upstream.headers.get("Content-Encoding", ""),
+                        "complete": False}
+            pending = b""
+            is_sse = "text/event-stream" in upstream.headers.get("Content-Type", "")
+            decoder = None
+            if aliases and upstream.headers.get("Content-Encoding", "").lower() == "gzip":
+                import zlib
+                decoder = zlib.decompressobj(16 + zlib.MAX_WBITS)
+            try:
+                if self.capture_responses and request.path.endswith("/responses"):
+                    try:
+                        capture = capture_path.open("wb")
+                    except OSError as exc:
+                        metadata["capture_error"] = str(exc)
+                async for chunk in upstream.content.iter_any():
+                    if capture is not None:
+                        try:
+                            capture.write(chunk)
+                            capture.flush()
+                        except OSError as exc:
+                            metadata["capture_error"] = str(exc)
+                            capture.close()
+                            capture = None
+                    if aliases:
+                        pending += decoder.decompress(chunk) if decoder else chunk
+                        if is_sse:
+                            pending = pending.replace(b"\r\n", b"\n")
+                            while b"\n\n" in pending:
+                                event, pending = pending.split(b"\n\n", 1)
+                                await response.write(self._restore_namespace_event(event, aliases) + b"\n\n")
+                    else:
+                        await response.write(chunk)
+                if aliases and pending:
+                    if is_sse:
+                        await response.write(self._restore_namespace_event(pending, aliases))
+                    else:
+                        payload = json.loads(pending)
+                        self._restore_namespace_calls(payload, aliases)
+                        await response.write(json.dumps(payload).encode("utf-8"))
+                metadata["complete"] = True
+            finally:
+                if capture is not None:
+                    capture.close()
+                if self.capture_responses and request.path.endswith("/responses"):
+                    try:
+                        capture_path.with_suffix(".json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+                    except OSError:
+                        pass
             await response.write_eof()
             return response
 
@@ -214,8 +280,10 @@ class CodexRequestProxy:
         async def upstream_to_client() -> None:
             async for message in upstream:
                 if message.type == WSMsgType.TEXT:
+                    self._record_response_message("text", message.data)
                     await downstream.send_str(message.data)
                 elif message.type == WSMsgType.BINARY:
+                    self._record_response_message("binary", base64.b64encode(message.data).decode("ascii"))
                     await downstream.send_bytes(message.data)
                 elif message.type == WSMsgType.ERROR:
                     break
@@ -231,7 +299,67 @@ class CodexRequestProxy:
         await asyncio.gather(*done, *pending, return_exceptions=True)
         return downstream
 
-    def _record_request(self, transport: str, body: bytes) -> None:
+    @staticmethod
+    def _flatten_namespaces(payload: dict[str, Any]) -> tuple[dict[str, Any], dict[str, tuple[str, str]]]:
+        """Translate Codex namespace tools to standard function tools for NanoGPT."""
+        aliases = {}
+        tools = []
+        for tool in payload.get("tools", []):
+            if tool.get("type") != "namespace":
+                tools.append(tool)
+                continue
+            namespace = tool["name"]
+            for function in tool.get("tools", []):
+                name = function["name"]
+                alias = namespace + "__" + name
+                aliases[alias] = (namespace, name)
+                tools.append({**function, "name": alias})
+        if aliases:
+            payload["tools"] = tools
+            for item in payload.get("input", []):
+                if isinstance(item, dict) and item.get("type") == "function_call" and item.get("namespace"):
+                    alias = item["namespace"] + "__" + item["name"]
+                    if alias in aliases:
+                        item["name"] = alias
+                        item.pop("namespace")
+        return payload, aliases
+
+    @classmethod
+    def _restore_namespace_calls(cls, value: Any, aliases: dict[str, tuple[str, str]]) -> None:
+        if isinstance(value, list):
+            for item in value:
+                cls._restore_namespace_calls(item, aliases)
+        elif isinstance(value, dict):
+            if value.get("type") == "function_call" and value.get("name") in aliases:
+                value["namespace"], value["name"] = aliases[value["name"]]
+            for item in value.values():
+                cls._restore_namespace_calls(item, aliases)
+
+    @classmethod
+    def _restore_namespace_event(cls, event: bytes, aliases: dict[str, tuple[str, str]]) -> bytes:
+        lines = event.split(b"\n")
+        for index, line in enumerate(lines):
+            if line.startswith(b"data: ") and line[6:] != b"[DONE]":
+                try:
+                    value = json.loads(line[6:])
+                except (ValueError, UnicodeError):
+                    continue
+                cls._restore_namespace_calls(value, aliases)
+                lines[index] = b"data: " + json.dumps(value, ensure_ascii=False).encode("utf-8")
+        return b"\n".join(lines)
+
+    def _record_response_message(self, message_type: str, data: str) -> None:
+        if not self.capture_responses:
+            return
+        try:
+            with (self.output_dir / "responses-websocket.jsonl").open("a", encoding="utf-8") as stream:
+                stream.write(json.dumps({"recorded_at_unix_ns": time.time_ns(),
+                                         "request_sequence": self._sequence,
+                                         "message_type": message_type, "data": data}) + "\n")
+        except OSError:
+            pass
+
+    def _record_request(self, transport: str, body: bytes, *, original_body: bytes | None = None) -> None:
         try:
             text = body.decode("utf-8")
             parsed: Any = json.loads(text)
@@ -265,6 +393,8 @@ class CodexRequestProxy:
             "isolation": self.guard.report() if self.guard else None,
             "forwarding_allowed": failure is None,
         }
+        if original_body is not None:
+            payload["codex_request"] = json.loads(original_body)
         destination = self.output_dir / f"request-{timestamp}-{self._sequence:06d}.json"
         temporary = destination.with_suffix(".json.tmp")
         try:

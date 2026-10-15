@@ -152,7 +152,7 @@ def agent_identity(config: dict) -> dict:
     model = (config.get("player") or {}).get("model", config.get("model"))
     outer = config.get("optimizer_model")
     def provider(value):
-        return value.split("/", 1)[0] if value and "/" in value and (backend == "opencode" or value.startswith("openrouter/")) else "openai"
+        return value.split("/", 1)[0] if value and "/" in value and (backend == "opencode" or value.startswith(("openrouter/", "nanogpt/"))) else "openai"
     return {"agent_backend": backend, "model": model, "model_provider": provider(model),
             "optimizer_model": outer, "optimizer_provider": provider(outer) if outer else None}
 

@@ -206,6 +206,42 @@ class CodexSessionTests(unittest.TestCase):
             for path in Path(tmpdir).rglob("*.json*"):
                 self.assertNotIn("test-provider-secret", path.read_text(encoding="utf-8"))
 
+    def test_nanogpt_baseline_plus_uses_max_and_keeps_key_out_of_artifacts(self) -> None:
+        import openai_codex
+        from openai_codex.types import ReasoningEffort
+
+        self.assertEqual(ReasoningEffort("max").value, "max")
+
+        with (
+            tempfile.TemporaryDirectory() as tmpdir,
+            patch.object(openai_codex, "Codex", FakeCodex),
+            patch("dotenv.dotenv_values", return_value={"NANOGPT_API_KEY": "test-provider-secret"}),
+            patch.dict("os.environ", {"AVO_NANOGPT_KEY_FILE": ""}),
+            patch("studies.codex_agent.session._find_codex_bin", return_value="codex"),
+        ):
+            with CodexGameSession(
+                CodexSessionConfig(model="nanogpt/qwen/qwen3.8-27b", effort="max", workspace_enabled=True),
+                Path(tmpdir) / "workspace", artifact_directory=tmpdir,
+            ) as session:
+                response = session.next_action("frame")
+                instance = FakeCodex.instances[-1]
+                self.assertEqual(response["operation"], "ACT")
+                self.assertEqual(instance.thread_kwargs["model"], "qwen/qwen3.8-27b")
+                self.assertEqual(instance.thread.calls[0]["kwargs"]["effort"], "max")
+                self.assertNotIn("output_schema", instance.thread.calls[0]["kwargs"])
+                self.assertIn('After any tool calls finish', instance.thread_kwargs['base_instructions'])
+                self.assertEqual(instance.config.env["NANOGPT_API_KEY"], "test-provider-secret")
+                self.assertIn('model_provider="nanogpt"', instance.config.config_overrides)
+                self.assertIn('model_providers.nanogpt.requires_openai_auth=false', instance.config.config_overrides)
+                self.assertIn("features.shell_tool=false", instance.config.config_overrides)
+                self.assertIn("features.goals=false", instance.config.config_overrides)
+                self.assertIn('mcp_servers.codex_notes.enabled_tools=["list_notes","read_note","write_note"]', instance.config.config_overrides)
+                proxy_call = self.proxy_type.call_args.kwargs
+                self.assertEqual(proxy_call["upstream_origin"], "https://nano-gpt.com")
+                self.assertEqual(proxy_call["base_path"], "/api/v1")
+            for path in Path(tmpdir).rglob("*.json*"):
+                self.assertNotIn("test-provider-secret", path.read_text(encoding="utf-8"))
+
     def test_openrouter_missing_key_fails_before_model_start(self) -> None:
         import openai_codex
 

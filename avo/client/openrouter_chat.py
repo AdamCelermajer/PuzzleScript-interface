@@ -16,6 +16,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+from avo.client.model_provider import API_PROVIDERS, api_key
+
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 HARNESSES = ("codex", "tools", "raw")
 # OpenRouter's unified reasoning parameter has no "max"; xhigh is its ceiling.
@@ -58,19 +60,31 @@ def image_part(path: str | Path) -> dict[str, Any]:
 class OpenRouterChat:
     def __init__(self, model: str, effort: str, request_dir: str | Path, *,
                  context_chars: int = DEFAULT_CONTEXT_CHARS, max_attempts: int = 8, provider: str = "",
-                 request_timeout: float = 900.0) -> None:
+                 request_timeout: float = 900.0, model_provider: str = "openrouter") -> None:
+        details = API_PROVIDERS[model_provider]
+        self.model_provider = model_provider
+        self.label = details["label"]
+        self.api_url = details["origin"] + "/api/v1/chat/completions"
+        if model_provider != "openrouter" and provider:
+            raise ValueError("Provider pinning is only supported for OpenRouter")
         if effort not in EFFORT_SENT:
             raise ValueError(f"Unsupported reasoning effort: {effort}")
         self.model = model
         self.effort = effort
-        self.effort_sent = EFFORT_SENT[effort]
+        self.effort_sent = EFFORT_SENT[effort] if model_provider == "openrouter" else effort
         self.provider = provider
         self.request_dir = Path(request_dir)
         self.request_dir.mkdir(parents=True, exist_ok=True)
         self.context_chars = context_chars
         self.max_attempts = max_attempts
         self.request_timeout = request_timeout
-        self._key = openrouter_key()
+        if model_provider == "openrouter":
+            self._key = openrouter_key()
+        else:
+            try:
+                self._key = api_key(model_provider, env_file=Path(__file__).resolve().parents[2] / ".env")
+            except RuntimeError as exc:
+                raise ProviderError(str(exc)) from None
         self._sequence = 0
         self.usage_totals: dict[str, float] = {}
         self.elided_messages = 0
@@ -80,7 +94,9 @@ class OpenRouterChat:
         """Return (assistant_message, call_record). Retries transient failures."""
         view = self._view(messages)
         body: dict[str, Any] = {"model": self.model, "messages": view,
-                                "reasoning": {"effort": self.effort_sent}, "usage": {"include": True}}
+                                "reasoning": {"effort": self.effort_sent}}
+        if self.model_provider == "openrouter":
+            body["usage"] = {"include": True}
         if self.provider:
             body["provider"] = provider_routing(self.provider)
         if tools:
@@ -103,7 +119,7 @@ class OpenRouterChat:
                 attempts.append(str(exc))
                 if attempt == self.max_attempts:
                     self._record(body, None, attempts, started)
-                    raise RuntimeError(f"OpenRouter failed after {attempt} attempts: {exc}") from None
+                    raise RuntimeError(f"{self.label} failed after {attempt} attempts: {exc}") from None
                 time.sleep(min(60.0, 2.0 ** attempt))
             except ProviderError as exc:
                 attempts.append(str(exc))
@@ -125,7 +141,7 @@ class OpenRouterChat:
         return assistant, record
 
     def _post(self, payload: bytes) -> dict[str, Any]:
-        request = urllib.request.Request(API_URL, data=payload, method="POST", headers={
+        request = urllib.request.Request(self.api_url, data=payload, method="POST", headers={
             "Authorization": f"Bearer {self._key}", "Content-Type": "application/json",
             "X-Title": "PuzzleScript harness ladder"})
         try:
@@ -135,7 +151,7 @@ class OpenRouterChat:
             detail = exc.read().decode("utf-8", errors="replace")[:1000]
             if exc.code in TRANSIENT_STATUS:
                 raise _Transient(f"HTTP {exc.code}: {detail}") from None
-            raise ProviderError(f"OpenRouter HTTP {exc.code}: {detail}") from None
+            raise ProviderError(f"{self.label} HTTP {exc.code}: {detail}") from None
         except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as exc:
             raise _Transient(f"{type(exc).__name__}: {exc}") from None
         except json.JSONDecodeError as exc:
@@ -186,7 +202,8 @@ class OpenRouterChat:
 
     def _record(self, body: dict, response: dict | None, attempts: list[str], started: float) -> dict[str, Any]:
         record = {
-            "sequence": self._sequence, "model": self.model, "effort_requested": self.effort,
+            "sequence": self._sequence, "model": self.model, "model_provider": self.model_provider,
+            "effort_requested": self.effort,
             "effort_sent": self.effort_sent, "duration_s": round(time.time() - started, 3),
             "retries": attempts, "elided_messages": self.elided_messages,
             "usage": (response or {}).get("usage"), "provider": (response or {}).get("provider"),

@@ -5,9 +5,7 @@
 %  title page). The bundled latexmkrc also selects XeLaTeX.
 %  Bibliography: BibTeX with natbib (plainnat), file refs.bib.
 %
-%  Search this file for "TODO" to find every placeholder that still needs
-%  Adam's input. Red \todo{...} notes are visible in the PDF on purpose;
-%  delete them before submission.
+%  Main study: rule learning from image and grid observations.
 % =========================================================================
 \documentclass[11pt,a4paper]{article}
 
@@ -50,7 +48,6 @@
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
 
-\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
 \newcommand{\qsmall}{Qwen~3.8-27B}
 
 \begin{document}
@@ -69,14 +66,13 @@
   {\scshape\large M.Sc.\ Research Proposal\par}
   \vspace{0.4cm}
   \rule{\linewidth}{0.5pt}\\[0.3cm]
-  {\LARGE\bfseries Learning Unknown Games from Interaction:\\[0.15cm]
-   \Large Diagnosing and Fixing Small Open Models\par}
+  {\LARGE\bfseries Rule Learning with Small Language Models\\[0.15cm]
+   \Large in Interactive Puzzle Games\par}
   \vspace{0.4cm}
-  % TODO(Adam): confirm the Hebrew wording of the title.
   \begin{hebrew}
-    {\Large\bfseries למידת משחקים לא מוכרים מתוך אינטראקציה:\par}
+    {\Large\bfseries למידת חוקי משחק באמצעות מודלי שפה קטנים\par}
     \vspace{0.1cm}
-    {\large\bfseries אבחון ותיקון של מודלי שפה פתוחים קטנים\par}
+    {\large\bfseries במשחקי חידה אינטראקטיביים\par}
   \end{hebrew}
   \rule{\linewidth}{0.5pt}\\[1.0cm]
 
@@ -84,18 +80,17 @@
     \raggedright\large
     \emph{Student:}\\
     Adam Celermajer\\
-    % TODO(Adam): confirm the Hebrew spelling of your name.
-    \texthebrew{אדם סלרמאייר}~\todo{confirm}
+    \texthebrew{אדם סלרמאג'ר}
   \end{minipage}\hfill
   \begin{minipage}[t]{0.45\textwidth}
     \raggedleft\large
-    \emph{Supervisor:}\\
-    \textbf{[SUPERVISOR -- TODO]}
+    \emph{Supervisors:}\\
+    Prof.\ Gal Kaminka\\
+    Prof.\ Yoav Goldberg
   \end{minipage}
 
   \vfill
   {\large Department of Computer Science and Artificial Intelligence\par}
-  % TODO(Adam): confirm the official Hebrew department name.
   {\large\texthebrew{המחלקה למדעי המחשב ובינה מלאכותית}\par}
   {\large Bar-Ilan University, Ramat Gan, Israel\par}
   \vspace{0.8cm}
@@ -113,535 +108,606 @@
 \section{Introduction}
 \label{sec:intro}
 
-Imagine an agent dropped into a game it has never seen. It receives a small
-grid of numbers and a picture. It is told which buttons exist
-(\texttt{ACTION1}, \texttt{ACTION2}, \dots) but not what they do. Nobody
-tells it the rules. Nobody tells it what winning means. It must find out by
-pressing buttons and watching what changes.
+\textbf{This thesis will enable a small language model to learn game rules
+from images, grid observations and interaction, and use those rules to solve
+interactive puzzles.} Our primary
+target is \qsmall{}. The deliverable is a working agent that discovers the
+controls, goal and mechanics of a new game, constructs a useful world model,
+and produces solutions that succeed when executed independently. We will use
+controlled experiments to identify the capabilities the harness must support
+and demonstrate the resulting improvement on games held out from development.
 
-This is the setting of ARC-AGI-3 \citep{arcprize2026arcagi3}, and it is a
-clean test of skill acquisition \citep{chollet2019measure}: an agent that
-succeeds must form, test and revise hypotheses rather than recall answers.
+The task is more demanding than solving a puzzle with stated rules. In our
+main game-playing conditions, the agent has access to both rendered PNG images
+and integer grid observations, together with anonymous action identifiers.
+Images provide visual evidence about objects, terrain and targets; they do not
+state the transition rules, action meanings or win condition. The agent must
+combine visual and symbolic evidence, design informative
+experiments, infer what counts as success, and plan with incomplete knowledge.
+Later levels test whether the learned rules survive changes in layout and
+combinations of mechanics. This is the skill-acquisition setting motivating
+ARC-AGI-3 \citep{arcprize2026arcagi3,chollet2019measure}.
 
-\paragraph{PuzzleScript games.}
-We study this setting with PuzzleScript \citep{lavelle2013puzzlescript}, a
-small language for turn-based grid puzzles. A PuzzleScript game has four
-parts: \emph{sprites} on a grid (player, walls, crates, targets),
-\emph{rewrite rules} that say how the grid changes after an input
-(``a player moving into a crate pushes it''), a \emph{win condition}
-(``every target has a crate''), and an ordered list of \emph{levels} that
-reuse the same rules on harder layouts. Our repository contains 206 such games.
-Some are close to classic Sokoban. Others add their own twist:
-in \emph{IceCrates} the player slides until it hits something, and crates
-pushed into water fill it; in \emph{Knightoban} some crates move like chess
-knights, and a separate key commits the move.
+We have already established the research foundation for this objective: an
+ARC-compatible PuzzleScript environment, diagnostic evaluation artifacts,
+an explicit rule-learning agent, a goal-recognition dataset with model and
+human responses, persistent direct-play baselines, and an isolated adaptation
+of Agentic Variation Operators (AVO) \citep{chen2026avo}. A web workbench joins
+experiment configuration, execution, replay and artifact inspection. These
+components make it possible to trace a solver's result back to the observations,
+experiments and revisions that produced it.
 
-\paragraph{Running example: Modality.}
-Figure~\ref{fig:modality} shows the first level of \emph{Modality} as the agent
-sees it. The hidden rules are short. The player cannot step directly between
-white and black floor; the checkered tile bridges them. A crate can be pushed
-only when the player and the crate stand on compatible terrain. One button
-(\texttt{ACTION7}) is undo. The level is won when every crate is on a target.
-None of this is given to the agent. We use Modality throughout to make each
-difficulty concrete.
+The existing results establish both feasibility and a concrete research target.
+AVO-generated solvers have completed all levels of Modality, Knightoban and
+IceCrates in fresh environments, including solvers produced by DeepSeek
+V4.1 Flash. In contrast, the completed \qsmall{} direct-play pilot achieved
+0/4, 0/6 and 3/6 levels on those games, respectively. Its recorded behavior
+reveals specific failures in action interpretation, goal recognition and
+hypothesis revision. We will close this gap by turning those diagnoses into
+tested components of a small-model learning system.
 
-\begin{figure}[h]
+\section{The Task: Learning Rules from Multimodal Interaction}
+\label{sec:task}
+
+\subsection{PuzzleScript as an experimental environment}
+
+PuzzleScript is a language for turn-based grid games
+\citep{lavelle2013puzzlescript}. A game defines objects and their appearance,
+rewrite rules for state transitions, a win condition, and an ordered sequence
+of levels. The resulting tasks include box-pushing puzzles, sliding motion,
+objects with different movement rules, mode changes, and interactions whose
+effects depend on terrain or history. Their compact appearance makes the
+mechanics inspectable by an evaluator while leaving substantial discovery
+and planning work for an agent.
+
+Our collection contains 206 game entries. Experiments use curated, versioned
+playable subsets with explicit evaluation coverage. The agent sees neither
+the game identity nor the source.
+For the local environment, \texttt{visible-cell-v1} assigns an anonymous integer
+to each rendered tile texture. The direct player receives the rendered PNG
+alongside the grid at each turn; AVO makes rendered observations available
+through its research interface. A model can therefore recognize visual patterns
+and use them to propose rules, rather than reason only over anonymous numbers.
+Object-name legends and action meanings are withheld. Identical visible textures may conceal
+different underlying states, so the agent may need observation history rather
+than a transition model based on the latest frame alone.
+
+\subsection{A concrete example: Modality}
+
+Figure~\ref{fig:modality} illustrates the distinction between seeing a board
+and understanding a game. In Modality, the player cannot move directly between
+white and black terrain; a checkered tile connects them. Crate pushing depends
+on compatible terrain, the goal is to place crates on targets, and
+\texttt{ACTION7} undoes a move. The agent must infer these facts from their
+effects. Calling undo a jump changes its interpretation of earlier transitions;
+calling a crate the goal sends its plans toward the wrong objective.
+
+\begin{figure}[ht]
   \centering
-  \begin{minipage}[c]{0.30\textwidth}\centering
+  \begin{minipage}[c]{0.29\textwidth}\centering
     \includegraphics[width=\linewidth]{figures/modality-level1.png}\\
-    {\small (a) Rendered frame, level 1}
+    {\small (a) First-level image}
   \end{minipage}\hspace{0.6cm}
-  \begin{minipage}[c]{0.20\textwidth}\centering
-    {\small\ttfamily
-    \begin{tabular}{@{}ccccc@{}}
+  \begin{minipage}[c]{0.21\textwidth}\centering
+    {\small\ttfamily\begin{tabular}{@{}ccccc@{}}
       0&1&2&2&2\\ 3&1&4&2&5\\ 1&1&1&2&2
     \end{tabular}}\\[4pt]
-    {\small (b) Grid the agent receives}
+    {\small (b) Anonymous tile grid}
   \end{minipage}\hspace{0.6cm}
   \begin{minipage}[c]{0.24\textwidth}\centering
     \includegraphics[width=\linewidth]{figures/modality-level2.png}\\
-    {\small (c) Level 2}
+    {\small (c) A later layout}
   \end{minipage}
-  \caption{Modality. In (b) each number is an anonymous texture ID: 0 target,
-  1 white floor, 2 black floor, 3 crate, 4 checkered bridge, 5 player on black
-  floor. The agent is not told these meanings, and the player's ID changes with
-  the floor it stands on. Solving level~1 requires crossing to the white side
-  through the bridge and pushing the crate up onto the target.}
+  \caption{Modality observations. For the evaluator, the initial IDs denote a
+  target (0), white floor (1), black floor (2), crate (3), bridge (4) and player
+  on black floor (5). These meanings are not supplied to the agent. Later
+  levels require reusing the inferred mechanics on new configurations.}
   \label{fig:modality}
 \end{figure}
 
-\paragraph{What this proposal covers.}
-Since January 2026 we have built an ARC-AGI-3--compatible PuzzleScript
-environment, a rule-learning agent, a goal-recognition study with human
-participants, a direct game-playing agent, and an adaptation of NVIDIA's
-Agentic Variation Operators (AVO) \citep{chen2026avo}. With these tools,
-frontier models and some \emph{small} recent models recover hidden mechanics
-and solve whole games. A capable open model, \qsmall{}, does not. The
-proposed thesis asks why, along three axes---the harness, model scale, and
-pretraining exposure---and aims to build a harness under which the small open
-model succeeds.
+\subsection{The capabilities the agent must acquire}
 
-% -------------------------------------------------------------------------
-\section{Why Learning a Game from Interaction Is Hard}
-\label{sec:challenge}
-
-Solving an unknown game is not one skill. Table~\ref{tab:challenge}
-decomposes it into seven parts. Each row gives a definition and a real
-example from our runs. This decomposition is the backbone of the proposal:
-the failure taxonomy in Section~\ref{sec:plan} labels each failed run with one
-of these categories, plus an eighth category, \emph{protocol}, for failures of
-the agent's interface rather than of the game.
+We decompose the task into the seven capabilities in
+Table~\ref{tab:challenge}. The decomposition connects the experimental
+measurements to concrete design decisions. It also distinguishes a failure
+to learn a game from a failure of the software protocol.
 
 \begin{table}[ht]
   \centering\small
-  \begin{tabularx}{\linewidth}{L{0.15\linewidth} L{0.27\linewidth} Y}
+  \begin{tabularx}{\linewidth}{L{0.17\linewidth} Y Y}
     \toprule
-    Challenge & What makes it hard & Example from our runs \\
+    Capability & Required behavior & Diagnostic evidence \\
     \midrule
-    Perception & IDs are anonymous; identical pictures share an ID; hidden
-    objects are not shown. &
-    In Modality the player's ID is 5, 6 or 7 depending on the floor below it;
-    the agent must realise these are one object. \\
-    Action semantics & Buttons are unlabeled; some are not movements. &
-    On Modality and Knightoban, \qsmall{} never identified \texttt{ACTION7} as
-    undo. It called it ``fires a shot'', a ``jump opposite the facing
-    direction'', and ``contextual movement''. \\
-    Rule induction & Effects depend on context. &
-    Pushing in Modality depends on terrain. A GPT-5.6 Luna agent isolated this
-    with controlled tests from one saved state; \qsmall{} instead built a new
-    ``wall map'' for each level. \\
-    Goal recognition & The win condition is never stated. &
-    \qsmall{} took the crate for ``a goal frame you enter from below'', and in
-    Knightoban guessed ``collect all red squares''. \\
-    Planning & Moves can be irreversible; crates deadlock in corners. &
-    A \qsmall{} run pushed the crate into a corner and concluded it was
-    ``permanently stuck''. Undo would have recovered it. \\
-    Transfer & Later levels reuse rules on new layouts and add new mechanics. &
-    A \qsmall{} note generalised from level~1: ``unreachable object = decoy,
-    reachable object = goal''; this rule misled it on level~2. \\
-    Credit assignment & A win may happen by accident. &
-    \qsmall{} won Modality level~1 while ``testing if the frame is
-    enterable'', and the win reinforced its wrong goal theory. \\
+    Perception & Ground objects in images and grids; track changing textures and hidden state. &
+    Object tracking and next-frame predictions. \\
+    Action interpretation & Discover movements, undo, selection and commitment. &
+    Controlled action tests and the agent's stated control model. \\
+    Rule induction & Learn conditional effects, including interactions. &
+    Predicted versus observed transitions; tests distinguishing rival rules. \\
+    Goal recognition & Infer the actual win condition. &
+    Goal statements and hidden, elicited and supplied-goal conditions. \\
+    Planning & Find legal solutions and recover from dead ends. &
+    Fresh solver evaluations, search traces and recovery actions. \\
+    Transfer & Reuse and refine knowledge across levels. &
+    Performance when familiar mechanics appear in new layouts. \\
+    Credit assignment & Explain why an action sequence produced a win. &
+    Post-win reconstruction checked against the winning transition. \\
     \bottomrule
   \end{tabularx}
-  \caption{The challenge decomposition, with examples taken from saved runs
-  (Section~\ref{sec:results}).}
+  \caption{Capabilities supporting rule learning and its use in planning.}
   \label{tab:challenge}
 \end{table}
 
-These parts interact. A misread action (undo as jump) makes a reversible
-mistake look irreversible, which turns a rule-induction error into a planning
-dead end. A wrong goal makes every later plan wrong, even when the rules are
-right. Measuring the parts separately is what lets us say \emph{where} an
-agent fails.
+These capabilities interact. A wrong goal can invalidate a correct movement
+model; an incorrect interpretation of undo can make a recoverable planning
+error appear permanent. The proposed agent will maintain explicit links
+between observations, hypotheses and plans so that contradictory evidence
+causes a revision rather than a new local explanation for every failure.
 
-% -------------------------------------------------------------------------
-\section{Related Work}
+\section{Related Work and Research Position}
 \label{sec:related}
 
-\paragraph{Interactive reasoning benchmarks.}
-ARC-AGI-3 evaluates agents on interactive grid games with no instructions
-\citep{arcprize2026arcagi3}. BALROG \citep{paglieri2025balrog} and AgentBench
-\citep{liu2024agentbench} show that long-horizon game play remains far below
-static-benchmark performance. WorldTest evaluates learned world models through
-environment queries rather than reward \citep{warrier2026worldtest}. PuzzleJAX
-compiles PuzzleScript into fast environments \citep{earle2025puzzlejax}; we
-instead keep the original engine and expose it through the ARC-AGI-3
-interface, so the same agent code runs on both.
+\paragraph{Interactive skill acquisition.}
+ARC-AGI-3 evaluates learning through interaction with unfamiliar environments,
+including exploration, goal inference and planning
+\citep{arcprize2026arcagi3}. PuzzleJAX establishes PuzzleScript as a source of
+diverse reasoning and learning tasks \citep{earle2025puzzlejax}. Our platform
+retains the original engine as the transition authority and exposes an
+ARC-compatible interface. This lets us study how an agent acquires mechanics
+while separately measuring predictive knowledge and executable solutions.
+The experiments proposed here concern PuzzleScript tasks; they do not claim
+a score on the official ARC-AGI-3 benchmark.
 
-\paragraph{Harnesses.}
-The code around a model matters. ReAct interleaves reasoning and tool calls
-\citep{yao2023react}. SWE-agent showed that interface design alone changes
-success rates \citep{yang2024sweagent}. WorldCoder learns an executable world
-model by writing code \citep{tang2024worldcoder}. AVO turns a coding agent
-into an evolutionary variation operator \citep{chen2026avo}, and NVIDIA
-reports that it reaches the full score on the public ARC-AGI-3 set with a
-frontier model \citep{nvidia2026avoarc}. RSIAgent lets open models outperform
-closed ones through autonomous exploration and frozen memory, without
-training \citep{zhu2026rsiagent}. Small format choices also matter: prompt
-formatting can swing accuracy by tens of points \citep{sclar2024quantifying},
-and forced output formats can hurt reasoning \citep{tam2024letmespeak}.
+\paragraph{Agent interfaces and persistent learning.}
+ReAct interleaves reasoning and actions to support grounded decision making
+\citep{yao2023react}. SWE-agent demonstrates that the interface provided to a
+language model affects its ability to carry out a task
+\citep{yang2024sweagent}. We investigate this principle under a different
+constraint: the model must learn the task's mechanics and objective rather
+than follow a stated specification. Our direct-play and coding-agent runners
+provide an existing basis for controlled comparisons of memory, tools,
+observation formats and experiment structure.
 
-\paragraph{Priors.}
-Humans learn new video games fast because of prior knowledge about objects
-and game conventions; hiding these cues slows them sharply
-\citep{dubey2018priors}. Agents that explicitly propose and revise causal
-theories approach human efficiency in Atari-like games
-\citep{tsividis2021theory}. This suggests two failure sources we test
-separately: missing priors, and failure to revise.
+\paragraph{Executable models and evolutionary improvement.}
+WorldCoder learns a program representing environmental dynamics and uses
+interaction to refine it \citep{tang2024worldcoder}. AVO uses autonomous coding
+agents as variation operators that propose and improve implementations with
+execution feedback \citep{chen2026avo}. Our adaptation combines game research,
+strategy evolution and a separate fresh-solver evaluation. This creates a
+testable connection between a model's hypotheses and an executable artifact:
+a candidate earns its score only when its solver succeeds independently.
 
-\paragraph{Scale and training data.}
-Loss scales smoothly with size \citep{kaplan2020scaling}, but abilities can
-appear abruptly, sometimes as a metric artifact \citep{schaeffer2023mirage}.
-Exposure to similar data inflates measured ability
-\citep{magar2022contamination}; it can be detected indirectly
-\citep{golchin2024timetravel} or, for open corpora, searched directly
-\citep{elazar2024wimbd}. Qwen's training data is closed
-\citep{yang2025qwen3}, so we rely on indirect probes and optional fine-tuning
-\citep{hu2022lora}.
+\paragraph{Prior knowledge and the small-model question.}
+Human game learning depends partly on object and game conventions
+\citep{dubey2018priors}. Our traces suggest that recognizing conventions such
+as undo and box pushing can simplify discovery substantially. However,
+behavioral familiarity alone cannot establish what appeared in a model's
+training data. We will compare models within the Qwen~3.8 family and probe
+their initial interpretations, then test whether explicit exploration and
+verification allow the 27B model to acquire the missing knowledge during play.
 
-% -------------------------------------------------------------------------
-\section{Work So Far and Initial Results}
+\section{Research Objective and Hypotheses}
+\label{sec:goal}
+
+\textbf{We will build a small-model rule-learning agent that infers game
+dynamics from image and grid transitions and produces working puzzle
+solutions.} \qsmall{} is the primary
+development model. We will keep its weights fixed while developing the
+harness, so improvements can be attributed to the agent system. Larger
+models provide diagnostic comparisons and successful learning traces; the
+final small-model condition will not rely on a larger model selecting its
+actions or revising its solver at evaluation time.
+
+The harness will support a complete learning cycle: formulate a hypothesis,
+choose a discriminating experiment, compare a predicted transition with the
+real outcome, revise the world model, and plan using the verified knowledge.
+Memory will retain the evidence for a rule and its unresolved cases, not only
+a conclusion. In the coding condition, learned knowledge will be converted
+into a solver that is tested from a fresh reset.
+
+Three research questions guide construction:
+\begin{enumerate}[leftmargin=1.5em]
+  \item Which capabilities distinguish correct rule acquisition and revision
+  from the observed failures of the small model?
+  \item Which of these capabilities can be supplied or strengthened through
+  exploration, memory, verification and planning support?
+  \item Do the learned rules predict held-out transitions and support reliable
+  puzzle solutions, including on games held out from harness development?
+\end{enumerate}
+
+\paragraph{Testable hypotheses.}
+\begin{description}[leftmargin=1.2em]
+  \item[H1: Learning structure.] An explicit experiment-and-revision loop
+  improves rule prediction and whole-game success over the direct-play baseline with
+  the same small model and provider.
+  \item[H2: Goal and control bottlenecks.] Correcting goal recognition or
+  action interpretation removes a substantial part of the observed failures.
+  Separate interventions will measure which component matters in each game.
+  \item[H3: Externalized planning.] Executable world models, deterministic
+  search and fresh evaluation improve solution reliability beyond verbal
+  planning alone.
+  \item[H4: Model-family differences.] Under matched conditions, Qwen~3.8
+  Flash, 27B and Max differ in their ability to discover and revise the
+  decisive rules. Their traces will identify concrete capabilities for the
+  small-model harness to support.
+\end{description}
+
+\section{Completed Research Foundation and Initial Results}
 \label{sec:results}
 
-This section follows the work in time order. Each subsection states what was
-built and what it taught us.
+The project has developed an integrated platform for observing, measuring
+and improving rule-learning agents. The completed work is organized below by
+research contribution and evidence, rather than by elapsed calendar time.
 
-\subsection{The environment (January--April 2026)}
+\subsection{An executable environment and diagnostic evaluation platform}
 
-The PuzzleScript engine is an npm package. A Node.js service runs the games,
-and a Python FastAPI service exposes them through the public ARC-AGI-3 REST
-contract (reset, actions, scorecards). Any ARC-AGI-3 agent can therefore play
-our games without changes. Observations use \texttt{visible-cell-v1}: one
-integer per rendered tile, as in Figure~\ref{fig:modality}(b), plus a lossless
-PNG. Game names, sprite names and action meanings are hidden.
+The implementation separates the game engine from the agent interface. A
+Node.js runtime executes the PuzzleScript rules; a Python service adapts it
+to the ARC interaction contract, including resets, actions and scorecards.
+Shared adapters let the same agent code address the local service or an
+official ARC backend. This separation permits changes to agents and
+evaluation without replacing the game dynamics.
 
-On top of this we built a benchmark layer (catalog sampling, scorecards for
-solving, goal and next-frame claims, and a live monitor) and a web workbench
-for launching and replaying runs. Search produced
-replay-verified winning paths for the first playable level of 30 sampled games,
-and a whole-game reference for Sokoban (49 actions over two levels). These
-references are used only for evaluation, never shown to agents.
+We also built evaluator artifacts that measure knowledge independently of
+winning. The current benchmark set covers 21 games with replay-verified
+reference trajectories and ten unique next-observation probes per game.
+Probe construction covers distinct rule families and extends exploration
+when a short solution provides insufficient transitions. The scoring records
+exact-frame accuracy, cell accuracy and transition-edit measures. A separate
+closeness measure reports progress on a verified solution trace and explicitly
+marks off-trace states as unavailable. These tools allow us to ask whether an
+agent has learned useful dynamics even when it has not yet found a solution.
 
-\subsection{A rule-learning agent (January--July 2026)}
+\paragraph{Experiment infrastructure.}
+The workbench launches bounded batches, records their settings and process
+ownership, and retains frames, transitions, note histories, model requests,
+solver files and scores. Its replay interface connects an action to the
+available agent reasoning and artifacts. Research actions and fresh solver
+evaluations are inspected separately. Persistent manifests support
+continuation and recovery while preserving the original attempt. Together,
+these components provide a practical experimental system for repeated,
+auditable comparisons.
 
-Our first agent tried to make learning explicit. After each transition, an LLM
-proposed a natural-language rule (``\texttt{ACTION1} moves the player up into
-empty floor''). The rule was compiled into a logical rule over relative cells,
-checked against the full transition timeline, and stored only if no recorded
-transition contradicted it. A planner then searched with the verified rules,
-and the LLM proposed subgoals only when no rule-based plan existed. In the
-recorded runs the agent was given the object legend and the instruction to
-complete the level.
+\subsection{Explicit rule induction and verification}
 
-In short runs on Sokoban the agent learned correct, verified movement, wall and
-push rules. It did not complete a level in the recorded runs. The lesson we
-drew was that a hand-designed rule language is too narrow for the variety of
-PuzzleScript mechanics, and that many LLM calls per step make it slow. We
-therefore moved to general coding agents that write their own world models
-\todo{confirm this summary of the rule-agent outcome}.
+We implemented a rule-learning agent that records state--action--state
+transitions, asks a language model to propose rules, compiles them into an
+executable logical representation, and checks them against accumulated
+evidence. A planner searches with verified rules; model-generated subgoals
+support exploration when no rule-based plan is available.
 
-\subsection{The goal-recognition study (May--June 2026)}
+Saved Sokoban experiments contain verified movement, collision and crate-push
+rules. The important methodological result is an implemented link between a
+verbal hypothesis, an executable prediction and a recorded transition. This
+provides a baseline for the proposed learning cycle. The later coding-agent
+approach extends the representation to mechanics whose state, interactions
+or search procedures are easier to express directly in programs. We will
+compare these representations through their predictions and solutions.
 
-Goal recognition is the least-studied part of Table~\ref{tab:challenge}, so we
-measured it on its own. We curated 50 PuzzleScript games and asked four
-frontier models (Claude Opus~4.8, GPT-5.5, Kimi~K2.6, DeepSeek~V4~Pro) to state
-the goal and win condition of each game. Two factors were crossed: the
-\emph{evidence} (the first frame only, or the first frame plus three random
-actions) and the \emph{input} (text only, or text plus the first image;
-DeepSeek received text only). This gave 700 model predictions. In parallel,
-a web study collected 114 free-text goal descriptions from 38 human
-participants, covering 48 of the 50 games \todo{describe what humans saw}.
+\subsection{A model-and-human goal-recognition study}
+
+We designed and completed data collection for a separate study of goal
+recognition across 50 curated PuzzleScript games. Four models---Claude
+Opus~4.8, GPT-5.5, Kimi~K2.6 and DeepSeek~V4~Pro---were asked to describe
+the goal and win condition. The collection varies both the available
+evidence (an initial frame or an initial frame followed by three random
+actions) and modality (text or text plus image; DeepSeek is text-only).
+The resulting analysis set contains 700 model predictions. A human study
+collected 114 goal descriptions from 38 participants across 48 games.
 
 \begin{table}[ht]
   \centering\small
   \begin{tabular}{lccc}
     \toprule
-    Evidence & Text only & Text + image & Predictions \\
+    Evidence condition & Text models & Text + image models & Predictions \\
     \midrule
-    First frame          & 4 models & 3 models & 350 \\
-    Frame + 3 random actions & 4 models & 3 models & 350 \\
+    Initial frame & 4 & 3 & 350 \\
+    Initial frame + three actions & 4 & 3 & 350 \\
     \midrule
-    Human study & \multicolumn{2}{c}{38 participants, 48 games} & 114 answers \\
+    Human responses & \multicolumn{2}{c}{38 participants; 48 games} & 114 \\
     \bottomrule
   \end{tabular}
-  \caption{Goal-recognition data collected (50 games). Correctness labels
-  (correct / partial / wrong) have not yet been assigned.}
+  \caption{Completed goal-recognition data collection. Correctness annotation
+  and the model--human accuracy comparison form the analysis phase.}
   \label{tab:goalrec}
 \end{table}
 
-Correctness has not been scored yet. A review tool lets an annotator play each
-game and label a prediction correct, partial or wrong; no labels have been
-recorded so far, so we report no accuracies. Two observations already shape
-the plan. First, the conditions are confounded: first-frame text prompts used
-the game's own level glyphs (\texttt{P}, \texttt{*}, \texttt{O}, \dots),
-while trajectory prompts used anonymous IDs. The scoring stage must separate
-evidence from representation. Second, glyphs invoke priors, for better or
-worse. From the Sokoban glyphs, Claude Opus~4.8 answered ``Push the box (*)
-onto the target/goal (O), a Sokoban-style puzzle'', but it read \texttt{@} as
-the player, as in the common Sokoban text format; in this game \texttt{@} means
-a crate on a target. From anonymous IDs after three actions it said only
-``Push or move the player token (2) toward a target/goal location''.
+The study includes evidence preparation, reusable prompt builders, model-call
+records, a response viewer and a review tool supporting correct, partial and
+incorrect judgments. Data collection is complete; correctness annotation is
+the next analysis step, so no accuracy claim is made here.
 
-\subsection{Direct player and AVO (July--September 2026)}
+The collected responses already expose a useful design issue. Initial-frame
+text prompts used game-specific glyphs, whereas trajectory prompts used
+anonymous IDs. A Sokoban-style glyph can activate the right genre prior but
+also the wrong interpretation of an object. For example, a model interpreted
+\texttt{@} as a player when it denoted a crate on a target. We will analyze
+the existing data with this representation difference explicit and use
+matched representations in subsequent evidence comparisons. This finding
+connects the standalone study to the proposed goal-recognition interventions.
 
-\paragraph{Direct player.} One persistent model session receives each frame and
-returns exactly one action. The \emph{baseline+} condition adds three
-note-taking tools and requires a \texttt{strategy.md} file. A harness ladder
-can run the same condition through the Codex SDK, native function tools, or
-plain text.
+\subsection{Persistent direct play and isolated solver evolution}
 
-\paragraph{AVO.} In our from-scratch adaptation of AVO \citep{chen2026avo}, an
-\emph{inner player} researches the game (with checkpoints and at most two
-solver self-checks), an \emph{outer optimizer} evolves a lineage of strategies
-without touching the game, and a \emph{fresh evaluator} scores a candidate only
-by the levels its frozen \texttt{solver.py} completes alone in a new game,
-with no model calls. All sessions run in a Docker sandbox without network or
-game sources.
+\paragraph{Direct play.}
+The direct player maintains one model session across the game. The baseline+
+condition adds persistent note tools and a strategy file while retaining the
+same action and observation loop. This gives a reproducible reference for
+learning through ordinary interaction, with recorded transitions and immutable
+note revisions.
 
-\paragraph{Results.} Table~\ref{tab:success} lists the best fresh-solver scores.
-A post-hoc audit against the game sources found that the core mechanic of
-each solved game was recovered from observation, including corrected false
-hypotheses (e.g., the two-crate ``train'' collision in IceCrates). DeepSeek
-V4.1 Flash, a small recent model, matched the frontier models on all three
-games. Separately, GPT-5.6 Luna fully solved three of six further games in
-both repeats (Feeling Like Filling 6/6, Mowing 4/4, Fatigued Square Maze 8/8).
+\paragraph{AVO adaptation.}
+We implemented a distinct research--optimization--evaluation architecture.
+An inner coding agent explores the game, compares continuations from saved
+checkpoints and constructs a solver. An outer optimizer improves strategies
+through a recorded candidate lineage. A trusted evaluator then executes each
+frozen solver from a fresh reset, without language-model calls. The candidate's
+fitness is the number of levels completed in this independent evaluation:
+\[
+  \text{strategy}_i\ \longrightarrow\ \text{research}_i
+  \longrightarrow\ \texttt{solver}_i
+  \longrightarrow\ \text{fresh evaluation}.
+\]
+Model commands run in a Linux sandbox without access to game sources,
+private evaluation artifacts or network tools. The trusted controller owns
+environment and provider communication. The implementation also retains
+candidate strategies, inherited knowledge, evaluation feedback and final
+world-model reports. A report is evidence about stated understanding; its
+presence does not affect solver fitness.
+
+\subsection{Demonstrated whole-game solving and mechanics recovery}
+
+Table~\ref{tab:success} reports representative best fresh evaluations. These
+are independently executed solvers, not scores inferred from research notes
+or from the model's claim that it has understood a game.
 
 \begin{table}[ht]
   \centering\small
-  \begin{tabular}{llcr}
+  \begin{tabular}{llrr}
     \toprule
-    Game (levels) & Player / optimizer model (effort) & Best solver & Actions \\
+    Game & Player / optimizer & Levels & Solver actions \\
     \midrule
-    Modality (4)   & GPT-5.6 Luna (high) / GPT-6 Astra (low)   & 4/4 & 263 \\
-    Knightoban (6) & GPT-5.6 Luna (high) / GPT-6 Astra (low)   & 6/6 & 255 \\
-    IceCrates (6)  & GPT-6 Astra (low) / GPT-6 Astra (high)    & 6/6 & 138 \\
-    Modality (4)   & DeepSeek V4.1 Flash (max) / same          & 4/4 & 263 \\
-    Knightoban (6) & DeepSeek V4.1 Flash (max) / same          & 6/6 & 216 \\
-    IceCrates (6)  & DeepSeek V4.1 Flash (max) / same          & 6/6 & 90 \\
-    Enqueue (14)   & GPT-6 Luna (high) / GPT-6 Sol (high)      & 8/14 & -- \\
-    Enqueue (14)   & DeepSeek V4.1 Flash (medium) / same (max) & 8/14 & -- \\
+    Modality & GPT-5.6 Luna / GPT-6 Astra & 4/4 & 263 \\
+    Knightoban & GPT-5.6 Luna / GPT-6 Astra & 6/6 & 255 \\
+    IceCrates & GPT-6 Astra / GPT-6 Astra & 6/6 & 138 \\
+    Modality & DeepSeek V4.1 Flash / same & 4/4 & 263 \\
+    Knightoban & DeepSeek V4.1 Flash / same & 6/6 & 216 \\
+    IceCrates & DeepSeek V4.1 Flash / same & 6/6 & 90 \\
     \bottomrule
   \end{tabular}
-  \caption{Best fresh-solver score per AVO campaign; ``Actions'' is the length
-  of the winning fresh evaluation.}
+  \caption{Observed AVO whole-game successes. Rows report the best completed
+  fresh evaluation from the corresponding campaign, not averages across
+  repeated attempts. Model-role settings are retained in the run manifests.}
   \label{tab:success}
 \end{table}
 
-\subsection{The \qsmall{} thread (September--October 2026)}
+We audited the discovered mechanics against the source rules after the runs.
+In Modality, controlled tests established terrain-dependent movement and
+pushing. In Knightoban, the agent separated move preview, spatial selection
+and action-key commitment and constructed a planner for interacting pieces.
+In IceCrates, experiments distinguished moving crates from walls, established
+water filling and the need to stop on the goal, and corrected a missing rule
+for pushing a two-crate train. After that correction, the independent solver
+completed all six levels.
 
-\qsmall{} is open and cheap, which makes it the natural model to study in
-depth. It fails where small closed models succeed.
-Table~\ref{tab:qwen} lists every run in which it played. Ten further launches
-failed before the model acted (Docker down, an SDK option error, isolation
-guards); these are infrastructure failures and are excluded.
+This analysis demonstrates more than a final score: recorded experiments
+produced revisions that made an executable model useful for planning. The
+audit relies on contemporaneous strategies, transitions and solver code;
+reconstructed post-run reports are identified separately. It establishes
+the mechanics needed by the successful solvers, rather than claiming that
+every unobserved combination was exhaustively characterized.
+
+The broader experiments also identify where generalization remains difficult.
+GPT-5.6 Luna solved Feeling Like Filling (6/6), Mowing (4/4) and Fatigued
+Square Maze (8/8) in both recorded repeats of the six-game comparison.
+Enqueue reached 8/14 levels with both the GPT-6 Luna and DeepSeek Flash
+configurations. These results supply successes and partial-progress cases
+for evaluating whether the proposed small-model improvements transfer across
+different mechanics.
+
+\subsection{A specific, measurable small-model gap}
+
+The completed \qsmall{} pilot used a pinned Alibaba provider, high effort,
+and baseline+ through Codex. The resulting outcomes are summarized in
+Table~\ref{tab:qwen}. Each run reached its action budget; the partial IceCrates
+result is therefore directly distinguishable from a startup or transport error.
 
 \begin{table}[ht]
   \centering\small
-  \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{llllrcl}
+  \begin{tabular}{lrrl}
     \toprule
-    Provider & Harness & Effort & Game & Actions & Levels & How it ended \\
+    Game & Actions & Levels & Evidence for the next intervention \\
     \midrule
-    unpinned & AVO research & medium & Modality & 228 & 1/4 & stopped by hand \\
-    unpinned & baseline+    & max    & Modality & 124 & 1/4 & stopped by hand \\
-    unpinned & baseline+    & high   & Modality & 36+53 & 1/4 & parse error, continued, stopped \\
-    unpinned & baseline+    & high   & IceCrates & 2  & 0/6 & parse error \\
-    \midrule
-    Alibaba  & baseline+    & high   & Modality  & 100 & 0/4 & action budget \\
-    Alibaba  & baseline+    & high   & Knightoban & 120 & 0/6 & action budget \\
-    Alibaba  & baseline+    & high   & IceCrates & 100 & 3/6 & in progress \todo{final} \\
+    Modality & 100 & 0/4 & Undo misread; crate deadlock not recovered \\
+    Knightoban & 120 & 0/6 & Goal and special movement not identified \\
+    IceCrates & 120 & 3/6 & Undo identified; later mechanics unresolved \\
     \bottomrule
   \end{tabular}
-  \caption{All runs in which \qsmall{} played. ``Stopped by hand'' means a run
-  that was clearly not progressing was stopped to save budget. The Alibaba runs
-  had budgets of 100 (Modality) and 120 actions; the IceCrates run was still in
-  progress at the time of writing.}
+  \caption{Completed 27B direct-play pilot. AVO and direct-play results are
+  distinct conditions; their difference motivates, rather than replaces,
+  matched comparisons.}
   \label{tab:qwen}
 \end{table}
 
-\paragraph{Harness problems we found and fixed.} (1)~With an enforced JSON
-action schema, the model made 0/2 note-tool calls and wrote the note inside
-its answer instead; without the schema it made 2/2 calls. One harness choice
-silently disabled a tool. (2)~Twice, the model wrote a sentence before a valid
-JSON action (``I've been stuck in a note loop\ldots''). The strict parser ended
-the run; the parser now accepts such replies and asks again if a reply is
-unusable. (3)~Provider control. OpenRouter routes an open model to any
-provider unless pinned. Our first provider choice, DeepInfra, accepts at most
-30 images per request, so our long early runs could not have been served by it
-and ran on an unknown, possibly quantised provider. All new runs are pinned to
-Alibaba, the model's first-party provider, with fallbacks disabled.
+The traces make the target precise. Earlier Modality attempts cleared the
+first level while interpreting the crate as a destination and undo as a
+backward jump. The accidental win reinforced an incorrect explanation.
+The pinned run did recognize a pushable box and a target, but retained the
+jump interpretation and treated a recoverable crate deadlock as permanent.
+In IceCrates, the same model identified undo and solved three levels in its
+first 27 actions. Thus, the research target is the reliable acquisition and
+revision of specific mechanics, not an assumption that the model has no
+game-playing ability.
 
-\paragraph{What the model believed.} We compared the notes of two unpinned
-27B runs with a GPT-5.5 run in the same baseline+ harness, which solved
-Modality level~2 in 39 actions (3/4 levels overall).
+We have also isolated interface effects. In a small controlled diagnostic,
+an enforced JSON action schema yielded zero note-tool calls in two checks;
+the corresponding checks without that schema each called the tool. A separate
+end-to-end check verified note writing and reading without the schema.
+The action parser now accepts valid actions surrounded by prose and requests
+a correction for unusable replies. Provider pinning and recorded request
+metadata reduce routing ambiguity; disclosed serving precision is recorded
+when available. These checks establish a better-controlled baseline for
+capability experiments. They are reported separately from game-learning
+outcomes.
 
-\begin{table}[ht]
-  \centering\small
-  \begin{tabularx}{\linewidth}{L{0.18\linewidth} Y Y}
-    \toprule
-    Mechanic (truth) & \qsmall{} & GPT-5.5 \\
-    \midrule
-    \texttt{ACTION7} (undo) & ``fires a shot''; ``jumps one tile opposite the
-    facing direction'' & ``likely reset/undo'', then ``undo one move'' \\
-    Crate (pushable) & ``goal frame entered from below''; ``decoy'' &
-    ``Sokoban-like pushable blocks'' \\
-    Colour blocking & a new wall map per level & ``light player cannot enter
-    dark tiles directly'' \\
-    Level-1 win & accidental; reinforced the wrong goal & ``solved by pushing
-    orange onto purple'' \\
-    \bottomrule
-  \end{tabularx}
-  \caption{Beliefs about Modality from the agents' own notes, compared with the
-  game source (read only for this audit).}
-  \label{tab:beliefs}
-\end{table}
-
-The 27B model used the tools correctly, returned valid actions, and tracked
-coordinates and IDs. Its failure was in \emph{forming and revising
-hypotheses}: it did not reach for common conventions (undo, Sokoban pushing),
-explained evidence away level by level, and credited an accidental win to the
-wrong cause. GPT-5.5 named the genre and the undo key early. The new pinned
-runs refine the picture. On Modality the 27B now called the crate a ``pushable
-Sokoban box'' and the target a ``goal pad'', but it still read
-\texttt{ACTION7} as a jump, pushed the crate into a corner, and never cleared
-level~1. On Knightoban it read the knight crates as collectibles and never
-found the win condition. On IceCrates it did identify undo, used it in its
-plans, and cleared three levels in its first 27 actions. These are few runs,
-not proof, but they point to action semantics, goal recognition and revision
-rather than protocol as the main remaining failures.
-
-\subsection{What we have learned so far}
-
-\begin{enumerate}
-  \item PuzzleScript games are a practical test bed in the style of ARC-AGI-3: 206
-  games, hidden rules and goals, and an engine that serves as ground truth.
-  \item A fixed, hand-designed rule language was too narrow. Agents that write
-  their own code and solvers went much further.
-  \item Goal recognition can be measured on its own, but the input
-  representation can carry priors (Sokoban glyphs), so it must be controlled.
-  \item Small recent models can learn and solve whole games inside a strong
-  harness; see DeepSeek V4.1 Flash in Table~\ref{tab:success}.
-  \item For \qsmall{}, harness details (output schema, parser strictness,
-  provider) silently changed outcomes. Once they were fixed, its failures
-  concentrate in action semantics, goal recognition and hypothesis revision.
-\end{enumerate}
-
-% -------------------------------------------------------------------------
-\section{Research Goal, Hypotheses and Plan}
+\section{Experimental Program: From Rule Acquisition to Verified Solutions}
 \label{sec:plan}
 
-\subsection{Goal and design}
+\subsection{First: compare the Qwen~3.8 family on the same task}
 
-\textbf{Goal.} Make \qsmall{} solve PuzzleScript games it currently fails, by
-first diagnosing why it fails. An agent is a model $m$ with a harness $h$
-(prompt, tools, output format, memory, budgets). The outcome $L(m,h,g)$ is the
-number of levels completed in game $g$: by the agent's own play for the direct
-player, or by the frozen solver for AVO. We ask:
-\begin{description}[leftmargin=1.2em]
-  \item[RQ1 (Where).] Which challenge in Table~\ref{tab:challenge}, or the
-  protocol, causes each failure of the 27B model?
-  \item[RQ2 (Why).] How much of the gap is explained by harness, by scale
-  within the Qwen~3.8 family, and by training exposure?
-  \item[RQ3 (Fix).] Which harness changes raise $L$ for the 27B model, and do
-  they generalise to games not used to design them?
-\end{description}
+We will compare Qwen~3.8 Flash, 27B and Max on Modality with the same
+direct-player condition: Codex baseline+, Alibaba, high effort, image and grid
+observations, and a 100-action budget. Flash and Max runs were initiated on
+13 October 2026.
+For any model that does not solve the game, a fresh AVO campaign will test
+whether executable modeling and strategy evolution unlock its capability.
+The same model will occupy the player and optimizer roles. Direct-play and
+AVO outcomes will remain separate, with their respective action, candidate,
+time and token budgets reported explicitly.
 
-Following a correlational-then-interventional design, the work has two
-stages.
+This experiment identifies the next useful intervention. If Max discovers
+the decisive rule but 27B does not, we will compare the experiments and
+revisions that led to it. If the same smaller model succeeds under AVO,
+we will isolate which support made the difference. If the family stalls on
+the same mechanic, we will target that shared bottleneck. Family differences
+do not isolate parameter count alone: training, architecture and serving
+conditions will be treated as additional possible explanations.
 
-\textbf{Stage A (correlational).} (i)~Run the 27B model under baseline+ and AVO
-on Modality, IceCrates and Knightoban, three repeats each, pinned to one
-provider. Label every failed run with the taxonomy. (ii)~Run a fixed-harness
-model sweep: the Qwen~3.8 family from \texttt{qwen3.8-flash} through 27B and
-the open 2.4T-A95B weights to Qwen~3.8~Max, plus small successful models
-(DeepSeek~V4.1~Flash, GPT-6~Luna) and a large flagship released before
-ARC-AGI-3 \todo{choose}. (iii)~Probe familiarity without play: can the model
-write PuzzleScript that compiles in our engine, name a level's genre from its
-image, and predict the next grid of logged transitions?
+The pilot will then be expanded to Modality, Knightoban and IceCrates with
+independent repeats. These games supply distinct challenges in terrain,
+selection and commitment, and multi-object sliding interactions. Existing
+successful solver records provide diagnostic comparisons, while the actual
+held-out evaluation will use fresh runs.
 
-\textbf{Stage B (interventional).} Change one harness component at a time,
-chosen from Stage~A: revision scaffolds (list two competing explanations for
-each surprising transition, including ``undo''; replay ``what caused this
-win?'' after each level); an explicit hypothesis ledger; a forced
-predict--act--compare loop; observation format (IDs, ASCII, frame diffs);
-code tools for search; budgets. Optionally, fine-tune an open Qwen model with
-LoRA on successful trajectories from \emph{other} games.
+\subsection{Second: locate the bottleneck through controlled interventions}
 
-\textbf{Goal recognition as a condition.} The goal-recognition study becomes a
-probe inside this design. The same game runs under three conditions: goal
-hidden (the normal task), goal \emph{elicited} (the agent must state the goal
-before acting and revise it after each level), and goal \emph{given} (the true
-win condition is in the prompt). If giving the goal fixes the 27B model, goal
-recognition is its bottleneck; if not, the problem lies in rules or planning.
-In parallel we score the 700 existing predictions and 114 human answers, which
-gives a model-vs-human baseline and separates evidence from representation.
-
-\textbf{Taxonomy and agreement.} Each failed run gets one primary label: one
-of the seven challenges in Table~\ref{tab:challenge}, or protocol. An LLM
-labeller \citep{zheng2023judging} reads the run's notes, transitions and the
-true rules, and cites the step where the failure occurs. Two human annotators
-label at least 40 runs independently. We report Cohen's $\kappa$
-\citep{cohen1960kappa} and use the LLM labels only if $\kappa \ge 0.6$
-\citep{landis1977kappa}.
-
-\textbf{Measures.} Levels solved ($L$, $L/n_g$, whole-game success); actions
-per level; protocol errors per turn; the distribution of failure labels;
-goal-statement correctness; tokens and cost. Provider, precision and dates are
-recorded for every run.
-
-\subsection{Hypotheses}
-
-\begin{description}[leftmargin=1.2em]
-  \item[H1 (Harness).] Harness changes alone, with the model fixed, raise the
-  27B model's levels solved on held-out games. After protocol fixes, the most
-  effective changes will target revision and action semantics, not format.
-  \item[H2 (Scale).] Within the Qwen~3.8 family, under one harness, levels
-  solved rise with model size.
-  \item[H3 (Pretraining).] At similar size or cost, models that succeed also
-  score higher on the familiarity probes, consistent with exposure to grid
-  puzzles and their conventions.
-  \item[H4 (Goal).] Giving the 27B model the true goal improves its levels
-  solved more than any single other intervention.
-\end{description}
-
-\subsection{Work plan}
-
-The plan covers November 2026 to June 2027 (Table~\ref{tab:timeline}).
+We will use the capability decomposition to select interventions, rather
+than add several forms of assistance at once. Initial conditions will test:
 \begin{enumerate}[leftmargin=1.5em]
-  \item \textbf{Failure taxonomy.} 18 pinned 27B runs; labelling; $\kappa$.
-  Score the goal-recognition predictions and human answers.
-  \item \textbf{Model sweep.} Qwen family and controls on the three games.
-  \item \textbf{Familiarity probes.} PuzzleScript writing, genre naming,
-  next-frame prediction; optional LoRA fine-tuning.
-  \item \textbf{Harness interventions} (main contribution). Single-factor
-  ablations, including the goal conditions; combine the best and evaluate on
-  held-out catalog games.
-  \item \textbf{Trace comparison.} Successful vs.\ failed runs (Max vs.\ 27B,
-  small closed models vs.\ 27B), coded with the taxonomy.
+  \item \textbf{Goal recognition:} the goal is hidden, explicitly elicited
+  and revised, or supplied by the evaluator.
+  \item \textbf{Action interpretation:} controls remain anonymous, or their
+  true meanings are supplied while the rules and goal remain hidden.
+  \item \textbf{Mechanics and planning:} selected true mechanics are supplied
+  diagnostically, or the model's learned mechanics are paired with a
+  deterministic planner.
 \end{enumerate}
+Supplying the truth is a diagnostic intervention, not the final task setting.
+A gain under a supplied-goal condition estimates how much incorrect goals
+contribute to failure; a residual gap motivates further tests of dynamics
+and planning. The final agent must acquire the hidden information itself.
+
+For each failed attempt we will identify the first consequential mismatch
+between the model's belief and the observed transition, along with secondary
+causes such as failure to recover. Annotators will cite the supporting step,
+action and note rather than infer the cause from terminal reward alone.
+Independent human annotation of a sample will assess the reliability of the
+taxonomy; we will report agreement and disagreements rather than treat an
+automatic label as ground truth.
+
+The existing goal-recognition corpus will be annotated in parallel using
+game-specific win conditions and a correct/partial/incorrect rubric.
+Model--human comparisons will describe the evidence and representation
+available in each condition. This analysis supplies an independent view of
+goal inference and helps choose appropriate scaffolds for interactive play.
+
+\subsection{Third: build and ablate the support that makes the small model solve}
+
+We will develop the harness from the diagnosed failures. Candidate components
+are a ledger linking hypotheses to evidence, controlled experiment selection,
+explicit transition predictions, revision when evidence contradicts a rule,
+and reconstruction of what caused each win. The ledger
+will distinguish observed, predicted and untested cases, preserving uncertainty
+instead of recording unknown moves as walls or no-ops.
+
+The coding condition will support executable world models and search. The
+small model will infer and implement the mechanics; deterministic procedures
+will handle repeated simulation and path search. A mismatch between simulation
+and a real transition will invalidate the relevant rule or plan and trigger
+new research. Fresh solver evaluation will verify that the resulting program
+works without continued language-model guidance.
+
+Each component will first be compared with the established baseline under
+matched conditions. We will then combine components that produce repeatable
+gains and remove them individually to determine their contribution. The
+comparison will record the actual observation history, context policy and
+tool inventory, since changing these silently can change the task. Interface
+transport comparisons are available when needed, but follow the family and
+bottleneck experiments rather than determine the initial direction.
+
+\subsection{Validation, efficiency and generalization}
+
+Let $L(m,h,g)$ be the number of levels completed by model $m$ with harness
+$h$ on game $g$, and let $n_g$ be the number of playable levels. We will report
+rule-prediction accuracy, whole-game success, $L/n_g$, actions, candidate
+evaluations, elapsed search time, tokens and measured API cost. For AVO, the
+solver outcome comes from
+the fresh frozen solver; research progress is an additional diagnostic.
+Next-observation accuracy and goal correctness measure learned knowledge
+separately from task completion.
+
+Development uses the three diagnostic games. Before final evaluation, we
+will select and freeze a held-out subset from the curated collection,
+covering different mechanics and level structures. Game sources, verified
+solutions and source-derived annotations remain evaluator-only. Runs are
+independent, and no notes or solutions from a held-out game are inherited
+by its evaluated agent. We will report repeated-attempt outcomes and
+uncertainty, not only the best candidate.
+
+The primary success criterion is that the fixed small model learns rule models
+that predict held-out transitions and enable complete solutions on games its
+baseline fails, with repeatable gains under declared resource budgets.
+A solver that improves only on a development
+layout is an intermediate result; the final contribution must demonstrate
+that the learning procedure transfers.
+
+\section{Work Plan and Deliverables}
+\label{sec:workplan}
+
+Table~\ref{tab:milestones} defines the remaining work by verifiable deliverables.
+Family-comparison results will guide the interventions, with repeated
+experiments concentrated on promising conditions.
 
 \begin{table}[ht]
   \centering\small
-  \setlength{\tabcolsep}{4.5pt}
-  \begin{tabular}{lcccccccc}
+  \begin{tabularx}{\linewidth}{L{0.20\linewidth} Y Y}
     \toprule
-    Task & Nov & Dec & Jan & Feb & Mar & Apr & May & Jun \\
+    Milestone & Work & Completion evidence \\
     \midrule
-    1. Taxonomy, $\kappa$, goal-recognition scoring & \textbullet & \textbullet & & & & & & \\
-    2. Model sweep                                  & & \textbullet & \textbullet & & & & & \\
-    3. Familiarity probes (optional fine-tuning)    & & & \textbullet & \textbullet & \textbullet & & & \\
-    4. Harness interventions, held-out evaluation   & & & & \textbullet & \textbullet & \textbullet & & \\
-    5. Trace comparison                             & & & & & & \textbullet & \textbullet & \\
-    Thesis writing; paper submission                & & & & & & & \textbullet & \textbullet \\
+    Family comparison & Direct play and AVO with Flash, 27B and Max; expand
+    informative conditions with repeats. & Matched settings, outcomes,
+    costs and decisive-rule trace comparisons. \\
+    Bottleneck analysis & Goal, control and mechanics interventions;
+    annotate failure traces and the goal corpus. & Scored interventions,
+    annotated evidence and agreement analysis. \\
+    Small-model solver & Implement and combine experiment, memory,
+    verification and search support. & Whole-game successes by the fixed
+    small model; component ablations. \\
+    Generalization & Freeze the harness and held-out games; run repeated
+    independent evaluations. & Fresh solver scores, uncertainty and
+    efficiency comparisons. \\
+    Thesis and release & Document the method, artifacts and limits. &
+    Reproducible implementation, experiment records and thesis. \\
     \bottomrule
-  \end{tabular}
-  \caption{Timeline (2026--2027).}
-  \label{tab:timeline}
+  \end{tabularx}
+  \caption{Milestones for the remaining research, organized around outputs.}
+  \label{tab:milestones}
 \end{table}
 
-\paragraph{Expected contributions.} (1)~A challenge decomposition and failure
-taxonomy for agents that learn games from interaction, with an LLM labeller
-validated against humans. (2)~A scored model-vs-human comparison of
-goal recognition on PuzzleScript games. (3)~A controlled decomposition of one
-open model's failure into harness, scale and training factors. (4)~A harness,
-built from single-factor ablations, under which \qsmall{} solves games it
-currently fails, evaluated on held-out games.
+\paragraph{Resource management.}
+We will enforce action, candidate and wall-time budgets, record tokens and
+measured costs, and retain unsuccessful attempts. Infrastructure errors will
+be distinguished from capability outcomes. Direct-play and AVO comparisons
+will report both rule-learning gains and the resources used to obtain them.
 
-\paragraph{Budget and risks.} A 27B run costs about \$2; a Qwen~3.8~Max run of
-similar length is estimated at about \$20. The full plan needs a few hundred
-dollars of API cost \todo{confirm budget source}; fine-tuning needs GPU access
-\todo{confirm compute}. Hosted models can change, so we record provider and
-dates and treat the open-weight models as the primary subjects. To avoid
-fitting the harness to three games, final results use held-out games. Qwen's
-training data is closed, so the pretraining explanation can only be supported
-indirectly unless fine-tuning shows a causal effect; we will say so.
+\paragraph{Expected contributions.}
+We will deliver a working rule-learning agent built around a small model,
+validated on held-out games. The research will also provide scored
+goal-recognition data, component ablations, and reproducible rule-prediction
+and fresh-solver evaluations.
 
-% -------------------------------------------------------------------------
 \clearpage
 \phantomsection
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{plainnat}
 \bibliography{refs}
-
 \end{document}

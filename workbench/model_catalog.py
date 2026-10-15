@@ -10,12 +10,13 @@ import requests
 
 _cache: dict = {}
 _lock = Lock()
-URLS = {"openrouter": "https://openrouter.ai/api/v1/models"}
+URLS = {"openrouter": "https://openrouter.ai/api/v1/models",
+        "nanogpt": "https://nano-gpt.com/api/v1/models?detailed=true"}
 
 
 def normalize(provider: str, data: dict) -> list[dict]:
     if provider not in URLS:
-        raise ValueError("Only the OpenRouter public catalog is supported")
+        raise ValueError("Only OpenRouter and NanoGPT public catalogs are supported")
     if not isinstance(data, dict) or not isinstance(data.get("data"), list):
         raise ValueError("Invalid model catalog")
     result = []
@@ -25,17 +26,19 @@ def normalize(provider: str, data: dict) -> list[dict]:
         name = model.get("id", "")
         if not isinstance(name, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/:-]{0,148}", name) or name.endswith(":batch"):
             continue
-        if "tools" not in (model.get("supported_parameters") or []):
+        tools_supported = (model.get("capabilities") or {}).get("tool_calling") if provider == "nanogpt" else "tools" in (model.get("supported_parameters") or [])
+        if not tools_supported:
             continue
         prices = model.get("pricing") or {}
         def price(key):
             try:
-                value = float(prices[key]) * 1_000_000
+                # NanoGPT detailed prices are already USD per million tokens.
+                value = float(prices[key]) * (1 if provider == "nanogpt" else 1_000_000)
                 return value if value >= 0 and math.isfinite(value) else None
             except (KeyError, TypeError, ValueError):
                 return None
         incoming, outgoing = price("prompt"), price("completion")
-        result.append({"id": f"openrouter/{name}", "name": model.get("name") or name,
+        result.append({"id": f"{provider}/{name}", "name": model.get("name") or name,
                        "provider": provider, "free": incoming == 0 and outgoing == 0,
                        "context": model.get("context_length"), "input_price": incoming, "output_price": outgoing})
     return sorted(result, key=lambda m: m["name"].lower())
@@ -43,7 +46,7 @@ def normalize(provider: str, data: dict) -> list[dict]:
 
 def catalog(provider: str) -> dict:
     if provider not in URLS:
-        raise ValueError("Only the OpenRouter public catalog is supported")
+        raise ValueError("Only OpenRouter and NanoGPT public catalogs are supported")
     with _lock:
         cached = _cache.get(provider)
         if cached and time.time() - cached["fetched_at"] < 600:

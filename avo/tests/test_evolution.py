@@ -95,6 +95,20 @@ class DeterministicEvaluator:
 
 
 class EvolutionTests(unittest.TestCase):
+    def test_zero_wall_limit_still_stops_at_candidate_budget(self):
+        with tempfile.TemporaryDirectory() as raw:
+            store = EvolutionStore.create(Path(raw) / "campaign")
+            store.prepare_seed_draft("x_0001", "fitness=1")
+            gateway = EvolutionGateway(store, DeterministicEvaluator(), mission="test",
+                                       budget=EvolutionBudget(max_evaluations=1, max_wall_seconds=0))
+            gateway.started_at -= 1_000_000
+            self.assertFalse(gateway.terminal)
+            self.assertIsNone(gateway.handle("status")["budgets"]["wall_seconds_remaining"])
+            gateway.handle("register", {"candidate_id": "x_0001"})
+            gateway.handle("evaluate", {"candidate_id": "x_0001"})
+            self.assertTrue(gateway.terminal)
+            self.assertEqual(gateway.finish_reason, "candidate evaluation budget exhausted")
+
     def test_final_world_model_prompt_is_shared_and_rules_first(self):
         from avo.evolution.gateway import FINAL_WORLD_MODEL_PROMPT
         from avo.report_saved_world_model import FINAL_PROMPT
@@ -614,6 +628,15 @@ else:
                     max_environment_steps=10,
                     max_wall_seconds=10,
                 )
+                unlimited = evaluate_solver_workspace(
+                    loaded_profile=SimpleNamespace(implementation=CounterProfile()),
+                    workspace=workspace,
+                    output_dir=root / "evaluation-no-wall-limit",
+                    max_environment_steps=10,
+                    max_wall_seconds=0,
+                )
+                self.assertTrue(unlimited.success)
+                self.assertEqual(unlimited.environment_steps, 2)
 
             self.assertEqual(result.score["solver_levels_completed"], 2)
             self.assertEqual(result.score["solver_environment_actions"], 2)

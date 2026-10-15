@@ -13,7 +13,7 @@ from uuid import uuid4
 if __package__ in {None, ""}:
     import sys
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from avo.client.model_provider import resolve_model
+from avo.client.model_provider import API_PROVIDERS, api_key, resolve_model
 
 ROOT = Path(__file__).resolve().parents[2]
 IMAGE = 'avo-puzzlescript-isolated:local'
@@ -54,17 +54,12 @@ def stage_credentials(credentials: Path, models: list[str]) -> list[str]:
         if not payload.get('tokens'):
             raise RuntimeError('Existing ChatGPT OAuth login is required for OpenAI models')
         shutil.copyfile(auth, credentials/'auth.json')
-    if 'openrouter' in providers:
-        from dotenv import dotenv_values
-        # Prefer the project's key; never replace a different user-level key.
-        key_file = os.environ.get('AVO_OPENROUTER_KEY_FILE', '')
-        key = (Path(key_file).read_text(encoding='utf-8').strip() if key_file else
-               dotenv_values(ROOT/'.env').get('OPENROUTER_API_KEY') or os.environ.get('OPENROUTER_API_KEY', ''))
-        if not key or not key.strip():
-            raise RuntimeError('OpenRouter requires an existing OPENROUTER_API_KEY')
-        (credentials/'openrouter.key').write_text(key.strip(), encoding='utf-8')
-        (credentials/'openrouter.key').chmod(0o600)
-        options += ['--env', 'AVO_OPENROUTER_KEY_FILE=/credentials/openrouter.key']
+    for provider in sorted(providers & API_PROVIDERS.keys()):
+        key = api_key(provider, env_file=ROOT/'.env')
+        target = credentials/f'{provider}.key'
+        target.write_text(key, encoding='utf-8')
+        target.chmod(0o600)
+        options += ['--env', f'AVO_{provider.upper()}_KEY_FILE=/credentials/{provider}.key']
     (credentials/'config.toml').write_text('# synthetic config canary\n')
     return options
 
@@ -87,6 +82,8 @@ def main() -> None:
     parser.add_argument('--optimizer-service-tier', default='', choices=['', 'priority'])
     parser.add_argument('--player-service-tier', default='', choices=['', 'priority'])
     parser.add_argument('--max-wall-seconds', type=int, default=14400)
+    parser.add_argument('--player-max-wall-seconds', type=int, default=None,
+                        help='Per-candidate research time; defaults to the campaign wall limit')
     parser.add_argument('--world-model-mode', choices=['final-only', 'between-hypotheses'], default='final-only')
     parser.add_argument('--max-evaluations', type=int)
     parser.add_argument('--research-moves', type=int)
@@ -101,10 +98,12 @@ def main() -> None:
         if any(getattr(options,key)<=0 for key in ('max_evaluations','research_moves','solver_moves')):
             parser.error('Budgets must be positive')
         for model in (options.optimizer_model, options.player_model):
-            if resolve_model(model)[0] != 'openrouter' and options.harness != 'codex':
-                parser.error('The tools and raw harnesses require openrouter/vendor/model IDs')
-        if resolve_model(options.player_model)[0] == 'openrouter' and options.player_service_tier:
-            parser.error('OpenRouter models do not support the Codex service tier setting')
+            if options.provider and resolve_model(model)[0] == 'nanogpt':
+                parser.error('Provider pinning is only supported for OpenRouter')
+            if resolve_model(model)[0] not in API_PROVIDERS and options.harness != 'codex':
+                parser.error('The tools and raw harnesses require OpenRouter or NanoGPT model IDs')
+        if resolve_model(options.player_model)[0] in API_PROVIDERS and options.player_service_tier:
+            parser.error('API-key models do not support the Codex service tier setting')
     output = Path(options.output_dir).resolve()
     if options.resume_saved_campaign:
         saved = json.loads((output / 'campaign' / 'evolution_config.json').read_text(encoding='utf-8'))
@@ -133,7 +132,7 @@ def main() -> None:
                 '--world-model-mode',options.world_model_mode,
                 '--harness',options.harness, '--provider',options.provider,
                 '--max-wall-seconds',str(options.max_wall_seconds),
-                '--player-max-wall-seconds',str(options.max_wall_seconds),
+                '--player-max-wall-seconds',str(options.player_max_wall_seconds if options.player_max_wall_seconds is not None else options.max_wall_seconds),
                 '--max-evaluations',str(options.max_evaluations),
                 '--player-max-environment-steps',str(options.research_moves),
                 '--fresh-solver-max-environment-steps',str(options.solver_moves),

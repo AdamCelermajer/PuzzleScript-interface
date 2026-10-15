@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from avo.analysis.model_proxy import CodexRequestProxy
 from avo.analysis.run_trace import RunTraceRecorder
-from avo.client.model_provider import resolve_model
+from avo.client.model_provider import API_PROVIDERS, codex_provider_overrides, resolve_model
 from avo.client.openrouter_chat import provider_routing
 from avo.isolation import IsolatedRuntime, IsolationError, runtime_root
 from avo.core.agent_backend import AgentGateway, AgentRunResult, AgentToolServer
@@ -85,7 +85,7 @@ def drive_turns(
     workspace_path: Path,
     transcript_path: Path,
     trace: RunTraceRecorder | None,
-    run_turn: Callable[[int, str, float], str],
+    run_turn: Callable[[int, str, float | None], str],
 ) -> tuple[int, str]:
     """AVO turn protocol shared by every harness.
 
@@ -103,12 +103,12 @@ def drive_turns(
     # The optional last call reuses the outer session and its evidence.
     for turn_number in range(1, config.max_turns + 4):
         turns = turn_number
-        remaining = float(gateway.handle("status")["budgets"]["wall_seconds_remaining"])
+        remaining = gateway.handle("status")["budgets"]["wall_seconds_remaining"]
         if reporting:
             # The report turn has fixed grace: an exhausted search budget must not
             # also erase the required final report.
             remaining = REPORT_GRACE_SECONDS
-        final_response = run_turn(turn_number, instruction, max(1.0, remaining))
+        final_response = run_turn(turn_number, instruction, None if remaining is None else max(1.0, remaining))
         with transcript_path.open("a", encoding="utf-8") as stream:
             stream.write(
                 json.dumps(
@@ -139,7 +139,7 @@ def drive_turns(
                 )
                 continue
             break
-        if status["budgets"]["wall_seconds_remaining"] <= 0:
+        if status["budgets"]["wall_seconds_remaining"] is not None and status["budgets"]["wall_seconds_remaining"] <= 0:
             if not status["finished"]:
                 gateway.handle("finish", {"reason": "wall-time budget exhausted"})
         elif status["task"]["terminal"]:
@@ -170,8 +170,10 @@ class CodexOAuthAgent:
     def __init__(self, config: CodexOAuthConfig | None = None) -> None:
         self.config = config or CodexOAuthConfig()
         self.provider, self.provider_model = resolve_model(self.config.model)
-        if self.provider == "openrouter" and self.config.service_tier:
-            raise ValueError("OpenRouter models do not support the Codex service tier setting")
+        if self.provider == "nanogpt" and self.config.provider:
+            raise ValueError("Provider pinning is only supported for OpenRouter")
+        if self.provider in API_PROVIDERS and self.config.service_tier:
+            raise ValueError("API-key models do not support the Codex service tier setting")
 
     def _prompt(self) -> str:
         path = Path(self.config.prompt_path).resolve()
@@ -198,6 +200,8 @@ class CodexOAuthAgent:
         try:
             if self.provider == "openrouter":
                 runtime.authenticate_openrouter()
+            elif self.provider in API_PROVIDERS:
+                runtime.authenticate_api_provider(self.provider)
             else:
                 runtime.authenticate()
             return self._run(gateway, workspace, tool_server=tool_server, runtime=runtime)
@@ -253,8 +257,8 @@ class CodexOAuthAgent:
                 session_role=self.config.session_role,
                 body_patch=({"provider": provider_routing(self.config.provider)}
                             if self.provider == "openrouter" and self.config.provider else None),
-                **({"upstream_origin": "https://openrouter.ai", "base_path": "/api/v1"}
-                   if self.provider == "openrouter" else {}),
+                **({"upstream_origin": API_PROVIDERS[self.provider]["origin"], "base_path": "/api/v1"}
+                   if self.provider in API_PROVIDERS else {}),
             )
             try:
                 request_proxy.start()
@@ -271,15 +275,8 @@ class CodexOAuthAgent:
             "memories.generate_memories=false",
         ]
         if request_proxy is not None:
-            if self.provider == "openrouter":
-                config_overrides.extend([
-                    'model_provider="openrouter"',
-                    'model_providers.openrouter.name="OpenRouter"',
-                    f'model_providers.openrouter.base_url="{request_proxy.model_base_url}"',
-                    'model_providers.openrouter.env_key="OPENROUTER_API_KEY"',
-                    'model_providers.openrouter.wire_api="responses"',
-                    'model_providers.openrouter.requires_openai_auth=false',
-                ])
+            if self.provider in API_PROVIDERS:
+                config_overrides.extend(codex_provider_overrides(self.provider, request_proxy.model_base_url))
             else:
                 config_overrides.append(
                     f'openai_base_url="{request_proxy.model_base_url}"'
@@ -308,7 +305,7 @@ class CodexOAuthAgent:
                 if trace is not None:
                     trace.attach_thread(str(getattr(thread, "id", "")) or None)
 
-                def run_turn(turn_number: int, instruction: str, timeout: float) -> str:
+                def run_turn(turn_number: int, instruction: str, timeout: float | None) -> str:
                     turn = thread.turn(
                         [TextInput(instruction)],
                         effort=self.config.effort,
@@ -320,9 +317,10 @@ class CodexOAuthAgent:
                             instruction=instruction,
                             effort=self.config.effort,
                         )
-                    timer = threading.Timer(timeout, turn.interrupt)
-                    timer.daemon = True
-                    timer.start()
+                    timer = threading.Timer(timeout, turn.interrupt) if timeout is not None else None
+                    if timer is not None:
+                        timer.daemon = True
+                        timer.start()
                     try:
                         if trace is None or not hasattr(turn, "stream"):
                             result = turn.run()
@@ -336,7 +334,8 @@ class CodexOAuthAgent:
                             )
                             result = _collect_turn_result(events, turn_id=turn.id)
                     finally:
-                        timer.cancel()
+                        if timer is not None:
+                            timer.cancel()
                     return str(result.final_response or "")
 
                 turns, final_response = drive_turns(

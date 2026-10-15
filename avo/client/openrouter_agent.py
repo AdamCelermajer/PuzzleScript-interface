@@ -101,10 +101,12 @@ class OpenRouterShellAgent:
             raise ValueError("OpenRouterShellAgent implements the raw and tools harnesses")
         self.config = config
         self.provider, self.provider_model = resolve_model(config.model)
-        if self.provider != "openrouter":
-            raise ValueError("The raw and tools harnesses require an openrouter/vendor/model ID")
+        if self.provider not in {"openrouter", "nanogpt"}:
+            raise ValueError("The raw and tools harnesses require an OpenRouter or NanoGPT model ID")
+        if self.provider == "nanogpt" and config.provider:
+            raise ValueError("Provider pinning is only supported for OpenRouter")
         if config.service_tier:
-            raise ValueError("OpenRouter models do not support the Codex service tier setting")
+            raise ValueError("API-key models do not support the Codex service tier setting")
 
     def run(self, gateway: AgentGateway, workspace: str | Path, *,
             tool_server: AgentToolServer | None = None) -> AgentRunResult:
@@ -143,7 +145,8 @@ class OpenRouterShellAgent:
         )
         self.trace = trace
         self.chat = OpenRouterChat(self.provider_model, self.config.effort, trace.transport_root,
-                                   context_chars=CONTEXT_CHARS, provider=self.config.provider)
+                                   context_chars=CONTEXT_CHARS, provider=self.config.provider,
+                                   **({"model_provider": self.provider} if self.provider != "openrouter" else {}))
         self.messages: list[dict[str, Any]] = [{"role": "system", "content": prompt}]
         run_error: BaseException | None = None
         try:
@@ -161,8 +164,8 @@ class OpenRouterShellAgent:
         return AgentRunResult(finish_reason=gateway.finish_reason, terminal=gateway.terminal,
                               turns=turns, final_response=final_response, transcript_path=transcript_path)
 
-    def _run_turn(self, turn_number: int, instruction: str, timeout: float) -> str:
-        deadline = time.monotonic() + timeout
+    def _run_turn(self, turn_number: int, instruction: str, timeout: float | None) -> str:
+        deadline = time.monotonic() + timeout if timeout is not None else float("inf")
         self.trace.record_turn_input(turn_number=turn_number, turn_id=f"turn-{turn_number}",
                                      instruction=instruction, effort=self.config.effort)
         self.messages.append({"role": "user", "content": instruction})
@@ -254,7 +257,7 @@ class OpenRouterShellAgent:
                                    start_new_session=os.name != "nt")
         timed_out = False
         try:
-            raw, _ = process.communicate(timeout=limit)
+            raw, _ = process.communicate(timeout=None if limit == float("inf") else limit)
         except subprocess.TimeoutExpired:
             timed_out = True
             if os.name != "nt":
@@ -277,7 +280,7 @@ class OpenRouterShellAgent:
     def _item(self, turn_number: int, item_type: str, role: str, *, content: str = "",
               item: dict | None = None) -> None:
         record = {"recorded_at": datetime.now(timezone.utc).isoformat(), "session_id": self.trace.session_id,
-                  "turn": turn_number, "turn_id": f"turn-{turn_number}", "source": "openrouter_harness",
+                  "turn": turn_number, "turn_id": f"turn-{turn_number}", "source": f"{self.provider}_harness",
                   "type": item_type, "role": role}
         if item is not None:
             record["item"] = item

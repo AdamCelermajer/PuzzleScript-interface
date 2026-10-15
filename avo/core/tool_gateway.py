@@ -87,7 +87,7 @@ class AvoToolGateway:
             "environment_steps_remaining": max(
                 0, self.budget.max_environment_steps - self.environment_steps
             ),
-            "wall_seconds_remaining": max(
+            "wall_seconds_remaining": None if self.budget.max_wall_seconds == 0 else max(
                 0.0,
                 self.budget.max_wall_seconds - (time.monotonic() - self.started_at),
             ),
@@ -147,6 +147,19 @@ class AvoToolGateway:
             "budgets": self._budget_payload(),
         }
 
+    def _image_payload(self) -> dict[str, Any]:
+        current = self.initialize()
+        rendered_frame = current.metadata.get("rendered_frame")
+        if not isinstance(rendered_frame, Mapping) or not rendered_frame.get("path"):
+            raise RuntimeError("No rendered image is available for the current observation")
+        result = {
+            "rendered_frame": _jsonable(rendered_frame),
+            "observation_fingerprint": current.fingerprint,
+            "episode": self.laboratory.episode,
+        }
+        self.laboratory.store.append("image_requested", result)
+        return result
+
     def _history_payload(self) -> dict[str, Any]:
         return {
             "transitions": _jsonable(self.laboratory.history),
@@ -177,7 +190,7 @@ class AvoToolGateway:
             raise RuntimeError(f"Run already finished: {self.finish_reason}")
         if self.environment_steps >= self.budget.max_environment_steps:
             raise RuntimeError("Environment step budget exhausted")
-        if time.monotonic() - self.started_at >= self.budget.max_wall_seconds:
+        if self.budget.max_wall_seconds > 0 and time.monotonic() - self.started_at >= self.budget.max_wall_seconds:
             raise RuntimeError("Wall-time budget exhausted")
 
     def _reset(self, params: Mapping[str, Any]) -> dict[str, Any]:
@@ -332,6 +345,8 @@ class AvoToolGateway:
         with self._lock:
             if method == "observe":
                 return self._observation_payload()
+            if method == "image":
+                return self._image_payload()
             if method == "mission":
                 self.initialize()
                 return self._task_payload()
@@ -379,6 +394,7 @@ Use only the evidence returned by these commands.
 
 ```text
 python avo_tool.py observe
+python avo_tool.py image
 python avo_tool.py mission
 python avo_tool.py history
 python avo_tool.py archive .
@@ -395,6 +411,13 @@ python avo_tool.py finish "reason"
 You own the workspace. Organize notes, programs, simulations, tests, and intermediate
 files however you find useful. The required final deliverable is documented by the task
 prompt; there is no framework-owned internal hypothesis format.
+
+`image` requests the lossless PNG of the current observation without taking a game
+action. Open the returned `rendered_frame.path` with your `view_image` tool to see
+the image; the command itself returns metadata, not image pixels in its text output.
+Images are viewed on demand. Each request is recorded with its episode and observation
+fingerprint, and the original PNG remains in the run artifacts. Environments without
+a rendered image return an explicit error.
 
 `evaluate_solver` launches the current `solver.py` alone in a separate fresh game and
 returns only its provisional scalar fitness. The evaluation trajectory and detailed score
@@ -454,7 +477,7 @@ def call(method, params=None):
 
 parser = argparse.ArgumentParser()
 sub = parser.add_subparsers(dest="method", required=True)
-for name in ("observe", "mission", "history", "status"):
+for name in ("observe", "image", "mission", "history", "status"):
     sub.add_parser(name)
 probe = sub.add_parser("probe")
 probe.add_argument("action_id")

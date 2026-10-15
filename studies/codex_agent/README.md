@@ -155,3 +155,18 @@ unsolved runs that exhausted their action budget and preserves the parent settin
 - Codex runs read-only with approvals denied. Baseline+ adds only its isolated
   note-tool server. Shell/browser integrations are disabled, but generic internal
   Codex tools may still be advertised; inspect captured requests and tool traces.
+
+## NanoGPT provider
+
+Set `NANOGPT_API_KEY` in the project `.env` or environment. Choose **NanoGPT** in
+workbench's model picker, or pass `--model nanogpt/<model-id>` to the direct player.
+For example, `--model nanogpt/deepseek/deepseek-v4.1-flash --effort high`.
+Use an exact model ID from NanoGPT's catalog. The `codex`, `tools`, and `raw`
+harnesses all support this provider, including baseline+ notes and continuation.
+The Codex harness uses Responses; raw/tools use Chat Completions. Requests and
+catalog discovery use `https://nano-gpt.com/api/v1`, matching
+[NanoGPT's API setup guide](https://nano-gpt.com/api).
+
+`--provider` pins an OpenRouter upstream and must be left empty for NanoGPT.
+NanoGPT `max` reasoning effort is preserved. Provider credentials stay in the
+trusted controller and are omitted from request artifacts and model shell tools.

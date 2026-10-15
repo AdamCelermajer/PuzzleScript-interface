@@ -60,6 +60,17 @@ class CounterProfile:
 
 
 class AvoToolGatewayTests(unittest.TestCase):
+    def test_zero_wall_limit_preserves_the_action_budget(self):
+        with tempfile.TemporaryDirectory() as root:
+            environment = CounterEnvironment()
+            gateway = AvoToolGateway(AvoLaboratory(environment, [], root), CounterProfile(environment),
+                                     budget=GatewayBudget(max_environment_steps=1, max_wall_seconds=0))
+            gateway.started_at -= 1_000_000
+            self.assertIsNone(gateway.handle("status")["budgets"]["wall_seconds_remaining"])
+            gateway.handle("probe", {"action_id": "A2"})
+            with self.assertRaisesRegex(RuntimeError, "step budget exhausted"):
+                gateway.handle("probe", {"action_id": "A2"})
+
     def test_solver_self_checks_are_fresh_separate_and_limited_to_two(self) -> None:
         with tempfile.TemporaryDirectory() as root:
             calls: list[tuple[int, int]] = []
