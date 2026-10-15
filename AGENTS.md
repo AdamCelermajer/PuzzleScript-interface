@@ -157,3 +157,7 @@ The public ARC surface returns ARC fields (`frame`, `state`, `levels_completed`,
 ## Current workbench
 
 `npm run workbench` starts or reuses the local services. `/` lists runs; `/runs/avo.html` and `/runs/codex.html` launch maintained workflows. `/experiments/rule-agent.html` preserves the older client. `workbench/catalog.py` discovers existing output paths without moving them; Docker process status and worker heartbeats are distinct from recorded solver success. `workbench/experiment_job.py` runs bounded subprocess batches with persistent manifests and exact ownership for stops. Never restart shared game services as part of a website refresh. See `docs/architecture/workbench.md`.
+
+## Diary
+
+At the end of a substantial work session (new results, decisions, experiments or a feature), add or update one entry in `docs/diary/` (`YYYY-MM-DD-<slug>.md`, sections `## Did`, `## Found`, `## Decided`, `## Next`), following `docs/diary/README.md`. Keep it terse and factual, cite commits, docs and runs, and register any new thread in the README's thread table. Runs started that day are linked automatically by `workbench/diary.py`.

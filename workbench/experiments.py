@@ -13,11 +13,13 @@ from pathlib import Path
 from typing import Literal
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Query, Response
+from fastapi import APIRouter, Body, HTTPException, Query, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 
-from workbench.catalog import ROOT, last_record, legacy_enqueue_backend, read_json, run_path, snapshot
+from workbench.catalog import (ROOT, last_record, legacy_enqueue_backend, normalized_spec, read_json, read_run_spec,
+                               run_path, snapshot)
 
 
 class ExperimentRequest(BaseModel):
@@ -245,7 +247,43 @@ def write_json(path: Path, value: dict) -> None:
         temporary.unlink(missing_ok=True)
 
 
-def create_router(root: Path = ROOT) -> APIRouter:
+AGENT_EVENT_FIELDS = ("schema", "t", "session", "role", "turn", "type", "text", "output", "exit_code", "tool",
+                      "usage", "harness", "model")
+
+
+def agent_events_path(path: Path) -> Path | None:
+    return next((p for p in (path / "agent_events.jsonl", path / "analysis/agent_events.jsonl") if p.is_file()), None)
+
+
+def read_agent_events(path: Path, limit: int) -> dict:
+    """Tail of a normalized `agent-event-v1` log; malformed lines are counted, not fatal."""
+    from collections import deque
+    events, total, invalid = deque(maxlen=limit or None), 0, 0
+    with path.open(encoding="utf-8", errors="replace") as stream:
+        for line in stream:
+            if not line.strip():
+                continue
+            try:
+                item = json.loads(line)
+            except ValueError:
+                invalid += 1
+                continue
+            if not isinstance(item, dict) or not item.get("type"):
+                invalid += 1
+                continue
+            total += 1
+            if limit:
+                event = {key: item.get(key) for key in AGENT_EVENT_FIELDS}
+                event["schema"] = event["schema"] or "agent-event-v1"
+                for key in ("text", "output"):
+                    if isinstance(event[key], str) and len(event[key]) > 16000:
+                        event[key] = event[key][:16000] + "\n[truncated]"
+                events.append(event)
+    return {"total": total, "invalid_lines": invalid, "truncated": total > len(events), "events": list(events)}
+
+
+def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
+    """`legacy_start` serves the historical rule-agent `POST /runs` body (no `modes` key)."""
     router = APIRouter(prefix="/api/workbench")
     cache: dict = {}
     resume_run_lock = threading.Lock()
@@ -275,7 +313,7 @@ def create_router(root: Path = ROOT) -> APIRouter:
         body = json.dumps(public, allow_nan=False, default=str).encode()
         # A launch/stop clears the cache (and its token); an older rebuild must not repopulate it.
         if token is not None and cache.get("token") is token:
-            cache.update(body=body, at=time.monotonic())
+            cache.update(body=body, data=public, at=time.monotonic())
         return body
 
     def refresh_in_background(token: object) -> None:
@@ -297,6 +335,69 @@ def create_router(root: Path = ROOT) -> APIRouter:
         elif time.monotonic() - cache.get("at", 0) > 2 and catalog_lock.acquire(blocking=False):
             threading.Thread(target=refresh_in_background, args=(cache.get("token"),), daemon=True).start()
         return Response(body, media_type="application/json", headers={"Cache-Control": "no-store"})
+
+    def catalog_runs() -> list[dict]:
+        """In-process catalog for the AVO console (shares the cache above)."""
+        catalog()
+        data = cache.get("data")
+        return (data if data is not None else json.loads(build_catalog(None)))["runs"]
+
+    from workbench.avo_console import add_routes as add_avo_routes
+    add_avo_routes(router, root, catalog_runs)
+
+    # ---- unified harness runs (revamp contract §4)
+    from workbench import runs as harness_runs
+
+    def run_error(exc: Exception) -> HTTPException:
+        return HTTPException(409 if isinstance(exc, harness_runs.Conflict) else 400, str(exc))
+
+    def run_request(payload: dict):
+        try:
+            return harness_runs.RunRequest.model_validate(payload)
+        except ValidationError as exc:
+            raise RequestValidationError(exc.errors(include_url=False, include_context=False)) from exc
+
+    @router.get("/harnesses")
+    def harnesses(catalogs: bool = True):
+        from workbench.harness_catalog import harness_listing
+        return harness_listing(root, include_public_catalogs=catalogs)
+
+    @router.post("/runs/preview")
+    def preview_runs(payload: dict = Body(...)):
+        config = run_request(payload)
+        try:
+            rows, warnings = harness_runs.plan_matrix(config, root / "output/workbench/preview", root)
+        except (ValueError, OSError) as exc:
+            raise run_error(exc) from exc
+        public = ("mode", "harness", "model", "optimizer_model", "effort", "optimizer_effort", "game_id",
+                  "world_model_mode", "repeat", "match_id", "backend_url", "budget", "command")
+        return {"runs": [{k: row[k] for k in public} for row in rows], "warnings": warnings, "count": len(rows),
+                "parallel": min(config.parallel, len(rows))}
+
+    @router.post("/runs", status_code=202)
+    def launch_runs(payload: dict = Body(...)):
+        if "modes" not in payload and legacy_start is not None:
+            return legacy_start(payload)
+        config = run_request(payload)
+        try:
+            launched = harness_runs.launch_matrix(config, root)
+        except (ValueError, OSError) as exc:
+            raise run_error(exc) from exc
+        cache.clear()
+        return launched
+
+    class RunResumeRequest(BaseModel):
+        run_id: str = Field(min_length=1, max_length=400)
+
+    @router.post("/runs/resume", status_code=202)
+    def resume_harness_run(request: RunResumeRequest):
+        with resume_run_lock:
+            try:
+                resumed = harness_runs.resume_runs([request.run_id], root)
+            except (ValueError, OSError, KeyError) as exc:
+                raise run_error(exc) from exc
+        cache.clear()
+        return resumed
 
     @router.post("/experiments/preview")
     def preview(config: ExperimentRequest):
@@ -347,10 +448,10 @@ def create_router(root: Path = ROOT) -> APIRouter:
         try:
             path = run_path(job, root)
             manifest = read_json(path / "job.json")
-            if path.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") != "avo":
-                raise ValueError("Only active workbench-owned AVO batches can be paused here")
+            if path.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") not in {"avo", "matrix"}:
+                raise ValueError("Only active workbench-owned AVO or harness batches can be paused here")
             if manifest.get("status") not in {"starting", "running"}:
-                raise ValueError("Only an active AVO batch can be paused")
+                raise ValueError("Only an active batch can be paused")
         except ValueError as exc:
             raise HTTPException(400, str(exc)) from exc
         (path / "pause.request").touch()
@@ -361,8 +462,8 @@ def create_router(root: Path = ROOT) -> APIRouter:
         try:
             path = run_path(job, root)
             manifest = read_json(path / "job.json")
-            if path.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") != "avo":
-                raise ValueError("Only workbench-owned AVO batches can be removed from Runs")
+            if path.parent != root / "output/workbench" or manifest.get("config", {}).get("kind") not in {"avo", "matrix"}:
+                raise ValueError("Only workbench-owned AVO or harness batches can be removed from Runs")
             if manifest.get("status") not in {"paused", "cancelled", "failed"} or manifest.get("resumed_as"):
                 raise ValueError("Only an inactive resumable batch can be removed from Runs")
             manifest["dismissed_from_runs_at"] = datetime.now(timezone.utc).isoformat()

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import subprocess
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -12,6 +13,33 @@ from workbench.experiments import write_json
 
 
 REPORT_GRACE_SECONDS = 600
+HARNESS_IDS = {"codex", "claude-code", "opencode", "antigravity", "bare"}
+LEGACY_BACKENDS = {"codex", "tools", "raw"}
+
+
+def batch_deadline(config: dict, started: float) -> float | None:
+    """Legacy batches share one `max_hours` cutoff that includes queued runs.
+    Harness batches have no batch cutoff: each run owns `max_wall_seconds`
+    (0 = unlimited), backstopped per child in `overdue`."""
+    if "budget" in config or config.get("launcher") == "harnesses":
+        return None
+    hours = config.get("max_hours", 0)
+    return started + hours * 3600 + REPORT_GRACE_SECONDS if hours > 0 else None
+
+
+def overdue(row: dict, now: float) -> bool:
+    wall = row.get("max_wall_seconds") or 0
+    return (row.get("launcher") == "harnesses" and wall > 0
+            and now >= row.get("started_at", now) + wall + REPORT_GRACE_SECONDS)
+
+
+def check_launchable(row: dict, config: dict) -> None:
+    if row.get("launcher") == "harnesses":
+        if row.get("harness") not in HARNESS_IDS:
+            raise ValueError(f"Saved job uses an unknown harness: {row.get('harness')}")
+        return
+    if row.get("agent_backend", config.get("agent_backend", "codex")) not in LEGACY_BACKENDS:
+        raise ValueError("Saved job uses a retired agent backend; create a new Codex experiment")
 
 
 def stop_child(process, row):
@@ -19,8 +47,10 @@ def stop_child(process, row):
         return
     # Removing this exact container lets its launcher execute credential cleanup.
     launch = read_json(Path(row["output"]) / "launcher.json")
-    container = launch.get("container", "")
-    if row["kind"] == "avo" and container.startswith("avo-isolated-"):
+    container = str(launch.get("container", ""))
+    owned = (row["kind"] == "avo" and container.startswith("avo-isolated-")) or (
+        row.get("launcher") == "harnesses" and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", container))
+    if owned:
         subprocess.run(["docker", "rm", "-f", container], capture_output=True, timeout=20)
         try:
             process.wait(timeout=20)
@@ -59,8 +89,7 @@ def run_job(directory: Path):
     job = read_json(manifest_path)
     config = job["config"]
     # Campaigns use max_hours as their search budget; keep room for the final report turn.
-    deadline = (time.time() + config["max_hours"] * 3600 + REPORT_GRACE_SECONDS
-                if config["max_hours"] > 0 else None)
+    deadline = batch_deadline(config, time.time())
     active = []
     cancelled = False
     paused = False
@@ -77,14 +106,17 @@ def run_job(directory: Path):
                 break
             for entry in active[:]:
                 row, proc, log = entry
+                if proc.poll() is None and overdue(row, time.time()):
+                    # The harness enforces its own wall budget; this only backstops a hung child.
+                    stop_child(proc, row)
+                    row["error"] = "Exceeded its wall budget plus grace; stopped by the batch worker"
                 code = proc.poll()
                 if code is not None:
                     row.update(status="completed" if code == 0 else "failed", returncode=code)
                     log.close()
                     active.remove(entry)
             for row in next_rows(job["runs"], config["parallel"]-len(active), config.get("comparison", False)):
-                if row.get("agent_backend", config.get("agent_backend", "codex")) not in {"codex", "tools", "raw"}:
-                    raise ValueError("Saved job uses a retired agent backend; create a new Codex experiment")
+                check_launchable(row, config)
                 # The CLI owns creation of a fresh run directory (especially continuation).
                 log = (directory / (Path(row["output"]).name + ".log")).open("wb")
                 try:

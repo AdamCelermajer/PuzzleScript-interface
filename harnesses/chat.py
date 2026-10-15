@@ -19,7 +19,6 @@ from typing import Any
 from avo.client.model_provider import API_PROVIDERS, api_key
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-HARNESSES = ("codex", "tools", "raw")
 # OpenRouter's unified reasoning parameter has no "max"; xhigh is its ceiling.
 EFFORT_SENT = {"none": "none", "minimal": "minimal", "low": "low", "medium": "medium",
                "high": "high", "xhigh": "xhigh", "max": "xhigh"}
@@ -42,7 +41,7 @@ def openrouter_key() -> str:
         key = Path(key_file).read_text(encoding="utf-8").strip()
     else:
         key = ""
-        env_file = Path(__file__).resolve().parents[2] / ".env"
+        env_file = Path(__file__).resolve().parents[1] / ".env"
         if env_file.is_file():
             from dotenv import dotenv_values
             key = str(dotenv_values(env_file).get("OPENROUTER_API_KEY") or "").strip()
@@ -82,7 +81,7 @@ class OpenRouterChat:
             self._key = openrouter_key()
         else:
             try:
-                self._key = api_key(model_provider, env_file=Path(__file__).resolve().parents[2] / ".env")
+                self._key = api_key(model_provider, env_file=Path(__file__).resolve().parents[1] / ".env")
             except RuntimeError as exc:
                 raise ProviderError(str(exc)) from None
         self._sequence = 0
