@@ -24,6 +24,7 @@ FILE_TOOLS = {"edit", "write", "patch", "multiedit"}
 # OpenRouter's reasoning ceiling is xhigh (as in the bare harness).
 VARIANT = {"low": "low", "medium": "medium", "high": "high", "xhigh": "xhigh", "max": "xhigh"}
 NANOGPT_BASE_URL = "https://nano-gpt.com/api/v1"
+OUTPUT_TOKEN_MAX = 64_000
 MODEL_LISTS = {"openrouter": "https://openrouter.ai/api/v1/models",
                "nanogpt": f"{NANOGPT_BASE_URL}/models?detailed=true"}
 
@@ -85,6 +86,10 @@ class OpenCodeSession(CliSession):
                                                      self.pin_provider, images=listed is not False), indent=2), encoding="utf-8")
         self.env["OPENCODE_CONFIG"] = str(config)
         self.env["OPENCODE_DISABLE_AUTOUPDATE"] = "1"
+        # OpenCode caps one reply at 32k output tokens; a thinking model can spend all of it reasoning
+        # and return nothing. Harness² upstream runs every OpenCode session with 64k.
+        self.env["OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX"] = str(OUTPUT_TOKEN_MAX)
+        self.manifest_extra["output_token_max"] = OUTPUT_TOKEN_MAX
         # Never read or write a real OpenCode install (T3 Code depends on the host one).
         for name in ("XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_STATE_HOME", "XDG_CACHE_HOME"):
             path = self.private / name.lower()

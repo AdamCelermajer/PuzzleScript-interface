@@ -138,6 +138,8 @@ def test_opencode_private_config_declares_model_and_denies_web(tmp_path):
     assert config["provider"]["openrouter"]["models"]["qwen/qwen3.8-27b"]["options"]["provider"] == {
         "order": ["deepinfra"], "allow_fallbacks": False}
     assert config["permission"]["*"] == "allow" and config["permission"]["webfetch"] == "deny"
+    assert session.env["OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX"] == "64000"  # thinking models outlast the 32k default
+    assert json.loads((session.analysis_dir / "session.json").read_text())["output_token_max"] == 64000
     assert Path(config["instructions"][0]).read_text() == "SYSTEM PROMPT"
     for name in ("XDG_DATA_HOME", "XDG_CONFIG_HOME", "XDG_STATE_HOME", "XDG_CACHE_HOME"):
         assert session.env[name].startswith(str(tmp_path / "private"))
