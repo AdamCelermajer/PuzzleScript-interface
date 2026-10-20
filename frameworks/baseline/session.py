@@ -141,8 +141,7 @@ class CliGameSession:
     """One persistent harness conversation for one game episode."""
 
     def __init__(self, config: GameSessionConfig, working_directory: str | Path,
-                 artifact_directory: str | Path | None = None, *, mirror_directory: str | Path | None = None,
-                 workspace_seed: Path | None = None) -> None:
+                 artifact_directory: str | Path | None = None, *, mirror_directory: str | Path | None = None) -> None:
         self.config = config
         self.working_directory = Path(working_directory).resolve()
         self.working_directory.mkdir(parents=True, exist_ok=True)
@@ -153,22 +152,6 @@ class CliGameSession:
         self.deadline: float | None = None  # monotonic; set by a wall-clock budget
         self.operations = 0
         self.session: Any = None
-        self.workspace_seed = Path(workspace_seed).resolve() if workspace_seed is not None else None
-
-    def _restore_seed(self) -> None:
-        # Harness files are fixed inputs, not a second notes channel. Discard edits
-        # and generated files under their directories before restoring the seed.
-        if self.workspace_seed is not None:
-            for source in self.workspace_seed.iterdir():
-                target = self.working_directory / source.name
-                if target.is_dir() and not target.is_symlink():
-                    shutil.rmtree(target)
-                else:
-                    target.unlink(missing_ok=True)
-                if source.is_dir():
-                    shutil.copytree(source, target)
-                else:
-                    shutil.copyfile(source, target)
 
     @property
     def keep(self) -> set[str]:
@@ -183,12 +166,9 @@ class CliGameSession:
         if self.config.workspace_enabled:
             (self.working_directory / NOTES_DIR).mkdir(exist_ok=True)
         wipe_workspace(self.working_directory, self.keep)
-        self._restore_seed()
         initial_notes = sorted(path.relative_to(self.working_directory).as_posix()
                                for path in self.working_directory.rglob("*") if path.is_file())
         instructions = game_instructions(self.config.workspace_enabled)
-        if self.workspace_seed is not None and any(self.workspace_seed.iterdir()):
-            instructions += " Harness instructions and helper files are also provided in this workspace; they are restored unchanged after each turn."
         self.session = create_session(self.config.harness)
         self.session.start(self.working_directory, instructions, self.config.model, self.config.effort,
                            "player", self.artifact_directory, provider=self.config.provider)
@@ -200,7 +180,6 @@ class CliGameSession:
                                  if self.config.workspace_enabled else
                                  "keep frame.png only; delete everything else after each turn"),
             "initial_note_files": initial_notes, "base_instructions": instructions,
-            "workspace_seed": str(self.workspace_seed) if self.workspace_seed else None,
             "web_tools": "disabled", "prompt_omits_game_id": True, "prompt_omits_game_title": True,
             "prompt_omits_action_meanings": True,
         }, indent=2), encoding="utf-8")
@@ -240,7 +219,6 @@ class CliGameSession:
 
     def _after_turn(self) -> None:
         wipe_workspace(self.working_directory, self.keep)
-        self._restore_seed()
         if (self.mirror_directory is not None and self.config.workspace_enabled
                 and (self.working_directory / NOTES_DIR).is_dir()):
             target = self.mirror_directory / NOTES_DIR

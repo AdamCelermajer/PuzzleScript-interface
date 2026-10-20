@@ -1,4 +1,4 @@
-"""One PuzzleScript game, executed by the existing baseline player."""
+"""One PuzzleScript game, played by a coding agent that drives the game itself (frameworks.harness2.player)."""
 from __future__ import annotations
 
 import json
@@ -41,14 +41,16 @@ class PuzzleScriptAdapter:
         self.spec = BenchSpec(
             name="puzzlescript", runs_root=self.root / "rollouts", install_mode="workspace_agents_md",
             prompts=BenchPrompts(
-                work="play an unfamiliar puzzle game, choosing one game action per turn",
+                work="play an unfamiliar puzzle game through a command-line game tool, in a working folder that persists",
                 domain_word="puzzle mechanics", deliverable_word="environment model",
                 yardstick="Complete more levels; on a tie, use fewer game actions.",
-                inv_levers="Improve observation, hypothesis tracking, planning, and recovery from dead ends.",
+                inv_levers="Improve observation, hypothesis tracking, notes, helper scripts that call `python game.py`, "
+                           "planning, and recovery from dead ends.",
                 dom_levers="Use the observed transitions to learn this game's objects, controls, and goals.",
                 domain_guidance="Each trajectory begins with the run's levels completed and actions used. "
-                                "Use these outcomes when comparing approaches. The player keeps one conversation; "
-                                "harness files are restored after each turn and notes are disabled.",
+                                "Use these outcomes when comparing approaches. The player works in one session and "
+                                "one folder for the whole run, plays only through `python game.py look | do ACTION | "
+                                "reset`, and finds the harness files in that folder at the start.",
             ),
             channels={"proposer": channel, "selector": channel}, allow_subagents=True,
         )
@@ -61,8 +63,7 @@ class PuzzleScriptAdapter:
         return "puzzlescript"
 
     def task_prompt(self, task_id: str) -> str:
-        return ("Solve the unknown puzzle game from its frames and observed transitions. "
-                "Return one legal action per turn in the same persistent conversation. "
+        return ("Play the unknown puzzle game with `python game.py` in your working folder. "
                 "Complete as many levels as possible within the game action budget.")
 
     def task_files(self, task_id: str) -> None:
@@ -98,7 +99,7 @@ class PuzzleScriptAdapter:
         finally:
             shutil.rmtree(install.staging_dir)
         spec = self.run_spec
-        argv = [sys.executable, "-m", "frameworks.baseline.run", "--no-window", "--harness", "opencode"]
+        argv = [sys.executable, "-m", "frameworks.harness2.player", "--harness", "opencode"]
         for key in ("model", "effort", "game_id", "backend_url", "provider", "max_wall_seconds"):
             argv += ["--" + key.replace("_", "-"), str(spec[key])]
         argv += ["--max-steps", str(spec["options"]["max_steps"]), "--output-dir", str(run_dir),
@@ -118,13 +119,7 @@ class PuzzleScriptAdapter:
         total = result.get("win_levels", result.get("total_levels"))
         text = [f"Outcome of this run: completed {result['levels_completed']} of {total if total is not None else 'unknown'} "
                 f"levels in {result['action_count']} game actions (ended: {result.get('reason', 'unknown')})."]
-        transcript = run_dir / "transcript.jsonl"
-        if transcript.is_file():
-            for line in transcript.read_text(encoding="utf-8").splitlines():
-                row = json.loads(line)
-                text += ["[OBSERVATION] " + str(row.get("prompt", row.get("frame", "")))[:obs_trunc],
-                         "[ACTION] " + json.dumps(row.get("response", {})),
-                         "[OBSERVATION] " + json.dumps(row.get("result", {}))[:obs_trunc]]
+        # The player's OpenCode session: its reasoning, its game.py calls and their printed results.
         for raw in sorted((run_dir / "raw").glob("turn-*.jsonl"),
                           key=lambda p: int(p.stem.split("-")[-1])):
             text.append(render_events(raw, obs_trunc=obs_trunc, max_chars=sys.maxsize))
@@ -132,17 +127,12 @@ class PuzzleScriptAdapter:
 
     def deliverable_text(self, run_dir: Path) -> str:
         # Only the player's own environment-model report, never controller metrics.
-        path = run_dir / "world_model.json"
-        if not path.is_file():
-            return ""
-        text = path.read_text(encoding="utf-8")
-        if set(json.loads(text)) == {"error"}:
-            return ""  # baseline writes this controller diagnostic when reporting fails
-        return text
+        path = run_dir / "world_model.md"
+        return path.read_text(encoding="utf-8") if path.is_file() else ""
 
     def deliverable_files(self, run_dir: Path) -> dict[str, str]:
         text = self.deliverable_text(run_dir)
-        return {"world_model.json": text} if text else {}
+        return {"world_model.md": text} if text else {}
 
     def score(self, run_dir: Path, task_id: str) -> dict | None:
         return read_result(run_dir)

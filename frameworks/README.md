@@ -8,7 +8,7 @@ Docker container by `python -m harnesses.launch`.
 |---|---|---|---|---|
 | `baseline` | `baseline/` | the coding agent plays directly, one action per turn | `max_steps`, `notes` (on = "Baseline+") | `--continue-from PARENT` into a new directory |
 | `avo` | `avo/` | an optimizer agent evolves a player's strategy; each candidate's `solver.py` is scored by a fresh run | `max_evaluations`, `research_moves`, `solver_moves`, `world_model_mode`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
-| `harness2` | `harness2/` | Harness² edits the direct player's harness files from run outcomes, then re-runs the adopted harness fresh | `k`, `recursion`, `max_steps`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
+| `harness2` | `harness2/` | Harness²: a coach edits the harness files (AGENTS.md, skills, scripts) of an agent that plays through `game.py` in its own folder, from run outcomes; the kept harness is re-run fresh | `k`, `recursion`, `max_steps`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
 
 The launcher, the container entry (`harnesses/entry.py`) and the workbench read only the
 interface in `base.py`, through `registry.py`:
@@ -35,10 +35,18 @@ write `result.json` in the baseline shape (`status`, `solved`, `levels_completed
 ## Harness²
 
 Uses Google Research's [Harness²](https://github.com/google-research/harness2), pinned to
-`1cfe254e8d25b15f37048c3730134686abe60335`. One task is one PuzzleScript game. The
-player is baseline on OpenCode, with notes off; the starting harness has no instructions
-or helpers. Candidates supply `AGENTS.md`, `.opencode/` skills, agents and plugins, and
-`scripts/` in a fresh workspace. These fixed files are restored between player turns.
+`1cfe254e8d25b15f37048c3730134686abe60335`. One task is one PuzzleScript game.
+
+The player (`player.py`) is set up as in the paper: one OpenCode session with one task and
+one working folder that persists for the whole rollout. It plays only through
+`python game.py look | do ACTION | reset` in that folder; a small server in the player
+process owns the game session and the action budget and records every move in the
+baseline shape (`transitions.jsonl`, `frames/`, `result.json`), so the run page replays
+each rollout. When the agent ends a turn with actions left it is told to continue in the
+same session (two turns without an action end the rollout); at the end it writes
+`world_model.md`, and its folder is kept under `workspace/`. The starting harness is
+empty (stock OpenCode); candidates add `AGENTS.md`, `.opencode/` skills, agents and
+plugins, and `scripts/` to the folder before the session starts.
 
 The improver uses our installed OpenCode binary, `--optimizer-model` and
 `--optimizer-effort`, capped at 120 steps per session. Parallel and sequential recursion

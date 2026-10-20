@@ -277,33 +277,6 @@ def test_harness2_launch_flags_spec_and_entry(tmp_path, capsys, monkeypatch):
     assert argv[argv.index("--backend-url") + 1] == "http://host.docker.internal:8000"
 
 
-def test_seeded_baseline_restores_harness_without_notes(tmp_path, monkeypatch):
-    from frameworks.baseline.session import CliGameSession, GameSessionConfig
-
-    class SeedHarness(FakeHarness):
-        def turn(self, instruction, images=(), timeout=None):
-            assert (self.workspace / "AGENTS.md").read_text() == "Fixed harness"
-            assert (self.workspace / ".opencode/skills/plan/SKILL.md").is_file()
-            (self.workspace / "AGENTS.md").write_text("Edited")
-            (self.workspace / ".opencode/generated.txt").write_text("discard")
-            return super().turn(instruction, images, timeout)
-
-    monkeypatch.setattr("harnesses.registry.create_session", lambda harness: SeedHarness())
-    seed = tmp_path / "seed"
-    (seed / ".opencode/skills/plan").mkdir(parents=True)
-    (seed / "AGENTS.md").write_text("Fixed harness")
-    (seed / ".opencode/skills/plan/SKILL.md").write_text("Plan")
-    frame = tmp_path / "frame.png"
-    frame.write_bytes(b"png")
-    with CliGameSession(GameSessionConfig(harness="opencode"), tmp_path / "ws", tmp_path / "out",
-                        workspace_seed=seed) as game:
-        for _ in range(2):
-            game.next_action("Choose an action", frame)
-            assert (game.working_directory / "AGENTS.md").read_text() == "Fixed harness"
-            assert not (game.working_directory / ".opencode/generated.txt").exists()
-            assert not (game.working_directory / "notes").exists()
-
-
 def test_opencode_error_event_with_zero_exit_is_a_failed_turn(tmp_path, monkeypatch):
     from harnesses.opencode import OpenCodeSession
 

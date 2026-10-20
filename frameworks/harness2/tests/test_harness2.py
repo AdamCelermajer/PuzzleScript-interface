@@ -32,9 +32,13 @@ class FakePlayer:
         result = {"status": "completed", "solved": False, "levels_completed": levels,
                   "win_levels": 5, "action_count": 12, "reason": "step_budget_exhausted"}
         (run_dir / "result.json").write_text(json.dumps(result), encoding="utf-8")
-        (run_dir / "transcript.jsonl").write_text(json.dumps(
-            {"prompt": "Current frame: 0 1 2", "response": {"action": "ACTION1"}, "result": {"changed": True}}) + "\n")
-        (run_dir / "world_model.json").write_text('{"objects": ["red tile"]}', encoding="utf-8")
+        (run_dir / "raw").mkdir()
+        (run_dir / "raw" / "turn-1.jsonl").write_text("\n".join(json.dumps(event) for event in (
+            {"type": "text", "part": {"type": "text", "text": "Trying the first action."}},
+            {"type": "tool_use", "part": {"type": "tool", "tool": "bash", "state": {
+                "status": "completed", "input": {"command": "python game.py do ACTION1"},
+                "output": "ACTION1: changed (0,1) 2->5"}}})) + "\n")
+        (run_dir / "world_model.md").write_text("# Objects\n- red tile\n", encoding="utf-8")
 
 
 class FakeProposer:
@@ -84,19 +88,20 @@ def test_adapter_protocol_trajectory_and_deliverables(tmp_path):
     assert adapter.delivered(rd)
     text = adapter.trajectory(rd, obs_trunc=10_000)
     assert text.startswith("Outcome of this run: completed 1 of 5 levels in 12 game actions (ended: step_budget_exhausted).")
-    assert "[ACTION]" in text and "Current frame" in text
-    assert adapter.deliverable_text(rd) == '{"objects": ["red tile"]}'
-    assert adapter.deliverable_files(rd) == {"world_model.json": adapter.deliverable_text(rd)}
+    assert "python game.py do ACTION1" in text and "changed (0,1) 2->5" in text
+    assert adapter.deliverable_text(rd) == "# Objects\n- red tile\n"
+    assert adapter.deliverable_files(rd) == {"world_model.md": adapter.deliverable_text(rd)}
     assert "levels_completed" not in adapter.deliverable_text(rd)
     evidence = tmp_path / "evidence"
     evidence.mkdir()
     (evidence / "trajectory.md").write_text(text)
     context.assert_no_grader_verdicts(evidence)
     assert adapter.score(rd, adapter.tasks()[0])["levels_completed"] == 1
-    assert "--notes" not in player.calls[0][0]
-    assert player.calls[0][0][player.calls[0][0].index("--harness") + 1] == "opencode"
-    assert list((rd / "seed").iterdir()) == []  # stock baseline gets no extra prompt
-    (rd / "world_model.json").write_text('{"error": "No report received"}')
+    argv = player.calls[0][0]
+    assert argv[argv.index("-m") + 1] == "frameworks.harness2.player"
+    assert argv[argv.index("--harness") + 1] == "opencode"
+    assert list((rd / "seed").iterdir()) == []  # stock OpenCode: the base harness adds no files
+    (rd / "world_model.md").unlink()
     assert adapter.deliverable_text(rd) == "" and adapter.deliverable_files(rd) == {}
 
 
