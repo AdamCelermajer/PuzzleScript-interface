@@ -6,7 +6,7 @@ is a command in that folder, ``python game.py look | do ACTION | reset``, answer
 server in this process: it owns the game session and the action budget, and records every move
 in the baseline shape (transitions.jsonl, frames/, result.json) so the run page replays it.
 If the agent ends its turn with actions left, it is told to continue in the same session; at
-the end it writes world_model.md.
+the end, with the game closed, it writes world_model.md and then solver.py (saved, not run).
 """
 from __future__ import annotations
 
@@ -70,6 +70,14 @@ REPORT_PROMPT = (
     "and what is still uncertain. Separate confirmed facts from guesses. Then reply 'done'."
 )
 
+SOLVER_PROMPT = (
+    "Last task, still without game.py: write solver.py in your folder, a Python program that plays this game "
+    "from the very first level using what you learned. It must define next_action(grid, levels_completed) -> str, "
+    "taking the current grid (a list of rows of integers, as game.py prints it) and returning one action name; "
+    "it may keep state between calls (e.g. a planned move list). It is saved for reading, not run now. "
+    "Then reply 'done'."
+)
+
 
 class GameServer:
     """Answers game.py requests: one game session, one action budget, the full record."""
@@ -78,6 +86,7 @@ class GameServer:
         self.env, self.workspace, self.output = env, workspace, output_dir
         self.max_steps, self.deadline = max_steps, (time.monotonic() + max_wall_seconds) if max_wall_seconds else None
         self.actions: list[str] = []
+        self.closed = False  # set once play is over and only the final reports remain
         self.frames = output_dir / "frames"
         self.frames.mkdir(parents=True, exist_ok=True)
         self.rpc = workspace / RPC_DIR
@@ -130,7 +139,7 @@ class GameServer:
     def handle(self, command: str, action: str) -> tuple[bool, str]:
         if command == "look":
             return True, self._status() + "\npicture: frame.png"
-        if self.finished:
+        if self.finished or self.closed:
             return False, f"The game session is over ({self.reason}). No more actions."
         if command == "reset":
             return self._act("RESET", self.env.reset)
@@ -235,24 +244,28 @@ def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provid
             instruction = (f"The game is not finished: levels {f.levels_completed}/{f.win_levels}, "
                            f"{max_steps - len(server.actions)} of {max_steps} actions left. Keep playing with python game.py.")
         reason = server.reason if server.finished else ("agent_idle" if idle >= IDLE_TURNS else "turn_budget_exhausted")
-        # A missing report leaves the rollout's score intact; the coach then sees no world_model.md.
+        # Missing reports leave the rollout's score intact; the coach then sees no world_model.md.
+        server.closed = True
         _turn(session, REPORT_PROMPT.format(reason=reason, levels=server.frame.levels_completed,
                                             total=server.frame.win_levels), 600)
+        _turn(session, SOLVER_PROMPT, 900)
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
         reason = "error"
     finally:
         server.stop()
         session.close()
-        if (workspace / "world_model.md").is_file():
-            shutil.copyfile(workspace / "world_model.md", output_dir / "world_model.md")
+        for name in ("world_model.md", "solver.py"):
+            if (workspace / name).is_file():
+                shutil.copyfile(workspace / name, output_dir / name)
         shutil.copytree(workspace, output_dir / "workspace", dirs_exist_ok=True, ignore=shutil.ignore_patterns(RPC_DIR))
         shutil.rmtree(workspace, ignore_errors=True)
     result = {"status": "error" if error else "completed", "reason": reason, "error": error or None,
               "solved": server.solved, "actions": server.actions, "action_count": len(server.actions),
               "agent_turns": turns, "final_state": getattr(server.frame.state, "value", str(server.frame.state)),
               "levels_completed": server.frame.levels_completed, "win_levels": server.frame.win_levels,
-              "world_model": str(output_dir / "world_model.md") if (output_dir / "world_model.md").is_file() else None}
+              "world_model": str(output_dir / "world_model.md") if (output_dir / "world_model.md").is_file() else None,
+              "solver": str(output_dir / "solver.py") if (output_dir / "solver.py").is_file() else None}
     (output_dir / "result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     return result
 

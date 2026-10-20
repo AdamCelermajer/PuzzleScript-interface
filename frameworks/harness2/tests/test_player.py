@@ -83,7 +83,10 @@ class ScriptedSession:
     def turn(self, instruction, images=(), timeout=None):
         self.instructions.append(instruction)
         if instruction.startswith("The game session has ended"):
+            self.refused = game(self.workspace, "do", "ACTION4")  # the game is closed for the final reports
             (self.workspace / "world_model.md").write_text("ACTION4 moves right.")
+        elif instruction.startswith("Last task"):
+            (self.workspace / "solver.py").write_text("def next_action(grid, levels_completed):\n    return 'ACTION4'\n")
         else:
             for args in (self.plan.pop(0) if self.plan else []):
                 game(self.workspace, *args)
@@ -119,6 +122,8 @@ def test_play_stops_an_idle_agent(tmp_path, monkeypatch):
     result = play(Corridor(), tmp_path / "out", harness="opencode", model="m", effort="low", provider="",
                   max_steps=10, max_wall_seconds=0, harness_dir=harness)
     assert result["reason"] == "agent_idle" and result["agent_turns"] == 2 and result["action_count"] == 0
+    assert session.refused[0] == 1 and "No more actions" in session.refused[1]  # 10 actions left, still refused
+    assert result["solver"] and "def next_action" in (tmp_path / "out" / "solver.py").read_text()
 
 
 class FlakySession(ScriptedSession):

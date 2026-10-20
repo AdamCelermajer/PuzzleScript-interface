@@ -43,8 +43,9 @@ one working folder that persists for the whole rollout. It plays only through
 process owns the game session and the action budget and records every move in the
 baseline shape (`transitions.jsonl`, `frames/`, `result.json`), so the run page replays
 each rollout. When the agent ends a turn with actions left it is told to continue in the
-same session (two turns without an action end the rollout); at the end it writes
-`world_model.md`, and its folder is kept under `workspace/`. The starting harness is
+same session (two turns without an action end the rollout). At the end, with the game
+closed, it writes `world_model.md` and then `solver.py` (`next_action(grid, levels_completed)`,
+saved for reading, never run); both go to the coach, and its folder is kept under `workspace/`. The starting harness is
 empty (stock OpenCode); candidates add `AGENTS.md`, `.opencode/` skills, agents and
 plugins, and `scripts/` to the folder before the session starts.
 

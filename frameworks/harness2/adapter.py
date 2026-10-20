@@ -131,8 +131,9 @@ class PuzzleScriptAdapter:
         return path.read_text(encoding="utf-8") if path.is_file() else ""
 
     def deliverable_files(self, run_dir: Path) -> dict[str, str]:
-        text = self.deliverable_text(run_dir)
-        return {"world_model.md": text} if text else {}
+        # The player's own end-of-run artifacts: its world model and the solver it wrote (never run).
+        return {name: (run_dir / name).read_text(encoding="utf-8")
+                for name in ("world_model.md", "solver.py") if (run_dir / name).is_file()}
 
     def score(self, run_dir: Path, task_id: str) -> dict | None:
         return read_result(run_dir)
