@@ -140,8 +140,7 @@ function Replay({ runId, record, live }: { runId: string; record: RunRecord; liv
       <input type="range" min={1} max={total} value={position} onChange={(e) => { const v = Number(e.target.value); setIndex(v >= total ? null : v) }} className="mb-3 w-full accent-[var(--accent)]" />
       {transition.error && <ErrorBox error={transition.error} />}
       {current && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto_auto_auto_minmax(0,1fr)]">
-          <FramePicture src={fileUrl(runId, frameFile(Math.max(0, decision - 1)))} caption={`Before ${current.action} (shown to the agent)`} />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto_auto_minmax(0,1fr)]">
           <FramePicture src={fileUrl(runId, frameFile(decision))} caption={`After ${current.action}`} />
           <figure className="flex flex-col gap-1">
             <figcaption className="text-[11.5px] text-muted">Grid after {current.action} · changed cells outlined</figcaption>

@@ -32,8 +32,10 @@ export function Timeline({ items, emptyText = 'No agent events recorded', footer
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [allOpen, setAllOpen] = useState(false)
+  const [newestFirst, setNewestFirst] = useState(true)
   const needle = search.trim().toLowerCase()
-  const shown = items.filter((i) => !hidden.has(i.kind) && (!needle || `${i.title} ${i.summary} ${i.input ?? ''} ${i.body ?? ''}`.toLowerCase().includes(needle)))
+  const filtered = items.filter((i) => !hidden.has(i.kind) && (!needle || `${i.title} ${i.summary} ${i.input ?? ''} ${i.body ?? ''}`.toLowerCase().includes(needle)))
+  const shown = newestFirst ? [...filtered].reverse() : filtered
   const counts = items.reduce<Record<string, number>>((acc, i) => ({ ...acc, [i.kind]: (acc[i.kind] ?? 0) + 1 }), {})
 
   if (!items.length) return <Empty title={emptyText} />
@@ -52,6 +54,7 @@ export function Timeline({ items, emptyText = 'No agent events recorded', footer
           </button>
         ))}
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search events…" className="ml-auto h-7 w-52" />
+        <Button size="sm" variant="ghost" onClick={() => setNewestFirst(!newestFirst)} title="Order of events">{newestFirst ? 'Newest first' : 'Oldest first'}</Button>
         <Button size="sm" variant="ghost" onClick={() => { setAllOpen(!allOpen); setExpanded(new Set()) }}>{allOpen ? 'Collapse all' : 'Expand all'}</Button>
       </div>
       <div className="flex flex-col rounded-md border border-line">
