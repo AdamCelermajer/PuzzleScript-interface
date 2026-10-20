@@ -27,6 +27,50 @@ def read_result(run_dir: Path) -> dict | None:
     return None
 
 
+# The coach reads whole trajectories in one context; a full 200-action rollout of a thinking
+# model is ~500k characters, more than a 262k-token model holds. Keep each thought's gist and
+# every game call with its one-line result.
+REASONING_CHARS = 700
+OUTPUT_LINES = 2
+
+
+def level_times(run_dir: Path) -> list[tuple[int, int]]:
+    path = run_dir / "transitions.jsonl"
+    if not path.is_file():
+        return []
+    times = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        row = json.loads(line)
+        if row["after"].get("levels_completed", 0) > row["before"].get("levels_completed", 0):
+            times.append((row["after"]["levels_completed"], row["action_index"]))
+    return times
+
+
+def _clip(text: str, limit: int) -> str:
+    text = text.strip()
+    return text if len(text) <= limit else text[:limit].rstrip() + f" …(+{len(text) - limit} chars)"
+
+
+def compact_events(path: Path) -> str:
+    """The player's session in the [ACTION]/[OBSERVATION] grammar, shortened for the coach."""
+    lines = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        event = json.loads(raw)
+        kind, body, output = event.get("type"), str(event.get("text") or ""), str(event.get("output") or "")
+        if kind == "reasoning" and body.strip():
+            lines.append("[THINKING] " + _clip(body, REASONING_CHARS))
+        elif kind == "message" and body.strip():
+            lines.append("[MESSAGE] " + _clip(body, 1500))
+        elif kind == "command":
+            shown = "\n".join(output.strip().splitlines()[:OUTPUT_LINES])
+            lines.append(f"[ACTION] {_clip(body, 400)}\n[OBSERVATION] {_clip(shown, 400)}")
+        elif kind in {"tool", "file_change"}:
+            lines.append(f"[ACTION] {event.get('tool') or kind}: {_clip(body, 200)}")
+        elif kind == "error":
+            lines.append("[ERROR] " + _clip(body, 300))
+    return "\n".join(lines)
+
+
 def run_player(argv: list[str], run_dir: Path, timeout: int | None) -> None:
     with (run_dir / "player.log").open("w", encoding="utf-8") as log:
         subprocess.run(argv, stdout=log, stderr=subprocess.STDOUT, timeout=timeout, check=True)
@@ -119,10 +163,15 @@ class PuzzleScriptAdapter:
         total = result.get("win_levels", result.get("total_levels"))
         text = [f"Outcome of this run: completed {result['levels_completed']} of {total if total is not None else 'unknown'} "
                 f"levels in {result['action_count']} game actions (ended: {result.get('reason', 'unknown')})."]
-        # The player's OpenCode session: its reasoning, its game.py calls and their printed results.
-        for raw in sorted((run_dir / "raw").glob("turn-*.jsonl"),
-                          key=lambda p: int(p.stem.split("-")[-1])):
-            text.append(render_events(raw, obs_trunc=obs_trunc, max_chars=sys.maxsize))
+        levels = level_times(run_dir)
+        if levels:
+            text.append("Levels completed at game action: " + ", ".join(f"level {n} at {a}" for n, a in levels) + ".")
+        events = run_dir / "agent_events.jsonl"
+        if events.is_file():
+            text.append(compact_events(events))
+        else:  # rollouts recorded before agent_events.jsonl existed
+            for raw in sorted((run_dir / "raw").glob("turn-*.jsonl"), key=lambda p: int(p.stem.split("-")[-1])):
+                text.append(render_events(raw, obs_trunc=obs_trunc, max_chars=sys.maxsize))
         return "\n\n".join(text)
 
     def deliverable_text(self, run_dir: Path) -> str:

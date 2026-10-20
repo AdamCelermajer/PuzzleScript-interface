@@ -245,3 +245,26 @@ def test_installed_proposer_uses_private_config_and_preserves_credentials(tmp_pa
     cwd = tmp_path / "session"
     cwd.mkdir()
     assert proposer._opencode(cwd, "Do this.", "System", 10) == ("<notes>Done.</notes>", 0.1, "")
+
+
+def test_trajectory_is_compact_and_keeps_every_game_call(tmp_path):
+    from frameworks.harness2.adapter import compact_events, level_times
+    rd = tmp_path / "rollouts" / "base1"
+    rd.mkdir(parents=True)
+    (rd / "result.json").write_text(json.dumps({"status": "completed", "levels_completed": 1, "win_levels": 4,
+                                                "action_count": 2, "reason": "step_budget_exhausted"}))
+    (rd / "transitions.jsonl").write_text("\n".join(json.dumps(r) for r in (
+        {"action_index": 1, "before": {"levels_completed": 0}, "after": {"levels_completed": 0}},
+        {"action_index": 2, "before": {"levels_completed": 0}, "after": {"levels_completed": 1}})) + "\n")
+    events = [{"type": "reasoning", "text": "x" * 5000},
+              {"type": "command", "text": "python game.py do ACTION1",
+               "output": "ACTION1: changed (0,1) 2->5\nstate=PLAYING levels=0/4\ngrid:\n" + "1 2 3\n" * 50},
+              {"type": "tool", "tool": "read", "text": '{"filePath": "frame.png"}', "output": "Image read successfully"},
+              {"type": "usage", "usage": {}}]
+    (rd / "agent_events.jsonl").write_text("\n".join(json.dumps(e) for e in events) + "\n")
+    adapter = PuzzleScriptAdapter(spec(), tmp_path, player=FakePlayer())
+    text = adapter.trajectory(rd, obs_trunc=50_000)
+    assert "Levels completed at game action: level 1 at 2." in text and level_times(rd) == [(1, 2)]
+    assert "[ACTION] python game.py do ACTION1\n[OBSERVATION] ACTION1: changed (0,1) 2->5\nstate=PLAYING levels=0/4" in text
+    assert "grid:" not in text and "…(+4300 chars)" in text and "[ACTION] read:" in text
+    assert len(compact_events(rd / "agent_events.jsonl")) < 1200
