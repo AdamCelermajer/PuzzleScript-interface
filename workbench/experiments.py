@@ -386,6 +386,38 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         cache.clear()
         return {"archived": sorted(current)}
 
+    @router.get("/pins")
+    def list_pins(run: str | None = Query(None, max_length=500)):
+        from workbench.pins import read_pins
+        return {"pins": read_pins(root, run)}
+
+    @router.post("/pins", status_code=201)
+    def create_pin(payload: dict = Body(...)):
+        from workbench.pins import add_pin
+        try:
+            return add_pin(root, payload)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @router.patch("/pins/{pin_id}")
+    def edit_pin(pin_id: str, payload: dict = Body(...)):
+        from workbench.pins import update_pin
+        try:
+            return update_pin(root, pin_id, payload.get("note"))
+        except KeyError as exc:
+            raise HTTPException(404, "No such pin") from exc
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+
+    @router.delete("/pins/{pin_id}", status_code=204)
+    def delete_pin(pin_id: str):
+        from workbench.pins import remove_pin
+        try:
+            remove_pin(root, pin_id)
+        except KeyError as exc:
+            raise HTTPException(404, "No such pin") from exc
+        return Response(status_code=204)
+
     @router.get("/frameworks")
     def frameworks():
         from frameworks.registry import list_frameworks

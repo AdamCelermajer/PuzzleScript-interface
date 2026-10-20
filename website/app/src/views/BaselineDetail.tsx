@@ -1,17 +1,19 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { api, q } from '../api/client'
+import { usePinActions, usePins } from '../api/hooks'
 import type { RunRecord, Transition } from '../api/types'
 import { GridCanvas, PixelImage } from '../components/Frame'
 import { Markdown } from '../components/Markdown'
+import { PinList } from '../components/Pins'
 import { Timeline } from '../components/Timeline'
 import { Button, Card, Empty, ErrorBox, KeyValues, Loading, Pre, Tabs } from '../components/ui'
-import { fromAgentEvent, fromLegacyTranscript } from '../lib/events'
+import { fromAgentEvent, fromLegacyTranscript, pinKey, pinText, type TimelineItem } from '../lib/events'
 
 const fileUrl = (run: string, file: string) => `/api/workbench/record/file${q({ run, file })}`
 const frameFile = (index: number) => `frames/${String(index).padStart(3, '0')}.png`
 
-type Tab = 'events' | 'notes' | 'result' | 'files'
+type Tab = 'events' | 'pinned' | 'notes' | 'result' | 'files'
 
 /** Baseline and baseline+ runs: replay of recorded transitions, agent events, notes, artifacts. */
 export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId: string; live?: boolean; notes?: boolean }) {
@@ -23,6 +25,7 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
     placeholderData: keepPreviousData,
   })
   const [tab, setTab] = useState<Tab>('events')
+  const pins = usePins(runId)
 
   if (record.isLoading) return <Loading label="Reading run record…" />
   if (record.error) return <ErrorBox error={record.error} retry={() => record.refetch()} />
@@ -37,12 +40,14 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
           onChange={setTab}
           tabs={[
             { id: 'events', label: 'Agent timeline' },
+            { id: 'pinned', label: `Pinned${pins.data?.length ? ` (${pins.data.length})` : ''}` },
             { id: 'notes', label: `Notes${notes.length ? ` (${notes.length})` : ''}`, hidden: !withNotes && !notes.length },
             { id: 'result', label: 'Result & spec' },
             { id: 'files', label: `Files (${data.files.length})` },
           ]}
         />
         {tab === 'events' && <Events runId={runId} record={data} onMore={() => setEventsLimit(5000)} />}
+        {tab === 'pinned' && (pins.error ? <ErrorBox error={pins.error} /> : <PinList pins={pins.data ?? []} />)}
         {tab === 'notes' && <Notes runId={runId} files={notes} />}
         {tab === 'result' && (
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
@@ -167,11 +172,22 @@ function Events({ runId, record, onMore }: { runId: string; record: RunRecord; o
   if (legacyFile && legacy.isLoading) return <Loading label="Reading transcript…" />
   if (legacy.error) return <ErrorBox error={legacy.error} />
   const events = record.agent_events
+  const pins = usePins(runId)
+  const actions = usePinActions()
+  const keys = new Map((pins.data ?? []).map((p) => [p.key, p.id]))
+  const togglePin = (item: TimelineItem) => {
+    const existing = keys.get(pinKey(item))
+    if (existing) actions.remove.mutate(existing)
+    else actions.add.mutate({ run: runId, key: pinKey(item), turn: item.turn, kind: item.kind, title: item.title, text: pinText(item), at: item.at })
+  }
   return (
     <div className="flex flex-col gap-2">
       {!events && legacyFile && <div className="text-[12px] text-muted">Older run without agent_events.jsonl: showing the saved transcript (prompt / response per decision).</div>}
+      {actions.add.error ? <ErrorBox error={actions.add.error} /> : null}
       <Timeline
         items={items}
+        pinned={(item) => keys.has(pinKey(item))}
+        onPin={togglePin}
         footer={events?.truncated ? (
           <div className="flex items-center justify-between text-[12px] text-muted">
             Showing the last {events.events.length} of {events.total} events.

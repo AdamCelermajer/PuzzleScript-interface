@@ -108,3 +108,10 @@ export const KIND_LABEL: Record<EventKind, string> = {
   message: 'message', prompt: 'prompt', reasoning: 'reasoning', command: 'command', file_change: 'file change', tool: 'tool',
   image: 'image', usage: 'usage', error: 'error', turn_end: 'turn end', environment: 'environment', other: 'other',
 }
+
+/** Identity of a timeline event for pinning: stable across reloads and event windows. */
+export const pinKey = (item: TimelineItem, context = '') =>
+  [context, item.turn ?? '', item.kind, item.at ?? '', item.summary.slice(0, 120)].join('|')
+
+/** The text a pin keeps: the event's input and body, or its summary. */
+export const pinText = (item: TimelineItem) => [item.input, item.body].filter(Boolean).join('\n\n') || item.summary

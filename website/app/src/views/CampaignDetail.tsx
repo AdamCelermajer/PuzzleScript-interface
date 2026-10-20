@@ -1,16 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { api, q } from '../api/client'
+import { usePinActions, usePins } from '../api/hooks'
 import type { AvoArtifact, AvoFrame, AvoLogs, AvoSnapshot, Submission } from '../api/types'
 import { GridCanvas, PixelImage, toGrid } from '../components/Frame'
 import { LevelPips } from '../components/identity'
 import { Markdown } from '../components/Markdown'
+import { PinList } from '../components/Pins'
 import { Timeline } from '../components/Timeline'
 import { Button, Card, Empty, ErrorBox, Input, Loading, Notice, Pill, Pre, Select, Tabs, cx } from '../components/ui'
-import { fromAvoLog } from '../lib/events'
+import { fromAvoLog, pinKey, pinText, type TimelineItem } from '../lib/events'
 import { bytes, dateTime, duration } from '../lib/format'
 
-type Tab = 'trace' | 'solver' | 'artifacts'
+type Tab = 'trace' | 'pinned' | 'solver' | 'artifacts'
 type Phase = 'research' | 'evaluation'
 const STREAMS: [string, string][] = [['session', 'Conversation + tools'], ['reasoning', 'Reasoning'], ['environment', 'Environment'], ['workspace', 'Workspace'], ['all', 'Everything']]
 
@@ -23,6 +25,7 @@ export function CampaignDetail({ runId, live }: { runId: string; live?: boolean 
     placeholderData: keepPreviousData,
   })
   const [candidate, setCandidate] = useState<string | null>(null)
+  const pins = usePins(runId)
   const [tab, setTab] = useState<Tab>('trace')
   const data = snapshot.data
   const selected = candidate ?? data?.current ?? data?.candidates.at(-1)?.candidate_id ?? null
@@ -69,8 +72,9 @@ export function CampaignDetail({ runId, live }: { runId: string; live?: boolean 
         {selected ? <FrameReplay runId={runId} snapshot={data} candidate={selected} live={live} /> : <Card title="Replay"><Empty title="Nothing to replay yet" /></Card>}
       </div>
 
-      <Tabs<Tab> value={tab} onChange={setTab} tabs={[{ id: 'trace', label: 'Agent timeline' }, { id: 'solver', label: 'Solver & world model' }, { id: 'artifacts', label: 'Artifacts' }]} />
+      <Tabs<Tab> value={tab} onChange={setTab} tabs={[{ id: 'trace', label: 'Agent timeline' }, { id: 'pinned', label: `Pinned${pins.data?.length ? ` (${pins.data.length})` : ''}` }, { id: 'solver', label: 'Solver & world model' }, { id: 'artifacts', label: 'Artifacts' }]} />
       {tab === 'trace' && <Trace runId={runId} candidates={data.candidates.map((c) => c.candidate_id)} defaultScope="outer" live={live} />}
+      {tab === 'pinned' && (pins.error ? <ErrorBox error={pins.error} /> : <PinList pins={pins.data ?? []} />)}
       {tab === 'solver' && <SolverPanel runId={runId} />}
       {tab === 'artifacts' && <Artifacts runId={runId} />}
     </div>
@@ -172,6 +176,15 @@ function Trace({ runId, candidates, defaultScope, live }: { runId: string; candi
     placeholderData: keepPreviousData,
   })
   const items = useMemo(() => (logs.data?.entries ?? []).map(fromAvoLog), [logs.data])
+  const pins = usePins(runId)
+  const actions = usePinActions()
+  const keys = new Map((pins.data ?? []).map((p) => [p.key, p.id]))
+  const context = scope === 'outer' ? 'optimizer' : `${scope} player`
+  const togglePin = (item: TimelineItem) => {
+    const existing = keys.get(pinKey(item, context))
+    if (existing) actions.remove.mutate(existing)
+    else actions.add.mutate({ run: runId, key: pinKey(item, context), context, turn: item.turn, kind: item.kind, title: item.title, text: pinText(item), at: item.at })
+  }
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
@@ -197,7 +210,7 @@ function Trace({ runId, candidates, defaultScope, live }: { runId: string; candi
               <Button size="sm" onClick={() => setPages(pages + 1)} disabled={logs.isFetching}>Load older</Button>
             </div>
           )}
-          <Timeline items={items} emptyText={scope === 'outer' ? 'No optimizer trace saved' : `No trace saved for ${scope}`} />
+          <Timeline items={items} pinned={(item) => keys.has(pinKey(item, context))} onPin={togglePin} emptyText={scope === 'outer' ? 'No optimizer trace saved' : `No trace saved for ${scope}`} />
         </>
       )}
     </div>

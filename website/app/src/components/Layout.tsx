@@ -11,6 +11,7 @@ const NAV: { to: string; label: string; icon: ReactNode; end?: boolean }[] = [
   { to: '/board', label: 'Board', icon: <Icon d="M2.5 3h3v10h-3zM6.5 3h3v6h-3zM10.5 3h3v8h-3z" /> },
   { to: '/runs', label: 'Runs', icon: <Icon d="M3 4h10M3 8h10M3 12h6" /> },
   { to: '/launch', label: 'Launch', icon: <Icon d="M8 3v10M3 8h10" /> },
+  { to: '/pinned', label: 'Pinned', icon: <Icon d="M8 2.5l1.7 3.4 3.8.6-2.7 2.6.6 3.8L8 11.1l-3.4 1.8.6-3.8-2.7-2.6 3.8-.6z" /> },
   { to: '/compare', label: 'Compare', icon: <Icon d="M3 13V8M8 13V3M13 13V6" /> },
   { to: '/benchmarks', label: 'Benchmarks', icon: <Icon d="M2.5 4.5h11v8h-11zM5 4.5V3h6v1.5M6 8.5h1M9.5 8h.01M10.5 9h.01" /> },
   { to: '/diary', label: 'Diary', icon: <Icon d="M4 2.5h7.5v11H4zM6 5.5h3.5M6 8h3.5" /> },

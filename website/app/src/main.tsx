@@ -11,6 +11,7 @@ import { RunDetailView } from './views/RunDetail'
 import { CompareView } from './views/Compare'
 import { BenchmarksView } from './views/Benchmarks'
 import { DiaryView, DiaryEntryView, DiaryEditView } from './views/Diary'
+import { PinnedView } from './views/Pinned'
 import { ToolsView } from './views/Tools'
 import { BoardCardView, BoardNewView, BoardPresentView, BoardView } from './views/Board'
 import { NotesView } from './views/Notes'
@@ -38,6 +39,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="runs/*" element={<RunDetailView />} />
             <Route path="launch" element={<LaunchView />} />
             <Route path="compare" element={<CompareView />} />
+            <Route path="pinned" element={<PinnedView />} />
             <Route path="benchmarks" element={<BenchmarksView />} />
             <Route path="benchmarks/:gameId" element={<BenchmarksView />} />
             <Route path="diary" element={<DiaryView />} />

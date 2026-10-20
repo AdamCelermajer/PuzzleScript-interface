@@ -19,7 +19,14 @@ const KIND_STYLE: Record<EventKind, string> = {
 }
 
 /** Normalized agent event timeline: kind filter chips, search, collapsible items. */
-export function Timeline({ items, emptyText = 'No agent events recorded', footer }: { items: TimelineItem[]; emptyText?: string; footer?: React.ReactNode }) {
+/** `pinned` holds the pin keys of this list; `onPin` toggles one (absent = no pin buttons). */
+export function Timeline({ items, emptyText = 'No agent events recorded', footer, pinned, onPin }: {
+  items: TimelineItem[]
+  emptyText?: string
+  footer?: React.ReactNode
+  pinned?: (item: TimelineItem) => boolean
+  onPin?: (item: TimelineItem) => void
+}) {
   const kinds = useMemo(() => [...new Set(items.map((i) => i.kind))], [items])
   const [hidden, setHidden] = useState<Set<EventKind>>(new Set(['usage', 'turn_end']))
   const [search, setSearch] = useState('')
@@ -57,11 +64,12 @@ export function Timeline({ items, emptyText = 'No agent events recorded', footer
             <div key={item.id}>
               {turnHeader && <div className="sticky top-0 z-[1] border-b border-line bg-sunken px-3 py-0.5 text-[11px] font-medium text-muted">Turn {item.turn}</div>}
               <div className="border-b border-line last:border-b-0">
+                <div className="flex items-stretch">
                 <button
                   type="button"
                   disabled={!detail}
                   onClick={() => setExpanded((e) => { const n = new Set(e); if (n.has(item.id)) n.delete(item.id); else n.add(item.id); return n })}
-                  className="flex w-full items-baseline gap-2 px-3 py-1.5 text-left hover:bg-sunken disabled:cursor-default"
+                  className="flex min-w-0 flex-1 items-baseline gap-2 px-3 py-1.5 text-left hover:bg-sunken disabled:cursor-default"
                 >
                   <span className="w-3 shrink-0 text-[11px] text-faint">{detail ? (open ? '▾' : '▸') : ''}</span>
                   <span className={cx('w-28 shrink-0 truncate text-[12px] font-medium', KIND_STYLE[item.kind])}>{item.title}</span>
@@ -69,6 +77,13 @@ export function Timeline({ items, emptyText = 'No agent events recorded', footer
                   {item.meta && <span className={cx('shrink-0 text-[11px] tabular-nums', /failed|error|exit [1-9-]/i.test(item.meta) ? 'text-bad' : 'text-faint')}>{item.meta}</span>}
                   {item.at && <span className="shrink-0 text-[11px] text-faint" title={dateTime(item.at)}>{timeOnly(item.at)}</span>}
                 </button>
+                {onPin && (
+                  <button type="button" onClick={() => onPin(item)} title={pinned?.(item) ? 'Unpin' : 'Pin this event'} aria-label={pinned?.(item) ? 'Unpin' : 'Pin'}
+                    className={cx('shrink-0 px-2 text-[13px] hover:text-accent', pinned?.(item) ? 'text-accent' : 'text-faint')}>
+                    {pinned?.(item) ? '★' : '☆'}
+                  </button>
+                )}
+                </div>
                 {open && detail && (
                   <div className="flex flex-col gap-1.5 px-3 pb-2 pl-8">
                     {item.input && <pre className="max-h-64 overflow-auto rounded bg-sunken p-2 font-mono text-[11.5px] whitespace-pre-wrap break-words">{item.input}</pre>}

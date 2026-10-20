@@ -508,3 +508,21 @@ export interface DiaryThread {
   first: string | null
   last: string | null
 }
+
+// ---- Pins (/pins): moments of a run the user kept, with the event text copied.
+
+export interface Pin {
+  id: string
+  run: string
+  /** Stable identity of the pinned event inside its run, so a second click finds the same pin. */
+  key: string
+  /** Where in the run, e.g. an AVO candidate scope. */
+  context: string
+  turn: number | null
+  kind: string
+  title: string
+  text: string
+  at: string | null
+  note: string
+  created_at: string
+}
