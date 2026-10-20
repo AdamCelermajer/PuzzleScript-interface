@@ -120,7 +120,7 @@ export function LaunchView() {
           {optimizer && (
             <Card title="4 · Optimizer">
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <Field label="Optimizer model" hint="Outer loop of frameworks with an optimizer (AVO). Empty = same as each player model.">
+                <Field label="Optimizer model" hint="The outer agent: AVO's optimizer, Harness²'s improver (edits the player's harness files). Empty = same as each player model.">
                   <Select value={form.optimizerModel} onChange={(e) => set('optimizerModel', e.target.value)}>
                     <option value="">Same as player</option>
                     {[...new Set([...form.models, ...selectedHarnesses.flatMap((h) => (h.manual_model_ids ? [] : h.models.map((m) => m.id)))])].map((m) => <option key={m} value={m}>{m}</option>)}
@@ -138,7 +138,7 @@ export function LaunchView() {
 
           <Card title={`${optimizer ? 5 : 4} · Wall time and scheduling`}>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <Field label="Wall time" className="col-span-2">
+              <Field label="Wall time" hint="Clock-time cap; the run stops when it runs out. Harness² applies it to each player run and improver session." className="col-span-2">
                 <div className="flex items-center gap-3">
                   <Toggle checked={form.unlimitedWall} onChange={(v) => set('unlimitedWall', v)} label="Unlimited" />
                   {!form.unlimitedWall && (
