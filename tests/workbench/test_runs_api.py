@@ -569,3 +569,13 @@ def test_record_reads_a_harness2_agent_rollout(tmp_path):
     with client(tmp_path) as api:
         response = api.get("/api/workbench/record", params={"run": rollout})
     assert response.status_code == 200 and response.json()["normalized"]["model"] == "nanogpt/qwen/qwen3.8-27b:thinking"
+
+
+def test_a_live_ps_agent_container_marks_a_non_avo_run_running(tmp_path):
+    from workbench.catalog import snapshot
+    run = "output/workbench/20261020T142237-x/run-0001"
+    folder = put(tmp_path, f"{run}/run_spec.json", {"schema": "run-spec-v2", "framework": "harness2", "options": {"k": 1},
+                                                    "harness": "opencode", "model": "m", "effort": "low",
+                                                    "game_id": "ps_modality-v1", "max_wall_seconds": 0})
+    row = next(r for r in snapshot(tmp_path, {str(folder.resolve()).casefold(): "ps-agent-abc"})["runs"] if r["id"] == run)
+    assert row["status"] == "running" and row["container"] == "ps-agent-abc"

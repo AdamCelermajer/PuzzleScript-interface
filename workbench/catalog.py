@@ -122,9 +122,10 @@ def discover(root: Path = ROOT) -> tuple[list[Path], list[Path]]:
 
 def live_containers() -> tuple[dict[str, str], str | None]:
     try:
-        listing = subprocess.run(["docker", "ps", "--filter", "name=avo-", "--format", "{{.Names}}"],
+        listing = subprocess.run(["docker", "ps", "--format", "{{.Names}}"],
                                  capture_output=True, text=True, timeout=5, check=True)
-        names = [name for name in listing.stdout.split() if name.startswith("avo-isolated-")]
+        # harnesses.launch names run containers ps-agent-*; avo-isolated-* predates the harness revamp.
+        names = [name for name in listing.stdout.split() if name.startswith(("ps-agent-", "avo-isolated-"))]
         if not names:
             return {}, None
         result = subprocess.run(["docker", "inspect", "--format", "{{.Name}} {{json .Mounts}}", *names],
@@ -354,7 +355,8 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
         config = read_json(path / ("evolution_config.json" if is_avo else "run_config.json"))
         owner = owners.get(run_id)
         recovery = read_json(path.parent / "recovery.json") if is_avo and owner else {}
-        container = containers.get(str(path.parent.resolve()).casefold()) if is_avo else None
+        # The container mounts the run folder at /results (AVO records into its campaign/ subfolder).
+        container = containers.get(str((path.parent if is_avo else path).resolve()).casefold())
         status, status_source = "unconfirmed", "No current process confirmation"
         if owner:
             status = owner[1].get("status", "queued")
