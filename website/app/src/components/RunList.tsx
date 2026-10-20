@@ -147,7 +147,7 @@ function GroupRow({ launch, defaultOpen, selectable, selected, onSelect, onResum
           <span className="font-semibold">{solved}</span><span className="text-faint">/{launch.runs.length} solved</span>
         </span>
         <span className="flex min-w-0 items-center gap-1">
-          <HarnessChip harness={launch.harnesses[0]} legacy={launch.archive} />
+          <HarnessChip harness={launch.harnesses[0]} legacy={launch.runs.every((r) => r.legacy)} />
           {launch.harnesses.length > 1 && <span className="text-[11px] text-faint" title={launch.harnesses.join(', ')}>+{launch.harnesses.length - 1}</span>}
         </span>
         <span className="min-w-0 truncate text-[12.5px] text-muted" title={launch.models.join(', ')}>{models.slice(0, 2).join(', ')}{models.length > 2 ? ` +${models.length - 2}` : ''}</span>

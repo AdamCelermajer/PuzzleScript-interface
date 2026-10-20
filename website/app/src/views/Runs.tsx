@@ -48,6 +48,14 @@ export function RunsView() {
   const catalog = useCatalog(5000)
   const navigate = useNavigate()
   const actions = useJobActions()
+  const client = useQueryClient()
+  const archiving = useMutation({
+    mutationFn: (body: { runs: string[]; archived: boolean }) => api.post<{ archived: string[] }>('/runs/archive', body),
+    onSuccess: () => {
+      setSelected(new Set())
+      client.invalidateQueries({ queryKey: ['catalog'] })
+    },
+  })
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [archiveOpen, setArchiveOpen] = useState(params.get('archive') === '1')
   const [archiveLimit, setArchiveLimit] = useState(ARCHIVE_PAGE)
@@ -66,6 +74,8 @@ export function RunsView() {
   const current = launches.filter((l) => !l.archive)
   const archive = launches.filter((l) => l.archive)
   const archiveRuns = archive.reduce((n, l) => n + l.runs.length, 0)
+  const archivedByHand = archive.reduce((n, l) => n + l.runs.filter((r) => r.archived).length, 0)
+  const selectedRuns = runs.filter((r) => selected.has(r.id))
   const options = useMemo(() => ({ variant: distinct(runs, (r) => r.variant), harness: distinct(runs, (r) => r.harness), model: distinct(runs, (r) => r.model), game: distinct(runs, (r) => r.game) }), [runs])
   const anyFilter = Object.values(filters).some(Boolean)
   const showArchive = archiveOpen || Boolean(filters.job)
@@ -90,6 +100,8 @@ export function RunsView() {
         </div>
         <div className="flex items-center gap-2">
           {selected.size > 0 && <Button variant="ghost" onClick={() => setSelected(new Set())}>Clear {selected.size}</Button>}
+          {selectedRuns.some((r) => !r.archived && !r.legacy) && <Button onClick={() => archiving.mutate({ runs: selectedRuns.filter((r) => !r.archived && !r.legacy).map((r) => r.id), archived: true })} disabled={archiving.isPending}>Archive {selectedRuns.filter((r) => !r.archived && !r.legacy).length}</Button>}
+          {selectedRuns.some((r) => r.archived) && <Button onClick={() => archiving.mutate({ runs: selectedRuns.filter((r) => r.archived).map((r) => r.id), archived: false })} disabled={archiving.isPending}>Unarchive {selectedRuns.filter((r) => r.archived).length}</Button>}
           {selected.size >= 2 && <Button onClick={() => navigate(`/compare?${[...selected].map((id) => `run=${encodeURIComponent(id)}`).join('&')}`)}>Compare {selected.size}</Button>}
           <Link to="/launch"><Button variant="primary">New launch</Button></Link>
         </div>
@@ -121,6 +133,7 @@ export function RunsView() {
 
       {catalog.data?.warnings.map((w) => <Notice key={w} tone="warn">{w}</Notice>)}
       {actions.error ? <ErrorBox error={actions.error} /> : null}
+      {archiving.error ? <ErrorBox error={archiving.error} /> : null}
 
       {catalog.isLoading ? <Loading label="Reading the run catalog…" /> : catalog.error ? <ErrorBox error={catalog.error} retry={() => catalog.refetch()} /> : !visible.length ? (
         <div className="rounded-xl border border-dashed border-line-strong"><Empty title={runs.length ? 'No runs match these filters' : 'No runs yet'}>{runs.length ? 'Loosen a filter or reset them.' : <Link to="/launch">Launch the first run.</Link>}</Empty></div>
@@ -136,7 +149,7 @@ export function RunsView() {
               <button type="button" onClick={() => setArchiveOpen(!archiveOpen)} className={cx('flex items-center justify-between rounded-xl border border-line bg-panel px-4 py-3 text-left hover:bg-hover')}>
                 <span>
                   <span className="section-label">{showArchive ? '▾' : '▸'} Archive</span>
-                  <span className="ml-3 text-[13px] text-muted">{archiveRuns} runs recorded before the harness revamp (no run_spec.json)</span>
+                  <span className="ml-3 text-[13px] text-muted">{archiveRuns} runs: {archivedByHand ? `${archivedByHand} archived by you, ` : ''}{archiveRuns - archivedByHand} recorded before the harness revamp</span>
                 </span>
                 <span className="text-[12px] text-faint">{showArchive ? 'Hide' : 'Show'}</span>
               </button>

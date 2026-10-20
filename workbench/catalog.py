@@ -281,6 +281,28 @@ def result_inputs(config: dict, evaluations: list[dict], finalized: bool) -> dic
             "finalized": finalized}
 
 
+ARCHIVED = "output/workbench/archived.json"
+
+
+def archived_runs(root: Path = ROOT) -> set[str]:
+    """Run ids the user moved to the archive; the run directories stay where they are."""
+    runs = read_json(root / ARCHIVED).get("runs")
+    return {r for r in runs if isinstance(r, str)} if isinstance(runs, list) else set()
+
+
+def set_archived(run_ids: list[str], archived: bool, root: Path = ROOT) -> set[str]:
+    for run_id in run_ids:
+        run_path(run_id, root)  # rejects ids outside the repository
+    current = archived_runs(root)
+    current = current | set(run_ids) if archived else current - set(run_ids)
+    path = root / ARCHIVED
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps({"runs": sorted(current)}, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+    return current
+
+
 def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
     paths, job_paths = discover(root)
     warnings = []
@@ -421,5 +443,8 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
         if job["status"] == "unconfirmed" and child_ids and all(child_id in terminal_children for child_id in child_ids):
             job["status"] = "failed" if any(terminal_children[child_id] == "failed" for child_id in child_ids) else "completed"
             job["status_source"] = "Terminal child artifacts"
+    archived = archived_runs(root)
+    for row in rows:
+        row["archived"] = row["id"] in archived
     rows.sort(key=lambda r: (r["status"] == "running", r.get("modified", 0)), reverse=True)
     return {"runs": rows, "jobs": jobs, "warnings": warnings, "checked_at": time.time()}

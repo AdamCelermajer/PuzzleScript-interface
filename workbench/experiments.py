@@ -373,6 +373,19 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         from workbench.harness_catalog import harness_listing
         return harness_listing(root, include_public_catalogs=catalogs)
 
+    @router.post("/runs/archive")
+    def archive_runs(payload: dict = Body(...)):
+        from workbench.catalog import set_archived
+        runs, archived = payload.get("runs"), payload.get("archived", True)
+        if not isinstance(runs, list) or not runs or not all(isinstance(r, str) for r in runs) or not isinstance(archived, bool):
+            raise HTTPException(400, "Expected {runs: [run ids], archived: bool}")
+        try:
+            current = set_archived(runs, archived, root)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        cache.clear()
+        return {"archived": sorted(current)}
+
     @router.get("/frameworks")
     def frameworks():
         from frameworks.registry import list_frameworks

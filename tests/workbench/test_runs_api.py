@@ -542,3 +542,20 @@ def test_harness2_record_lists_rollouts_and_catalog_keeps_the_optimizer(tmp_path
     assert [r["label"] for r in record["rollouts"]] == ["base1"]
     assert record["rollouts"][0]["result"]["levels_completed"] == 1 and record["adoption"] is None
     assert row["optimizer_model"] == "openrouter/anthropic/claude-opus-4.8"
+
+
+def test_archive_moves_runs_without_touching_their_files(tmp_path):
+    run = "output/workbench/20261020T104612-abc/run-0001"
+    put(tmp_path, f"{run}/run_spec.json", {"schema": "run-spec-v2", "framework": "baseline", "options": {"max_steps": 5},
+                                           "harness": "opencode", "model": "nanogpt/qwen/qwen3.8-flash", "effort": "low",
+                                           "game_id": "ps_modality-v1", "max_wall_seconds": 0})
+    put(tmp_path, f"{run}/run_config.json", {"model": "nanogpt/qwen/qwen3.8-flash", "game_id": "ps_modality-v1"})
+    archived = lambda api: next(r for r in api.get("/api/workbench/catalog").json()["runs"] if r["id"] == run)["archived"]
+    with client(tmp_path) as api:
+        assert archived(api) is False
+        assert api.post("/api/workbench/runs/archive", json={"runs": [run]}).json() == {"archived": [run]}
+        assert archived(api) is True and (tmp_path / run / "run_spec.json").is_file()
+        assert api.post("/api/workbench/runs/archive", json={"runs": [run], "archived": False}).json() == {"archived": []}
+        assert archived(api) is False
+        assert api.post("/api/workbench/runs/archive", json={"runs": ["../../etc"]}).status_code == 400
+        assert api.post("/api/workbench/runs/archive", json={"runs": []}).status_code == 400

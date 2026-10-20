@@ -51,7 +51,7 @@ def run_win_levels(run: dict, games: dict) -> int | None:
 
 
 def is_archive(run: dict) -> bool:
-    return run.get("spec_source") != "run_spec"
+    return run.get("spec_source") != "run_spec" or run.get("archived") is True
 
 
 def harness_rank(harness: str) -> int:

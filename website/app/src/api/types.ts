@@ -63,6 +63,8 @@ export interface CatalogRun {
   spec_source?: 'run_spec' | 'legacy' | null
   continued_from?: string | null
   resumable?: boolean
+  /** Moved to the archive by the user (output/workbench/archived.json). */
+  archived?: boolean
   log_href?: string | null
   game_id?: string | null
   condition?: string | null

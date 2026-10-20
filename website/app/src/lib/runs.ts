@@ -20,6 +20,8 @@ export interface RunView {
   started: number
   activity: number
   legacy: boolean
+  /** Archived by the user; shown with the archive like legacy runs. */
+  archived: boolean
   process: ProcessStatus
   outcome: Outcome
   progress: { used: number | null; budget: number | null; unit: 'actions' | 'evaluations' }
@@ -72,6 +74,7 @@ export function normalizeRun(row: CatalogRun): RunView {
     started,
     activity: row.modified || 0,
     legacy: row.spec_source !== 'run_spec',
+    archived: row.archived === true,
     process: processStatus(row),
     outcome: outcome(row),
     progress: campaign
@@ -173,8 +176,8 @@ function budgetSummary(run: RunView): string {
 }
 
 /**
- * Group runs by launch, newest first. A launch is archive when none of its runs has
- * run_spec.json (everything recorded before the harness revamp).
+ * Group runs by launch, newest first. A launch is archive when every run either has no
+ * run_spec.json (recorded before the harness revamp) or was archived by the user.
  */
 export function groupLaunches(runs: RunView[], jobs: Map<string, CatalogJob>): Launch[] {
   const groups = new Map<string, RunView[]>()
@@ -182,7 +185,7 @@ export function groupLaunches(runs: RunView[], jobs: Map<string, CatalogJob>): L
     // Only real launches group runs: a workbench batch (job.json) or a `<batch>/run-NNNN` matrix folder.
     // Shared output folders (e.g. output/codex_agent) are not launches; their runs stay separate.
     const launch = run.batch && (jobs.has(run.batch) || new RegExp(`^${escapeRegExp(run.batch)}/run-\\d+`).test(run.id))
-    const key = `${launch ? run.batch : run.id}|${run.legacy ? 'a' : 'n'}`
+    const key = `${launch ? run.batch : run.id}|${run.legacy || run.archived ? 'a' : 'n'}`
     groups.set(key, [...(groups.get(key) ?? []), run])
   }
   const launches: Launch[] = []
@@ -195,7 +198,7 @@ export function groupLaunches(runs: RunView[], jobs: Map<string, CatalogJob>): L
       id,
       label: launchLabel(id),
       started: Number.isFinite(created) ? created : Math.max(...members.map((r) => r.started || r.activity || 0)),
-      archive: members.every((r) => r.legacy),
+      archive: members.every((r) => r.legacy || r.archived),
       job,
       runs: ordered,
       variants: [...new Set(ordered.map((r) => r.variant))],

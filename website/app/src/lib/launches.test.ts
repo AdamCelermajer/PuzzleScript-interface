@@ -49,3 +49,16 @@ describe('results matrix header', () => {
     expect(harnessGroups(columns)).toEqual([{ harness: 'codex', span: 2 }, { harness: 'opencode', span: 1 }, { harness: 'codex', span: 1 }])
   })
 })
+
+describe('user archive', () => {
+  it('moves an archived run of a launch into its own archive group', () => {
+    const batch = 'output/workbench/20261020T104612-x-abcdef12'
+    const views = [
+      run({ id: `${batch}/run-0001`, batch, spec_source: 'run_spec', framework: 'baseline', archived: true }),
+      run({ id: `${batch}/run-0002`, batch, spec_source: 'run_spec', framework: 'baseline' }),
+    ].map(normalizeRun)
+    const launches = groupLaunches(views, new Map())
+    const ids = (archive: boolean) => launches.filter((l) => l.archive === archive).flatMap((l) => l.runs.map((r) => r.id.slice(-8)))
+    expect([ids(true), ids(false)]).toEqual([['run-0001'], ['run-0002']])
+  })
+})
