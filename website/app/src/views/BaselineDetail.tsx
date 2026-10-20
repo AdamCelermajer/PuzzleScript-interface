@@ -70,6 +70,25 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
   )
 }
 
+/** "1 / 4 · now on level 2"; a level completed by this very action is called out. */
+function levelsText(t: Transition): string {
+  const done = t.after?.levels_completed, total = t.after?.win_levels
+  if (done === undefined || total === undefined) return '—'
+  const justNow = (t.before?.levels_completed ?? done) < done ? ' · completed by this action' : ''
+  return `${done} / ${total}${done < total ? ` · now on level ${done + 1}` : ''}${justNow}`
+}
+
+function FramePicture({ src, caption }: { src: string; caption: string }) {
+  const [missing, setMissing] = useState(false)
+  useEffect(() => setMissing(false), [src])
+  return (
+    <figure className="flex flex-col gap-1">
+      <figcaption className="text-[11.5px] text-muted">{caption}</figcaption>
+      {missing ? <div className="flex h-40 w-60 items-center justify-center rounded-md bg-sunken text-[12px] text-faint">No PNG saved</div> : <PixelImage src={src} alt={caption} onError={() => setMissing(true)} className="max-h-[300px] w-auto" />}
+    </figure>
+  )
+}
+
 function Replay({ runId, record, live }: { runId: string; record: RunRecord; live?: boolean }) {
   const total = record.latest_transition?.action_index ?? 0
   const recordedActions = Number(record.result.action_count ?? 0)
@@ -84,10 +103,7 @@ function Replay({ runId, record, live }: { runId: string; record: RunRecord; liv
     staleTime: Infinity,
   })
   const current: Transition | undefined = index === null ? record.latest_transition : transition.data
-  const [imageMissing, setImageMissing] = useState(false)
   const decision = current?.decision ?? position
-  const image = fileUrl(runId, frameFile(Math.max(0, decision - 1)))
-  useEffect(() => setImageMissing(false), [image])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -124,11 +140,9 @@ function Replay({ runId, record, live }: { runId: string; record: RunRecord; liv
       <input type="range" min={1} max={total} value={position} onChange={(e) => { const v = Number(e.target.value); setIndex(v >= total ? null : v) }} className="mb-3 w-full accent-[var(--accent)]" />
       {transition.error && <ErrorBox error={transition.error} />}
       {current && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto_auto_minmax(0,1fr)]">
-          <figure className="flex flex-col gap-1">
-            <figcaption className="text-[11.5px] text-muted">Frame shown to the agent (decision {decision})</figcaption>
-            {imageMissing ? <div className="flex h-40 w-60 items-center justify-center rounded-md bg-sunken text-[12px] text-faint">No PNG saved</div> : <PixelImage src={image} alt={`Frame ${decision}`} onError={() => setImageMissing(true)} className="max-h-[360px] w-auto" />}
-          </figure>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[auto_auto_auto_minmax(0,1fr)]">
+          <FramePicture src={fileUrl(runId, frameFile(Math.max(0, decision - 1)))} caption={`Before ${current.action} (shown to the agent)`} />
+          <FramePicture src={fileUrl(runId, frameFile(decision))} caption={`After ${current.action}`} />
           <figure className="flex flex-col gap-1">
             <figcaption className="text-[11.5px] text-muted">Grid after {current.action} · changed cells outlined</figcaption>
             <GridCanvas grid={current.after?.grid} highlight={current.changed_cells} maxSize={360} />
@@ -138,7 +152,7 @@ function Replay({ runId, record, live }: { runId: string; record: RunRecord; liv
               items={[
                 ['Action', <span className="font-mono">{current.action}</span>],
                 ['State', `${current.before?.state ?? '—'} → ${current.after?.state ?? '—'}`],
-                ['Levels', `${current.after?.levels_completed ?? '—'} / ${current.after?.win_levels ?? '—'}`],
+                ['Levels completed', levelsText(current)],
                 ['Changed', current.changed ? `${current.changed_cells?.length ?? 0} cells` : 'no change'],
                 ['Time', current.timestamp ?? '—'],
               ]}
