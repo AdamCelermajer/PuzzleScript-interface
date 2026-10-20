@@ -10,6 +10,7 @@ from harnesses import entry, launch
 from harnesses.base import HarnessError, TurnResult
 from frameworks.avo.framework import AVO
 from frameworks.baseline.framework import BASELINE
+from frameworks.harness2.framework import HARNESS2
 from frameworks.registry import FRAMEWORKS, list_frameworks
 from harnesses.registry import HARNESS_IDS, HARNESSES, credentials_for, list_harnesses, resolve_model_for
 
@@ -139,7 +140,7 @@ def test_stage_controller_excludes_games_env_outputs_and_tests(tmp_path):
     for name in ("frameworks/avo/evolve.py", "frameworks/avo/output/run/x.py", "frameworks/avo/tests/test_x.py",
                  "frameworks/avo/legacy/old.py", "client/arc/types.py", "client/rules/g/rules.json",
                  "harnesses/base.py", "harnesses/docker/Dockerfile", "frameworks/registry.py",
-                 "frameworks/baseline/run.py", "avo/output/r/a.md", "studies/other/secret.py",
+                 "frameworks/baseline/run.py", "frameworks/harness2/run.py", "avo/output/r/a.md", "studies/other/secret.py",
                  "puzzlescript_interface/games/g/script.txt", ".env", "frameworks/avo/.env"):
         (root / name).parent.mkdir(parents=True, exist_ok=True)
         (root / name).write_text("x")
@@ -147,7 +148,7 @@ def test_stage_controller_excludes_games_env_outputs_and_tests(tmp_path):
     launch.stage_controller(target, root)
     staged = sorted(path.relative_to(target).as_posix() for path in target.rglob("*") if path.is_file())
     assert staged == ["client/arc/types.py", "frameworks/avo/evolve.py", "frameworks/baseline/run.py",
-                      "frameworks/registry.py", "harnesses/base.py"]
+                      "frameworks/harness2/run.py", "frameworks/registry.py", "harnesses/base.py"]
 
 
 def test_credentials_stage_only_the_chosen_harness(tmp_path, monkeypatch):
@@ -258,6 +259,63 @@ def test_baseline_entry_argv_and_continuation():
     assert Path(argv[argv.index("--continue-from") + 1]).as_posix() == "/parent"
     assert "--notes" not in BASELINE.entry({**spec, "options": {"max_steps": 3, "notes": False}}, False,
                                            Path("/results"), Path("/parent"))
+
+
+def test_harness2_launch_flags_spec_and_entry(tmp_path, capsys, monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "unit-test")
+    args = ["--framework", "harness2", "--harness", "opencode", "--model", "openrouter/qwen/qwen3.8-27b",
+            "--effort", "low", "--optimizer-model", "openrouter/anthropic/claude-opus-4.8",
+            "--optimizer-effort", "high", "--game-id", "ps_modality-v1", "--backend-url", "http://localhost:8000",
+            "--output-dir", str(tmp_path / "run"), "--k", "1", "--recursion", "sequential", "--max-steps", "20",
+            "--dry-run"]
+    assert launch.launch(args) == 0
+    config = json.loads(capsys.readouterr().out)["run_spec"]
+    assert config["framework"] == "harness2" and config["options"] == {"k": 1, "recursion": "sequential", "max_steps": 20}
+    assert config["optimizer_model"] == "openrouter/anthropic/claude-opus-4.8" and config["optimizer_effort"] == "high"
+    argv = HARNESS2.entry(config, True, Path("/results"), Path("/parent"))
+    assert argv[0] == "frameworks.harness2.run" and argv[-1] == "--resume"
+    assert argv[argv.index("--backend-url") + 1] == "http://host.docker.internal:8000"
+
+
+def test_seeded_baseline_restores_harness_without_notes(tmp_path, monkeypatch):
+    from frameworks.baseline.session import CliGameSession, GameSessionConfig
+
+    class SeedHarness(FakeHarness):
+        def turn(self, instruction, images=(), timeout=None):
+            assert (self.workspace / "AGENTS.md").read_text() == "Fixed harness"
+            assert (self.workspace / ".opencode/skills/plan/SKILL.md").is_file()
+            (self.workspace / "AGENTS.md").write_text("Edited")
+            (self.workspace / ".opencode/generated.txt").write_text("discard")
+            return super().turn(instruction, images, timeout)
+
+    monkeypatch.setattr("harnesses.registry.create_session", lambda harness: SeedHarness())
+    seed = tmp_path / "seed"
+    (seed / ".opencode/skills/plan").mkdir(parents=True)
+    (seed / "AGENTS.md").write_text("Fixed harness")
+    (seed / ".opencode/skills/plan/SKILL.md").write_text("Plan")
+    frame = tmp_path / "frame.png"
+    frame.write_bytes(b"png")
+    with CliGameSession(GameSessionConfig(harness="opencode"), tmp_path / "ws", tmp_path / "out",
+                        workspace_seed=seed) as game:
+        for _ in range(2):
+            game.next_action("Choose an action", frame)
+            assert (game.working_directory / "AGENTS.md").read_text() == "Fixed harness"
+            assert not (game.working_directory / ".opencode/generated.txt").exists()
+            assert not (game.working_directory / "notes").exists()
+
+
+def test_opencode_error_event_with_zero_exit_is_a_failed_turn(tmp_path, monkeypatch):
+    from harnesses.opencode import OpenCodeSession
+
+    def stream(command, *, on_line, **kwargs):
+        on_line(json.dumps({"type": "error", "error": {"name": "APIError", "data": {"message": "Insufficient credits"}}}))
+        return 0, False, ""
+
+    monkeypatch.setattr("harnesses.base.run_streaming", stream)
+    with OpenCodeSession().start(tmp_path / "ws", "S", "openrouter/qwen/qwen3.8-27b", "low",
+                                 "player", tmp_path / "analysis") as session:
+        result = session.turn("go")
+    assert result.error == "Insufficient credits" and result.text == ""
 
 
 def test_entry_copies_codex_auth_into_a_writable_home(tmp_path, monkeypatch):

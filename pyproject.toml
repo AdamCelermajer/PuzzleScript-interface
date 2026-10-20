@@ -19,7 +19,12 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "harness2 @ git+https://github.com/google-research/harness2.git@1cfe254e8d25b15f37048c3730134686abe60335 ; python_version >= '3.12' and python_version < '3.14'",
 ]
 
 [tool.uv]
 package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "frameworks"]
+pythonpath = ["."]

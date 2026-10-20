@@ -4,8 +4,9 @@ from __future__ import annotations
 from frameworks.avo.framework import AVO
 from frameworks.base import Framework
 from frameworks.baseline.framework import BASELINE
+from frameworks.harness2.framework import HARNESS2
 
-FRAMEWORKS: dict[str, Framework] = {framework.id: framework for framework in (BASELINE, AVO)}
+FRAMEWORKS: dict[str, Framework] = {framework.id: framework for framework in (BASELINE, AVO, HARNESS2)}
 FRAMEWORK_IDS = tuple(FRAMEWORKS)
 
 

@@ -64,6 +64,7 @@ Rules:
 | `qwen-harness` | Main thread since Oct 2026: why Qwen 3.8-27B fails (harness, size, pretraining) | active |
 | `proposal` | M.Sc research proposal (Bar-Ilan CS format, Overleaf) | active |
 | `harness-revamp` | One run spec over codex, claude-code, opencode, antigravity and bare harnesses | active |
+| `harness2` | Score-aware Harness² edits the direct player's OpenCode harness and re-runs the adopted harness fresh | active |
 | `realtime-controllers` | Real-time direction: a slow coding agent building and repairing fast controllers and Jev-style decision calls | active |
 | `meetings` | Supervisor meetings; the export starts the day after the latest such entry | active |
 

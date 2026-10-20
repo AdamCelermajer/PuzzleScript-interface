@@ -53,6 +53,7 @@ def main() -> None:
     parser.add_argument("--max-decisions", type=int, default=None)
     parser.add_argument("--max-wall-seconds", type=int, default=0, help="0 = unlimited")
     parser.add_argument("--output-dir", default="")
+    parser.add_argument("--harness-dir", type=Path, help="Seed a fresh workspace with these harness files (notes stay off).")
     parser.add_argument("--continue-from", default="", help="Restore an unsolved completed run in a new session; max-steps is the additional budget.")
     parser.add_argument("--notes", action="store_true",
                         help="Give the agent a notes file it reads and edits across turns.")
@@ -142,6 +143,7 @@ def main() -> None:
                 session_workspace,
                 artifact_directory=output_dir,
                 mirror_directory=output_dir / "workspace",
+                workspace_seed=args.harness_dir,
             ) as session:
                 if args.max_wall_seconds > 0:
                     session.deadline = time.monotonic() + args.max_wall_seconds

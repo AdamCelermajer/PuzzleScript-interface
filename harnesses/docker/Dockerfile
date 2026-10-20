@@ -18,6 +18,9 @@ RUN apt-get update \
 RUN python -m venv /opt/venv \
  && /opt/venv/bin/pip install --no-cache-dir requests arc-agi python-dotenv fastapi uvicorn backports.zstd pillow numpy
 
+# Harness² method only; player and improver use the installed OpenCode binary below.
+RUN /opt/venv/bin/pip install --no-cache-dir "harness2 @ git+https://github.com/google-research/harness2.git@1cfe254e8d25b15f37048c3730134686abe60335"
+
 # CLI harnesses, pinned to the versions verified on 2026-10-15.
 ARG CODEX_VERSION=0.162.1
 ARG CLAUDE_VERSION=2.1.299

@@ -326,15 +326,18 @@ class CliSession:
                      stderr: str, timeout: float | None) -> TurnResult:
         assert self.log is not None
         error = ""
+        text = self.final_text()
         if timed_out:
             error = f"turn timed out after {int(timeout or 0)} s"
         elif exit_code not in (0, None):
             error = self._turn_errors[-1] if self._turn_errors else f"{self.harness_id} exited {exit_code}: {stderr[-1500:].strip()}"
+        elif self._turn_errors and not text.strip():
+            # A CLI can exit 0 after an API error (e.g. OpenCode on 402); with no reply that is a failed turn.
+            error = self._turn_errors[-1]
         if error:
             events.append(self.log.write(turn=number, type="error", session=self.session_id, text=error))
         if self._usage:
             events.append(self.log.write(turn=number, type="usage", session=self.session_id, usage=self._usage))
-        text = self.final_text()
         events.append(self.log.write(turn=number, type="turn_end", session=self.session_id, text=text,
                                      exit_code=exit_code, usage=self._usage or None))
         return TurnResult(text=text, session_id=self.session_id, usage=dict(self._usage), events=events,

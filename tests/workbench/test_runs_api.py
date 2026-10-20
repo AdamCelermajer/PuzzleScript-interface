@@ -109,7 +109,7 @@ MATRIX = {"frameworks": [{"id": "baseline"}, {"id": "baseline", "options": {"not
 def test_frameworks_endpoint_lists_the_registry(tmp_path):
     with client(tmp_path) as api:
         listing = {f["id"]: f for f in api.get("/api/workbench/frameworks").json()["frameworks"]}
-    assert set(listing) == {"baseline", "avo"}
+    assert set(listing) == {"baseline", "avo", "harness2"}
     assert {o["name"] for o in listing["baseline"]["options"]} == {"max_steps", "notes"}
     assert listing["avo"]["optimizer"] is True and listing["baseline"]["optimizer"] is False
 

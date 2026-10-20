@@ -851,6 +851,11 @@ wheels = [
 ]
 
 [[package]]
+name = "harness2"
+version = "0.1.0"
+source = { git = "https://github.com/google-research/harness2.git?rev=1cfe254e8d25b15f37048c3730134686abe60335#1cfe254e8d25b15f37048c3730134686abe60335" }
+
+[[package]]
 name = "httpcore"
 version = "1.0.9"
 source = { registry = "https://pypi.org/simple" }
@@ -1891,6 +1896,7 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "harness2", marker = "python_full_version >= '3.12' and python_full_version < '3.14'" },
     { name = "pytest" },
 ]
 
@@ -1900,6 +1906,7 @@ requires-dist = [
     { name = "arc-agi" },
     { name = "backports-zstd", specifier = ">=1.7.0" },
     { name = "fastapi" },
+    { name = "harness2", marker = "python_full_version >= '3.12' and python_full_version < '3.14' and extra == 'dev'", git = "https://github.com/google-research/harness2.git?rev=1cfe254e8d25b15f37048c3730134686abe60335" },
     { name = "openai" },
     { name = "openai-codex", specifier = ">=0.159.2" },
     { name = "pypdf" },

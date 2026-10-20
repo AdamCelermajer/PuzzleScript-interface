@@ -8,6 +8,7 @@ Docker container by `python -m harnesses.launch`.
 |---|---|---|---|---|
 | `baseline` | `baseline/` | the coding agent plays directly, one action per turn | `max_steps`, `notes` (on = "Baseline+") | `--continue-from PARENT` into a new directory |
 | `avo` | `avo/` | an optimizer agent evolves a player's strategy; each candidate's `solver.py` is scored by a fresh run | `max_evaluations`, `research_moves`, `solver_moves`, `world_model_mode`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
+| `harness2` | `harness2/` | Harness² edits the direct player's harness files from run outcomes, then re-runs the adopted harness fresh | `k`, `recursion`, `max_steps`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
 
 The launcher, the container entry (`harnesses/entry.py`) and the workbench read only the
 interface in `base.py`, through `registry.py`:
@@ -30,6 +31,34 @@ The CLI flags, `run_spec.json`, the workbench API (`GET /api/workbench/framework
 Launch form follow from the declaration. A framework without an `artifact` folder should
 write `result.json` in the baseline shape (`status`, `solved`, `levels_completed`,
 `action_count`) so the run catalog can show its outcome.
+
+## Harness²
+
+Uses Google Research's [Harness²](https://github.com/google-research/harness2), pinned to
+`1cfe254e8d25b15f37048c3730134686abe60335`. One task is one PuzzleScript game. The
+player is baseline on OpenCode, with notes off; the starting harness has no instructions
+or helpers. Candidates supply `AGENTS.md`, `.opencode/` skills, agents and plugins, and
+`scripts/` in a fresh workspace. These fixed files are restored between player turns.
+
+The improver uses our installed OpenCode binary, `--optimizer-model` and
+`--optimizer-effort`, capped at 120 steps per session. Parallel and sequential recursion
+both expose levels completed and actions used in every trajectory. Adoption considers
+all base, INV, DOM and composition rollouts: most levels, then fewer actions, then base
+on an exact tie. There is no blind selector or cross-game library.
+
+At `k=1`, each game uses **4 player runs + 1 fresh final run, 3 improver sessions**
+(invalid proposals or transport failures can add improver attempts). The fresh final run
+supplies the root `result.json`; `adoption.json` records base levels, best-of-pool levels,
+the adopted label and every selection rollout. `recursion.json` and `improver/` retain
+stage decisions and session logs. Resume reuses completed players and cached proposals;
+an interrupted player restarts only its own rollout. `--max-wall-seconds` applies per
+player and per improver session (0 leaves players unlimited; improvers default to 3600s).
+
+```powershell
+uv run python -m harnesses.launch --framework harness2 --harness opencode --model openrouter/qwen/qwen3.8-27b --effort low --optimizer-model openrouter/anthropic/claude-opus-4.8 --optimizer-effort high --game-id ps_modality-v1 --backend-url http://host.docker.internal:8000 --k 1 --recursion parallel --max-steps 200
+```
+
+Local tests need Python 3.12 or 3.13 and `uv sync --extra dev`; the Docker image uses 3.12.
 
 ## Outputs
 
