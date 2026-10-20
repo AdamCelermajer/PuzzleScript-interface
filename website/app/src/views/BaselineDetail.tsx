@@ -166,7 +166,13 @@ function Events({ runId, record, onMore }: { runId: string; record: RunRecord; o
     staleTime: 30_000,
   })
   const items = useMemo(() => {
-    if (record.agent_events) return record.agent_events.events.map(fromAgentEvent)
+    if (record.agent_events) {
+      // The API returns the newest events; index them from the start of the file so a row
+      // keeps its React key (and expanded state) when newer events arrive on the next poll.
+      const { events, total } = record.agent_events
+      const first = total - events.length
+      return events.map((event, i) => fromAgentEvent(event, first + i))
+    }
     return legacy.data ? fromLegacyTranscript(legacy.data) : []
   }, [record.agent_events, legacy.data])
   if (legacyFile && legacy.isLoading) return <Loading label="Reading transcript…" />

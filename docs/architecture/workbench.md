@@ -61,7 +61,10 @@ unknown owner rather than killing it. A frontend-only server is insufficient.
 Run `npm run workbench` in one persistent terminal, or use the existing
 `PuzzleScript Website` shortcut. The launcher checks the PuzzleScript runtime
 (3543), ARC service (8000), Workbench API (8010), Vite website (5173), the
-frontend API proxy, and the configured Tailscale URL. It starts only missing
+frontend API proxy, and the configured Tailscale URL. The website is a production
+build served by `vite preview` and rebuilt by `vite build --watch` on every source
+change (reload the page to pick it up); `WORKBENCH_WEB_DEV=1` serves the Vite dev
+server with hot reload instead, which is much slower on a laptop. It starts only missing
 services and rechecks them every five seconds. Existing healthy processes are
 reused, including an API whose command line Windows does not expose when its
 health response identifies it. A failed check is printed in the terminal and

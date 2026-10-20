@@ -138,10 +138,19 @@ try {
             $webUrl = "http://127.0.0.1:$webPort/"
             $webPattern = '<title>[^<]*Research Workbench'
             if (-not (Test-KnownPortOwner -Port $webPort -AllowedCommandParts @("vite.js", "vite/bin/vite") -HealthUrl $webUrl -HealthPattern $webPattern)) {
-                [void](Start-OwnedProcess -FileName "node" -Arguments "website/app/node_modules/vite/bin/vite.js --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment @{
-                    WORKBENCH_API_PORT = $apiPort
-                    WORKBENCH_ALLOWED_HOSTS = $tailscaleDnsName
-                })
+                $vite = "website/app/node_modules/vite/bin/vite.js"
+                $webEnvironment = @{ WORKBENCH_API_PORT = $apiPort; WORKBENCH_ALLOWED_HOSTS = $tailscaleDnsName }
+                if ($env:WORKBENCH_WEB_DEV -eq "1") {
+                    # Dev server: hot reload, but unbundled modules and React's development build.
+                    [void](Start-OwnedProcess -FileName "node" -Arguments "$vite --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment $webEnvironment)
+                } else {
+                    # Production build (much smoother on a laptop over Tailscale), rebuilt on every
+                    # source change by `build --watch`; reload the page to pick up a rebuild.
+                    & node $vite build --config website/app/vite.config.ts --logLevel warn
+                    if ($LASTEXITCODE -ne 0) { throw "Workbench website build failed" }
+                    [void](Start-OwnedProcess -FileName "node" -Arguments "$vite build --watch --config website/app/vite.config.ts --logLevel warn" -Environment $webEnvironment)
+                    [void](Start-OwnedProcess -FileName "node" -Arguments "$vite preview --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment $webEnvironment)
+                }
                 Wait-HttpReady -Url $webUrl -Pattern $webPattern
             }
             if (-not (Test-HttpReady -Url "http://127.0.0.1:$webPort/api/workbench/health" -Pattern $apiPattern)) {
