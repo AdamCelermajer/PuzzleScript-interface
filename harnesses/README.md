@@ -19,6 +19,14 @@ the model in its config, NanoGPT as an OpenAI-compatible provider); antigravity 
 ids from `agy models` (`gemini-3.8-flash-high`). `--provider SLUG` pins one
 OpenRouter upstream (opencode/bare only).
 
+Images on opencode: OpenCode forwards a `-f` image only when the model's config declares
+image input; otherwise it swaps the image for "ERROR: Cannot read … (this model does not
+support image input)". Since 2026-10-20 the session declares it from the provider's model list
+(OpenRouter `input_modalities`, NanoGPT `capabilities.vision`; an unlisted model is assumed to
+take images) and records `image_input` in `session.json`. Earlier opencode runs had no image.
+A provider can still drop images on its own route: NanoGPT's `qwen/qwen3.8-flash` answers "No
+image is visible" even to a direct API call, while NanoGPT's `qwen/qwen3.8-27b` sees the frame.
+
 Code: `base.py` (`CliSession.start/turn/close`, `TurnResult`, event log, subprocess
 handling: stdin closed, timeout kills the process tree), one module per harness,
 `chat.py` (bare transport), `registry.py` (ids, model validation, credentials,

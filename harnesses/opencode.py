@@ -3,11 +3,17 @@
 Config is private (``OPENCODE_CONFIG`` plus throwaway XDG dirs), never the user's
 ``~/.config/opencode``. The system prompt is an ``instructions`` file; models
 unknown to models.dev are declared under ``provider.<p>.models``.
+
+OpenCode only forwards an attached image when the model's config declares image input;
+otherwise it replaces the image with "ERROR: Cannot read ... (this model does not support
+image input)". Image input is therefore declared from the provider's own model list.
 """
 from __future__ import annotations
 
+import functools
 import json
 import shutil
+import urllib.request
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -18,10 +24,34 @@ FILE_TOOLS = {"edit", "write", "patch", "multiedit"}
 # OpenRouter's reasoning ceiling is xhigh (as in the bare harness).
 VARIANT = {"low": "low", "medium": "medium", "high": "high", "xhigh": "xhigh", "max": "xhigh"}
 NANOGPT_BASE_URL = "https://nano-gpt.com/api/v1"
+MODEL_LISTS = {"openrouter": "https://openrouter.ai/api/v1/models",
+               "nanogpt": f"{NANOGPT_BASE_URL}/models?detailed=true"}
 
 
-def opencode_config(provider: str, native_model: str, instructions: Path, pin_provider: str = "") -> dict[str, Any]:
+@functools.lru_cache(maxsize=None)
+def _model_list(provider: str) -> dict[str, dict]:
+    with urllib.request.urlopen(MODEL_LISTS[provider], timeout=20) as response:
+        return {str(m.get("id")): m for m in json.load(response).get("data", []) if isinstance(m, dict)}
+
+
+def image_input(provider: str, native_model: str) -> bool | None:
+    """Whether the provider lists image input for the model; None when the list is unavailable."""
+    try:
+        entry = _model_list(provider).get(native_model) if provider in MODEL_LISTS else None
+    except (OSError, ValueError):
+        return None
+    if entry is None:
+        return None
+    if provider == "nanogpt":
+        return bool((entry.get("capabilities") or {}).get("vision"))
+    return "image" in ((entry.get("architecture") or {}).get("input_modalities") or [])
+
+
+def opencode_config(provider: str, native_model: str, instructions: Path, pin_provider: str = "",
+                    images: bool = True) -> dict[str, Any]:
     model: dict[str, Any] = {}
+    if images:
+        model.update({"attachment": True, "modalities": {"input": ["text", "image"], "output": ["text"]}})
     if pin_provider:
         model["options"] = {"provider": {"order": [pin_provider], "allow_fallbacks": False}}
     provider_entry: dict[str, Any] = {"models": {native_model: model}}
@@ -46,8 +76,13 @@ class OpenCodeSession(CliSession):
         instructions = self.private / "SYSTEM_PROMPT.md"
         instructions.write_text(self.system_prompt, encoding="utf-8")
         config = self.private / "opencode.json"
+        listed = image_input(self.provider, self.native_model)
+        # An unlisted model is assumed to take images: a refused image fails loudly,
+        # a stripped one would silently leave the agent without the frame.
+        self.manifest_extra = {"image_input": listed is not False,
+                               "image_input_source": "provider model list" if listed is not None else "assumed (model not listed)"}
         config.write_text(json.dumps(opencode_config(self.provider, self.native_model, instructions,
-                                                     self.pin_provider), indent=2), encoding="utf-8")
+                                                     self.pin_provider, images=listed is not False), indent=2), encoding="utf-8")
         self.env["OPENCODE_CONFIG"] = str(config)
         self.env["OPENCODE_DISABLE_AUTOUPDATE"] = "1"
         # Never read or write a real OpenCode install (T3 Code depends on the host one).

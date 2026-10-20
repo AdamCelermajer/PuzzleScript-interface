@@ -157,6 +157,26 @@ def test_opencode_nanogpt_is_a_custom_openai_compatible_provider(tmp_path):
     assert "deepseek/deepseek-v4.1-flash" in provider["models"]
 
 
+
+def test_opencode_declares_image_input_from_the_provider_model_list(tmp_path, monkeypatch):
+    # Without a declared image modality OpenCode replaces -f frame.png with "does not support image input".
+    lists = {"openrouter": {"qwen/qwen3.8-27b": {"architecture": {"input_modalities": ["text", "image"]}},
+                            "text/only": {"architecture": {"input_modalities": ["text"]}}},
+             "nanogpt": {"qwen/qwen3.8-flash": {"capabilities": {"vision": True}}}}
+    monkeypatch.setattr("harnesses.opencode._model_list", lambda provider: lists[provider])
+
+    def declared(model):
+        session = started("opencode", tmp_path / model.replace("/", "_"), model)
+        provider, native = model.split("/", 1)
+        entry = json.loads(Path(session.env["OPENCODE_CONFIG"]).read_text())["provider"][provider]["models"][native]
+        manifest = json.loads((session.analysis_dir / "session.json").read_text())
+        return entry.get("modalities", {}).get("input"), entry.get("attachment"), manifest["image_input"], manifest["image_input_source"]
+
+    assert declared("openrouter/qwen/qwen3.8-27b") == (["text", "image"], True, True, "provider model list")
+    assert declared("nanogpt/qwen/qwen3.8-flash") == (["text", "image"], True, True, "provider model list")
+    assert declared("openrouter/text/only") == (None, None, False, "provider model list")
+    assert declared("openrouter/unlisted/model") == (["text", "image"], True, True, "assumed (model not listed)")
+
 OPENCODE_EVENTS = [
     {"type": "step_start", "sessionID": "ses_9", "part": {"type": "step-start"}},
     {"type": "text", "sessionID": "ses_9", "part": {"type": "text", "text": "Checking."}},

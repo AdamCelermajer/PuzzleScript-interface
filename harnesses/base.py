@@ -259,6 +259,7 @@ class CliSession:
             "role": role, "workspace": str(self.workspace), "started_at": utc_now(),
             "system_prompt_sha256": hashlib.sha256(system_prompt.encode("utf-8")).hexdigest(),
             "web_tools": "disabled", "permission_prompts": "disabled (Docker container is the sandbox)",
+            **getattr(self, "manifest_extra", {}),
         }
         (self.analysis_dir / "session.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
         (self.analysis_dir / "system_prompt.txt").write_text(system_prompt, encoding="utf-8")
