@@ -1,16 +1,30 @@
 // Shapes returned by workbench/*.py (read from the Python source, revamp contract §4).
 
-export type Mode = 'baseline' | 'baseline-plus' | 'campaign'
 export type HarnessId = 'codex' | 'claude-code' | 'opencode' | 'antigravity' | 'bare'
 export type Effort = 'low' | 'medium' | 'high' | 'xhigh' | 'max'
-export type WorldModelMode = 'final-only' | 'between-hypotheses'
+/** Framework option values, keyed by option name (frameworks/base.py Option). */
+export type FrameworkOptions = Record<string, number | string | boolean>
 
-export interface Budget {
-  max_wall_seconds?: number
-  max_steps?: number
-  max_evaluations?: number
-  research_moves?: number
-  solver_moves?: number
+/** One framework from `GET /frameworks` (frameworks/registry.py list_frameworks). */
+export interface FrameworkOption {
+  name: string
+  flag: string
+  kind: 'int' | 'str' | 'bool'
+  default: number | string | boolean
+  help: string
+  choices: string[]
+  minimum: number | null
+  maximum: number | null
+}
+
+export interface Framework {
+  id: string
+  label: string
+  description: string
+  options: FrameworkOption[]
+  optimizer: boolean
+  artifact: string
+  restart: 'resume' | 'continue'
 }
 
 export interface EvaluationInput {
@@ -33,7 +47,11 @@ export interface CatalogRun {
   id: string
   kind: 'avo' | 'codex'
   batch?: string
-  mode?: Mode | null
+  framework?: string | null
+  /** Display name for the framework and its options, e.g. `Baseline+`. */
+  variant?: string | null
+  options?: FrameworkOptions | null
+  max_wall_seconds?: number | null
   harness?: string | null
   agent_backend?: string
   model?: string | null
@@ -41,7 +59,6 @@ export interface CatalogRun {
   optimizer_model?: string | null
   effort?: string | null
   optimizer_effort?: string | null
-  run_budget?: Budget | null
   provider?: string | null
   spec_source?: 'run_spec' | 'legacy' | null
   continued_from?: string | null
@@ -129,7 +146,7 @@ export interface Harness {
 }
 
 export interface RunRequest {
-  modes: Mode[]
+  frameworks: { id: string; options: FrameworkOptions }[]
   harnesses: HarnessId[]
   models: string[]
   optimizer_model?: string
@@ -138,25 +155,25 @@ export interface RunRequest {
   games: string[]
   repeats: number
   parallel: number
-  budget: Budget
-  world_model_modes?: WorldModelMode[]
+  max_wall_seconds: number
   provider?: string
   label?: string
 }
 
 export interface PreviewRun {
-  mode: Mode
+  framework: string
+  options: FrameworkOptions
+  variant: string
   harness: HarnessId
   model: string
   optimizer_model: string | null
   effort: Effort
   optimizer_effort: Effort | null
   game_id: string
-  world_model_mode: WorldModelMode | null
   repeat: number
   match_id: string
   backend_url: string
-  budget: Budget
+  max_wall_seconds: number
   command: string[]
 }
 
@@ -225,13 +242,15 @@ export interface RunRecord {
   config: Record<string, unknown>
   run_spec: Record<string, unknown> | null
   normalized: {
-    mode: Mode | null
+    framework: string | null
+    variant: string | null
+    options: FrameworkOptions
     harness: string | null
     model: string | null
     effort: string | null
     game_id: string | null
     backend_url: string | null
-    budget: Budget | null
+    max_wall_seconds: number | null
     provider: string | null
     continued_from: string | null
     created_at: string | null
@@ -269,7 +288,7 @@ export interface AvoSnapshot {
   run_id: string
   game_id: string
   harness: string | null
-  mode: string | null
+  variant: string | null
   player_model: string
   optimizer_model: string
   current: string | null
@@ -450,7 +469,7 @@ export interface DiaryRunLink {
   linked: 'explicit' | 'date'
   found: boolean
   date?: string | null
-  mode?: string
+  variant?: string
   harness?: string | null
   model?: string | null
   game?: string | null

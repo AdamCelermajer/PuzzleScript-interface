@@ -2,26 +2,19 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, q } from '../api/client'
-import { useBenchmarks, useHarnesses } from '../api/hooks'
-import type { Effort, Harness, LaunchResult, Mode, Preview, WorldModelMode } from '../api/types'
+import { useBenchmarks, useFrameworks, useHarnesses } from '../api/hooks'
+import type { Effort, Framework, FrameworkOption, Harness, LaunchResult, Preview } from '../api/types'
 import { Button, Card, ChipGroup, Collapsible, Empty, ErrorBox, Field, Input, Loading, Notice, PageHeader, Pill, Select, Toggle, cx } from '../components/ui'
 import { gameName } from '../lib/format'
 import {
-  DEFAULT_FORM, budgetText, buildRunRequest, estimateRuns, formProblems, groupPreview, modelFitsHarness, providerPinApplies,
-  requestKey, usesBaseline, usesCampaign, type LaunchForm,
+  DEFAULT_FORM, budgetText, buildRunRequest, estimateRuns, formProblems, frameworkChoices, groupPreview, isMulti, modelFitsHarness,
+  providerPinApplies, requestKey, usesOptimizer, withFrameworks, type FrameworkForm, type LaunchForm, type OptionField,
 } from '../lib/launch'
-import { MODE_LABEL } from '../lib/runs'
 import { harnessColor } from '../components/identity'
 
-const MODES: Mode[] = ['baseline', 'baseline-plus', 'campaign']
-const MODE_HELP: Record<Mode, string> = {
-  baseline: 'Direct play; only the conversation persists between turns.',
-  'baseline-plus': 'Direct play plus a persistent notes/ directory.',
-  campaign: 'AVO optimizer + player + fresh solver evaluation.',
-}
 const EFFORTS: Effort[] = ['low', 'medium', 'high', 'xhigh', 'max']
-const WORLD_MODEL: WorldModelMode[] = ['final-only', 'between-hypotheses']
-const STORAGE = 'workbench.launch.form.v1'
+// v2: frameworks replaced the fixed baseline / baseline-plus / campaign modes.
+const STORAGE = 'workbench.launch.form.v2'
 
 function loadForm(): LaunchForm {
   try {
@@ -35,18 +28,22 @@ function loadForm(): LaunchForm {
 export function LaunchView() {
   const harnesses = useHarnesses()
   const benchmarks = useBenchmarks()
-  const [form, setForm] = useState<LaunchForm>(loadForm)
+  const frameworkList = useFrameworks()
+  const frameworks = useMemo(() => frameworkList.data ?? [], [frameworkList.data])
+  const [saved, setForm] = useState<LaunchForm>(loadForm)
+  const form = useMemo(() => (frameworks.length ? withFrameworks(saved, frameworks) : saved), [saved, frameworks])
   const navigate = useNavigate()
   const client = useQueryClient()
-  const set = <K extends keyof LaunchForm>(key: K, value: LaunchForm[K]) => setForm((f) => ({ ...f, [key]: value }))
+  const set = <K extends keyof LaunchForm>(key: K, value: LaunchForm[K]) => setForm(() => ({ ...form, [key]: value }))
+  const setFramework = (id: string, entry: FrameworkForm) => set('frameworks', { ...form.frameworks, [id]: entry })
 
   useEffect(() => localStorage.setItem(STORAGE, JSON.stringify(form)), [form])
 
-  const request = useMemo(() => buildRunRequest(form), [form])
+  const request = useMemo(() => buildRunRequest(form, frameworks), [form, frameworks])
   const key = requestKey(request)
-  const problems = formProblems(form)
+  const problems = formProblems(form, frameworks)
   const list = harnesses.data ?? []
-  const estimate = estimateRuns(form, list)
+  const estimate = estimateRuns(form, list, frameworks)
 
   const preview = useMutation({ mutationFn: (body: typeof request) => api.post<Preview>('/runs/preview', body) })
   const [previewKey, setPreviewKey] = useState('')
@@ -68,34 +65,25 @@ export function LaunchView() {
   const selectedHarnesses = list.filter((h) => form.harnesses.includes(h.id))
   const strayModels = form.models.filter((m) => !selectedHarnesses.some((h) => modelFitsHarness(h, m)))
 
-  const campaign = usesCampaign(form)
-  const baseline = usesBaseline(form)
+  const optimizer = usesOptimizer(form, frameworks)
+  const choices = frameworkChoices(form, frameworks).length
   const pinApplies = providerPinApplies(form)
   const playable = (benchmarks.data?.games ?? []).filter((g) => g.status === 'playable')
 
   return (
     <div className="mx-auto flex max-w-[1180px] flex-col gap-4">
-      <PageHeader title="Launch" subtitle="One request expands into a run matrix: games × modes × harness/model × efforts × repeats." />
+      <PageHeader title="Launch" subtitle="One request expands into a run matrix: games × frameworks × harness/model × efforts × repeats." />
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
         <div className="flex flex-col gap-4">
-          <Card title="1 · Modes">
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-              {MODES.map((mode) => {
-                const on = form.modes.includes(mode)
-                return (
-                  <button
-                    key={mode}
-                    type="button"
-                    onClick={() => set('modes', on ? form.modes.filter((m) => m !== mode) : [...form.modes, mode])}
-                    className={cx('rounded-md border px-3 py-2 text-left', on ? 'border-accent bg-accent-soft' : 'border-line-strong hover:bg-sunken')}
-                  >
-                    <div className={cx('text-[13px] font-medium', on && 'text-accent')}>{on ? '✓ ' : ''}{MODE_LABEL[mode]}</div>
-                    <div className="text-[11.5px] text-muted">{MODE_HELP[mode]}</div>
-                  </button>
-                )
-              })}
-            </div>
-            {form.modes.length > 1 && <div className="mt-2 text-[11.5px] text-muted">Selected modes share game, model, effort and repeat, so their runs are directly comparable (same match id).</div>}
+          <Card title="1 · Frameworks">
+            {frameworkList.isLoading ? <Loading label="Loading frameworks…" /> : frameworkList.error ? <ErrorBox error={frameworkList.error} retry={() => frameworkList.refetch()} /> : (
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                {frameworks.map((framework) => (
+                  <FrameworkCard key={framework.id} framework={framework} entry={form.frameworks[framework.id]} onChange={(entry) => setFramework(framework.id, entry)} />
+                ))}
+              </div>
+            )}
+            {choices > 1 && <div className="mt-2 text-[11.5px] text-muted">The {choices} framework choices share game, model, effort and repeat, so their runs are directly comparable (same match id). Picking several values of an option launches one run per value.</div>}
           </Card>
 
           <Card title="2 · Harness and model">
@@ -127,10 +115,10 @@ export function LaunchView() {
             <GamePicker games={playable.map((g) => ({ id: g.game_id, title: g.title, tier: g.tier, levels: g.levels }))} loading={benchmarks.isLoading} error={benchmarks.error} value={form.games} onChange={(v) => set('games', v)} />
           </Card>
 
-          {campaign && (
-            <Card title="4 · AVO settings">
+          {optimizer && (
+            <Card title="4 · Optimizer">
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <Field label="Optimizer model" hint="Outer AVO loop. Empty = same as each player model.">
+                <Field label="Optimizer model" hint="Outer loop of frameworks with an optimizer (AVO). Empty = same as each player model.">
                   <Select value={form.optimizerModel} onChange={(e) => set('optimizerModel', e.target.value)}>
                     <option value="">Same as player</option>
                     {[...new Set([...form.models, ...selectedHarnesses.flatMap((h) => (h.manual_model_ids ? [] : h.models.map((m) => m.id)))])].map((m) => <option key={m} value={m}>{m}</option>)}
@@ -142,14 +130,11 @@ export function LaunchView() {
                     {EFFORTS.map((e) => <option key={e} value={e}>{e}</option>)}
                   </Select>
                 </Field>
-                <Field label="World-model condition" hint="Selecting both creates matched campaigns per condition." className="md:col-span-2">
-                  <ChipGroup options={WORLD_MODEL} value={form.worldModelModes} onChange={(v) => set('worldModelModes', v)} />
-                </Field>
               </div>
             </Card>
           )}
 
-          <Card title={`${campaign ? 5 : 4} · Budget and scheduling`}>
+          <Card title={`${optimizer ? 5 : 4} · Wall time and scheduling`}>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <Field label="Wall time" className="col-span-2">
                 <div className="flex items-center gap-3">
@@ -162,24 +147,6 @@ export function LaunchView() {
                   )}
                 </div>
               </Field>
-              {baseline && (
-                <Field label="Max steps" hint="Baseline / baseline+">
-                  <Input type="number" min={1} value={form.maxSteps} onChange={(e) => set('maxSteps', Number(e.target.value))} />
-                </Field>
-              )}
-              {campaign && (
-                <>
-                  <Field label="Max evaluations" hint="AVO">
-                    <Input type="number" min={1} max={100} value={form.maxEvaluations} onChange={(e) => set('maxEvaluations', Number(e.target.value))} />
-                  </Field>
-                  <Field label="Research moves" hint="AVO player">
-                    <Input type="number" min={1} value={form.researchMoves} onChange={(e) => set('researchMoves', Number(e.target.value))} />
-                  </Field>
-                  <Field label="Solver moves" hint="Fresh evaluation">
-                    <Input type="number" min={1} value={form.solverMoves} onChange={(e) => set('solverMoves', Number(e.target.value))} />
-                  </Field>
-                </>
-              )}
               <Field label="Repeats" hint="Independent attempts">
                 <Input type="number" min={1} max={20} value={form.repeats} onChange={(e) => set('repeats', Number(e.target.value))} />
               </Field>
@@ -226,6 +193,53 @@ export function LaunchView() {
         </div>
       </div>
     </div>
+  )
+}
+
+function FrameworkCard({ framework, entry, onChange }: { framework: Framework; entry?: FrameworkForm; onChange: (entry: FrameworkForm) => void }) {
+  if (!entry) return null
+  const setValue = (name: string, value: OptionField) => onChange({ ...entry, values: { ...entry.values, [name]: value } })
+  return (
+    <div className={cx('flex flex-col gap-2 rounded-md border px-3 py-2', entry.on ? 'border-accent bg-accent-soft' : 'border-line-strong')}>
+      <button type="button" onClick={() => onChange({ ...entry, on: !entry.on })} className="text-left">
+        <div className={cx('text-[13px] font-medium', entry.on && 'text-accent')}>{entry.on ? '✓ ' : ''}{framework.label}</div>
+        <div className="text-[11.5px] text-muted">{framework.description}</div>
+      </button>
+      {entry.on && framework.options.length > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          {framework.options.map((option) => (
+            <OptionInput key={option.name} option={option} value={entry.values[option.name]} onChange={(value) => setValue(option.name, value)} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function OptionInput({ option, value, onChange }: { option: FrameworkOption; value: OptionField; onChange: (value: OptionField) => void }) {
+  const label = option.name.replaceAll('_', ' ')
+  if (isMulti(option)) {
+    // Several values = one matched run per value.
+    const values: (string | boolean)[] = option.kind === 'bool' ? [false, true] : option.choices
+    const picked = Array.isArray(value) ? value : []
+    const text = (v: string | boolean) => (typeof v === 'boolean' ? (v ? 'on' : 'off') : v)
+    return (
+      <Field label={label} hint={option.help} className="col-span-2">
+        <ChipGroup options={values.map(text)} value={picked.map(text)} onChange={(chosen) => onChange(values.filter((v) => chosen.includes(text(v))))} />
+      </Field>
+    )
+  }
+  if (option.kind === 'int') {
+    return (
+      <Field label={label} hint={option.help}>
+        <Input type="number" min={option.minimum ?? undefined} max={option.maximum ?? undefined} value={Number(value)} onChange={(e) => onChange(Number(e.target.value))} />
+      </Field>
+    )
+  }
+  return (
+    <Field label={label} hint={option.help}>
+      <Input value={String(value)} onChange={(e) => onChange(e.target.value)} />
+    </Field>
   )
 }
 
@@ -386,11 +400,10 @@ function PreviewList({ preview }: { preview: Preview }) {
             {rows.map((row, i) => (
               <div key={i} className="border-t border-line px-3 py-1.5 text-[12px]">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <Pill tone="accent">{MODE_LABEL[row.mode]}</Pill>
+                  <Pill tone="accent">{row.variant}</Pill>
                   <span className="text-muted">{row.harness}</span>
                   <span className="font-mono text-[11.5px]">{row.model}</span>
                   <span className="text-faint">· {row.effort}</span>
-                  {row.world_model_mode && <span className="text-faint">· {row.world_model_mode}</span>}
                   <span className="ml-auto text-[11px] text-faint">#{row.repeat} · {row.match_id}</span>
                 </div>
                 <div className="text-[11px] text-muted">

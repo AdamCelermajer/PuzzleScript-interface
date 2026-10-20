@@ -320,7 +320,6 @@ def _run_date(row: dict, root: Path) -> str | None:
 def _run_summary(row: dict, root: Path) -> dict:
     spec = read_json(root / row.get("id", "") / "run_spec.json")
     kind = row.get("kind")
-    mode = spec.get("mode") or ("campaign" if kind == "avo" else row.get("condition") or "baseline")
     status = row.get("status") or "unknown"
     outcome = "stopped" if status == "cancelled" else status
     if kind == "avo":
@@ -337,7 +336,7 @@ def _run_summary(row: dict, root: Path) -> dict:
         outcome += f", {row['levels']}/{total} levels" if total else f", {row['levels']} level(s)"
         if row.get("actions") is not None:
             outcome += f" in {row['actions']} actions"
-    return {"id": row.get("id"), "date": row.get("_date"), "mode": mode,
+    return {"id": row.get("id"), "date": row.get("_date"), "variant": row.get("variant") or kind,
             "harness": spec.get("harness") or row.get("agent_backend") or row.get("harness"),
             "model": spec.get("model") or row.get("model"), "game": spec.get("game_id") or row.get("game_id"),
             "status": status, "solved": bool(row.get("solved")), "outcome": outcome}
@@ -468,9 +467,9 @@ def export_markdown(entries: list[dict], start: str, end: str, thread: str | Non
     lines += ["## Linked runs", ""]
     if runs:
         rows = sorted(runs.values(), key=lambda r: (r.get("date") or "", r["id"]))
-        lines += ["| Date | Run | Mode | Harness | Model | Game | Outcome |", "|---|---|---|---|---|---|---|"]
+        lines += ["| Date | Run | Framework | Harness | Model | Game | Outcome |", "|---|---|---|---|---|---|---|"]
         for run in rows[:40]:
-            cells = [run.get("date") or "", f"`{run['id']}`", run.get("mode") or "", run.get("harness") or "",
+            cells = [run.get("date") or "", f"`{run['id']}`", run.get("variant") or "", run.get("harness") or "",
                      run.get("model") or "", run.get("game") or "", run.get("outcome") or ""]
             lines.append("| " + " | ".join(str(c).replace("|", "/") for c in cells) + " |")
         if len(rows) > 40:

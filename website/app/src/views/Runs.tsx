@@ -7,7 +7,7 @@ import type { CatalogJob, ResumeResult } from '../api/types'
 import { RunList, type JobVerb } from '../components/RunList'
 import { Button, Empty, ErrorBox, Input, Loading, Notice, Select, cx } from '../components/ui'
 import { gameName, relativeTime } from '../lib/format'
-import { EMPTY_FILTERS, MODE_LABEL, distinct, groupLaunches, matchesFilters, type RunFilters } from '../lib/runs'
+import { EMPTY_FILTERS, distinct, groupLaunches, matchesFilters, type RunFilters } from '../lib/runs'
 
 const STATUS_OPTIONS: [string, string][] = [
   ['', 'Any status'], ['active', 'Active'], ['running', 'Running'], ['queued', 'Queued'], ['paused', 'Paused'],
@@ -66,7 +66,7 @@ export function RunsView() {
   const current = launches.filter((l) => !l.archive)
   const archive = launches.filter((l) => l.archive)
   const archiveRuns = archive.reduce((n, l) => n + l.runs.length, 0)
-  const options = useMemo(() => ({ harness: distinct(runs, (r) => r.harness), model: distinct(runs, (r) => r.model), game: distinct(runs, (r) => r.game) }), [runs])
+  const options = useMemo(() => ({ variant: distinct(runs, (r) => r.variant), harness: distinct(runs, (r) => r.harness), model: distinct(runs, (r) => r.model), game: distinct(runs, (r) => r.game) }), [runs])
   const anyFilter = Object.values(filters).some(Boolean)
   const showArchive = archiveOpen || Boolean(filters.job)
   const listProps = {
@@ -97,9 +97,9 @@ export function RunsView() {
 
       <div className="flex flex-wrap items-center gap-2 xl:flex-nowrap">
         <Input placeholder="Filter id, game, model…" value={filters.q} onChange={(e) => setFilter('q', e.target.value)} className="min-w-48 flex-1" />
-        <Select value={filters.mode} onChange={(e) => setFilter('mode', e.target.value)} className={FILTER_SELECT}>
-          <option value="">Any mode</option>
-          {Object.entries(MODE_LABEL).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+        <Select value={filters.variant} onChange={(e) => setFilter('variant', e.target.value)} className={FILTER_SELECT}>
+          <option value="">Any framework</option>
+          {options.variant.map((variant) => <option key={variant} value={variant}>{variant}</option>)}
         </Select>
         <Select value={filters.harness} onChange={(e) => setFilter('harness', e.target.value)} className={FILTER_SELECT}>
           <option value="">Any harness</option>

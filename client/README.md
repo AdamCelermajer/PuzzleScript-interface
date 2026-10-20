@@ -32,14 +32,14 @@ uv run python -m client.inspect_rules --game-id ps_sokoban_basic-v1 --recent 5
 ```
 
 LIVE-style experiments live under `studies/LIVE_framework/`; goal-recognition
-experiments live under `studies/goal_recognition/`; the simple persistent Codex
-SDK game agent lives under `studies/codex_agent/`; the previous custom ReAct
+experiments live under `studies/goal_recognition/`; the persistent direct-play
+agent (framework `baseline`) lives under `frameworks/baseline/`; the previous custom ReAct
 implementation is archived under `studies/old_react/`.
 
 ## Maintained AVO Framework
 
-The maintained AVO implementation lives under top-level `avo/`,
-including its Codex client, generic kernel, profiles, prompts, tests, and run
-artifacts.
+The maintained AVO implementation lives under `frameworks/avo/` (framework `avo`),
+including its client, generic kernel, profiles, prompts and tests. Older run
+artifacts remain in `avo/output/`.
 
 Launch AVO campaigns and direct-play runs with `python -m harnesses.launch` (one Docker container per run); see `harnesses/README.md`.

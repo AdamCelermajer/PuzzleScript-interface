@@ -34,8 +34,8 @@ dev server; `website:build` produces the static pages, not a standalone live bac
 | Research | Papers, notes, goal recognition, optimal path and other studies |
 | Historical | The old rule-learning client and its architecture |
 
-AVO launches require the existing `avo-puzzlescript-isolated:local` Docker image
-and an existing Codex OAuth login. See [Docker setup](avo/docker/README.md).
+AVO and direct-play launches require the `puzzlescript-agents:local` Docker image
+and the chosen harness's credentials. See [harnesses](harnesses/README.md).
 Use `http://host.docker.internal:8000` for the host ARC backend from Docker.
 Parallel campaigns are independent per-game lineages; they do not share research.
 Only fresh autonomous solver evaluation owns AVO fitness. Research levels are
@@ -44,7 +44,7 @@ separate diagnostic evidence.
 The direct Codex player uses the existing Codex OAuth login. Baseline+ enables
 its persistent note tools. Continuation creates a separate session/run, verifies
 replayed transitions and retains the parent game, model, effort and condition;
-the entered action budget is additional. See [player details](studies/codex_agent/README.md).
+the entered action budget is additional. See [player details](frameworks/baseline/README.md).
 
 Launch forms show the run count, concurrency, time limit and exact commands before
 launch. They do not start model calls during preview. Stop controls act only on
@@ -54,17 +54,19 @@ batches created by the workbench; externally owned experiments are monitor-only.
 
 - `website/`: navigation, launch forms, run/result pages and AVO trace viewer.
 - `workbench/`: local API, artifact catalog and bounded experiment workers.
-- `avo/`: AVO controller, isolated Codex sessions, research/evaluation and Docker launch.
-- `studies/codex_agent/`: maintained direct-player runner, notes and continuation.
+- `frameworks/`: agent methods (`baseline` direct player with optional notes, `avo`
+  campaigns), one folder each plus `registry.py`; see its [README](frameworks/README.md).
+- `harnesses/`: coding-CLI harnesses and `python -m harnesses.launch` (one Docker container per run).
 - `puzzlescript_interface/`: Node game engine and ARC-compatible Python service.
 - `client/arc/`: shared ARC adapter/types used by AVO and the direct player.
 - `client/engine/` and `client/runtime/`: historical rule-learning client; some utilities remain shared.
-- `studies/`: other research studies; `avo/legacy/` and `studies/old_react/` preserve earlier approaches.
+- `studies/`: other research studies; `frameworks/avo/legacy/` and `studies/old_react/` preserve earlier approaches.
 - `benchmark/`: benchmark server and scoring tools; see its [README](benchmark/README.md).
 
-New workbench artifacts go under `output/workbench/<batch>/run-NNNN/`. Existing
-artifacts stay where they are: the catalog also reads `output/`, `avo/output/`,
-and `studies/codex_agent/output/`, excluding copied controller trees and workspaces.
+New workbench artifacts go under `output/workbench/<batch>/run-NNNN/`; CLI launches
+default to `output/<framework>/<run>/`. Existing artifacts stay where they are: the
+catalog also reads `avo/output/` and `studies/codex_agent/output/`, excluding copied
+controller trees and workspaces.
 Generated `output/` and `outputs/` are ignored by Git. Already tracked historical
 artifacts remain tracked; no archive is deleted or silently migrated.
 
@@ -74,8 +76,9 @@ artifacts remain tracked; no archive is deleted or silently migrated.
 npm run local                         # Node + ARC service, no workbench
 npm run benchmark:local               # benchmark stack
 uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
-uv run python -m studies.codex_agent.run --game-id ps_sokoban_basic-v1 --condition baseline-plus
-uv run python -m studies.codex_agent.batch --game-id ps_sokoban_basic-v1 --repeats 3 --parallel 3
+uv run python -m harnesses.launch --framework baseline --notes --harness codex --model gpt-5.6-sol `
+  --effort low --game-id ps_sokoban_basic-v1 --backend-url http://host.docker.internal:8000
+uv run python -m frameworks.baseline.batch --game-id ps_sokoban_basic-v1 --repeats 3 --parallel 3
 ```
 
 The historical rule agent uses OpenRouter (`OPENROUTER_API_KEY`). Official ARC
@@ -85,7 +88,7 @@ optional settings are needed. The maintained Codex workflows use OAuth.
 ## Checks
 
 ```powershell
-uv run python -m pytest tests/workbench avo/tests/test_docker_launch.py -q
+uv run python -m pytest tests/workbench tests/harnesses frameworks/baseline/tests frameworks/avo/tests -q
 node --test tests/workbench/run-paths.test.mjs
 npm run website:build
 npm test

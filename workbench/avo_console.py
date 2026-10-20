@@ -278,7 +278,7 @@ def avo_snapshot(root: Path, run_id, catalog_runs: Callable[[], list[dict]]) -> 
     return {
         "run_id": run_id, "game_id": dig(config, "profile_settings", "game_id") or "",
         "agent_backend": "opencode" if config.get("agent_backend") == "opencode" else "codex",
-        "harness": record.get("harness"), "mode": record.get("mode"),
+        "harness": record.get("harness"), "variant": record.get("variant"),
         "player_model": dig(config, "player", "model") or "", "optimizer_model": config.get("optimizer_model") or "",
         "current": current_id or None, "phase": phase, "active": record.get("status") == "running",
         "process_status": record.get("status") or "unconfirmed", "can_resume": bool(record.get("can_resume")),

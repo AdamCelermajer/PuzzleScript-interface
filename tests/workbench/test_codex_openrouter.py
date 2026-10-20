@@ -26,10 +26,10 @@ def test_openrouter_direct_player_plan_preserves_baseline_plus_budget_and_max(tm
                             efforts=['max'], conditions=['baseline-plus'], max_steps=500),
                     tmp_path/'output/workbench/test', tmp_path)
     command = row['command']
-    assert command[1:3] == ['-m', 'studies.codex_agent.run']
+    assert command[1:3] == ['-m', 'frameworks.baseline.run']
     assert command[command.index('--model')+1] == 'openrouter/qwen/qwen3.8-27b'
     assert command[command.index('--effort')+1] == 'max'
-    assert command[command.index('--condition')+1] == 'baseline-plus'
+    assert '--notes' in command and '--condition' not in command
     assert command[command.index('--max-steps')+1] == '500'
     assert row['model_provider'] == 'openrouter'
 

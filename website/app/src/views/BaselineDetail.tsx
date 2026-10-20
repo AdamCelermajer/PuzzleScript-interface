@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { api, q } from '../api/client'
-import type { Mode, RunRecord, Transition } from '../api/types'
+import type { RunRecord, Transition } from '../api/types'
 import { GridCanvas, PixelImage } from '../components/Frame'
 import { Markdown } from '../components/Markdown'
 import { Timeline } from '../components/Timeline'
@@ -14,7 +14,7 @@ const frameFile = (index: number) => `frames/${String(index).padStart(3, '0')}.p
 type Tab = 'events' | 'notes' | 'result' | 'files'
 
 /** Baseline and baseline+ runs: replay of recorded transitions, agent events, notes, artifacts. */
-export function BaselineDetail({ runId, live, mode }: { runId: string; live?: boolean; mode?: Mode }) {
+export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId: string; live?: boolean; notes?: boolean }) {
   const [eventsLimit, setEventsLimit] = useState(500)
   const record = useQuery({
     queryKey: ['record', runId, eventsLimit],
@@ -37,7 +37,7 @@ export function BaselineDetail({ runId, live, mode }: { runId: string; live?: bo
           onChange={setTab}
           tabs={[
             { id: 'events', label: 'Agent timeline' },
-            { id: 'notes', label: `Notes${notes.length ? ` (${notes.length})` : ''}`, hidden: mode === 'baseline' && !notes.length },
+            { id: 'notes', label: `Notes${notes.length ? ` (${notes.length})` : ''}`, hidden: !withNotes && !notes.length },
             { id: 'result', label: 'Result & spec' },
             { id: 'files', label: `Files (${data.files.length})` },
           ]}

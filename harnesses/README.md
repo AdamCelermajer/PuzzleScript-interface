@@ -1,7 +1,7 @@
 # Harnesses and the agents container
 
-Every run (baseline, baseline-plus, campaign) is **one plain Docker container**
-started by `python -m harnesses.launch`. Inside it, each agent role (direct player,
+Every run (one framework from `frameworks/`: `baseline`, with or without notes, or
+`avo`) is **one plain Docker container** started by `python -m harnesses.launch`. Inside it, each agent role (direct player,
 AVO optimizer, AVO player) is one persistent session of one harness:
 
 | id | how a turn runs | resume | system prompt | images | web tools disabled by |
@@ -22,8 +22,9 @@ OpenRouter upstream (opencode/bare only).
 Code: `base.py` (`CliSession.start/turn/close`, `TurnResult`, event log, subprocess
 handling: stdin closed, timeout kills the process tree), one module per harness,
 `chat.py` (bare transport), `registry.py` (ids, model validation, credentials,
-`list_harnesses()` for the workbench), `launch.py` (host), `entry.py` (container),
-`smoke.py`, `docker/Dockerfile`.
+`list_harnesses()` for the workbench), `model_provider.py` (provider-qualified model
+ids and API keys), `launch.py` (host), `entry.py` (container), `smoke.py`,
+`docker/Dockerfile`.
 
 ## Logs (every session)
 
@@ -38,9 +39,9 @@ runs use the run directory as `<analysis>`; campaigns use
 ```powershell
 docker build -t puzzlescript-agents:local harnesses/docker   # once, ~1.4 GB
 
-uv run python -m harnesses.launch --mode baseline-plus --harness claude-code --model claude-haiku-5-5 `
+uv run python -m harnesses.launch --framework baseline --notes --harness claude-code --model claude-haiku-5-5 `
   --effort low --game-id ps_modality-v1 --backend-url http://host.docker.internal:8000 --max-steps 50
-uv run python -m harnesses.launch --mode campaign --harness opencode --model openrouter/qwen/qwen3.8-27b `
+uv run python -m harnesses.launch --framework avo --harness opencode --model openrouter/qwen/qwen3.8-27b `
   --effort high --game-id ps_modality-v1 --backend-url http://host.docker.internal:8000 `
   --max-evaluations 8 --research-moves 400 --solver-moves 400 --world-model-mode final-only
 uv run python -m harnesses.launch check [--harness H] [--deep]     # JSON readiness
@@ -48,17 +49,20 @@ uv run python -m harnesses.launch smoke --harness codex --model gpt-5.6-sol   # 
 uv run python -m harnesses.launch login antigravity [--tui]       # once, interactive
 ```
 
-Full options (contract §3): `--optimizer-model`, `--optimizer-effort`,
-`--max-wall-seconds` (0 = unlimited), `--max-steps`, `--max-evaluations`,
-`--research-moves`, `--solver-moves`, `--world-model-mode`, `--provider`,
-`--resume` (campaign in DIR; refuses a different harness/provider/game/condition),
-`--continue-from PARENT` (baseline modes; new DIR), `--dry-run`.
+Common options (contract §3): `--framework`, `--harness`, `--model`, `--effort`,
+`--game-id`, `--backend-url`, `--output-dir`, `--max-wall-seconds` (0 = unlimited),
+`--provider`, `--memory`, `--cpus`, `--dry-run`. Each framework option becomes a flag
+(`baseline`: `--max-steps`, `--notes`; `avo`: `--max-evaluations`, `--research-moves`,
+`--solver-moves`, `--world-model-mode`). Only frameworks with an optimizer (`avo`) take
+`--optimizer-model`/`--optimizer-effort`; `--resume` (avo in DIR; refuses a different
+harness/provider/game/condition) and `--continue-from PARENT` (baseline; new DIR)
+follow the framework's restart kind.
 `localhost` backend URLs are rewritten to `host.docker.internal`.
 
-Output layout is unchanged: campaigns default to `avo/output/runs/<id>/` with the
-campaign in `<dir>/campaign/`; direct runs default to `studies/codex_agent/output/<id>/`.
-The launcher writes `<dir>/run_spec.json` (also copied to `<dir>/campaign/` for
-campaigns) and `<dir>/launcher.json` (`{"container": ...}`), and runs
+Runs default to `output/<framework>/<id>/`; AVO keeps the campaign in
+`<dir>/campaign/`. Older runs stay in `avo/output/` and `studies/codex_agent/output/`.
+The launcher writes `<dir>/run_spec.json` (schema `run-spec-v2`; the entry also copies
+it to `<dir>/campaign/` for avo) and `<dir>/launcher.json` (`{"container": ...}`), and runs
 `docker rm -f <container>` on exit.
 
 ## The container
@@ -67,9 +71,8 @@ Image `puzzlescript-agents:local` (`harnesses/docker/Dockerfile`, self-contained
 python 3.12 venv with the controller deps, node 22, `@openai/codex` 0.162.1,
 `@anthropic-ai/claude-code` 2.1.299, `opencode-ai` 1.14.19, `agy` 1.3.5). Per run:
 
-- controller source staged read-only at `/controller` (`avo`, `client`,
-  `harnesses`, `studies/codex_agent`; only .py/.md/.txt/.toml; no games, no `.env`,
-  no outputs, no tests);
+- controller source staged read-only at `/controller` (`client`, `frameworks`,
+  `harnesses`; only .py/.md/.txt/.toml; no games, no `.env`, no outputs, no tests);
 - the output directory bound at `/results` (and a continuation parent at `/parent`, read-only);
 - non-root user `agent`, `--cap-drop ALL`, `no-new-privileges`, memory/cpu/pids
   limits, normal network;

@@ -23,7 +23,7 @@ from workbench.catalog import (ROOT, last_record, legacy_enqueue_backend, normal
 
 
 def resolve_model(model: str) -> tuple[str, str]:
-    """Provider and native ID; mirrors avo.client.model_provider without importing avo."""
+    """Provider and native ID; mirrors harnesses.model_provider without importing harnesses."""
     for provider in ("nanogpt", "openrouter"):
         if model.startswith(provider + "/"):
             native = model.removeprefix(provider + "/")
@@ -136,7 +136,7 @@ CANDIDATE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,79}")
 
 
 def validate_candidate_id(candidate_id: str) -> str:
-    """Same rule as avo.evolution.candidate, without importing the avo package."""
+    """Same rule as frameworks.avo.evolution.candidate, without importing the avo package."""
     value = str(candidate_id).strip()
     if not CANDIDATE_ID.fullmatch(value):
         raise ValueError("candidate_id must be a safe 1-80 character identifier")
@@ -189,7 +189,7 @@ def plan_runs(config: ExperimentRequest, directory: Path, root: Path = ROOT) -> 
     parent = None
     if config.continue_from:
         parent = run_path(config.continue_from, root)
-        from studies.codex_agent.continuation import load_parent
+        from frameworks.baseline.continuation import load_parent
         load_parent(parent)
         saved = read_json(parent / "run_config.json")
         expected = {"game_id": config.game_ids[0], "model": config.models[0], "reasoning_effort": config.efforts[0], "condition": config.conditions[0]}
@@ -217,10 +217,12 @@ def plan_runs(config: ExperimentRequest, directory: Path, root: Path = ROOT) -> 
                         "--max-wall-seconds", str(int(config.max_hours * 3600)), "--output-dir", str(output)]
             artifact = output / "campaign"
         else:
-            command += ["studies.codex_agent.run", "--no-window", "--game-id", game,
+            command += ["frameworks.baseline.run", "--no-window", "--game-id", game,
                         "--backend-url", config.backend_url, "--model", model, "--effort", effort,
-                        "--condition", condition, "--harness", config.agent_backend, "--provider", config.provider,
+                        "--harness", config.agent_backend, "--provider", config.provider,
                         "--max-steps", str(config.max_steps), "--output-dir", str(output)]
+            if condition == "baseline-plus":
+                command.append("--notes")
             if parent:
                 command += ["--continue-from", str(parent)]
             artifact = output
@@ -292,7 +294,7 @@ def read_agent_events(path: Path, limit: int) -> dict:
 
 
 def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
-    """`legacy_start` serves the historical rule-agent `POST /runs` body (no `modes` key)."""
+    """`legacy_start` serves the historical rule-agent `POST /runs` body (no `frameworks` key)."""
     router = APIRouter(prefix="/api/workbench")
     cache: dict = {}
     resume_run_lock = threading.Lock()
@@ -371,6 +373,11 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         from workbench.harness_catalog import harness_listing
         return harness_listing(root, include_public_catalogs=catalogs)
 
+    @router.get("/frameworks")
+    def frameworks():
+        from frameworks.registry import list_frameworks
+        return {"frameworks": list_frameworks()}
+
     @router.post("/runs/preview")
     def preview_runs(payload: dict = Body(...)):
         config = run_request(payload)
@@ -378,14 +385,14 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
             rows, warnings = harness_runs.plan_matrix(config, root / "output/workbench/preview", root)
         except (ValueError, OSError) as exc:
             raise run_error(exc) from exc
-        public = ("mode", "harness", "model", "optimizer_model", "effort", "optimizer_effort", "game_id",
-                  "world_model_mode", "repeat", "match_id", "backend_url", "budget", "command")
+        public = ("framework", "options", "variant", "harness", "model", "optimizer_model", "effort",
+                  "optimizer_effort", "game_id", "repeat", "match_id", "backend_url", "max_wall_seconds", "command")
         return {"runs": [{k: row[k] for k in public} for row in rows], "warnings": warnings, "count": len(rows),
                 "parallel": min(config.parallel, len(rows))}
 
     @router.post("/runs", status_code=202)
     def launch_runs(payload: dict = Body(...)):
-        if "modes" not in payload and legacy_start is not None:
+        if "frameworks" not in payload and legacy_start is not None:
             return legacy_start(payload)
         config = run_request(payload)
         try:

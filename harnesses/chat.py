@@ -15,7 +15,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from avo.client.model_provider import API_PROVIDERS, api_key
+from harnesses.model_provider import API_PROVIDERS, api_key
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 # OpenRouter's unified reasoning parameter has no "max"; xhigh is its ceiling.

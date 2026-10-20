@@ -99,9 +99,19 @@ def test_model_membership_follows_harness_provider():
 
 # ---------------------------------------------------------------- preview / matrix
 
-MATRIX = {"modes": ["baseline", "baseline-plus", "campaign"], "harnesses": ["codex", "claude-code"],
-          "models": ["gpt-5.6-sol", "claude-sonnet-5-5"], "efforts": ["low", "high"],
-          "world_model_modes": ["final-only", "between-hypotheses"], "games": ["ps_modality-v1"]}
+MATRIX = {"frameworks": [{"id": "baseline"}, {"id": "baseline", "options": {"notes": True}},
+                         {"id": "avo", "options": {"world_model_mode": "final-only"}},
+                         {"id": "avo", "options": {"world_model_mode": "between-hypotheses"}}],
+          "harnesses": ["codex", "claude-code"], "models": ["gpt-5.6-sol", "claude-sonnet-5-5"],
+          "efforts": ["low", "high"], "games": ["ps_modality-v1"]}
+
+
+def test_frameworks_endpoint_lists_the_registry(tmp_path):
+    with client(tmp_path) as api:
+        listing = {f["id"]: f for f in api.get("/api/workbench/frameworks").json()["frameworks"]}
+    assert set(listing) == {"baseline", "avo"}
+    assert {o["name"] for o in listing["baseline"]["options"]} == {"max_steps", "notes"}
+    assert listing["avo"]["optimizer"] is True and listing["baseline"]["optimizer"] is False
 
 
 def test_preview_builds_matrix_with_contract_commands_and_never_starts(tmp_path, monkeypatch):
@@ -111,35 +121,35 @@ def test_preview_builds_matrix_with_contract_commands_and_never_starts(tmp_path,
         popen.assert_not_called()
     assert response.status_code == 200, response.text
     data = response.json()
-    # Valid pairs: codex×gpt and claude-code×claude → 2 × 2 efforts × (1 + 1 + 2 world-model modes).
+    # Valid pairs: codex×gpt and claude-code×claude → 2 × 2 efforts × 4 framework choices.
     assert data["count"] == len(data["runs"]) == 16
     assert any("Skipped codex × claude-sonnet-5-5" in w for w in data["warnings"])
     for run in data["runs"]:
         command = run["command"]
         assert command[:5] == LAUNCH
-        assert arg(command, "--mode") == run["mode"] and arg(command, "--harness") == run["harness"]
+        assert arg(command, "--framework") == run["framework"] and arg(command, "--harness") == run["harness"]
         assert arg(command, "--backend-url") == "http://host.docker.internal:8000"
         assert arg(command, "--max-wall-seconds") == "0"
-        if run["mode"] == "campaign":
+        if run["framework"] == "avo":
             assert arg(command, "--optimizer-model") == run["model"]
-            assert arg(command, "--world-model-mode") in {"final-only", "between-hypotheses"}
+            assert arg(command, "--world-model-mode") == run["options"]["world_model_mode"]
             assert "--max-steps" not in command and arg(command, "--max-evaluations") == "8"
         else:
-            assert arg(command, "--max-steps") == "200"
+            assert arg(command, "--max-steps") == "200" and ("--notes" in command) == run["options"]["notes"]
             assert "--max-evaluations" not in command and "--world-model-mode" not in command
         assert "--provider" not in command
-    # Matched rows share a match id across modes, so baseline vs baseline+ vs campaign compare in one launch.
+    # Matched rows share a match id across frameworks, so baseline vs baseline+ vs AVO compare in one launch.
     matched = [r for r in data["runs"] if r["harness"] == "codex" and r["effort"] == "low"]
-    assert {r["mode"] for r in matched} == {"baseline", "baseline-plus", "campaign"}
+    assert {r["variant"] for r in matched} == {"Baseline", "Baseline+", "AVO"}
     assert len({r["match_id"] for r in matched}) == 1
 
 
-def test_budget_optimizer_and_provider_pin_reach_commands(tmp_path):
-    body = {"modes": ["campaign"], "harnesses": ["opencode"], "models": ["openrouter/qwen/qwen3.8-27b"],
+def test_options_optimizer_and_provider_pin_reach_commands(tmp_path):
+    body = {"frameworks": [{"id": "avo", "options": {"max_evaluations": 3, "research_moves": 50, "solver_moves": 60}}],
+            "harnesses": ["opencode"], "models": ["openrouter/qwen/qwen3.8-27b"],
             "optimizer_model": "openrouter/deepseek/deepseek-v4.1-flash", "optimizer_effort": "max",
             "efforts": ["high"], "games": ["ps_modality-v1"], "provider": "chutes",
-            "backend_url": "http://10.0.0.5:8000/",
-            "budget": {"max_wall_seconds": 3600, "max_evaluations": 3, "research_moves": 50, "solver_moves": 60}}
+            "backend_url": "http://10.0.0.5:8000/", "max_wall_seconds": 3600}
     with client(tmp_path) as api:
         run = api.post("/api/workbench/runs/preview", json=body).json()["runs"][0]
     command = run["command"]
@@ -151,23 +161,24 @@ def test_budget_optimizer_and_provider_pin_reach_commands(tmp_path):
 
 
 @pytest.mark.parametrize("change, status, message", [
-    ({"modes": ["baseline"], "world_model_modes": ["between-hypotheses"]}, 400, "campaign"),
-    ({"modes": ["baseline"], "optimizer_model": "gpt-5.6-sol"}, 400, "campaign"),
-    ({"modes": ["baseline"], "budget": {"max_evaluations": 4}}, 400, "campaign"),
-    ({"modes": ["campaign"], "budget": {"max_steps": 10}}, 400, "baseline"),
+    ({"frameworks": [{"id": "baseline", "options": {"world_model_mode": "between-hypotheses"}}]}, 400, "no option"),
+    ({"optimizer_model": "gpt-5.6-sol"}, 400, "optimizer"),
+    ({"frameworks": [{"id": "baseline", "options": {"max_steps": 0}}]}, 400, "--max-steps"),
+    ({"frameworks": [{"id": "avo", "options": {"world_model_mode": "never"}}]}, 400, "--world-model-mode"),
     ({"provider": "chutes"}, 400, "opencode and bare"),
     ({"harnesses": ["bare"], "models": ["nanogpt/qwen/x"], "provider": "chutes"}, 400, "OpenRouter"),
     ({"harnesses": ["codex"], "models": ["claude-opus-5-5"]}, 400, "anthropic"),
     ({"harnesses": ["codex", "opencode"], "models": ["claude-opus-5-5"]}, 400, "No selected harness"),
     ({"games": [f"g{i}" for i in range(30)], "repeats": 5}, 400, "at most 120"),
+    ({"frameworks": [{"id": "nope"}]}, 422, None),
     ({"kind": "avo"}, 422, None),
-    ({"budget": {"max_wall_seconds": -1}}, 422, None),
+    ({"max_wall_seconds": -1}, 422, None),
     ({"efforts": ["minimal"]}, 422, None),
     ({"harnesses": ["tools"]}, 422, None),
 ])
 def test_request_validation(tmp_path, change, status, message):
-    body = {"modes": ["baseline"], "harnesses": ["codex"], "models": ["gpt-5.6-sol"], "games": ["ps_modality-v1"],
-            **change}
+    body = {"frameworks": [{"id": "baseline"}], "harnesses": ["codex"], "models": ["gpt-5.6-sol"],
+            "games": ["ps_modality-v1"], **change}
     with client(tmp_path) as api, patch("workbench.experiments.subprocess.Popen") as popen:
         for endpoint in ("/runs/preview", "/runs"):
             response = api.post("/api/workbench" + endpoint, json=body)
@@ -178,7 +189,7 @@ def test_request_validation(tmp_path, change, status, message):
 
 
 def test_enqueue_is_routed_to_its_dedicated_backend_in_a_mixed_matrix(tmp_path):
-    body = {"modes": ["baseline"], "harnesses": ["codex"], "models": ["gpt-5.6-sol"],
+    body = {"frameworks": [{"id": "baseline"}], "harnesses": ["codex"], "models": ["gpt-5.6-sol"],
             "games": ["ps_enqueue-v1", "ps_modality-v1"]}
     with client(tmp_path) as api:
         data = api.post("/api/workbench/runs/preview", json=body).json()
@@ -189,7 +200,7 @@ def test_enqueue_is_routed_to_its_dedicated_backend_in_a_mixed_matrix(tmp_path):
 
 def test_backend_url_default_comes_from_one_setting(tmp_path, monkeypatch):
     monkeypatch.setenv("WORKBENCH_BACKEND_URL", "http://arc.local:9000")
-    body = {"modes": ["baseline"], "harnesses": ["codex"], "models": ["gpt-5.6-sol"], "games": ["g"]}
+    body = {"frameworks": [{"id": "baseline"}], "harnesses": ["codex"], "models": ["gpt-5.6-sol"], "games": ["g"]}
     with client(tmp_path) as api:
         run = api.post("/api/workbench/runs/preview", json=body).json()["runs"][0]
     assert arg(run["command"], "--backend-url") == "http://arc.local:9000"
@@ -209,14 +220,15 @@ def test_launch_writes_matrix_manifest_and_detaches_one_worker(tmp_path):
     manifest = json.loads((tmp_path / job_id / "job.json").read_text())
     assert manifest["config"]["kind"] == "matrix" and manifest["config"]["parallel"] == 3
     assert len(manifest["runs"]) == 16
-    campaign = next(r for r in manifest["runs"] if r["mode"] == "campaign")
+    campaign = next(r for r in manifest["runs"] if r["framework"] == "avo")
     assert campaign["id"].endswith("/campaign") and campaign["launcher"] == "harnesses"
     # The catalog shows queued rows with normalized identity before artifacts exist.
     rows = {r["id"]: r for r in snapshot(tmp_path, {})["runs"]}
-    assert rows[campaign["id"]]["mode"] == "campaign" and rows[campaign["id"]]["harness"] == campaign["harness"]
+    assert rows[campaign["id"]]["framework"] == "avo" and rows[campaign["id"]]["harness"] == campaign["harness"]
+    assert rows[campaign["id"]]["variant"] == "AVO"
 
 
-def test_post_runs_without_modes_still_serves_rule_agent_start(tmp_path):
+def test_post_runs_without_frameworks_still_serves_rule_agent_start(tmp_path):
     seen = []
     with client(tmp_path, legacy_start=lambda payload: seen.append(payload) or {"run_id": "legacy"}) as api:
         response = api.post("/api/workbench/runs", json={"agent_mode": "rule", "game_id": "g"})
@@ -281,7 +293,7 @@ def test_resume_baseline_continues_parent_into_new_directory_once(tmp_path):
     popen.assert_called_once()
     job = json.loads((tmp_path / response.json()["job_id"] / "job.json").read_text())
     command = job["runs"][0]["command"]
-    assert command[:5] == LAUNCH and arg(command, "--mode") == "baseline-plus"
+    assert command[:5] == LAUNCH and arg(command, "--framework") == "baseline" and "--notes" in command
     assert arg(command, "--continue-from") == str(tmp_path / run)
     assert arg(command, "--output-dir") != str(tmp_path / run) and arg(command, "--max-steps") == "300"
     assert job["recovery_of"] == run
@@ -341,19 +353,32 @@ def test_catalog_normalizes_legacy_and_run_spec_runs(tmp_path):
     put(tmp_path, "output/new/run-0002/run_spec.json", spec(mode="campaign", harness="claude-code", model="claude-opus-5-5",
                                                             game_id="g3", effort="max", world_model_mode="final-only"))
     put(tmp_path, "output/new/run-0002/campaign/evolution_config.json", {"profile_settings": {"game_id": "g3"}})
+    v2 = {"schema": "run-spec-v2", "harness": "opencode", "model": "openrouter/a/b", "effort": "low", "game_id": "g4",
+          "max_wall_seconds": 60}
+    put(tmp_path, "output/new/run-0003/run_spec.json", {**v2, "framework": "baseline", "options": {"max_steps": 7, "notes": True}})
+    put(tmp_path, "output/new/run-0004/run_spec.json", {**v2, "framework": "avo",
+                                                         "options": {"world_model_mode": "between-hypotheses"}})
+    put(tmp_path, "output/new/run-0004/campaign/evolution_config.json", {"profile_settings": {"game_id": "g4"}})
     rows = {r["id"]: r for r in snapshot(tmp_path, {})["runs"]}
-    assert (rows["output/tools"]["mode"], rows["output/tools"]["harness"], rows["output/tools"]["effort"]) == ("baseline-plus", "bare", "max")
+    assert (rows["output/tools"]["variant"], rows["output/tools"]["harness"], rows["output/tools"]["effort"]) == ("Baseline+", "bare", "max")
     assert rows["output/raw"]["harness"] == "bare-raw (legacy)" and rows["output/raw"]["resumable"] is False
-    assert (rows["output/codex"]["mode"], rows["output/codex"]["harness"]) == ("baseline", "codex")
+    assert (rows["output/codex"]["framework"], rows["output/codex"]["variant"], rows["output/codex"]["harness"]) == \
+        ("baseline", "Baseline", "codex")
     old = rows["output/old/campaign"]
-    assert (old["mode"], old["harness"], old["spec_source"]) == ("campaign", "opencode (legacy)", "legacy")
+    assert (old["framework"], old["harness"], old["spec_source"]) == ("avo", "opencode (legacy)", "legacy")
     new = rows["output/new/run-0001"]  # discovered from run_spec.json alone
-    assert (new["mode"], new["harness"], new["model"], new["game_id"], new["budget"]) == \
+    assert (new["framework"], new["harness"], new["model"], new["game_id"], new["budget"]) == \
         ("baseline", "antigravity", "gemini-3.8-flash-high", "g2", 9)
     assert new["spec_source"] == "run_spec" and new["agent_backend"] == "antigravity"
     campaign = rows["output/new/run-0002/campaign"]
-    assert (campaign["mode"], campaign["harness"], campaign["effort"]) == ("campaign", "claude-code", "max")
+    assert (campaign["framework"], campaign["harness"], campaign["effort"]) == ("avo", "claude-code", "max")
     assert "output/new/run-0002" not in rows
+    v2 = rows["output/new/run-0003"]  # run-spec-v2 names the framework and its options
+    assert (v2["framework"], v2["variant"], v2["options"], v2["max_wall_seconds"]) == \
+        ("baseline", "Baseline+", {"max_steps": 7, "notes": True}, 60)
+    assert (rows["output/new/run-0004/campaign"]["framework"], rows["output/new/run-0004/campaign"]["world_model_mode"]) == \
+        ("avo", "between-hypotheses")
+    assert "output/new/run-0004" not in rows
 
 
 def test_record_exposes_agent_events_when_present_and_legacy_otherwise(tmp_path):
@@ -369,7 +394,7 @@ def test_record_exposes_agent_events_when_present_and_legacy_otherwise(tmp_path)
         record = api.get("/api/workbench/record", params={"run": "output/new", "events_limit": 1}).json()
         file = api.get("/api/workbench/record/file", params={"run": "output/new", "file": "agent_events.jsonl"})
         note = api.get("/api/workbench/record/file", params={"run": "output/new", "file": "workspace/notes/plan.md"})
-    assert legacy["agent_events"] is None and legacy["normalized"]["mode"] == "baseline"
+    assert legacy["agent_events"] is None and legacy["normalized"]["framework"] == "baseline"
     assert record["run_spec"]["harness"] == "codex" and record["normalized"]["spec_source"] == "run_spec"
     assert record["agent_events"]["total"] == 2 and record["agent_events"]["invalid_lines"] == 1
     assert record["agent_events"]["truncated"] is True and record["agent_events"]["events"][0]["type"] == "turn_end"

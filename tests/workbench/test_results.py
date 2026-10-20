@@ -19,18 +19,18 @@ def evaluation(fitness, win_levels):
 
 RUNS = [
     # New-format direct play: two attempts in one cell, the better one wins.
-    {"id": "new/a1", "kind": "codex", "harness": "claude-code", "model": "claude-haiku-5-5", "mode": "baseline-plus",
+    {"id": "new/a1", "kind": "codex", "harness": "claude-code", "model": "claude-haiku-5-5", "variant": "Baseline+",
      "game_id": "ps_alpha-v1", "spec_source": "run_spec", "has_result": True, "levels": 1, "recorded_win_levels": 4,
      "solved": False, "modified": 10},
-    {"id": "new/a2", "kind": "codex", "harness": "claude-code", "model": "claude-haiku-5-5", "mode": "baseline-plus",
+    {"id": "new/a2", "kind": "codex", "harness": "claude-code", "model": "claude-haiku-5-5", "variant": "Baseline+",
      "game_id": "ps_alpha-v1", "spec_source": "run_spec", "has_result": True, "levels": 3, "recorded_win_levels": 4,
      "solved": False, "modified": 5},
     # New-format campaign: levels from fresh fitness, total from the evaluation score.
     {"id": "new/c/campaign", "kind": "avo", "harness": "opencode", "model": "openrouter/qwen/qwen3.8-27b",
-     "mode": "campaign", "game_id": "ps_beta-v1", "spec_source": "run_spec", "has_result": True, "best_fitness": 6.0,
+     "variant": "AVO", "game_id": "ps_beta-v1", "spec_source": "run_spec", "has_result": True, "best_fitness": 6.0,
      "solved": True, "modified": 20, "result_inputs": {"evaluations": [evaluation(6.0, 6)]}},
     # Legacy run: archive only; falls back to games.json for the total.
-    {"id": "old/x", "kind": "codex", "agent_backend": "codex", "harness": "codex", "model": "gpt-5.5", "mode": "baseline",
+    {"id": "old/x", "kind": "codex", "agent_backend": "codex", "harness": "codex", "model": "gpt-5.5", "variant": "Baseline",
      "game_id": "ps_alpha-v1", "spec_source": "legacy", "has_result": True, "levels": 2, "solved": False, "modified": 1},
     # Queued child without artifacts: never counted.
     {"id": "queued", "kind": "codex", "harness": "codex", "model": "gpt-5.5", "game_id": "ps_beta-v1", "status": "queued"},
@@ -50,12 +50,12 @@ class MatrixTests(unittest.TestCase):
         campaign = matrix["cells"]["ps_beta-v1|opencode|openrouter/qwen/qwen3.8-27b"]
         self.assertEqual((campaign["best_levels"], campaign["win_levels"], campaign["solved"]), (6, 6, True))
 
-    def test_archive_and_mode_filters(self):
+    def test_archive_and_variant_filters(self):
         archive = build_matrix(RUNS, GAMES, archive=True)
         legacy = archive["cells"]["ps_alpha-v1|codex|gpt-5.5"]
         self.assertEqual((legacy["best_levels"], legacy["win_levels"], legacy["runs"]), (2, 4, 1))
         self.assertEqual(archive["columns"][0]["harness"], "codex")  # harness order, codex first
-        campaigns = build_matrix(RUNS, GAMES, mode="campaign")
+        campaigns = build_matrix(RUNS, GAMES, variant="AVO")
         self.assertEqual(list(campaigns["cells"]), ["ps_beta-v1|opencode|openrouter/qwen/qwen3.8-27b"])
         self.assertEqual([g["game_id"] for g in campaigns["games"]], ["ps_beta-v1"])
 
@@ -71,7 +71,7 @@ class MatrixTests(unittest.TestCase):
             self.assertEqual((body["archive"], body["checked_at"], len(body["cells"])), (False, 7.0, 2))
             self.assertEqual(len(client.get("/api/workbench/results/matrix?archive=1").json()["cells"]), 3)
             self.assertEqual(client.get("/api/workbench/results/matrix?archive=2").status_code, 422)
-            self.assertEqual(client.get("/api/workbench/results/matrix?mode=nope").status_code, 422)
+            self.assertEqual(client.get("/api/workbench/results/matrix?variant=AVO").json()["variant"], "AVO")
 
 
 PNG = b"\x89PNG\r\n\x1a\n" + b"fixture"

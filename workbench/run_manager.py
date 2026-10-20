@@ -21,8 +21,8 @@ from client.engine.plan_history import backfill_plan_history
 from client.engine.prompts import PromptStore
 from client.engine.utils import last_grid
 from client.runtime.runner import RuleReasoningLoop
-from studies.codex_agent.runner import CodexAgentRunner
-from studies.codex_agent.session import (
+from frameworks.baseline.runner import CodexAgentRunner
+from frameworks.baseline.session import (
     CliGameSession as CodexGameSession,
     GameSessionConfig as CodexSessionConfig,
     codex_oauth_status,

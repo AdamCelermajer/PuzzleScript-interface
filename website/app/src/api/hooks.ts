@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import { canonicalGameId, catalogViews } from '../lib/runs'
 import { gameName } from '../lib/format'
 import { api } from './client'
-import type { BenchmarkList, Catalog, Harness } from './types'
+import type { BenchmarkList, Catalog, Framework, Harness } from './types'
 
 /** The run catalog, polled while the page is visible (API serves it stale-while-revalidate). */
 export function useCatalog(interval = 5000) {
@@ -22,6 +22,14 @@ export function useHarnesses() {
     queryKey: ['harnesses'],
     queryFn: ({ signal }) => api.get<Harness[]>('/harnesses', signal),
     staleTime: 60_000,
+  })
+}
+
+export function useFrameworks() {
+  return useQuery({
+    queryKey: ['frameworks'],
+    queryFn: async ({ signal }) => (await api.get<{ frameworks: Framework[] }>('/frameworks', signal)).frameworks,
+    staleTime: 300_000,
   })
 }
 

@@ -10,13 +10,13 @@ passes zero wall limits to the campaign and research player as well; action,
 candidate, and solver self-check budgets still apply. Manual stops remain active.
 
 New batches (`POST /api/workbench/runs`, below) invoke `uv run python -m harnesses.launch`
-and have no batch cutoff: each run owns `budget.max_wall_seconds` (0 = unlimited), and the
+and have no batch cutoff: each run owns `max_wall_seconds` (0 = unlimited), and the
 worker only backstops a child that outlives its wall by the 600 s report grace. Legacy
 `/experiments` batches keep `max_hours`, as described above.
 
 Legacy AVO children invoke `avo.docker.launch --campaign`; that launcher retains the
 the existing Linux sandbox, temporary OAuth credentials and cleanup. Isolation probes are explicit diagnostics.
-Legacy Codex children invoke `studies.codex_agent.run --no-window`. Game/model/effort/
+Legacy Codex children invoke `frameworks.baseline.run --no-window`. Game/model/effort/
 condition/repeat combinations are separate child runs, with configurable bounded
 concurrency. The workbench does not introduce shared model memory or change fitness.
 
@@ -102,33 +102,41 @@ All routes are under `/api/workbench`; the contract is `docs/architecture/revamp
   imported every entry reports `missing: ["harnesses package", ...]`. Readiness checks only that
   credentials exist (`.env`/environment key names, `~/.codex/auth.json`), the Docker image
   `puzzlescript-agents:local` and the volume `puzzlescript-agy-home`. Values are never returned.
-- `POST /runs/preview` and `POST /runs` take a RunRequest: `{modes[], harnesses[], models[],
-  optimizer_model?, optimizer_effort?, efforts[], games[], repeats, parallel, budget{max_wall_seconds,
-  max_steps, max_evaluations, research_moves, solver_moves}, world_model_modes[], provider?, label?,
-  backend_url?}`. The matrix is games × modes × (harness, model) × efforts × repeats, times
-  world-model modes for campaigns (at most 120 runs). (harness, model) pairs whose provider does
-  not match are skipped with a warning; a model no selected harness runs is an error. Campaign-only
-  fields (optimizer, world-model modes, evaluation/move budgets) and `max_steps` are rejected when
-  explicitly set without a mode they apply to, and omitted from commands of modes they do not
-  apply to. `provider` (OpenRouter upstream pin) is accepted only when every harness is opencode
-  or bare, and only with OpenRouter models. Preview returns `{runs:[{mode, harness, model, game_id,
-  command, ...}], warnings, count, parallel}` and starts nothing; launch returns `{job_id, count,
-  warnings}` and detaches one `workbench.experiment_job` worker. Rows sharing game/harness/model/
-  effort/repeat share a `match_id`, so baseline, baseline+ and campaign compare within one launch.
-  `POST /runs` without `modes` is still the historical rule-agent start.
+- `GET /frameworks` → `{frameworks:[{id, label, description, options:[{name, flag, kind, default,
+  help, choices, minimum, maximum}], optimizer, artifact, restart}]}` from `frameworks/registry.py`.
+  The Launch page builds its framework cards and option editors from it; picking several values of
+  a choice/bool option launches one matched run per value.
+- `POST /runs/preview` and `POST /runs` take a RunRequest: `{frameworks:[{id, options}], harnesses[],
+  models[], optimizer_model?, optimizer_effort?, efforts[], games[], repeats, parallel,
+  max_wall_seconds, provider?, label?, backend_url?}`. The same framework may appear twice with
+  different options (e.g. baseline with notes off and on). The matrix is games × frameworks ×
+  (harness, model) × efforts × repeats (at most 120 runs). (harness, model) pairs whose provider does
+  not match are skipped with a warning; a model no selected harness runs is an error. Options are
+  checked against the framework's `Option` list; `optimizer_model`/`optimizer_effort` are rejected
+  when explicitly set without a framework that has an optimizer (avo), and omitted from commands of
+  frameworks without one. `provider` (OpenRouter upstream pin) is accepted only when every harness
+  is opencode or bare, and only with OpenRouter models. Preview returns `{runs:[{framework, options,
+  variant, harness, model, game_id, command, ...}], warnings, count, parallel}` and starts nothing;
+  launch returns `{job_id, count, warnings}` and detaches one `workbench.experiment_job` worker.
+  Rows sharing game/harness/model/effort/repeat share a `match_id`, so Baseline, Baseline+ and AVO
+  compare within one launch. `POST /runs` without `frameworks` is still the historical rule-agent start.
 - Backend URL: one setting, `backend_url` or `WORKBENCH_BACKEND_URL`, default
   `http://host.docker.internal:8000` (every harness runs in Docker). `ps_enqueue-v1` is routed to
   port 8001 on a local host because only the dedicated runtime runs `PUZZLESCRIPT_METHOD=ondemand`.
-- `POST /runs/resume {run_id}` → `{job_id, run_id, ...}`. A campaign is copied (as recovery
-  always did) into a new batch and continued with `--resume`; a baseline run gets a new directory
-  with `--continue-from <parent>`. Settings come from `run_spec.json`, else the legacy config.
+- `POST /runs/resume {run_id}` → `{job_id, run_id, ...}`. Follows the framework's `restart`: an avo
+  campaign is copied (as recovery always did) into a new batch and continued with `--resume`; a
+  baseline run gets a new directory with `--continue-from <parent>`. Settings come from `run_spec.json`, else the legacy config.
   Active, already-resumed, solved/finalized, needs-assistance, legacy-Enqueue and `bare-raw`/
   `opencode (legacy)` runs are refused (409/400). `/experiments/resume?job=` and
   `/experiments/resume-run?run=` remain as aliases of this path (service tiers are ignored).
-- Catalog rows read `run_spec.json` first (also from a campaign's parent run directory) and add
-  `mode` (baseline|baseline-plus|campaign), `harness` (legacy `tools`→`bare`, `raw`→`bare-raw
-  (legacy)`, `opencode`→`opencode (legacy)`), `effort`, `optimizer_effort`, `run_budget`,
-  `provider`, `spec_source`, `continued_from`, `resumable`. A run directory with only a baseline
+- Catalog rows read `run_spec.json` first (`run-spec-v2`, or v1 `mode` + `budget` for old runs;
+  also from a campaign's parent run directory) and add `framework`, `variant` (Baseline|Baseline+|
+  AVO), `options`, `max_wall_seconds`, `harness` (legacy `tools`→`bare`, `raw`→`bare-raw
+  (legacy)`, `opencode`→`opencode (legacy)`), `effort`, `optimizer_effort`, `provider`,
+  `spec_source`, `continued_from`, `resumable`. Old v1 modes and legacy conditions map to
+  `baseline` (notes off/on) and `avo`. The results matrix filters by `variant`. Runs are read from
+  `output/` (new CLI runs under `output/<framework>/`, workbench runs under `output/workbench/`)
+  and the archives `avo/output/` and `studies/codex_agent/output/`. A run directory with only a baseline
   `run_spec.json` is discovered too. `/record` adds `run_spec`, `normalized` and `agent_events`
   (`{total, invalid_lines, truncated, events}`, tail of `agent_events.jsonl`, `events_limit`
   default 500) when present; otherwise `agent_events` is null and legacy files are listed.

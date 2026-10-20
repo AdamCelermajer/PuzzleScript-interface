@@ -6,10 +6,10 @@ import requests
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from avo.client.model_provider import api_key, resolve_model
+from harnesses.model_provider import api_key, resolve_model
 from harnesses.chat import OpenRouterChat, ProviderError
 from harnesses.launch import stage_credentials
-from studies.codex_agent.session import GameSessionConfig
+from frameworks.baseline.session import GameSessionConfig
 from workbench.catalog import agent_identity
 from workbench.experiments import ExperimentRequest, create_router, plan_runs
 from workbench.model_catalog import catalog, normalize

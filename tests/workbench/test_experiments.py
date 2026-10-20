@@ -466,7 +466,7 @@ class ExperimentTests(unittest.TestCase):
             calls.append(command)
             return subprocess.CompletedProcess(command, 0)
 
-        args = ["--mode", "campaign", "--harness", "codex", "--output-dir", str(output), "--game-id", "test-game",
+        args = ["--framework", "avo", "--harness", "codex", "--output-dir", str(output), "--game-id", "test-game",
                 "--backend-url", "http://host.docker.internal:8000", "--optimizer-model", "gpt-5.6-sol",
                 "--model", "gpt-5.6-luna", "--optimizer-effort", "low", "--effort", "high",
                 "--max-evaluations", "2", "--research-moves", "30", "--solver-moves", "50"]

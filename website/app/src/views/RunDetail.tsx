@@ -7,7 +7,7 @@ import { GameThumb, HarnessChip, LevelPips, RunId, StatusDot } from '../componen
 import { ProgressText } from '../components/status'
 import { Button, ErrorBox, Loading, Notice } from '../components/ui'
 import { dateTime, gameName, relativeTime } from '../lib/format'
-import { MODE_LABEL, gameHref, normalizeRun, runHref, type RunView } from '../lib/runs'
+import { gameHref, normalizeRun, optionsText, runHref, type RunView } from '../lib/runs'
 import { BaselineDetail } from './BaselineDetail'
 import { CampaignDetail } from './CampaignDetail'
 
@@ -30,7 +30,7 @@ export function RunDetailView() {
           <Notice tone="warn">This run is not in the current catalog (it may have no artifacts yet). Showing saved artifacts only.</Notice>
         </div>
       )}
-      {campaign ? <CampaignDetail runId={id} live={run?.process.tone === 'running'} /> : <BaselineDetail runId={id} live={run?.process.tone === 'running'} mode={run?.mode} />}
+      {campaign ? <CampaignDetail runId={id} live={run?.process.tone === 'running'} /> : <BaselineDetail runId={id} live={run?.process.tone === 'running'} notes={run ? run.raw.options?.notes !== false : true} />}
     </div>
   )
 }
@@ -47,7 +47,6 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
     mutationFn: (jobId: string) => api.post(`/experiments/stop${q({ job: jobId })}`),
     onSettled: () => client.invalidateQueries({ queryKey: ['catalog'] }),
   })
-  const budget = raw.run_budget ?? {}
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-line bg-panel p-5 shadow-[var(--shadow)]">
       <div className="flex flex-wrap items-start gap-5">
@@ -55,7 +54,7 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h1 className="text-[26px] leading-tight font-semibold tracking-[-0.02em]"><Link to={gameHref(run.game)} className="text-fg">{gameName(run.game)}</Link></h1>
-            <span className="rounded-md bg-neutral-soft px-1.5 py-px text-[12px] font-medium text-muted">{MODE_LABEL[run.mode]}</span>
+            <span className="rounded-md bg-neutral-soft px-1.5 py-px text-[12px] font-medium text-muted">{run.variant}</span>
             <HarnessChip harness={run.harness} legacy={run.legacy} />
             <StatusDot status={run.process} />
           </div>
@@ -81,8 +80,8 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
         {run.kind === 'avo' && <Fact label="Optimizer" value={<span className="break-all">{run.optimizerModel ?? "—"} · {raw.optimizer_effort ?? "—"}</span>} />}
         {run.worldModel && <Fact label="World model" value={run.worldModel} />}
         <Fact label="Progress" value={<ProgressText run={run} />} />
-        <Fact label="Wall budget" value={budget.max_wall_seconds === 0 ? 'unlimited' : budget.max_wall_seconds ? `${(budget.max_wall_seconds / 3600).toFixed(1)}h` : '—'} />
-        {run.kind === 'avo' && <Fact label="Moves (research / solver)" value={`${budget.research_moves ?? '—'} / ${budget.solver_moves ?? '—'}`} />}
+        <Fact label="Wall budget" value={raw.max_wall_seconds === 0 ? 'unlimited' : raw.max_wall_seconds ? `${(raw.max_wall_seconds / 3600).toFixed(1)}h` : '—'} />
+        {raw.options && <Fact label="Options" value={optionsText(raw.options) || '—'} />}
         <Fact label="Launched" value={dateTime(run.started)} />
         <Fact label="Last activity" value={`${relativeTime(run.activity)}`} />
         <Fact label="Process source" value={run.process.detail || '—'} />

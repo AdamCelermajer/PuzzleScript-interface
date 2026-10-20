@@ -11,7 +11,7 @@ import math
 import threading
 import time
 from pathlib import Path
-from typing import Callable, Literal
+from typing import Callable
 
 from fastapi import APIRouter, Query
 
@@ -58,7 +58,7 @@ def harness_rank(harness: str) -> int:
     return HARNESS_IDS.index(harness) if harness in HARNESS_IDS else len(HARNESS_IDS)
 
 
-def build_matrix(runs: list[dict], games: dict, archive: bool = False, mode: str | None = None) -> dict:
+def build_matrix(runs: list[dict], games: dict, archive: bool = False, variant: str | None = None) -> dict:
     cells: dict[str, dict] = {}
     columns: dict[tuple[str, str], dict] = {}
     rows: set[str] = set()
@@ -69,7 +69,7 @@ def build_matrix(runs: list[dict], games: dict, archive: bool = False, mode: str
             continue  # queued children without artifacts are not runs yet
         if is_archive(run) and not archive:
             continue
-        if mode and run.get("mode") != mode:
+        if variant and run.get("variant") != variant:
             continue
         key = f"{game_id}|{harness}|{model}"
         levels, total = run_levels(run), run_win_levels(run, games)
@@ -115,12 +115,11 @@ def create_router(root: Path = ROOT, run_snapshot: Callable[[], dict] | None = N
             return cache["runs"], cache["checked_at"]
 
     @router.get("/results/matrix")
-    def results_matrix(archive: int = Query(0, ge=0, le=1),
-                       mode: Literal["baseline", "baseline-plus", "campaign"] | None = None):
+    def results_matrix(archive: int = Query(0, ge=0, le=1), variant: str | None = Query(None, max_length=80)):
         runs, checked_at = catalog_runs()
         games = read_json(root / "benchmark/games.json").get("games") or {}
-        return {**build_matrix(runs, games, archive=bool(archive), mode=mode), "archive": bool(archive),
-                "mode": mode, "checked_at": checked_at}
+        return {**build_matrix(runs, games, archive=bool(archive), variant=variant), "archive": bool(archive),
+                "variant": variant, "checked_at": checked_at}
 
     return router
 

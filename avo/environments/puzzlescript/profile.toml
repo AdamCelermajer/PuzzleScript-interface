@@ -1,7 +1,0 @@
-id = "puzzlescript"
-factory = "avo.environments.puzzlescript.profile:create_profile"
-prompt = "prompt.md"
-
-[defaults]
-backend_url = "http://127.0.0.1:8000"
-game_id = "ps_sokoban_basic-v1"

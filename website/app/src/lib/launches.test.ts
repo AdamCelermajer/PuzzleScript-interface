@@ -14,10 +14,11 @@ describe('launch grouping', () => {
 
   it('keeps new and archive runs of one folder in separate launches, newest first', () => {
     const views = [
-      run({ id: 'f/new', batch: 'f', spec_source: 'run_spec', mode: 'baseline-plus', harness: 'claude-code', model: 'claude-haiku-5-5', modified: 50 }),
+      run({ id: 'f/new', batch: 'f', spec_source: 'run_spec', framework: 'baseline', variant: 'Baseline+', harness: 'claude-code', model: 'claude-haiku-5-5', modified: 50 }),
       run({ id: 'f/old', batch: 'f', spec_source: 'legacy', harness: 'codex', model: 'gpt-5.5', modified: 10 }),
       run({ id: 'output/workbench/20261015T012502-x-abcdef12/run-0001', batch: 'output/workbench/20261015T012502-x-abcdef12', spec_source: 'run_spec',
-        kind: 'avo', mode: 'campaign', harness: 'opencode', model: 'openrouter/qwen/qwen3.8-27b', run_budget: { max_wall_seconds: 0, max_evaluations: 5, research_moves: 4, solver_moves: 6 } }),
+        kind: 'avo', framework: 'avo', variant: 'AVO', harness: 'opencode', model: 'openrouter/qwen/qwen3.8-27b', max_wall_seconds: 0,
+        options: { max_evaluations: 5, research_moves: 4, solver_moves: 6, world_model_mode: 'final-only' } }),
     ].map(normalizeRun)
     const job = { id: 'output/workbench/20261015T012502-x-abcdef12', created_at: '2026-10-15T00:25:02Z' } as CatalogJob
     const launches = groupLaunches(views, new Map([[job.id, job]]))
@@ -28,7 +29,8 @@ describe('launch grouping', () => {
       ['f/old', true, 1],
     ])
     const campaign = launches[0]
-    expect(campaign).toMatchObject({ label: 'x', modes: ['campaign'], harnesses: ['opencode'], budget: '5 evals · 4/6 moves · unlimited wall' })
+    expect(campaign).toMatchObject({ label: 'x', variants: ['AVO'], harnesses: ['opencode'],
+      budget: 'max evaluations 5 · research moves 4 · solver moves 6 · world model mode final-only · unlimited wall' })
     expect(campaign.job).toBe(job)
   })
 })

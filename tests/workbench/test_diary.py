@@ -94,8 +94,8 @@ class DiaryApiTests(unittest.TestCase):
         self.assertEqual(entry["sections"]["next"], "- —")
         runs = {run["id"]: run for run in entry["runs"]}
         dated = runs["output/workbench/20261014T101500-abc/run-0001"]
-        self.assertEqual((dated["linked"], dated["date"], dated["mode"], dated["game"]),
-                         ("date", "2026-10-14", "baseline-plus", "ps_modality-v1"))
+        self.assertEqual((dated["linked"], dated["date"], dated["variant"], dated["game"]),
+                         ("date", "2026-10-14", "Baseline+", "ps_modality-v1"))
         self.assertIn("1/4 levels", dated["outcome"])
         explicit = runs["output/workbench/explicit-run"]
         self.assertEqual((explicit["linked"], explicit["harness"], explicit["date"]),

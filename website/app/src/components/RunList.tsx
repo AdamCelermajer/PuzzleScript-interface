@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useGameTitle } from '../api/hooks'
 import type { CatalogJob } from '../api/types'
 import { relativeTime, shortTime } from '../lib/format'
-import { MODE_LABEL, modelParts, runHref, type Launch, type RunView } from '../lib/runs'
+import { modelParts, runHref, type Launch, type RunView } from '../lib/runs'
 import { processStatus } from '../lib/status'
 import { GameThumb, HarnessChip, LevelPips, RunId, StatusDot } from './identity'
 import { Button, cx } from './ui'
@@ -91,7 +91,7 @@ function RunRow({ run, job, indent, selectable, selected, onSelect, onResume, on
         <GameThumb gameId={run.game} size={indent ? 26 : 32} />
         <span className="min-w-0">
           <span className="block truncate text-[13.5px] font-semibold">{title(run.game)}</span>
-          <span className="block truncate text-[11.5px] text-faint">{MODE_LABEL[run.mode]}{run.worldModel && run.worldModel !== 'not-recorded' ? ` · ${run.worldModel}` : ''} · {shortTime(run.started)}</span>
+          <span className="block truncate text-[11.5px] text-faint">{run.variant}{run.worldModel && run.worldModel !== 'not-recorded' ? ` · ${run.worldModel}` : ''} · {shortTime(run.started)}</span>
         </span>
       </Link>
       <LevelPips levels={run.outcome.score} total={run.outcome.total} solved={run.outcome.tone === 'solved'} size="sm" />
@@ -139,7 +139,7 @@ function GroupRow({ launch, defaultOpen, selectable, selected, onSelect, onResum
           <span className="min-w-0">
             <span className="block truncate text-[13.5px] font-semibold" title={launch.id}>{launch.label}</span>
             <span className="block truncate text-[11.5px] text-faint">
-              {launch.runs.length} runs · {games.length === 1 ? title(games[0]) : `${games.length} games`} · {launch.modes.map((m) => MODE_LABEL[m]).join(' / ')} · {shortTime(launch.started)}
+              {launch.runs.length} runs · {games.length === 1 ? title(games[0]) : `${games.length} games`} · {launch.variants.join(' / ')} · {shortTime(launch.started)}
             </span>
           </span>
         </span>

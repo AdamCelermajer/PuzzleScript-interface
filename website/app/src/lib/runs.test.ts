@@ -1,15 +1,19 @@
 import { describe, expect, it } from 'vitest'
 import type { CatalogRun } from '../api/types'
-import { EMPTY_FILTERS, batchTime, matchesFilters, normalizeMode, normalizeRun, runHref } from './runs'
+import { EMPTY_FILTERS, batchTime, matchesFilters, normalizeRun, optionsText, runHref, runIdentity } from './runs'
 
-describe('normalizeMode', () => {
-  it('prefers the run_spec mode', () => {
-    expect(normalizeMode({ mode: 'baseline', kind: 'avo', condition: null })).toBe('baseline')
+describe('runIdentity', () => {
+  it('prefers the catalog framework and variant', () => {
+    expect(runIdentity({ framework: 'baseline', variant: 'Baseline+', kind: 'avo', condition: null })).toEqual({ framework: 'baseline', variant: 'Baseline+' })
   })
   it('falls back to kind and the legacy condition', () => {
-    expect(normalizeMode({ mode: null, kind: 'avo', condition: null })).toBe('campaign')
-    expect(normalizeMode({ mode: null, kind: 'codex', condition: 'baseline-plus-plus' })).toBe('baseline-plus')
-    expect(normalizeMode({ mode: undefined, kind: 'codex', condition: 'baseline' })).toBe('baseline')
+    expect(runIdentity({ framework: null, kind: 'avo', condition: null })).toEqual({ framework: 'avo', variant: 'AVO' })
+    expect(runIdentity({ kind: 'codex', condition: 'baseline-plus-plus' }).variant).toBe('Baseline+')
+    expect(runIdentity({ kind: 'codex', condition: 'baseline' }).variant).toBe('Baseline')
+  })
+  it('describes options generically', () => {
+    expect(optionsText({ max_steps: 200, notes: true }, 0)).toBe('max steps 200 · notes · unlimited wall')
+    expect(optionsText({ notes: false }, 5400)).toBe('1.5h wall')
   })
 })
 
@@ -22,7 +26,7 @@ describe('normalizeRun', () => {
 
   it('normalizes a legacy row (no run_spec.json)', () => {
     const view = normalizeRun(legacy)
-    expect(view).toMatchObject({ mode: 'baseline-plus', harness: 'codex', legacy: true, game: 'ps_modality-v1' })
+    expect(view).toMatchObject({ framework: 'baseline', variant: 'Baseline+', harness: 'codex', legacy: true, game: 'ps_modality-v1' })
     expect(view.progress).toEqual({ used: 386, budget: 1000, unit: 'actions' })
     expect(view.process.tone).toBe('stopped')
   })
@@ -34,9 +38,9 @@ describe('normalizeRun', () => {
   })
 
   it('uses run_spec identity and campaign progress for new runs', () => {
-    const view = normalizeRun({ id: 'a/campaign', kind: 'avo', status: 'running', status_source: 'Batch worker heartbeat', mode: 'campaign',
-      harness: 'opencode', spec_source: 'run_spec', model: 'openrouter/qwen/qwen3.8-27b', evaluated: 2, run_budget: { max_evaluations: 8 } })
-    expect(view).toMatchObject({ mode: 'campaign', harness: 'opencode', legacy: false })
+    const view = normalizeRun({ id: 'a/campaign', kind: 'avo', status: 'running', status_source: 'Batch worker heartbeat', framework: 'avo',
+      variant: 'AVO', harness: 'opencode', spec_source: 'run_spec', model: 'openrouter/qwen/qwen3.8-27b', evaluated: 2, options: { max_evaluations: 8 } })
+    expect(view).toMatchObject({ framework: 'avo', variant: 'AVO', harness: 'opencode', legacy: false })
     expect(view.progress).toEqual({ used: 2, budget: 8, unit: 'evaluations' })
     expect(view.process.live).toBe(true)
   })

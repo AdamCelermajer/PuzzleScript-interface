@@ -10,20 +10,21 @@ import time
 from datetime import datetime, timezone
 from itertools import product
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 from urllib.parse import urlparse, urlunparse
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from frameworks.base import Framework
+from frameworks.registry import FRAMEWORKS, get_framework
+
 from workbench.catalog import (HARNESS_IDS, ROOT, legacy_enqueue_backend, live_containers, normalized_spec,
                                read_json, run_path)
 from workbench.harness_catalog import model_error, model_provider
 
-Mode = Literal["baseline", "baseline-plus", "campaign"]
 Harness = Literal["codex", "claude-code", "opencode", "antigravity", "bare"]
 Effort = Literal["low", "medium", "high", "xhigh", "max"]
-WorldModelMode = Literal["final-only", "between-hypotheses"]
 
 LAUNCH = ["uv", "run", "python", "-m", "harnesses.launch"]
 DEFAULT_BACKEND_URL = "http://host.docker.internal:8000"
@@ -39,18 +40,25 @@ class Conflict(ValueError):
     """The request is valid but the run's current state forbids it (HTTP 409)."""
 
 
-class Budget(BaseModel):
+class FrameworkChoice(BaseModel):
+    """One framework with its options; the same framework may appear twice with different options."""
     model_config = ConfigDict(extra="forbid")
-    max_wall_seconds: int = Field(default=0, ge=0, le=30 * 86400, description="0 = unlimited")
-    max_steps: int = Field(default=200, ge=1, le=10000)
-    max_evaluations: int = Field(default=8, ge=1, le=100)
-    research_moves: int = Field(default=400, ge=1, le=10000)
-    solver_moves: int = Field(default=400, ge=1, le=20000)
+    id: str
+    options: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("id")
+    @classmethod
+    def known(cls, value: str) -> str:
+        get_framework(value)
+        return value
+
+    def checked(self) -> dict[str, Any]:
+        return get_framework(self.id).check_options(self.options)
 
 
 class RunRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    modes: list[Mode] = Field(min_length=1, max_length=3)
+    frameworks: list[FrameworkChoice] = Field(min_length=1, max_length=6)
     harnesses: list[Harness] = Field(min_length=1, max_length=5)
     models: list[str] = Field(min_length=1, max_length=12)
     optimizer_model: str | None = None
@@ -59,8 +67,7 @@ class RunRequest(BaseModel):
     games: list[str] = Field(min_length=1, max_length=30)
     repeats: int = Field(default=1, ge=1, le=20)
     parallel: int = Field(default=1, ge=1, le=6)
-    budget: Budget = Field(default_factory=Budget)
-    world_model_modes: list[WorldModelMode] = Field(default_factory=lambda: ["final-only"], min_length=1, max_length=2)
+    max_wall_seconds: int = Field(default=0, ge=0, le=30 * 86400, description="0 = unlimited")
     provider: str = Field(default="", pattern=r"^[a-z0-9][a-z0-9._/-]{0,63}$|^$")
     label: str = Field(default="", max_length=80)
     backend_url: str | None = None
@@ -72,7 +79,7 @@ class RunRequest(BaseModel):
             raise ValueError("Invalid game or model name")
         return list(dict.fromkeys(values))
 
-    @field_validator("modes", "harnesses", "efforts", "world_model_modes")
+    @field_validator("harnesses", "efforts")
     @classmethod
     def unique(cls, values: list[str]) -> list[str]:
         return list(dict.fromkeys(values))
@@ -109,19 +116,21 @@ def game_backend(game: str, backend_url: str) -> str:
     return backend_url
 
 
-def launch_command(*, mode: str, harness: str, model: str, effort: str, game_id: str, backend_url: str,
-                   output: Path, budget: dict, optimizer_model: str | None = None,
-                   optimizer_effort: str | None = None, world_model_mode: str | None = None, provider: str = "",
-                   resume: bool = False, continue_from: Path | None = None) -> list[str]:
-    command = [*LAUNCH, "--mode", mode, "--harness", harness, "--model", model, "--effort", effort,
+def launch_command(*, framework: Framework, options: dict, harness: str, model: str, effort: str, game_id: str,
+                   backend_url: str, output: Path, max_wall_seconds: int, optimizer_model: str | None = None,
+                   optimizer_effort: str | None = None, provider: str = "", resume: bool = False,
+                   continue_from: Path | None = None) -> list[str]:
+    command = [*LAUNCH, "--framework", framework.id, "--harness", harness, "--model", model, "--effort", effort,
                "--game-id", game_id, "--backend-url", backend_url, "--output-dir", str(output),
-               "--max-wall-seconds", str(int(budget.get("max_wall_seconds") or 0))]
-    if mode == "campaign":
-        command += ["--optimizer-model", optimizer_model or model, "--optimizer-effort", optimizer_effort or effort,
-                    "--max-evaluations", str(budget["max_evaluations"]), "--research-moves", str(budget["research_moves"]),
-                    "--solver-moves", str(budget["solver_moves"]), "--world-model-mode", world_model_mode or "final-only"]
-    else:
-        command += ["--max-steps", str(budget["max_steps"])]
+               "--max-wall-seconds", str(int(max_wall_seconds or 0))]
+    for option in framework.options:
+        value = options.get(option.name, option.default)
+        if option.kind == "bool":
+            command += [option.flag] if value else []
+        else:
+            command += [option.flag, str(value)]
+    if framework.optimizer:
+        command += ["--optimizer-model", optimizer_model or model, "--optimizer-effort", optimizer_effort or effort]
     if provider:
         command += ["--provider", provider]
     if resume:
@@ -133,18 +142,14 @@ def launch_command(*, mode: str, harness: str, model: str, effort: str, game_id:
 
 def validate_request(config: RunRequest) -> tuple[list[tuple[str, str]], list[str]]:
     """Return the valid (harness, model) pairs plus warnings, or raise ValueError."""
-    campaign = "campaign" in config.modes
-    baseline = any(mode != "campaign" for mode in config.modes)
-    explicit, explicit_budget = config.model_fields_set, config.budget.model_fields_set
-    if not campaign:
-        for field in ("optimizer_model", "optimizer_effort", "world_model_modes"):
-            if field in explicit:
-                raise ValueError(f"{field} applies only to campaign mode")
-        for field in ("max_evaluations", "research_moves", "solver_moves"):
-            if field in explicit_budget:
-                raise ValueError(f"budget.{field} applies only to campaign mode")
-    if not baseline and "max_steps" in explicit_budget:
-        raise ValueError("budget.max_steps applies only to baseline and baseline-plus modes")
+    for choice in config.frameworks:
+        choice.checked()
+    optimizer = any(get_framework(choice.id).optimizer for choice in config.frameworks)
+    if not optimizer:
+        for field in ("optimizer_model", "optimizer_effort"):
+            if field in config.model_fields_set:
+                raise ValueError(f"{field} applies only to frameworks with an optimizer "
+                                 f"({', '.join(f.id for f in FRAMEWORKS.values() if f.optimizer)})")
     if config.provider:
         if any(h not in {"opencode", "bare"} for h in config.harnesses):
             raise ValueError("Provider pinning applies only to the opencode and bare harnesses")
@@ -163,7 +168,7 @@ def validate_request(config: RunRequest) -> tuple[list[tuple[str, str]], list[st
     unmatched = [m for m in config.models if m not in fitting]
     if unmatched:
         raise ValueError(f"No selected harness runs {', '.join(unmatched)}")
-    if campaign and config.optimizer_model:
+    if optimizer and config.optimizer_model:
         for harness in {h for h, _ in pairs}:
             reason = model_error(harness, config.optimizer_model)
             if reason:
@@ -174,44 +179,37 @@ def validate_request(config: RunRequest) -> tuple[list[tuple[str, str]], list[st
 def plan_matrix(config: RunRequest, directory: Path, root: Path = ROOT) -> tuple[list[dict], list[str]]:
     pairs, warnings = validate_request(config)
     backend = config.backend_url or default_backend_url()
-    budget = config.budget.model_dump()
-    rows, matches = [], {}
-    combos = []
-    for game, mode, (harness, model), effort, repeat in product(config.games, config.modes, pairs, config.efforts,
-                                                                range(config.repeats)):
-        for world_model_mode in (config.world_model_modes if mode == "campaign" else [None]):
-            combos.append((game, mode, harness, model, effort, repeat, world_model_mode))
+    combos = list(product(config.games, config.frameworks, pairs, config.efforts, range(config.repeats)))
     if not combos:
         raise ValueError("The selection produces no runs")
     if len(combos) > MAX_RUNS:
         raise ValueError(f"A batch can contain at most {MAX_RUNS} runs (this selection has {len(combos)})")
+    rows, matches = [], {}
     enqueue_warned = False
-    for index, (game, mode, harness, model, effort, repeat, world_model_mode) in enumerate(combos, 1):
+    for index, (game, choice, (harness, model), effort, repeat) in enumerate(combos, 1):
         url = game_backend(game, backend)
         if url != backend and not enqueue_warned:
             enqueue_warned = True
             warnings.append(f"{ENQUEUE_GAME} uses its dedicated ondemand engine at {url}; "
                             "start scripts/start-enqueue-backend.ps1 and keep it running")
+        framework, options = get_framework(choice.id), choice.checked()
         output = directory / f"run-{index:04d}"
-        is_campaign = mode == "campaign"
-        row_budget = ({k: budget[k] for k in ("max_wall_seconds", "max_evaluations", "research_moves", "solver_moves")}
-                      if is_campaign else {k: budget[k] for k in ("max_wall_seconds", "max_steps")})
-        optimizer_model = (config.optimizer_model or model) if is_campaign else None
-        optimizer_effort = (config.optimizer_effort or effort) if is_campaign else None
-        command = launch_command(mode=mode, harness=harness, model=model, effort=effort, game_id=game,
-                                 backend_url=url, output=output, budget=row_budget, optimizer_model=optimizer_model,
-                                 optimizer_effort=optimizer_effort, world_model_mode=world_model_mode,
+        optimizer_model = (config.optimizer_model or model) if framework.optimizer else None
+        optimizer_effort = (config.optimizer_effort or effort) if framework.optimizer else None
+        command = launch_command(framework=framework, options=options, harness=harness, model=model, effort=effort,
+                                 game_id=game, backend_url=url, output=output, max_wall_seconds=config.max_wall_seconds,
+                                 optimizer_model=optimizer_model, optimizer_effort=optimizer_effort,
                                  provider=config.provider)
-        artifact = output / "campaign" if is_campaign else output
+        artifact = output / framework.artifact if framework.artifact else output
         match_id = matches.setdefault((game, harness, model, effort, repeat), f"match-{len(matches) + 1:04d}")
         rows.append({"id": artifact.relative_to(root).as_posix(), "launcher": "harnesses",
-                     "kind": "avo" if is_campaign else "codex", "mode": mode, "harness": harness,
+                     "kind": "avo" if framework.id == "avo" else "codex", "framework": framework.id,
+                     "options": options, "variant": framework.variant_label(options), "harness": harness,
                      "agent_backend": harness, "model": model, "model_provider": model_provider(model),
                      "optimizer_model": optimizer_model, "effort": effort, "optimizer_effort": optimizer_effort,
-                     "game_id": game, "backend_url": url, "world_model_mode": world_model_mode,
-                     "condition": None if is_campaign else mode, "provider": config.provider or None,
-                     "repeat": repeat + 1, "match_id": match_id, "pair_id": None, "budget": row_budget,
-                     "max_wall_seconds": row_budget["max_wall_seconds"], "output": str(output),
+                     "game_id": game, "backend_url": url, "provider": config.provider or None,
+                     "repeat": repeat + 1, "match_id": match_id, "pair_id": None,
+                     "max_wall_seconds": config.max_wall_seconds, "output": str(output),
                      "command": command, "status": "queued"})
     return rows, warnings
 
@@ -266,9 +264,9 @@ def find_owner(run_id: str, root: Path) -> tuple[Path, dict, dict, bool] | None:
 
 
 def plan_resume(run_id: str, output: Path, root: Path = ROOT) -> tuple[dict, Path]:
-    """Prepare one resumed run in `output`; returns its manifest row and the
-    source marker path. Campaigns copy the saved lineage and pass `--resume`;
-    baseline modes replay the parent with `--continue-from`."""
+    """Prepare one restarted run in `output`; returns its manifest row and the source
+    marker path. Frameworks that resume (AVO) copy the saved run and pass `--resume`;
+    frameworks that continue (baseline) replay the parent with `--continue-from`."""
     path = run_path(run_id, root)
     is_avo = (path / "evolution_config.json").is_file()
     config = read_json(path / ("evolution_config.json" if is_avo else "run_config.json"))
@@ -282,11 +280,18 @@ def plan_resume(run_id: str, output: Path, root: Path = ROOT) -> tuple[dict, Pat
     owner = find_owner(run_id, root)
     if owner and owner[3] and owner[2].get("status") in ACTIVE:
         raise Conflict("This run is still active in its batch")
-    mode = spec["mode"]
-    budget = {**{k: v for k, v in Budget().model_dump().items()}, **(spec["budget"] or {})}
-    if is_avo or mode == "campaign":
-        if path.name != "campaign":
-            raise ValueError("Only campaigns saved as <run>/campaign can be resumed")
+    framework = FRAMEWORKS.get(spec["framework"])
+    if framework is None:
+        raise Conflict(f"The {spec['framework']} framework no longer exists")
+    options = framework.check_options({k: v for k, v in spec["options"].items()
+                                       if k in {o.name for o in framework.options}})
+    common = dict(framework=framework, options=options, harness=spec["harness"], model=spec["model"],
+                  effort=spec["effort"] or "medium", game_id=spec["game_id"],
+                  backend_url=spec["backend_url"] or default_backend_url(), output=output,
+                  max_wall_seconds=spec["max_wall_seconds"] or 0, provider=spec["provider"] or "")
+    if framework.restart == "resume":
+        if not framework.artifact or path.name != framework.artifact:
+            raise ValueError(f"Only runs saved as <run>/{framework.artifact} can be resumed")
         if live_containers()[0].get(str(path.parent.resolve()).casefold()):
             raise Conflict("Docker reports this campaign running")
         marker = path.parent / "recovery.json"
@@ -301,14 +306,9 @@ def plan_resume(run_id: str, output: Path, root: Path = ROOT) -> tuple[dict, Pat
         if complete:
             shutil.rmtree(output, ignore_errors=True)
             raise ValueError("This campaign already has a final result")
-        artifact = output / "campaign"
-        command = launch_command(mode="campaign", harness=spec["harness"], model=spec["model"],
-                                 effort=spec["effort"] or "medium", game_id=spec["game_id"],
-                                 backend_url=spec["backend_url"] or default_backend_url(), output=output,
-                                 budget=budget, optimizer_model=spec["optimizer_model"],
-                                 optimizer_effort=spec["optimizer_effort"],
-                                 world_model_mode=spec["world_model_mode"] if spec["world_model_mode"] in {"final-only", "between-hypotheses"} else "final-only",
-                                 provider=spec["provider"] or "", resume=True)
+        artifact = output / framework.artifact
+        command = launch_command(**common, optimizer_model=spec["optimizer_model"],
+                                 optimizer_effort=spec["optimizer_effort"], resume=True)
     else:
         marker = path / "recovery.json"
         if read_json(marker).get("resumed_as"):
@@ -316,19 +316,16 @@ def plan_resume(run_id: str, output: Path, root: Path = ROOT) -> tuple[dict, Pat
         if read_json(path / "result.json").get("solved") is True:
             raise ValueError("This run already solved its game")
         artifact = output
-        command = launch_command(mode=mode, harness=spec["harness"], model=spec["model"],
-                                 effort=spec["effort"] or "medium", game_id=spec["game_id"],
-                                 backend_url=spec["backend_url"] or default_backend_url(), output=output,
-                                 budget=budget, provider=spec["provider"] or "", continue_from=path)
-    is_campaign = mode == "campaign" or is_avo
-    row = {"id": artifact.relative_to(root).as_posix(), "launcher": "harnesses", "kind": "avo" if is_campaign else "codex",
-           "mode": "campaign" if is_campaign else mode, "harness": spec["harness"], "agent_backend": spec["harness"],
+        command = launch_command(**common, optimizer_model=spec["optimizer_model"],
+                                 optimizer_effort=spec["optimizer_effort"], continue_from=path)
+    row = {"id": artifact.relative_to(root).as_posix(), "launcher": "harnesses",
+           "kind": "avo" if framework.id == "avo" else "codex", "framework": framework.id, "options": options,
+           "variant": framework.variant_label(options), "harness": spec["harness"], "agent_backend": spec["harness"],
            "model": spec["model"], "model_provider": model_provider(spec["model"]),
-           "optimizer_model": spec["optimizer_model"], "effort": spec["effort"],
-           "optimizer_effort": spec["optimizer_effort"], "game_id": spec["game_id"],
-           "world_model_mode": spec["world_model_mode"] if is_campaign else None,
-           "condition": None if is_campaign else mode, "provider": spec["provider"] or None, "repeat": 1,
-           "pair_id": None, "resumed_from": run_id, "max_wall_seconds": int(budget.get("max_wall_seconds") or 0),
+           "optimizer_model": spec["optimizer_model"] if framework.optimizer else None, "effort": spec["effort"],
+           "optimizer_effort": spec["optimizer_effort"] if framework.optimizer else None, "game_id": spec["game_id"],
+           "provider": spec["provider"] or None, "repeat": 1,
+           "pair_id": None, "resumed_from": run_id, "max_wall_seconds": int(spec["max_wall_seconds"] or 0),
            "output": str(output), "command": command, "status": "queued"}
     return row, marker
 

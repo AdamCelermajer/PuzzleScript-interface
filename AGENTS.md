@@ -10,12 +10,12 @@ A research framework for LLM agents that learn puzzle game mechanics by observin
 
 ## Repo Layout
 
-The maintained workflows are AVO campaigns and the direct player (baseline / baseline-plus). The browser homepage is a run catalog, not the historical rule agent.
+The maintained workflows are the frameworks `avo` (campaigns) and `baseline` (direct player; with `--notes` it is shown as Baseline+). The browser homepage is a run catalog, not the historical rule agent.
 
 - `website/app/` and `workbench/` — the workbench single-page app (React) and its FastAPI backend: runs, launch, benchmarks, diary, tools. The older `website/` pages are kept on disk but no longer served.
-- `avo/` — AVO research/evolution, prompts and evaluation.
-- `harnesses/` — agent harnesses (codex, claude-code, opencode, antigravity, bare) and `python -m harnesses.launch`, which runs every campaign or direct-play run in one Docker container. See `harnesses/README.md`.
-- `studies/codex_agent/` — maintained persistent direct player, baseline+, continuation and batches.
+- `frameworks/` — agent methods, one folder each (`baseline/`: persistent direct player, notes option, continuation and batches; `avo/`: AVO research/evolution, prompts and evaluation), declared through `Framework`/`Option` in `base.py` and listed in `registry.py`. Adding a framework = one folder with `framework.py` + one line in `registry.py`. See `frameworks/README.md`.
+- `harnesses/` — agent harnesses (codex, claude-code, opencode, antigravity, bare) and `python -m harnesses.launch --framework <id> --harness <id> ...`, which runs every run in one Docker container. See `harnesses/README.md`.
+- Run outputs: new CLI runs default to `output/<framework>/<run>`, workbench launches to `output/workbench/<job>/run-NNNN`; older runs stay in `avo/output/` and `studies/codex_agent/output/` (archives the catalog still reads).
 
 Shared environment code and historical client:
 
@@ -157,7 +157,7 @@ The public ARC surface returns ARC fields (`frame`, `state`, `levels_completed`,
 
 ## Current workbench
 
-`npm run workbench` starts or reuses the local services and serves the SPA (`website/app/`) on port 5173 (any hostname, e.g. Tailscale). Sections: Runs, Launch, Run detail, Compare, Benchmarks, Diary, Tools. Every launch goes through `POST /api/workbench/runs` → `python -m harnesses.launch`. `workbench/catalog.py` discovers existing output paths without moving them; Docker process status and worker heartbeats are distinct from recorded solver success. `workbench/experiment_job.py` runs bounded subprocess batches with persistent manifests and exact ownership for stops. Never restart shared game services as part of a website refresh. See `docs/architecture/workbench.md`.
+`npm run workbench` starts or reuses the local services and serves the SPA (`website/app/`) on port 5173 (any hostname, e.g. Tailscale). Sections: Runs, Launch, Run detail, Compare, Benchmarks, Diary, Tools. Every launch goes through `POST /api/workbench/runs` (`frameworks: [{id, options}]`, framework list from `GET /api/workbench/frameworks`) → `python -m harnesses.launch --framework ...`. `workbench/catalog.py` discovers existing output paths without moving them; Docker process status and worker heartbeats are distinct from recorded solver success. `workbench/experiment_job.py` runs bounded subprocess batches with persistent manifests and exact ownership for stops. Never restart shared game services as part of a website refresh. See `docs/architecture/workbench.md`.
 
 ## Diary
 

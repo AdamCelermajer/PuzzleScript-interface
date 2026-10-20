@@ -113,7 +113,7 @@ export function DiaryEntryView() {
                   {e.runs.map((r) => (
                     <li key={r.id} className="min-w-0">
                       {r.found ? <Link to={runHref(r.id)} className="font-mono text-[11.5px] break-all">{r.id}</Link> : <span className="font-mono text-[11.5px] break-all text-faint">{r.id} (not found)</span>}
-                      <div className="text-[11.5px] text-muted">{r.linked === 'date' ? 'started that day' : 'linked'}{r.outcome ? ` · ${r.mode} · ${r.harness} · ${r.model} · ${r.outcome}` : ''}</div>
+                      <div className="text-[11.5px] text-muted">{r.linked === 'date' ? 'started that day' : 'linked'}{r.outcome ? ` · ${r.variant} · ${r.harness} · ${r.model} · ${r.outcome}` : ''}</div>
                     </li>
                   ))}
                 </ul>

@@ -10,10 +10,10 @@ import { OutcomeCell, ProcessPill } from '../components/status'
 import { Button, Card, Empty, ErrorBox, Input, Loading, Notice, PageHeader, Pill, Select, cx } from '../components/ui'
 import { bestSoFar, firstSuccess, levelCurve } from '../lib/compare'
 import { dateTime, duration, gameName, shortId } from '../lib/format'
-import { MODE_LABEL, distinct, jobLabel, runHref, type RunView } from '../lib/runs'
+import { distinct, jobLabel, runHref, type RunView } from '../lib/runs'
 
 const shortLabel = (r: RunView) => `${r.model.split('/').at(-1)} · ${r.effort}`
-const seriesLabel = (r: RunView) => `${MODE_LABEL[r.mode]} · ${r.harness} · ${r.model.split('/').at(-1)} · ${r.effort}${r.worldModel && r.worldModel !== 'not-recorded' ? ` · ${r.worldModel}` : ''}`
+const seriesLabel = (r: RunView) => `${r.variant} · ${r.harness} · ${r.model.split('/').at(-1)} · ${r.effort}${r.worldModel && r.worldModel !== 'not-recorded' ? ` · ${r.worldModel}` : ''}`
 
 export function CompareView() {
   const [params, setParams] = useSearchParams()
@@ -70,11 +70,11 @@ function SelectionBar({ runs, onRemove, onEdit }: { runs: RunView[]; onRemove: (
 
 function Picker({ runs, selected, onChange }: { runs: RunView[]; selected: string[]; onChange: (ids: string[]) => void }) {
   const [game, setGame] = useState(runs.find((r) => selected.includes(r.id))?.game ?? '')
-  const [mode, setMode] = useState('')
+  const [variant, setVariant] = useState('')
   const [search, setSearch] = useState('')
   const set = new Set(selected)
   const needle = search.toLowerCase()
-  const shown = runs.filter((r) => (!game || r.game === game) && (!mode || r.mode === mode) && (!needle || `${r.id} ${r.model} ${r.harness}`.toLowerCase().includes(needle)) && r.raw.has_result !== undefined)
+  const shown = runs.filter((r) => (!game || r.game === game) && (!variant || r.variant === variant) && (!needle || `${r.id} ${r.model} ${r.harness}`.toLowerCase().includes(needle)) && r.raw.has_result !== undefined)
   return (
     <Card title={`Pick at least two runs (${selected.length} selected)`} actions={selected.length >= 2 && <Button variant="primary" size="sm" onClick={() => onChange(selected)}>Compare {selected.length}</Button>}>
       <div className="mb-2 flex flex-wrap gap-2">
@@ -82,22 +82,22 @@ function Picker({ runs, selected, onChange }: { runs: RunView[]; selected: strin
           <option value="">Any game</option>
           {distinct(runs, (r) => r.game).map((g) => <option key={g} value={g}>{gameName(g)}</option>)}
         </Select>
-        <Select value={mode} onChange={(e) => setMode(e.target.value)}>
-          <option value="">Any mode</option>
-          {Object.entries(MODE_LABEL).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+        <Select value={variant} onChange={(e) => setVariant(e.target.value)}>
+          <option value="">Any framework</option>
+          {distinct(runs, (r) => r.variant).map((v) => <option key={v} value={v}>{v}</option>)}
         </Select>
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Filter by id, model, harness…" className="w-64" />
       </div>
       <div className="max-h-[60vh] overflow-auto rounded border border-line">
         {shown.length ? (
           <table className="data-table">
-            <thead><tr><th /><th>Outcome</th><th>Mode</th><th>Harness</th><th>Model</th><th>Game</th><th>Launched</th><th>Run</th></tr></thead>
+            <thead><tr><th /><th>Outcome</th><th>Framework</th><th>Harness</th><th>Model</th><th>Game</th><th>Launched</th><th>Run</th></tr></thead>
             <tbody>
               {shown.slice(0, 300).map((r) => (
                 <tr key={r.id} className={cx(set.has(r.id) && 'selected')} style={{ cursor: 'pointer' }} onClick={() => onChange(set.has(r.id) ? selected.filter((x) => x !== r.id) : [...selected, r.id])}>
                   <td><input type="checkbox" readOnly checked={set.has(r.id)} /></td>
                   <td><OutcomeCell outcome={r.outcome} campaign={r.kind === 'avo'} /></td>
-                  <td>{MODE_LABEL[r.mode]}</td>
+                  <td>{r.variant}</td>
                   <td><HarnessChip harness={r.harness} legacy={r.legacy} /></td>
                   <td className="max-w-64 truncate">{r.model} <span className="text-faint">· {r.effort}</span></td>
                   <td>{gameName(r.game)}</td>
@@ -142,7 +142,7 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
         <div className="overflow-auto">
           <table className="data-table">
             <thead>
-              <tr><th /><th>Game · run</th><th>Mode</th><th>Harness</th><th>Model · effort</th><th>Outcome</th><th>Process</th><th>Used</th><th>First solve</th><th>Search time</th></tr>
+              <tr><th /><th>Game · run</th><th>Framework</th><th>Harness</th><th>Model · effort</th><th>Outcome</th><th>Process</th><th>Used</th><th>First solve</th><th>Search time</th></tr>
             </thead>
             <tbody>
               {runs.map((r, i) => {
@@ -154,7 +154,7 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
                   <tr key={r.id}>
                     <td>{i < MAX_SERIES && <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: seriesColor(i) }} />}</td>
                     <td><div className="flex items-center gap-2.5"><GameThumb gameId={r.game} size={28} /><div className="min-w-0"><Link to={runHref(r.id)} className="block text-[13px] font-semibold">{gameName(r.game)}</Link><RunId id={r.id} className="w-44" /></div></div></td>
-                    <td>{MODE_LABEL[r.mode]}{r.worldModel && r.worldModel !== 'not-recorded' && <div className="text-[11px] text-faint">{r.worldModel}</div>}</td>
+                    <td>{r.variant}{r.worldModel && r.worldModel !== 'not-recorded' && <div className="text-[11px] text-faint">{r.worldModel}</div>}</td>
                     <td><HarnessChip harness={r.harness} legacy={r.legacy} /></td>
                     <td className="max-w-64 truncate">{r.model} <span className="text-faint">· {r.effort}</span></td>
                     <td><OutcomeCell outcome={r.outcome} campaign={r.kind === 'avo'} /></td>

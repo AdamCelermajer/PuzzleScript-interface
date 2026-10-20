@@ -8,6 +8,9 @@ import pytest
 
 from harnesses import entry, launch
 from harnesses.base import HarnessError, TurnResult
+from frameworks.avo.framework import AVO
+from frameworks.baseline.framework import BASELINE
+from frameworks.registry import FRAMEWORKS, list_frameworks
 from harnesses.registry import HARNESS_IDS, HARNESSES, credentials_for, list_harnesses, resolve_model_for
 
 
@@ -71,10 +74,10 @@ def test_sessions_refuse_to_run_on_the_host(tmp_path, monkeypatch):
 
 
 def options(**overrides):
-    values = dict(mode="baseline-plus", harness="claude-code", model="claude-haiku-5-5", optimizer_model="",
+    values = dict(framework="baseline", harness="claude-code", model="claude-haiku-5-5", optimizer_model="",
                   optimizer_effort="", effort="low", game_id="ps_modality-v1",
                   backend_url="http://host.docker.internal:8000", output_dir="", max_wall_seconds=0, max_steps=3,
-                  max_evaluations=None, research_moves=None, solver_moves=None, world_model_mode="final-only",
+                  notes=True, max_evaluations=None, research_moves=None, solver_moves=None, world_model_mode=None,
                   provider="", resume=False, continue_from="")
     values.update(overrides)
     return argparse.Namespace(**values)
@@ -86,25 +89,39 @@ def test_backend_url_rewrites_host_loopback():
     assert launch.container_backend_url("http://host.docker.internal:8000") == "http://host.docker.internal:8000"
 
 
-def test_run_spec_matches_contract_fields():
-    spec = launch.run_spec(options())
-    assert spec["schema"] == "run-spec-v1" and spec["budget"] == {"max_wall_seconds": 0, "max_steps": 3}
-    assert "optimizer_model" not in spec and spec["continued_from"] is None
-    campaign = launch.run_spec(options(mode="campaign", harness="opencode", model="openrouter/qwen/qwen3.8-27b",
-                                       max_evaluations=2, research_moves=30, solver_moves=40, max_steps=None))
-    assert campaign["optimizer_model"] == "openrouter/qwen/qwen3.8-27b"
-    assert campaign["budget"] == {"max_wall_seconds": 0, "max_evaluations": 2, "research_moves": 30, "solver_moves": 40}
-    assert campaign["world_model_mode"] == "final-only"
+def test_run_spec_records_framework_and_options():
+    spec = launch.run_spec(options(), BASELINE)
+    assert spec["schema"] == "run-spec-v2" and spec["framework"] == "baseline"
+    assert spec["options"] == {"max_steps": 3, "notes": True} and spec["max_wall_seconds"] == 0
+    assert spec["optimizer_model"] is None and spec["continued_from"] is None
+    campaign = launch.run_spec(options(framework="avo", harness="opencode", model="openrouter/qwen/qwen3.8-27b",
+                                       max_evaluations=2, research_moves=30, max_steps=None, notes=None), AVO)
+    assert campaign["optimizer_model"] == "openrouter/qwen/qwen3.8-27b" and campaign["optimizer_effort"] == "low"
+    assert campaign["options"] == {"max_evaluations": 2, "research_moves": 30, "solver_moves": 400,
+                                   "world_model_mode": "final-only"}
 
 
 @pytest.mark.parametrize("overrides", [
-    {"mode": "campaign"}, {"max_steps": None}, {"provider": "deepinfra"}, {"resume": True},
-    {"harness": "codex"}, {"max_wall_seconds": -1},
-    {"mode": "campaign", "max_evaluations": 1, "research_moves": 1, "solver_moves": 1, "continue_from": "x"},
+    {"provider": "deepinfra"}, {"harness": "codex"}, {"max_wall_seconds": -1},
 ])
 def test_invalid_launch_options(overrides):
     with pytest.raises(HarnessError):
-        launch.validate(options(**overrides))
+        launch.validate(options(**overrides), BASELINE)
+
+
+@pytest.mark.parametrize("given", [{"max_steps": 0}, {"notes": "yes"}, {"research_moves": 5}])
+def test_framework_options_are_checked(given):
+    with pytest.raises(ValueError):
+        BASELINE.check_options(given)
+
+
+def test_registry_describes_every_framework():
+    listing = {entry["id"]: entry for entry in list_frameworks()}
+    assert set(listing) == set(FRAMEWORKS) and json.dumps(listing)
+    assert listing["avo"]["optimizer"] and listing["avo"]["restart"] == "resume"
+    assert BASELINE.variant_label({"notes": True}) == "Baseline+" and AVO.variant_label({}) == "AVO"
+    for framework in FRAMEWORKS.values():
+        framework.check_options({})  # every default is valid
 
 
 def test_docker_command_is_plain_non_root_container(tmp_path):
@@ -119,17 +136,18 @@ def test_docker_command_is_plain_non_root_container(tmp_path):
 
 def test_stage_controller_excludes_games_env_outputs_and_tests(tmp_path):
     root = tmp_path / "repo"
-    for name in ("avo/evolve.py", "avo/output/run/x.py", "avo/tests/test_x.py", "client/arc/types.py",
-                 "client/rules/g/rules.json", "harnesses/base.py", "harnesses/docker/Dockerfile",
-                 "studies/__init__.py", "studies/codex_agent/run.py", "studies/codex_agent/output/r/a.md",
-                 "studies/other/secret.py", "puzzlescript_interface/games/g/script.txt", ".env", "avo/.env"):
+    for name in ("frameworks/avo/evolve.py", "frameworks/avo/output/run/x.py", "frameworks/avo/tests/test_x.py",
+                 "frameworks/avo/legacy/old.py", "client/arc/types.py", "client/rules/g/rules.json",
+                 "harnesses/base.py", "harnesses/docker/Dockerfile", "frameworks/registry.py",
+                 "frameworks/baseline/run.py", "avo/output/r/a.md", "studies/other/secret.py",
+                 "puzzlescript_interface/games/g/script.txt", ".env", "frameworks/avo/.env"):
         (root / name).parent.mkdir(parents=True, exist_ok=True)
         (root / name).write_text("x")
     target = tmp_path / "staged"
     launch.stage_controller(target, root)
     staged = sorted(path.relative_to(target).as_posix() for path in target.rglob("*") if path.is_file())
-    assert staged == ["avo/evolve.py", "client/arc/types.py", "harnesses/base.py", "studies/__init__.py",
-                      "studies/codex_agent/run.py"]
+    assert staged == ["client/arc/types.py", "frameworks/avo/evolve.py", "frameworks/baseline/run.py",
+                      "frameworks/registry.py", "harnesses/base.py"]
 
 
 def test_credentials_stage_only_the_chosen_harness(tmp_path, monkeypatch):
@@ -155,47 +173,74 @@ def test_credentials_stage_only_the_chosen_harness(tmp_path, monkeypatch):
         launch.stage_credentials("antigravity", ["gemini-3.8-flash-low"], tmp_path, env)
 
 
-def test_resume_requires_same_harness_and_maps_legacy_names(tmp_path):
+def test_avo_resume_requires_same_harness_and_maps_legacy_names(tmp_path):
     campaign = tmp_path / "campaign"
     campaign.mkdir()
     (campaign / "lineage.json").write_text("{}")
     (campaign / "evolution_config.json").write_text(json.dumps(
         {"harness": "tools", "provider": "", "profile_settings": {"game_id": "ps_modality-v1"},
          "world_model_mode": "final-only"}))
-    launch.check_resume(options(mode="campaign", harness="bare", resume=True), tmp_path)
-    with pytest.raises(HarnessError, match="harness"):
-        launch.check_resume(options(mode="campaign", harness="opencode", resume=True), tmp_path)
-    with pytest.raises(HarnessError, match="game"):
-        launch.check_resume(options(mode="campaign", harness="bare", game_id="other"), tmp_path)
+    spec = {"harness": "bare", "provider": "", "game_id": "ps_modality-v1",
+            "options": {"world_model_mode": "final-only"}}
+    AVO.check_restart(spec, tmp_path)
+    with pytest.raises(ValueError, match="harness"):
+        AVO.check_restart({**spec, "harness": "opencode"}, tmp_path)
+    with pytest.raises(ValueError, match="game"):
+        AVO.check_restart({**spec, "game_id": "other"}, tmp_path)
+
+
+def launch_args(tmp_path, *extra):
+    return ["--harness", "bare", "--model", "openrouter/qwen/qwen3.8-27b", "--effort", "low", "--game-id", "g",
+            "--backend-url", "http://localhost:8000", "--output-dir", str(tmp_path / "run"), "--dry-run", *extra]
 
 
 def test_dry_run_prints_command_without_writing(tmp_path, capsys, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "unit-test")
-    output = tmp_path / "run"
-    code = launch.launch(["--mode", "baseline", "--harness", "bare", "--model", "openrouter/qwen/qwen3.8-27b",
-                          "--effort", "low", "--game-id", "g", "--backend-url", "http://localhost:8000",
-                          "--max-steps", "2", "--output-dir", str(output), "--dry-run"])
+    code = launch.launch(["--framework", "baseline", "--max-steps", "2", "--notes", *launch_args(tmp_path)])
     printed = json.loads(capsys.readouterr().out)
-    assert code == 0 and not output.exists()
+    assert code == 0 and not (tmp_path / "run").exists()
     assert printed["run_spec"]["backend_url"] == "http://host.docker.internal:8000"
+    assert printed["run_spec"]["options"] == {"max_steps": 2, "notes": True}
     assert printed["command"][-3:] == ["harnesses.entry", "--spec", "/results/run_spec.json"]
     assert "--env" in printed["command"] and "OPENROUTER_API_KEY" in printed["command"]
 
 
+@pytest.mark.parametrize("extra", [
+    ["--framework", "baseline", "--max-evaluations", "2"],   # another framework's option
+    ["--framework", "baseline", "--resume"],                 # baseline continues; only avo resumes
+    ["--framework", "avo", "--continue-from", "x"],          # avo resumes; only baseline continues
+    ["--framework", "avo", "--world-model-mode", "never"],
+    ["--framework", "other"],
+])
+def test_launch_rejects_flags_of_other_frameworks(tmp_path, monkeypatch, extra):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "unit-test")
+    with pytest.raises(SystemExit):
+        launch.launch([*extra, *launch_args(tmp_path)])
+
+
+def test_launch_refuses_a_used_output_directory(tmp_path, monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "unit-test")
+    (tmp_path / "run").mkdir()
+    (tmp_path / "run" / "run_spec.json").write_text("{}")
+    with pytest.raises(SystemExit):
+        launch.launch(["--framework", "baseline", *launch_args(tmp_path)])
+
+
 # ---------------------------------------------------------------- entry
-SPEC = {"schema": "run-spec-v1", "mode": "campaign", "harness": "opencode", "model": "openrouter/qwen/qwen3.8-27b",
+SPEC = {"schema": "run-spec-v2", "framework": "avo", "harness": "opencode", "model": "openrouter/qwen/qwen3.8-27b",
         "optimizer_model": "openrouter/qwen/qwen3.8-27b", "effort": "high", "optimizer_effort": "low",
-        "game_id": "ps_modality-v1", "backend_url": "http://host.docker.internal:8000",
-        "budget": {"max_wall_seconds": 0, "max_evaluations": 8, "research_moves": 400, "solver_moves": 300},
-        "world_model_mode": "between-hypotheses", "provider": "deepinfra", "continued_from": None}
+        "game_id": "ps_modality-v1", "backend_url": "http://host.docker.internal:8000", "max_wall_seconds": 0,
+        "options": {"max_evaluations": 8, "research_moves": 400, "solver_moves": 300,
+                    "world_model_mode": "between-hypotheses"},
+        "provider": "deepinfra", "continued_from": None}
 
 
-def test_entry_campaign_argv():
-    argv = entry.campaign_argv(SPEC, resume=True, results=Path("/results"))
+def test_avo_entry_argv():
+    argv = AVO.entry(SPEC, True, Path("/results"), Path("/parent"))
 
     def value(flag):
         return argv[argv.index(flag) + 1]
-    assert argv[0] == "avo.evolve" and argv[-1] == "--resume-saved-campaign"
+    assert argv[0] == "frameworks.avo.evolve" and argv[-1] == "--resume-saved-campaign"
     assert value("--harness") == "opencode" and value("--optimizer-effort") == "low" and value("--player-effort") == "high"
     assert value("--player-max-environment-steps") == "400" and value("--fresh-solver-max-environment-steps") == "300"
     assert value("--max-wall-seconds") == "0" and value("--world-model-mode") == "between-hypotheses"
@@ -203,14 +248,16 @@ def test_entry_campaign_argv():
     assert Path(value("--output-dir")).as_posix() == "/results/campaign"
 
 
-def test_entry_baseline_argv_and_continuation():
-    spec = {**SPEC, "mode": "baseline-plus", "harness": "claude-code", "model": "claude-haiku-5-5", "provider": "",
-            "budget": {"max_wall_seconds": 60, "max_steps": 3}, "continued_from": "C:/runs/parent"}
-    argv = entry.baseline_argv(spec, results=Path("/results"), parent=Path("/parent"))
-    assert argv[:2] == ["studies.codex_agent.run", "--no-window"]
-    assert argv[argv.index("--condition") + 1] == "baseline-plus" and argv[argv.index("--max-steps") + 1] == "3"
+def test_baseline_entry_argv_and_continuation():
+    spec = {**SPEC, "framework": "baseline", "harness": "claude-code", "model": "claude-haiku-5-5", "provider": "",
+            "max_wall_seconds": 60, "options": {"max_steps": 3, "notes": True}, "continued_from": "C:/runs/parent"}
+    argv = BASELINE.entry(spec, False, Path("/results"), Path("/parent"))
+    assert argv[:2] == ["frameworks.baseline.run", "--no-window"]
+    assert "--notes" in argv and argv[argv.index("--max-steps") + 1] == "3"
     assert argv[argv.index("--max-wall-seconds") + 1] == "60"
     assert Path(argv[argv.index("--continue-from") + 1]).as_posix() == "/parent"
+    assert "--notes" not in BASELINE.entry({**spec, "options": {"max_steps": 3, "notes": False}}, False,
+                                           Path("/results"), Path("/parent"))
 
 
 def test_entry_copies_codex_auth_into_a_writable_home(tmp_path, monkeypatch):
@@ -287,7 +334,7 @@ class FakeHarness:
 
 @pytest.mark.parametrize("enabled,kept", [(False, ["frame.png"]), (True, ["frame.png", "notes"])])
 def test_baseline_wipe_keeps_only_frames_and_notes(tmp_path, monkeypatch, enabled, kept):
-    from studies.codex_agent import session as module
+    from frameworks.baseline import session as module
     monkeypatch.setattr("harnesses.registry.create_session", lambda harness: FakeHarness())
     frame = tmp_path / "f.png"
     frame.write_bytes(b"png")
@@ -330,7 +377,7 @@ class AgentHarness(FakeHarness):
 
 
 def test_cli_agent_drives_turns_and_report_retries(tmp_path, monkeypatch):
-    from avo.client.turns import INNER_RUN_INSTRUCTION, AgentConfig, CliAgent
+    from frameworks.avo.client.turns import INNER_RUN_INSTRUCTION, AgentConfig, CliAgent
     monkeypatch.setattr("harnesses.registry.create_session", lambda harness: AgentHarness())
     AgentHarness.instructions = []
     prompt = tmp_path / "prompt.txt"
@@ -347,7 +394,7 @@ def test_cli_agent_drives_turns_and_report_retries(tmp_path, monkeypatch):
 
 
 def test_cli_agent_raises_when_the_cli_fails_without_working(tmp_path, monkeypatch):
-    from avo.client.turns import AgentConfig, CliAgent
+    from frameworks.avo.client.turns import AgentConfig, CliAgent
 
     class Broken(FakeHarness):
         def turn(self, instruction, images=(), timeout=None):

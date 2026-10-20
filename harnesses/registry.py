@@ -12,7 +12,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, Callable
 
-from avo.client.model_provider import API_PROVIDERS, resolve_model
+from harnesses.model_provider import API_PROVIDERS, resolve_model
 from harnesses.base import EFFORTS, CliSession, HarnessError
 
 ROOT = Path(__file__).resolve().parents[1]

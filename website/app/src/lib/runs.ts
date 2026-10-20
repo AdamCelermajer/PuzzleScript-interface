@@ -1,15 +1,15 @@
-import type { Catalog, CatalogJob, CatalogRun, Mode } from '../api/types'
+import type { Catalog, CatalogJob, CatalogRun, FrameworkOptions } from '../api/types'
 import { outcome, processStatus, type Outcome, type ProcessStatus } from './status'
-
-export const MODES: Mode[] = ['baseline', 'baseline-plus', 'campaign']
-export const MODE_LABEL: Record<string, string> = { baseline: 'Baseline', 'baseline-plus': 'Baseline+', campaign: 'AVO' }
 
 /** A catalog row with one normalized identity, regardless of run_spec.json vs legacy config. */
 export interface RunView {
   raw: CatalogRun
   id: string
   kind: 'avo' | 'codex'
-  mode: Mode
+  /** Registry id (frameworks/registry.py), e.g. `baseline`, `avo`. */
+  framework: string
+  /** Framework plus options as shown to people, e.g. `Baseline+`. */
+  variant: string
   harness: string
   model: string
   optimizerModel: string | null
@@ -35,21 +35,34 @@ export function batchTime(batch: string | undefined): number | null {
   return z ? Date.UTC(...parts) : new Date(...parts).getTime()
 }
 
-export function normalizeMode(row: Pick<CatalogRun, 'mode' | 'kind' | 'condition'>): Mode {
-  if (row.mode === 'baseline' || row.mode === 'baseline-plus' || row.mode === 'campaign') return row.mode
-  if (row.kind === 'avo') return 'campaign'
-  return String(row.condition ?? '').startsWith('baseline-plus') ? 'baseline-plus' : 'baseline'
+/** The catalog names every run's framework; rows from before the frameworks package fall back to kind/condition. */
+export function runIdentity(row: Pick<CatalogRun, 'framework' | 'variant' | 'kind' | 'condition'>): { framework: string; variant: string } {
+  if (row.framework) return { framework: row.framework, variant: row.variant || row.framework }
+  if (row.kind === 'avo') return { framework: 'avo', variant: 'AVO' }
+  return { framework: 'baseline', variant: String(row.condition ?? '').startsWith('baseline-plus') ? 'Baseline+' : 'Baseline' }
+}
+
+/** `max steps 200 · notes · 4h wall` from a framework's options. */
+export function optionsText(options: FrameworkOptions | null | undefined, maxWallSeconds?: number | null): string {
+  const parts = Object.entries(options ?? {}).flatMap(([name, value]) => {
+    const label = name.replaceAll('_', ' ')
+    if (typeof value === 'boolean') return value ? [label] : []
+    return [`${label} ${value}`]
+  })
+  const wall = maxWallSeconds === 0 ? 'unlimited wall' : maxWallSeconds ? `${Math.round((maxWallSeconds / 3600) * 10) / 10}h wall` : ''
+  return [...parts, wall].filter(Boolean).join(' · ')
 }
 
 export function normalizeRun(row: CatalogRun): RunView {
-  const mode = normalizeMode(row)
+  const { framework, variant } = runIdentity(row)
   const campaign = row.kind === 'avo'
   const started = (row.started_at ? row.started_at * 1000 : null) ?? batchTime(row.id) ?? batchTime(row.batch) ?? row.modified ?? 0
   return {
     raw: row,
     id: row.id,
     kind: row.kind,
-    mode,
+    framework,
+    variant,
     harness: row.harness || row.agent_backend || 'codex',
     model: row.model || '—',
     optimizerModel: campaign ? row.optimizer_model ?? null : null,
@@ -62,14 +75,17 @@ export function normalizeRun(row: CatalogRun): RunView {
     process: processStatus(row),
     outcome: outcome(row),
     progress: campaign
-      ? { used: row.evaluated ?? null, budget: row.budget ?? row.run_budget?.max_evaluations ?? null, unit: 'evaluations' }
-      : { used: row.actions ?? null, budget: row.budget ?? row.run_budget?.max_steps ?? null, unit: 'actions' },
+      ? { used: row.evaluated ?? null, budget: row.budget ?? numberOption(row.options, 'max_evaluations'), unit: 'evaluations' }
+      : { used: row.actions ?? null, budget: row.budget ?? numberOption(row.options, 'max_steps'), unit: 'actions' },
     worldModel: campaign ? row.world_model_mode ?? null : null,
   }
 }
 
+const numberOption = (options: FrameworkOptions | null | undefined, name: string) =>
+  typeof options?.[name] === 'number' ? (options[name] as number) : null
+
 export interface RunFilters {
-  mode: string
+  variant: string
   harness: string
   model: string
   game: string
@@ -78,11 +94,11 @@ export interface RunFilters {
   q: string
 }
 
-export const EMPTY_FILTERS: RunFilters = { mode: '', harness: '', model: '', game: '', status: '', job: '', q: '' }
+export const EMPTY_FILTERS: RunFilters = { variant: '', harness: '', model: '', game: '', status: '', job: '', q: '' }
 
 /** Status filter buckets: live = confirmed active process; others match the process tone. */
 export function matchesFilters(run: RunView, f: RunFilters): boolean {
-  if (f.mode && run.mode !== f.mode) return false
+  if (f.variant && run.variant !== f.variant) return false
   if (f.harness && run.harness !== f.harness) return false
   if (f.model && run.model !== f.model) return false
   if (f.game && run.game !== f.game) return false
@@ -96,7 +112,7 @@ export function matchesFilters(run: RunView, f: RunFilters): boolean {
   }
   if (f.q) {
     const needle = f.q.toLowerCase()
-    const hay = `${run.id} ${run.game} ${run.model} ${run.harness} ${run.mode} ${run.optimizerModel ?? ''}`.toLowerCase()
+    const hay = `${run.id} ${run.game} ${run.model} ${run.harness} ${run.variant} ${run.optimizerModel ?? ''}`.toLowerCase()
     if (!hay.includes(needle)) return false
   }
   return true
@@ -137,7 +153,7 @@ export interface Launch {
   archive: boolean
   job?: CatalogJob
   runs: RunView[]
-  modes: Mode[]
+  variants: string[]
   harnesses: string[]
   models: string[]
   budget: string
@@ -153,13 +169,7 @@ export function launchLabel(batch: string): string {
 }
 
 function budgetSummary(run: RunView): string {
-  const b = run.raw.run_budget
-  if (!b) return ''
-  const wall = b.max_wall_seconds === 0 ? 'unlimited wall' : b.max_wall_seconds ? `${Math.round((b.max_wall_seconds / 3600) * 10) / 10}h wall` : ''
-  const work = run.mode === 'campaign'
-    ? [b.max_evaluations && `${b.max_evaluations} evals`, b.research_moves && `${b.research_moves}/${b.solver_moves ?? '?'} moves`]
-    : [b.max_steps && `${b.max_steps} steps`]
-  return [...work, wall].filter(Boolean).join(' · ')
+  return run.raw.options ? optionsText(run.raw.options, run.raw.max_wall_seconds) : ''
 }
 
 /**
@@ -188,7 +198,7 @@ export function groupLaunches(runs: RunView[], jobs: Map<string, CatalogJob>): L
       archive: members.every((r) => r.legacy),
       job,
       runs: ordered,
-      modes: MODES.filter((m) => members.some((r) => r.mode === m)),
+      variants: [...new Set(ordered.map((r) => r.variant))],
       harnesses: [...new Set(members.map((r) => r.harness))],
       models: [...new Set(members.map((r) => r.model).filter((m) => m && m !== '—'))],
       budget: budgetSummary(ordered[0]),

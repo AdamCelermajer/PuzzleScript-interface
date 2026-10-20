@@ -9,6 +9,8 @@ import time
 from pathlib import Path
 from urllib.parse import quote
 
+from frameworks.registry import FRAMEWORKS
+
 ROOT = Path(__file__).resolve().parents[1]
 RUN_ROOTS = ("output", "avo/output", "studies/codex_agent/output")
 SKIP = {"controller", "workspace", "codex_workspace", "research", "evaluation", "solver",
@@ -93,7 +95,7 @@ def discover(root: Path = ROOT) -> tuple[list[Path], list[Path]]:
             runs.append(path)
             return
         spec = read_json(path / "run_spec.json") if is_file("run_spec.json") else {}
-        if spec.get("schema") == "run-spec-v1" and spec.get("mode") in {"baseline", "baseline-plus"}:
+        if spec_artifact(spec) == "":
             runs.append(path)
             return
         config = read_json(path / "run_config.json") if is_file("run_config.json") else {}
@@ -162,64 +164,92 @@ def agent_identity(config: dict) -> dict:
 
 
 HARNESS_IDS = ("codex", "claude-code", "opencode", "antigravity", "bare")
-RUN_MODES = ("baseline", "baseline-plus", "campaign")
 # Recorded identities of runs launched before the harnesses package existed.
 LEGACY_HARNESSES = {"codex": "codex", "tools": "bare", "raw": "bare-raw (legacy)", "opencode": "opencode (legacy)"}
+# run_spec.json schemas: v1 named a mode (baseline, baseline-plus, campaign); v2 names a framework.
+SPEC_SCHEMAS = ("run-spec-v1", "run-spec-v2")
 
 
 def read_run_spec(path: Path) -> dict:
-    """`run_spec.json` sits in the run output directory; for campaigns that is the
-    parent of the `campaign/` artifact directory the catalog identifies."""
-    for candidate in (path / "run_spec.json", path.parent / "run_spec.json" if path.name == "campaign" else None):
-        if candidate is not None:
-            spec = read_json(candidate)
-            if spec.get("schema") == "run-spec-v1":
-                return spec
+    """`run_spec.json` sits in the run output directory; for frameworks with an artifact
+    subfolder (AVO's `campaign/`) that is the parent of the directory the catalog identifies."""
+    for candidate in (path / "run_spec.json", path.parent / "run_spec.json"):
+        spec = read_json(candidate)
+        if spec.get("schema") in SPEC_SCHEMAS and (candidate.parent == path or spec_artifact(spec) == path.name):
+            return spec
     return {}
 
 
-def legacy_mode(condition: str | None) -> str:
+def spec_artifact(spec: dict) -> str | None:
+    """The artifact subfolder a run spec's framework writes to; None if this is no run spec."""
+    if spec.get("schema") not in SPEC_SCHEMAS:
+        return None
+    framework = FRAMEWORKS.get(mode_identity(spec.get("mode"))[0] if spec["schema"] == "run-spec-v1" else spec.get("framework"))
+    return framework.artifact if framework else ""
+
+
+def mode_identity(mode: str | None, budget: dict | None = None, world_model_mode: str | None = None) -> tuple[str, dict]:
+    """(framework, options) for a run recorded with a v1 mode or a legacy condition."""
+    budget = budget or {}
+    if mode == "campaign":
+        options = {key: budget.get(key) for key in ("max_evaluations", "research_moves", "solver_moves")}
+        return "avo", {**options, "world_model_mode": world_model_mode}
     # Historical variants such as baseline-plus-plus keep their notes directory.
-    return "baseline-plus" if str(condition or "").startswith("baseline-plus") else "baseline"
+    return "baseline", {"max_steps": budget.get("max_steps"), "notes": str(mode or "").startswith("baseline-plus")}
+
+
+def identity(framework: str, options: dict) -> dict:
+    options = {key: value for key, value in options.items() if value is not None}
+    known = FRAMEWORKS.get(framework)
+    return {"framework": framework, "options": options,
+            "variant": known.variant_label(options) if known else framework}
 
 
 def normalized_spec(path: Path, config: dict, is_avo: bool) -> dict:
     """One identity for every run: `run_spec.json` first, else the legacy config."""
     spec = read_run_spec(path)
+    if spec.get("schema") == "run-spec-v2":
+        fields = ("harness", "model", "optimizer_model", "optimizer_effort", "effort", "game_id", "backend_url",
+                  "max_wall_seconds", "provider", "continued_from", "created_at")
+        return {**identity(spec.get("framework"), spec.get("options") or {}),
+                **{key: spec.get(key) for key in fields}, "spec_source": "run_spec"}
     if spec:
-        fields = ("mode", "harness", "model", "optimizer_model", "optimizer_effort", "effort", "game_id",
-                  "backend_url", "budget", "world_model_mode", "provider", "continued_from", "created_at")
-        return {**{key: spec.get(key) for key in fields}, "spec_source": "run_spec"}
-    identity = agent_identity(config)
-    harness = LEGACY_HARNESSES.get(identity["agent_backend"], identity["agent_backend"])
+        budget = spec.get("budget") or {}
+        fields = ("harness", "model", "optimizer_model", "optimizer_effort", "effort", "game_id", "backend_url",
+                  "provider", "continued_from", "created_at")
+        return {**identity(*mode_identity(spec.get("mode"), budget, spec.get("world_model_mode"))),
+                **{key: spec.get(key) for key in fields}, "max_wall_seconds": budget.get("max_wall_seconds"),
+                "spec_source": "run_spec"}
+    agent = agent_identity(config)
+    harness = LEGACY_HARNESSES.get(agent["agent_backend"], agent["agent_backend"])
     if is_avo:
         player = config.get("player") or {}
         settings = config.get("profile_settings") or {}
-        budget = {"max_wall_seconds": config.get("max_wall_seconds"), "max_evaluations": config.get("max_evaluations"),
-                  "research_moves": player.get("max_environment_steps"),
+        budget = {"max_evaluations": config.get("max_evaluations"), "research_moves": player.get("max_environment_steps"),
                   "solver_moves": config.get("fresh_solver_max_environment_steps")}
-        return {"mode": "campaign", "harness": harness, "model": player.get("model"),
+        return {**identity(*mode_identity("campaign", budget, config.get("world_model_mode"))),
+                "harness": harness, "model": player.get("model"),
                 "optimizer_model": config.get("optimizer_model"), "optimizer_effort": config.get("optimizer_effort"),
                 "effort": player.get("effort"), "game_id": settings.get("game_id"),
-                "backend_url": settings.get("backend_url"), "budget": {k: v for k, v in budget.items() if v is not None},
-                "world_model_mode": config.get("world_model_mode"), "provider": config.get("provider") or "",
-                "continued_from": None, "created_at": None, "spec_source": "legacy"}
-    budget = {"max_steps": config.get("max_steps")}
-    return {"mode": legacy_mode(config.get("condition")), "harness": harness, "model": config.get("model"),
-            "optimizer_model": None, "optimizer_effort": None, "effort": config.get("reasoning_effort"),
-            "game_id": config.get("game_id"), "backend_url": config.get("backend_url"),
-            "budget": {k: v for k, v in budget.items() if v is not None}, "world_model_mode": None,
+                "backend_url": settings.get("backend_url"), "max_wall_seconds": config.get("max_wall_seconds"),
+                "provider": config.get("provider") or "", "continued_from": None, "created_at": None,
+                "spec_source": "legacy"}
+    return {**identity(*mode_identity(config.get("condition"), {"max_steps": config.get("max_steps")})),
+            "harness": harness, "model": config.get("model"), "optimizer_model": None, "optimizer_effort": None,
+            "effort": config.get("reasoning_effort"), "game_id": config.get("game_id"),
+            "backend_url": config.get("backend_url"), "max_wall_seconds": config.get("max_wall_seconds"),
             "provider": config.get("provider") or "", "continued_from": config.get("continuation_from"),
             "created_at": None, "spec_source": "legacy"}
 
 
 def normalized_row(row: dict) -> dict:
-    """Mode/harness for a queued manifest row that has no artifacts yet."""
-    if row.get("mode") and row.get("harness"):
-        return {"mode": row["mode"], "harness": row["harness"]}
+    """Framework/harness for a queued manifest row that has no artifacts yet."""
     backend = row.get("agent_backend", "codex")
-    return {"mode": "campaign" if row.get("kind") == "avo" else legacy_mode(row.get("condition")),
-            "harness": LEGACY_HARNESSES.get(backend, backend)}
+    harness = row.get("harness") or LEGACY_HARNESSES.get(backend, backend)
+    if row.get("framework"):
+        return {**identity(row["framework"], row.get("options") or {}), "harness": harness}
+    mode = row.get("mode") or ("campaign" if row.get("kind") == "avo" else row.get("condition"))
+    return {**identity(*mode_identity(mode, row.get("budget"), row.get("world_model_mode"))), "harness": harness}
 
 
 def result_inputs(config: dict, evaluations: list[dict], finalized: bool) -> dict:
@@ -343,16 +373,17 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
                      **agent_identity(config),
                      **({"agent_backend": spec["harness"]} if spec["spec_source"] == "run_spec" else {}),
                      # Normalized identity shared by old and new runs (run_spec.json first).
-                     "mode": spec["mode"], "harness": spec["harness"], "effort": spec["effort"],
-                     "optimizer_effort": spec["optimizer_effort"], "run_budget": spec["budget"],
+                     "framework": spec["framework"], "variant": spec["variant"], "options": spec["options"],
+                     "max_wall_seconds": spec["max_wall_seconds"], "harness": spec["harness"], "effort": spec["effort"],
+                     "optimizer_effort": spec["optimizer_effort"],
                      "provider": spec["provider"], "spec_source": spec["spec_source"],
                      "continued_from": spec["continued_from"],
                      "resumable": (can_resume or can_continue) and spec["harness"] in HARNESS_IDS,
                      "log_href": f"/api/workbench/experiments/log?job={quote(owner[0], safe='')}&run={quote(Path(owner[1]['output']).name)}" if owner else None,
                      "game_id": ((config.get("profile_settings") or {}).get("game_id") if is_avo else config.get("game_id")) or spec["game_id"],
                      "model": ((config.get("player") or {}).get("model") if is_avo else config.get("model")) or spec["model"],
-                     "condition": (config.get("condition") or spec["mode"] or "baseline") if not is_avo else None,
-                     "world_model_mode": (config.get("world_model_mode") or spec["world_model_mode"] or "not-recorded") if is_avo else None,
+                     "condition": config.get("condition") if not is_avo else None,
+                     "world_model_mode": (config.get("world_model_mode") or spec["options"].get("world_model_mode") or "not-recorded") if is_avo else None,
                      "status": status, "status_source": status_source, "container": container,
                      "needs_assistance": needs_assistance,
                      "failure_reason": assistance_reason if needs_assistance else None,
@@ -362,7 +393,7 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
                      "levels": result.get("levels_completed", transition.get("after", {}).get("levels_completed")) if not is_avo else None,
                      "actions": result.get("action_count", transition.get("action_index")) if not is_avo else None,
                      "evaluated": len(evaluations), "budget": next((v for v in (config.get("max_evaluations" if is_avo else "max_steps"),
-                                                (spec["budget"] or {}).get("max_evaluations" if is_avo else "max_steps")) if v is not None), None),
+                                                spec["options"].get("max_evaluations" if is_avo else "max_steps")) if v is not None), None),
                      "candidate": candidate or None, "modified": activity * 1000,
                      "can_continue": can_continue,
                      "href": f"/experiments/avo-lab.html?run={quote(run_id, safe='')}" if is_avo else f"/runs/detail.html?run={quote(run_id, safe='')}",
@@ -373,7 +404,7 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
     present = {r["id"] for r in rows}
     for run_id, (job_id, row, fresh) in owners.items():
         if run_id not in present:
-            public_row = {k: v for k, v in row.items() if k not in {"command", "output"}}
+            public_row = {k: v for k, v in row.items() if k not in {"command", "output", "mode"}}
             rows.append({**public_row, **normalized_row(row), "batch": job_id, "modified": 0, "status": row.get("status", "queued") if fresh or row.get("status") in {"paused", "cancelled", "failed", "completed"} else "unconfirmed", "status_source": "Batch worker", "solved": False,
                          "log_href": f"/api/workbench/experiments/log?job={quote(job_id, safe='')}&run={quote(Path(row.get('output', '')).name)}"})
     # A worker can disappear after its children have already written their final

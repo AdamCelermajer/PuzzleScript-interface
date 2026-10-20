@@ -7,7 +7,7 @@ import { GameThumb, LevelPips, SectionLabel, TierBadge, harnessColor, harnessLab
 import { RunList } from '../components/RunList'
 import { Button, Empty, ErrorBox, Loading, Notice, Toggle, cx } from '../components/ui'
 import { relativeTime } from '../lib/format'
-import { MODE_LABEL, gameHref, groupLaunches, runHref, type RunView } from '../lib/runs'
+import { distinct, gameHref, groupLaunches, runHref, type RunView } from '../lib/runs'
 import { useJobActions } from './Runs'
 
 export interface MatrixCell {
@@ -28,7 +28,6 @@ export interface ResultsMatrix {
 }
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`
-const MODES = [['', 'All modes'], ['baseline', 'Baseline'], ['baseline-plus', 'Baseline+'], ['campaign', 'AVO']] as const
 
 /** Consecutive columns of the same harness, for the grouped header. */
 export function harnessGroups(columns: ResultsMatrix['columns']): { harness: string; span: number }[] {
@@ -44,7 +43,7 @@ export function harnessGroups(columns: ResultsMatrix['columns']): { harness: str
 export function ResultsView() {
   const [params, setParams] = useSearchParams()
   const archive = params.get('archive') === '1'
-  const mode = params.get('mode') ?? ''
+  const variant = params.get('variant') ?? ''
   const set = (key: string, value: string) => {
     const next = new URLSearchParams(params)
     if (value) next.set(key, value)
@@ -52,8 +51,8 @@ export function ResultsView() {
     setParams(next, { replace: true })
   }
   const matrix = useQuery({
-    queryKey: ['results-matrix', archive, mode],
-    queryFn: ({ signal }) => api.get<ResultsMatrix>(`/results/matrix${q({ archive: archive ? 1 : 0, mode })}`, signal),
+    queryKey: ['results-matrix', archive, variant],
+    queryFn: ({ signal }) => api.get<ResultsMatrix>(`/results/matrix${q({ archive: archive ? 1 : 0, variant })}`, signal),
     refetchInterval: 20_000,
     placeholderData: keepPreviousData,
   })
@@ -81,9 +80,9 @@ export function ResultsView() {
           right={
             <div className="flex items-center gap-4">
               <div className="flex rounded-lg border border-line bg-panel p-0.5">
-                {MODES.map(([id, label]) => (
-                  <button key={id} type="button" onClick={() => set('mode', id)} className={cx('rounded-md px-2.5 py-1 text-[12px]', mode === id ? 'bg-accent text-accent-fg' : 'text-muted hover:text-fg')}>
-                    {label}
+                {['', ...distinct(catalog.views, (r) => r.variant)].map((id) => (
+                  <button key={id} type="button" onClick={() => set('variant', id)} className={cx('rounded-md px-2.5 py-1 text-[12px]', variant === id ? 'bg-accent text-accent-fg' : 'text-muted hover:text-fg')}>
+                    {id || 'All frameworks'}
                   </button>
                 ))}
               </div>
@@ -237,7 +236,7 @@ function CellPopover({ cell, byId, onClose }: { cell: MatrixCell; byId: Map<stri
           return (
             <Link key={id} to={runHref(id)} className="flex items-center gap-3 px-3 py-2 text-fg hover:bg-hover hover:no-underline">
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[12.5px]">{run ? `${MODE_LABEL[run.mode]} · ${run.effort}` : id.split('/').slice(-2).join('/')}</span>
+                <span className="block truncate text-[12.5px]">{run ? `${run.variant} · ${run.effort}` : id.split('/').slice(-2).join('/')}</span>
                 <span className="block truncate font-mono text-[10.5px] text-faint">{id.replace(/\/campaign$/, '').split('/').slice(-2).join('/')}</span>
               </span>
               {run && <LevelPips levels={run.outcome.score} total={run.outcome.total} solved={run.outcome.tone === 'solved'} size="sm" showNumber={false} />}
