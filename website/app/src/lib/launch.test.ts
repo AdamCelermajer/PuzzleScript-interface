@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Framework, Harness, PreviewRun } from '../api/types'
 import {
   DEFAULT_FORM, budgetText, buildRunRequest, estimateRuns, formProblems, frameworkChoices, groupPreview, modelFitsHarness,
-  modelProvider, withFrameworks, type LaunchForm,
+  modelProvider, recentModels, withFrameworks, type LaunchForm,
 } from './launch'
 
 const harnesses: Harness[] = [
@@ -95,5 +95,17 @@ describe('matrix preview helpers', () => {
     expect(groups.map(([g, rows]) => [g, rows.length])).toEqual([['a', 2], ['b', 1]])
     expect(budgetText(row('a', 'baseline'))).toBe('max steps 200 · notes · unlimited wall')
     expect(budgetText(row('a', 'avo'))).toBe('max evaluations 8 · world model mode final-only · 2h wall')
+  })
+})
+
+describe('recentModels', () => {
+  it('lists player and optimizer models newest first without repeats', () => {
+    const runs = [
+      { model: 'openrouter/qwen/qwen3.8-27b', optimizerModel: null, started: 1 },
+      { model: 'nanogpt/qwen/qwen3.8-flash', optimizerModel: 'openrouter/anthropic/claude-opus-4.8', started: 3 },
+      { model: 'openrouter/qwen/qwen3.8-27b', optimizerModel: null, started: 2 },
+      { model: '—', optimizerModel: null, started: 4 },
+    ]
+    expect(recentModels(runs)).toEqual(['nanogpt/qwen/qwen3.8-flash', 'openrouter/anthropic/claude-opus-4.8', 'openrouter/qwen/qwen3.8-27b'])
   })
 })

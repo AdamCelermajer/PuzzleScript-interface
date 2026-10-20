@@ -1,5 +1,5 @@
 import type { Effort, Framework, FrameworkOption, FrameworkOptions, Harness, HarnessId, PreviewRun, RunRequest } from '../api/types'
-import { optionsText } from './runs'
+import { optionsText, type RunView } from './runs'
 
 /**
  * One framework in the form. Choice and bool options hold a list: picking several values
@@ -161,6 +161,15 @@ export function modelProvider(model: string): string {
 export function modelFitsHarness(harness: Pick<Harness, 'providers' | 'models'>, model: string): boolean {
   if (harness.models.some((m) => m.id === model)) return true
   return harness.providers.includes(modelProvider(model))
+}
+
+/** Player and optimizer models of past runs, most recently started first, without repeats. */
+export function recentModels(runs: Pick<RunView, 'model' | 'optimizerModel' | 'started'>[]): string[] {
+  const seen = new Set<string>()
+  for (const run of [...runs].sort((a, b) => b.started - a.started)) {
+    for (const model of [run.model, run.optimizerModel]) if (model && model !== '—') seen.add(model)
+  }
+  return [...seen]
 }
 
 /** Stable key so the Launch button only enables for the request that was previewed. */

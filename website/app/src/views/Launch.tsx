@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api, q } from '../api/client'
-import { useBenchmarks, useFrameworks, useHarnesses } from '../api/hooks'
+import { useBenchmarks, useCatalog, useFrameworks, useHarnesses } from '../api/hooks'
 import type { Effort, Framework, FrameworkOption, Harness, LaunchResult, Preview } from '../api/types'
 import { Button, Card, ChipGroup, Collapsible, Empty, ErrorBox, Field, Input, Loading, Notice, PageHeader, Pill, Select, Toggle, cx } from '../components/ui'
 import { gameName } from '../lib/format'
 import {
   DEFAULT_FORM, budgetText, buildRunRequest, estimateRuns, formProblems, frameworkChoices, groupPreview, isMulti, modelFitsHarness,
-  providerPinApplies, requestKey, usesOptimizer, withFrameworks, type FrameworkForm, type LaunchForm, type OptionField,
+  providerPinApplies, recentModels, requestKey, usesOptimizer, withFrameworks, type FrameworkForm, type LaunchForm, type OptionField,
 } from '../lib/launch'
 import { harnessColor } from '../components/identity'
 
@@ -30,6 +30,8 @@ export function LaunchView() {
   const benchmarks = useBenchmarks()
   const frameworkList = useFrameworks()
   const frameworks = useMemo(() => frameworkList.data ?? [], [frameworkList.data])
+  const catalog = useCatalog(30000)
+  const recent = useMemo(() => recentModels(catalog.views), [catalog.views])
   const [saved, setForm] = useState<LaunchForm>(loadForm)
   const form = useMemo(() => (frameworks.length ? withFrameworks(saved, frameworks) : saved), [saved, frameworks])
   const navigate = useNavigate()
@@ -95,7 +97,7 @@ export function LaunchView() {
                   ))}
                 </div>
                 {selectedHarnesses.map((h) => (
-                  <ModelPicker key={h.id} harness={h} value={form.models} onChange={(models) => set('models', models)} />
+                  <ModelPicker key={h.id} harness={h} recent={recent} value={form.models} onChange={(models) => set('models', models)} />
                 ))}
                 {!selectedHarnesses.length && <div className="text-[12px] text-faint">Pick a harness to choose models.</div>}
                 {strayModels.length > 0 && (
@@ -261,7 +263,7 @@ function HarnessCard({ harness, on, onToggle }: { harness: Harness; on: boolean;
   )
 }
 
-function ModelPicker({ harness, value, onChange }: { harness: Harness; value: string[]; onChange: (v: string[]) => void }) {
+function ModelPicker({ harness, recent, value, onChange }: { harness: Harness; recent: string[]; value: string[]; onChange: (v: string[]) => void }) {
   const [search, setSearch] = useState('')
   const [freeOnly, setFreeOnly] = useState(false)
   const [manual, setManual] = useState('')
@@ -270,6 +272,7 @@ function ModelPicker({ harness, value, onChange }: { harness: Harness; value: st
   const needle = search.trim().toLowerCase()
   const shown = harness.models.filter((m) => (!freeOnly || m.free) && (!needle || `${m.id} ${m.label}`.toLowerCase().includes(needle)))
   const picked = value.filter((m) => modelFitsHarness(harness, m))
+  const recentHere = recent.filter((m) => modelFitsHarness(harness, m)).slice(0, 8)
   return (
     <div className="rounded-md border border-line p-2.5">
       <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -281,6 +284,16 @@ function ModelPicker({ harness, value, onChange }: { harness: Harness; value: st
           </span>
         ))}
       </div>
+      {(big || harness.manual_model_ids) && recentHere.length > 0 && (
+        <div className="mb-2 flex flex-wrap items-center gap-1.5">
+          <span className="text-[11.5px] text-faint">Recent</span>
+          {recentHere.map((m) => (
+            <button key={m} type="button" onClick={() => toggle(m)} className={cx('h-7 rounded-md border px-2 font-mono text-[11.5px]', value.includes(m) ? 'border-accent bg-accent-soft text-accent' : 'border-line-strong text-muted hover:text-fg')}>
+              {m}
+            </button>
+          ))}
+        </div>
+      )}
       {harness.model_catalogs?.filter((c) => !c.available || c.stale).map((c) => (
         <div key={c.provider} className="mb-2"><Notice tone="warn">{c.provider} catalog {c.available ? 'is stale' : 'unavailable'}{c.warning ? `: ${c.warning}` : ''}</Notice></div>
       ))}
