@@ -1,4 +1,4 @@
-import type { RunView } from '../lib/runs'
+import { unitLabel, type RunView } from '../lib/runs'
 import type { Outcome, ProcessStatus } from '../lib/status'
 import { LevelPips, StatusDot } from './identity'
 
@@ -17,9 +17,9 @@ export function ProgressText({ run }: { run: RunView }) {
   const { used, budget, unit } = run.progress
   if (used === null && budget === null) return <span className="text-faint">–</span>
   return (
-    <span className="whitespace-nowrap text-[12px] tabular-nums text-muted" title={unit}>
+    <span className="whitespace-nowrap text-[12px] tabular-nums text-muted" title={run.progress.detail ?? unit}>
       {used ?? '–'}
-      {budget ? <span className="text-faint">/{budget}</span> : ''} <span className="text-[11px] text-faint">{unit === 'actions' ? 'actions' : 'evals'}</span>
+      {budget ? <span className="text-faint">/{budget}</span> : ''} <span className="text-[11px] text-faint">{unitLabel(unit)}</span>{run.progress.detail ? <span className="text-[11px] text-faint"> · {run.progress.detail}</span> : null}
     </span>
   )
 }

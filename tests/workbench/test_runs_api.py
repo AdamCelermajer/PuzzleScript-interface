@@ -542,6 +542,7 @@ def test_harness2_record_lists_rollouts_and_catalog_keeps_the_optimizer(tmp_path
     assert [r["label"] for r in record["rollouts"]] == ["base1"]
     assert record["rollouts"][0]["result"]["levels_completed"] == 1 and record["adoption"] is None
     assert row["optimizer_model"] == "openrouter/anthropic/claude-opus-4.8"
+    assert row["rollouts"] == {"done": 1, "total": 5, "current": None, "current_actions": None}
 
 
 def test_archive_moves_runs_without_touching_their_files(tmp_path):

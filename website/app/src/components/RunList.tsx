@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useGameTitle } from '../api/hooks'
 import type { CatalogJob } from '../api/types'
 import { relativeTime, shortTime } from '../lib/format'
-import { modelParts, runHref, type Launch, type RunView } from '../lib/runs'
+import { modelParts, runHref, unitLabel, type Launch, type RunView } from '../lib/runs'
 import { processStatus } from '../lib/status'
 import { GameThumb, HarnessChip, LevelPips, RunId, StatusDot } from './identity'
 import { Button, cx } from './ui'
@@ -100,9 +100,9 @@ function RunRow({ run, job, indent, selectable, selected, onSelect, onResume, on
         <span className="block truncate text-[13px]">{name}</span>
         <span className="block truncate text-[11px] text-faint">{[provider, run.effort].filter((x) => x && x !== '—').join(' · ')}</span>
       </span>
-      <span className="text-[12px] whitespace-nowrap tabular-nums text-muted" title={`${progress.used ?? '?'} of ${progress.budget ?? '?'} ${progress.unit}`}>
+      <span className="text-[12px] whitespace-nowrap tabular-nums text-muted" title={`${progress.used ?? '?'} of ${progress.budget ?? '?'} ${progress.unit}${progress.detail ? ` · ${progress.detail}` : ''}`}>
         {progress.used === null && !progress.budget ? <span className="text-faint">–</span> : (
-          <>{progress.used ?? '–'}{progress.budget ? <span className="text-faint">/{progress.budget}</span> : null} <span className="text-[11px] text-faint">{progress.unit === 'actions' ? 'act' : 'eval'}</span></>
+          <>{progress.used ?? '–'}{progress.budget ? <span className="text-faint">/{progress.budget}</span> : null} <span className="text-[11px] text-faint">{unitLabel(progress.unit, true)}</span></>
         )}
       </span>
       <span className="min-w-0">

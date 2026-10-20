@@ -65,6 +65,8 @@ export interface CatalogRun {
   resumable?: boolean
   /** Moved to the archive by the user (output/workbench/archived.json). */
   archived?: boolean
+  /** Harness²: finished and planned rollouts, and the one playing now. */
+  rollouts?: { done: number; total: number; current: string | null; current_actions: number | null } | null
   log_href?: string | null
   game_id?: string | null
   condition?: string | null

@@ -24,7 +24,7 @@ export interface RunView {
   archived: boolean
   process: ProcessStatus
   outcome: Outcome
-  progress: { used: number | null; budget: number | null; unit: 'actions' | 'evaluations' }
+  progress: { used: number | null; budget: number | null; unit: ProgressUnit; detail?: string }
   worldModel: string | null
 }
 
@@ -55,6 +55,11 @@ export function optionsText(options: FrameworkOptions | null | undefined, maxWal
   return [...parts, wall].filter(Boolean).join(' · ')
 }
 
+export type ProgressUnit = 'actions' | 'evaluations' | 'rollouts'
+/** Short (table) and long (header) labels for a progress unit. */
+export const unitLabel = (unit: ProgressUnit, short = false) =>
+  unit === 'actions' ? (short ? 'act' : 'actions') : unit === 'evaluations' ? (short ? 'eval' : 'evals') : 'rollouts'
+
 export function normalizeRun(row: CatalogRun): RunView {
   const { framework, variant } = runIdentity(row)
   const campaign = row.kind === 'avo'
@@ -77,7 +82,10 @@ export function normalizeRun(row: CatalogRun): RunView {
     archived: row.archived === true,
     process: processStatus(row),
     outcome: outcome(row),
-    progress: campaign
+    progress: row.rollouts
+      ? { used: row.rollouts.done, budget: row.rollouts.total, unit: 'rollouts',
+          detail: row.rollouts.current ? `${row.rollouts.current} playing · ${row.rollouts.current_actions ?? 0} actions` : undefined }
+      : campaign
       ? { used: row.evaluated ?? null, budget: row.budget ?? numberOption(row.options, 'max_evaluations'), unit: 'evaluations' }
       : { used: row.actions ?? null, budget: row.budget ?? numberOption(row.options, 'max_steps'), unit: 'actions' },
     worldModel: campaign ? row.world_model_mode ?? null : null,

@@ -10,7 +10,7 @@ import { OutcomeCell, ProcessPill } from '../components/status'
 import { Button, Card, Empty, ErrorBox, Input, Loading, Notice, PageHeader, Pill, Select, cx } from '../components/ui'
 import { bestSoFar, firstSuccess, levelCurve } from '../lib/compare'
 import { dateTime, duration, gameName, shortId } from '../lib/format'
-import { distinct, jobLabel, runHref, type RunView } from '../lib/runs'
+import { distinct, jobLabel, runHref, unitLabel, type RunView } from '../lib/runs'
 
 const shortLabel = (r: RunView) => `${r.model.split('/').at(-1)} · ${r.effort}`
 const seriesLabel = (r: RunView) => `${r.variant} · ${r.harness} · ${r.model.split('/').at(-1)} · ${r.effort}${r.worldModel && r.worldModel !== 'not-recorded' ? ` · ${r.worldModel}` : ''}`
@@ -159,7 +159,7 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
                     <td className="max-w-64 truncate">{r.model} <span className="text-faint">· {r.effort}</span></td>
                     <td><OutcomeCell outcome={r.outcome} campaign={r.kind === 'avo'} /></td>
                     <td><ProcessPill status={r.process} /></td>
-                    <td className="whitespace-nowrap text-[12.5px] tabular-nums text-muted">{r.progress.used ?? '—'}{r.progress.budget ? ` / ${r.progress.budget}` : ''} {r.progress.unit === 'actions' ? 'act' : 'eval'}</td>
+                    <td className="whitespace-nowrap text-[12.5px] tabular-nums text-muted">{r.progress.used ?? '—'}{r.progress.budget ? ` / ${r.progress.budget}` : ''} {unitLabel(r.progress.unit, true)}</td>
                     <td className="text-[12px]">{r.kind === 'avo' ? (first ? `eval ${first}` : '—') : r.outcome.tone === 'solved' ? `${r.progress.used ?? '—'} act` : '—'}</td>
                     <td className="text-[12px] text-muted">{r.kind === 'avo' ? duration(firstEval?.score.search_session_elapsed_seconds ?? lastEval?.score.search_session_elapsed_seconds) : '—'}</td>
                   </tr>

@@ -281,6 +281,18 @@ def result_inputs(config: dict, evaluations: list[dict], finalized: bool) -> dic
             "finalized": finalized}
 
 
+def harness2_rollouts(path: Path, options: dict) -> dict:
+    """Harness² runs one direct player per rollout under rollouts/<label>: 4k selection rollouts + 1 fresh final run."""
+    started = sorted((p for p in (path / "rollouts").glob("*") if (p / "run_config.json").is_file()),
+                     key=lambda p: (p / "run_config.json").stat().st_mtime)
+    done = [p for p in started if read_json(p / "result.json").get("status") == "completed"]
+    current = next((p for p in reversed(started) if p not in done), None)
+    k = options.get("k") if isinstance(options.get("k"), int) else 1
+    return {"done": len(done), "total": 4 * k + 1, "current": current.name if current else None,
+            "current_actions": last_record(current / "transitions.jsonl").get("action_index") if current else None,
+            "paths": [p / name for p in started for name in ("transitions.jsonl", "result.json")]}
+
+
 ARCHIVED = "output/workbench/archived.json"
 
 
@@ -381,12 +393,13 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
             terminal_children[run_id] = "failed"
         transition = last_record(path / "transitions.jsonl") if not is_avo else {}
         spec = normalized_spec(path, config, is_avo)
+        rollouts = harness2_rollouts(path, spec["options"]) if spec["framework"] == "harness2" else None
         fitness = [e["fitness"] for e in evaluations if isinstance(e.get("fitness"), (int, float))]
         solved = result.get("success" if is_avo else "solved") is True or any(e.get("success") is True for e in evaluations)
         activity = modified([path / "run_config.json", path / "evolution_config.json", path / "lineage.json",
                              path / "result.json", path / "evolution_summary.json", path / "transitions.jsonl",
                              current / "research/evidence.jsonl", current / "evaluation/evidence.jsonl",
-                             path / "optimizer_analysis/conversation.jsonl"])
+                             path / "optimizer_analysis/conversation.jsonl", *(rollouts["paths"] if rollouts else [])])
         batch = owner[0] if owner else ("/".join(run_id.split("/")[:2]) if run_id.startswith("output/avo-") else str(path.parent.relative_to(root)).replace("\\", "/"))
         can_resume = bool(is_avo and owner and owner[1].get("status") == "failed"
                           and not recovery.get("resumed_as") and not container and not needs_assistance)
@@ -419,6 +432,7 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
                      "evaluated": len(evaluations), "budget": next((v for v in (config.get("max_evaluations" if is_avo else "max_steps"),
                                                 spec["options"].get("max_evaluations" if is_avo else "max_steps")) if v is not None), None),
                      "candidate": candidate or None, "modified": activity * 1000,
+                     "rollouts": {k: v for k, v in rollouts.items() if k != "paths"} if rollouts else None,
                      "can_continue": can_continue,
                      "href": f"/experiments/avo-lab.html?run={quote(run_id, safe='')}" if is_avo else f"/runs/detail.html?run={quote(run_id, safe='')}",
                      "config": config if not is_avo else {"player": config.get("player"), "optimizer_model": config.get("optimizer_model")},
