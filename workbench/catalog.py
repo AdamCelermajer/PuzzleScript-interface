@@ -376,6 +376,8 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
                      "framework": spec["framework"], "variant": spec["variant"], "options": spec["options"],
                      "max_wall_seconds": spec["max_wall_seconds"], "harness": spec["harness"], "effort": spec["effort"],
                      "optimizer_effort": spec["optimizer_effort"],
+                     # Frameworks without a run_config.json (Harness²) record the optimizer only in run_spec.json.
+                     "optimizer_model": config.get("optimizer_model") or spec.get("optimizer_model"),
                      "provider": spec["provider"], "spec_source": spec["spec_source"],
                      "continued_from": spec["continued_from"],
                      "resumable": (can_resume or can_continue) and spec["harness"] in HARNESS_IDS,

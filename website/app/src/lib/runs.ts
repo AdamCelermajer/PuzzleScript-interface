@@ -65,7 +65,7 @@ export function normalizeRun(row: CatalogRun): RunView {
     variant,
     harness: row.harness || row.agent_backend || 'codex',
     model: row.model || '—',
-    optimizerModel: campaign ? row.optimizer_model ?? null : null,
+    optimizerModel: row.optimizer_model ?? null,
     effort: row.effort || (row.config as { reasoning_effort?: string } | undefined)?.reasoning_effort || '—',
     game: row.game_id || '—',
     batch: row.batch || '',

@@ -261,6 +261,9 @@ export interface RunRecord {
   latest_transition: Transition
   agent_events: { total: number; invalid_lines: number; truncated: boolean; events: AgentEvent[] } | null
   files: string[]
+  /** Harness²: one direct-player run per rollout, in start order. */
+  rollouts?: { label: string; result: Record<string, unknown> | null; latest_transition: Transition }[]
+  adoption?: { adopted_label?: string; base_levels?: (number | null)[]; best_of_pool_levels?: number } | null
 }
 
 // ---- AVO console (/avo/*)

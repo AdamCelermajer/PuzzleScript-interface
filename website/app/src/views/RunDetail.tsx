@@ -10,6 +10,7 @@ import { dateTime, gameName, relativeTime } from '../lib/format'
 import { gameHref, normalizeRun, optionsText, runHref, type RunView } from '../lib/runs'
 import { BaselineDetail } from './BaselineDetail'
 import { CampaignDetail } from './CampaignDetail'
+import { Harness2Detail } from './Harness2Detail'
 
 /** One view for every mode: header from the catalog row, body by run kind. */
 export function RunDetailView() {
@@ -30,7 +31,7 @@ export function RunDetailView() {
           <Notice tone="warn">This run is not in the current catalog (it may have no artifacts yet). Showing saved artifacts only.</Notice>
         </div>
       )}
-      {campaign ? <CampaignDetail runId={id} live={run?.process.tone === 'running'} /> : <BaselineDetail runId={id} live={run?.process.tone === 'running'} notes={run ? run.raw.options?.notes !== false : true} />}
+      {campaign ? <CampaignDetail runId={id} live={run?.process.tone === 'running'} /> : run?.framework === 'harness2' ? <Harness2Detail runId={id} live={run.process.tone === 'running'} /> : <BaselineDetail runId={id} live={run?.process.tone === 'running'} notes={run ? run.raw.options?.notes !== false : true} />}
     </div>
   )
 }
@@ -77,7 +78,7 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
       {(resume.error || stop.error) && <ErrorBox error={resume.error ?? stop.error} />}
       {raw.failure_reason && <Notice tone="warn">{raw.failure_reason}</Notice>}
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[12.5px] md:grid-cols-4 xl:grid-cols-6">
-        {run.kind === 'avo' && <Fact label="Optimizer" value={<span className="break-all">{run.optimizerModel ?? "—"} · {raw.optimizer_effort ?? "—"}</span>} />}
+        {run.optimizerModel && <Fact label="Optimizer" value={<span className="break-all">{run.optimizerModel ?? "—"} · {raw.optimizer_effort ?? "—"}</span>} />}
         {run.worldModel && <Fact label="World model" value={run.worldModel} />}
         <Fact label="Progress" value={<ProgressText run={run} />} />
         <Fact label="Wall budget" value={raw.max_wall_seconds === 0 ? 'unlimited' : raw.max_wall_seconds ? `${(raw.max_wall_seconds / 3600).toFixed(1)}h` : '—'} />

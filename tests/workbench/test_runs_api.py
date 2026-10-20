@@ -526,3 +526,19 @@ def test_notes_and_pseudocode_saves_are_allowlisted(tmp_path):
     assert code.json() == {"saved": True, "file": "entrypoint.md"}
     assert (tmp_path / "docs/pseudocode/entrypoint.md").read_text() == "# entry"
     assert unlisted.status_code == 403
+
+
+def test_harness2_record_lists_rollouts_and_catalog_keeps_the_optimizer(tmp_path):
+    run = "output/workbench/20261020T104612-abc/run-0001"
+    put(tmp_path, f"{run}/run_spec.json", {"schema": "run-spec-v2", "framework": "harness2", "options": {"k": 1},
+                                           "harness": "opencode", "model": "nanogpt/qwen/qwen3.8-flash", "effort": "medium",
+                                           "optimizer_model": "openrouter/anthropic/claude-opus-4.8", "optimizer_effort": "high",
+                                           "game_id": "ps_modality-v1", "max_wall_seconds": 0})
+    put(tmp_path, f"{run}/rollouts/base1/run_config.json", {"model": "nanogpt/qwen/qwen3.8-flash"})
+    put(tmp_path, f"{run}/rollouts/base1/result.json", {"status": "completed", "levels_completed": 1, "action_count": 40})
+    with client(tmp_path) as api:
+        record = api.get("/api/workbench/record", params={"run": run}).json()
+        row = next(r for r in api.get("/api/workbench/catalog").json()["runs"] if r["id"] == run)
+    assert [r["label"] for r in record["rollouts"]] == ["base1"]
+    assert record["rollouts"][0]["result"]["levels_completed"] == 1 and record["adoption"] is None
+    assert row["optimizer_model"] == "openrouter/anthropic/claude-opus-4.8"

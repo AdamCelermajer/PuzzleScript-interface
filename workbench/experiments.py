@@ -584,12 +584,18 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
             if not note.is_symlink():
                 notes.append(note.relative_to(path).as_posix())
         events = agent_events_path(path)
+        # Harness² keeps one direct-player run per rollout (base1, inv1, dom1, agg1, final).
+        rollouts = sorted((p for p in (path / "rollouts").glob("*") if (p / "run_config.json").is_file()),
+                          key=lambda p: (p / "run_config.json").stat().st_mtime)
         return {"id": run, "config": config, "run_spec": spec or None,
                 "normalized": normalized_spec(path, config, False), "result": read_json(path / "result.json"),
                 "error": read_json(path / "error.json"), "latest_transition": last_record(path / "transitions.jsonl"),
                 # Normalized harness events when present; otherwise the legacy session files above.
                 "agent_events": read_agent_events(events, events_limit) if events else None,
-                "files": [name for name in names + notes if (path / name).is_file()]}
+                "files": [name for name in names + notes if (path / name).is_file()],
+                "rollouts": [{"label": p.name, "result": read_json(p / "result.json") or None,
+                              "latest_transition": last_record(p / "transitions.jsonl")} for p in rollouts],
+                "adoption": read_json(path / "adoption.json") or None}
 
     @router.get("/experiments/log")
     def job_log(job: str = Query(...), run: str = Query(...)):
