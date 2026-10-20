@@ -10,10 +10,10 @@ A research framework for LLM agents that learn puzzle game mechanics by observin
 
 ## Repo Layout
 
-The maintained workflows are the frameworks `avo` (campaigns), `baseline` (direct player; with `--notes` it is shown as Baseline+), and `harness2` (score-aware Harness²: a coach edits the harness of an agent that plays through a game command). The browser homepage is a run catalog, not the historical rule agent.
+The maintained workflows are the frameworks `avo` (campaigns), `baseline` (no outer method; `--driver controller|agent` sets who drives the game, `--notes` makes it Baseline+), and `harness2` (score-aware Harness²: a coach edits the harness of an agent that plays through a game command). The browser homepage is a run catalog, not the historical rule agent.
 
 - `website/app/` and `workbench/` — the workbench single-page app (React) and its FastAPI backend: runs, launch, benchmarks, diary, tools. The older `website/` pages are kept on disk but no longer served.
-- `frameworks/` — agent methods, one folder each (`baseline/`: persistent direct player, notes option, continuation and batches; `avo/`: AVO research/evolution, prompts and evaluation), declared through `Framework`/`Option` in `base.py` and listed in `registry.py`. Adding a framework = one folder with `framework.py` + one line in `registry.py`. See `frameworks/README.md`.
+- `frameworks/` — agent methods, one folder each (`baseline/`: the player without an outer method, `run.py` when our controller drives and `agent.py` when the agent drives through `game.py`, notes option, continuation and batches; `avo/`: AVO research/evolution, prompts and evaluation), declared through `Framework`/`Option` in `base.py` and listed in `registry.py`. Adding a framework = one folder with `framework.py` + one line in `registry.py`. See `frameworks/README.md`.
 - `harnesses/` — agent harnesses (codex, claude-code, opencode, antigravity, bare) and `python -m harnesses.launch --framework <id> --harness <id> ...`, which runs every run in one Docker container. See `harnesses/README.md`.
 - Run outputs: new CLI runs default to `output/<framework>/<run>`, workbench launches to `output/workbench/<job>/run-NNNN`; older runs stay in `avo/output/` and `studies/codex_agent/output/` (archives the catalog still reads).
 

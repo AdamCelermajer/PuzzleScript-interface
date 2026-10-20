@@ -93,7 +93,7 @@ def test_backend_url_rewrites_host_loopback():
 def test_run_spec_records_framework_and_options():
     spec = launch.run_spec(options(), BASELINE)
     assert spec["schema"] == "run-spec-v2" and spec["framework"] == "baseline"
-    assert spec["options"] == {"max_steps": 3, "notes": True} and spec["max_wall_seconds"] == 0
+    assert spec["options"] == {"max_steps": 3, "notes": True, "driver": "controller"} and spec["max_wall_seconds"] == 0
     assert spec["optimizer_model"] is None and spec["continued_from"] is None
     campaign = launch.run_spec(options(framework="avo", harness="opencode", model="openrouter/qwen/qwen3.8-27b",
                                        max_evaluations=2, research_moves=30, max_steps=None, notes=None), AVO)
@@ -201,7 +201,7 @@ def test_dry_run_prints_command_without_writing(tmp_path, capsys, monkeypatch):
     printed = json.loads(capsys.readouterr().out)
     assert code == 0 and not (tmp_path / "run").exists()
     assert printed["run_spec"]["backend_url"] == "http://host.docker.internal:8000"
-    assert printed["run_spec"]["options"] == {"max_steps": 2, "notes": True}
+    assert printed["run_spec"]["options"] == {"max_steps": 2, "notes": True, "driver": "controller"}
     assert printed["command"][-3:] == ["harnesses.entry", "--spec", "/results/run_spec.json"]
     assert "--env" in printed["command"] and "OPENROUTER_API_KEY" in printed["command"]
 
@@ -437,3 +437,17 @@ def test_cli_agent_raises_when_the_cli_fails_without_working(tmp_path, monkeypat
     agent = CliAgent(AgentConfig(model="gpt-5.6-sol", harness="codex", prompt_path=prompt, analysis_dir=tmp_path / "a"))
     with pytest.raises(HarnessError, match="not logged in"):
         agent.run(Gateway(), tmp_path / "ws", tool_server=SimpleNamespace(start=lambda: None, stop=lambda: None))
+
+
+def test_baseline_driver_agent_runs_the_agent_player():
+    spec = {"framework": "baseline", "harness": "opencode", "model": "nanogpt/qwen/qwen3.8-27b:thinking", "effort": "medium",
+            "game_id": "ps_modality-v1", "backend_url": "http://host.docker.internal:8000", "provider": "",
+            "max_wall_seconds": 0, "options": BASELINE.check_options({"driver": "agent", "notes": True, "max_steps": 50})}
+    argv = BASELINE.entry(spec, False, Path("/results"), Path("/parent"))
+    assert argv[0] == "frameworks.baseline.agent" and argv[-1] == "--notes" and argv[argv.index("--max-steps") + 1] == "50"
+    assert BASELINE.entry({**spec, "options": {**spec["options"], "driver": "controller"}}, False,
+                          Path("/results"), Path("/parent"))[0] == "frameworks.baseline.run"
+    assert BASELINE.variant_label(spec["options"]) == "Baseline+ · agent"
+    assert BASELINE.variant_label({"notes": False}) == "Baseline"  # runs recorded before the driver option
+    with pytest.raises(ValueError, match="cannot be continued"):
+        BASELINE.entry({**spec, "continued_from": "/runs/parent"}, False, Path("/results"), Path("/parent"))

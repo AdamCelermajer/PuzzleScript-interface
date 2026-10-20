@@ -7,8 +7,8 @@ from types import SimpleNamespace
 
 from client.arc.types import GameAction, GameState
 
-from frameworks.harness2 import player
-from frameworks.harness2.player import GameServer, play
+from frameworks.baseline import agent as player
+from frameworks.baseline.agent import GameServer, play
 
 PNG = "data:image/png;base64," + base64.b64encode(b"\x89PNG fake").decode()
 
@@ -149,3 +149,22 @@ def test_provider_hiccups_are_retried_and_the_report_still_arrives(tmp_path, mon
                   max_steps=10, max_wall_seconds=0, harness_dir=harness)
     assert result["status"] == "completed" and result["levels_completed"] == 2
     assert (tmp_path / "out" / "world_model.md").read_text() == "ACTION4 moves right."
+
+
+def test_notes_option_adds_the_notes_instruction_and_mirrors_notes_live(tmp_path, monkeypatch):
+    class NoteTaker(ScriptedSession):
+        def turn(self, instruction, images=(), timeout=None):
+            if not instruction.startswith(("The game session has ended", "Last task")):
+                (self.workspace / "notes").mkdir(exist_ok=True)
+                (self.workspace / "notes" / "strategy.md").write_text("ACTION4 = right")
+            return super().turn(instruction, images, timeout)
+
+    harness = tmp_path / "harness"
+    harness.mkdir()
+    (harness / "AGENTS.md").write_text("Coach advice")
+    session = NoteTaker([[("do", "ACTION4")]])
+    monkeypatch.setattr(player, "create_session", lambda harness_id: session)
+    play(Corridor(), tmp_path / "out", harness="opencode", model="m", effort="low", provider="",
+         max_steps=10, max_wall_seconds=0, harness_dir=harness, notes=True)
+    assert "notes/strategy.md" in session.system_prompt and "notes/strategy.md" not in player.SYSTEM_PROMPT
+    assert (tmp_path / "out" / "workspace" / "notes" / "strategy.md").read_text() == "ACTION4 = right"

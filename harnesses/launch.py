@@ -88,7 +88,7 @@ def container_backend_url(url: str) -> str:
 
 
 def run_spec(options: argparse.Namespace, framework: Framework) -> dict[str, Any]:
-    given = {option.name: getattr(options, option.name) for option in framework.options}
+    given = {option.name: getattr(options, option.name, None) for option in framework.options}
     continue_from = getattr(options, "continue_from", "")
     return {
         "schema": "run-spec-v2", "framework": framework.id, "options": framework.check_options(given),

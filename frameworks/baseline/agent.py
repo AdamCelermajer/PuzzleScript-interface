@@ -1,8 +1,10 @@
-"""Harness²'s player: one coding-agent session that drives the game itself.
+"""Baseline with ``driver=agent``: one coding-agent session that drives the game itself.
 
-As in the paper, the agent gets one task and one working folder that persists for the whole
-rollout; the candidate harness (AGENTS.md, .opencode/, scripts/) is placed there first. The game
-is a command in that folder, ``python game.py look | do ACTION | reset``, answered by a small
+The other driver (``run.py``, ``driver=controller``) sends one frame per call and gets one action
+back. Here, as in the Harness² paper, the agent gets one task and one working folder that persists
+for the whole run (Harness² places its candidate harness, AGENTS.md, .opencode/, scripts/, there
+first; this is Harness²'s player). With ``--notes`` it is also told to keep notes/strategy.md, the
+Baseline+ instruction. The game is a command in that folder, ``python game.py look | do ACTION | reset``, answered by a small
 server in this process: it owns the game session and the action budget, and records every move
 in the baseline shape (transitions.jsonl, frames/, result.json) so the run page replays it.
 If the agent ends its turn with actions left, it is told to continue in the same session; at
@@ -63,6 +65,10 @@ The game is played only through this command in your folder:
 Actions are opaque names; learn what they do from what changes. Every `do` and `reset` uses one action from your budget. Complete as many levels as you can within the budget. Your own scripts may call `python game.py` too.
 
 Learn about the game only through game.py. Do not search this machine, other folders or the network for the game's files, source code, solutions or server; that is not playing the game."""
+
+NOTES_PROMPT = """
+
+Keep your notes in notes/ in your folder. Before your first game action, write notes/strategy.md with your initial observations, hypotheses and plan. Read it before deciding what to do next, and update it whenever evidence confirms or rejects a hypothesis, your plan changes, you reach a dead end, or a level changes. Keep confirmed facts separate from hypotheses."""
 
 REPORT_PROMPT = (
     "The game session has ended ({reason}; levels completed {levels}/{total}). Do not use game.py any more. "
@@ -168,6 +174,9 @@ class GameServer:
         with (self.output / "transitions.jsonl").open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(record) + "\n")
         self._save_picture()
+        # Mirror the agent's notes so the run page shows them while it plays (as baseline+ does).
+        if (self.workspace / "notes").is_dir():
+            shutil.copytree(self.workspace / "notes", self.output / "workspace" / "notes", dirs_exist_ok=True)
         if self.frame.levels_completed > before.levels_completed:
             what = f"LEVEL COMPLETED ({self.frame.levels_completed}/{self.frame.win_levels}). The grid below is the next level."
         elif len(before_grid) != len(after_grid) or (before_grid and len(before_grid[0]) != len(after_grid[0])):
@@ -220,16 +229,17 @@ def _turn(session, instruction: str, timeout: float | None):
 
 
 def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provider: str, max_steps: int,
-         max_wall_seconds: float, harness_dir: Path | None, max_turns: int = 40) -> dict:
+         max_wall_seconds: float, harness_dir: Path | None, notes: bool = False, max_turns: int = 40) -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
-    workspace = Path(tempfile.mkdtemp(prefix="h2-player-"))
+    workspace = Path(tempfile.mkdtemp(prefix="agent-player-"))
     if harness_dir is not None:
         shutil.copytree(harness_dir, workspace, dirs_exist_ok=True)
     server = GameServer(env, workspace, output_dir, max_steps, max_wall_seconds).start()
     session = create_session(harness)
     turns, idle, error = 0, 0, ""
     try:
-        session.start(workspace, SYSTEM_PROMPT, model, effort, "player", output_dir, provider=provider)
+        session.start(workspace, SYSTEM_PROMPT + (NOTES_PROMPT if notes else ""), model, effort, "player", output_dir,
+                      provider=provider)
         instruction = (f"Play the game now. You have {max_steps} actions. Start with `python game.py look`, "
                        "then keep playing until the game is solved or the actions run out.")
         while not server.finished and turns < max_turns and idle < IDLE_TURNS:
@@ -280,19 +290,21 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--backend-url", required=True)
     parser.add_argument("--max-steps", type=int, default=200)
     parser.add_argument("--max-wall-seconds", type=int, default=0)
-    parser.add_argument("--harness-dir", type=Path)
+    parser.add_argument("--harness-dir", type=Path, help="Files placed in the folder before the session (Harness²).")
+    parser.add_argument("--notes", action="store_true", help="Tell the agent to keep notes/strategy.md (Baseline+).")
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     (output / "run_config.json").write_text(json.dumps({
-        "executor": "harness2-agent", "harness": args.harness,
+        "driver": "agent", "notes": args.notes, "condition": "baseline-plus" if args.notes else "baseline",
+        "harness": args.harness,
         "provider": args.provider, "model": args.model, "reasoning_effort": args.effort, "game_id": args.game_id,
         "backend_url": args.backend_url, "max_steps": args.max_steps, "max_wall_seconds": args.max_wall_seconds,
     }, indent=2), encoding="utf-8")
     result = play(ArcadeEnv(game_id=args.game_id, backend_url=args.backend_url), output, harness=args.harness,
                   model=args.model, effort=args.effort, provider=args.provider, max_steps=args.max_steps,
-                  max_wall_seconds=args.max_wall_seconds, harness_dir=args.harness_dir)
+                  max_wall_seconds=args.max_wall_seconds, harness_dir=args.harness_dir, notes=args.notes)
     print(f"levels_completed={result['levels_completed']} actions={result['action_count']} reason={result['reason']}")
 
 

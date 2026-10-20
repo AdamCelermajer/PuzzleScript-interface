@@ -6,7 +6,7 @@ Docker container by `python -m harnesses.launch`.
 
 | id | folder | what it is | options | restart |
 |---|---|---|---|---|
-| `baseline` | `baseline/` | the coding agent plays directly, one action per turn | `max_steps`, `notes` (on = "Baseline+") | `--continue-from PARENT` into a new directory |
+| `baseline` | `baseline/` | the coding agent plays the game itself, no outer method; `driver` sets who drives it: `controller` (`run.py`, we send one frame per call and get one action) or `agent` (`agent.py`, the agent plays through `python game.py` in a folder that persists) | `max_steps`, `notes` (on = "Baseline+"), `driver` | `--continue-from PARENT` into a new directory (controller only) |
 | `avo` | `avo/` | an optimizer agent evolves a player's strategy; each candidate's `solver.py` is scored by a fresh run | `max_evaluations`, `research_moves`, `solver_moves`, `world_model_mode`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
 | `harness2` | `harness2/` | Harness²: a coach edits the harness files (AGENTS.md, skills, scripts) of an agent that plays through `game.py` in its own folder, from run outcomes; the kept harness is re-run fresh | `k`, `recursion`, `max_steps`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
 
@@ -37,7 +37,7 @@ write `result.json` in the baseline shape (`status`, `solved`, `levels_completed
 Uses Google Research's [Harness²](https://github.com/google-research/harness2), pinned to
 `1cfe254e8d25b15f37048c3730134686abe60335`. One task is one PuzzleScript game.
 
-The player (`player.py`) is set up as in the paper: one OpenCode session with one task and
+The player is Baseline with `driver=agent` (`baseline/agent.py`, notes off), set up as in the paper: one OpenCode session with one task and
 one working folder that persists for the whole rollout. It plays only through
 `python game.py look | do ACTION | reset` in that folder; a small server in the player
 process owns the game session and the action budget and records every move in the
