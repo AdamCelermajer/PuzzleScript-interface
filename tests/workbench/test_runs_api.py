@@ -560,3 +560,12 @@ def test_archive_moves_runs_without_touching_their_files(tmp_path):
         assert archived(api) is False
         assert api.post("/api/workbench/runs/archive", json={"runs": ["../../etc"]}).status_code == 400
         assert api.post("/api/workbench/runs/archive", json={"runs": []}).status_code == 400
+
+
+def test_record_reads_a_harness2_agent_rollout(tmp_path):
+    rollout = "output/workbench/20261020T142237-x/run-0001/rollouts/base1"
+    put(tmp_path, f"{rollout}/run_config.json", {"player": "harness2-agent", "model": "nanogpt/qwen/qwen3.8-27b:thinking",
+                                                 "game_id": "ps_modality-v1"})
+    with client(tmp_path) as api:
+        response = api.get("/api/workbench/record", params={"run": rollout})
+    assert response.status_code == 200 and response.json()["normalized"]["model"] == "nanogpt/qwen/qwen3.8-27b:thinking"

@@ -273,7 +273,7 @@ def main(argv: list[str] | None = None) -> None:
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     (output / "run_config.json").write_text(json.dumps({
-        "player": "harness2-agent", "harness": args.harness,
+        "executor": "harness2-agent", "harness": args.harness,
         "provider": args.provider, "model": args.model, "reasoning_effort": args.effort, "game_id": args.game_id,
         "backend_url": args.backend_url, "max_steps": args.max_steps, "max_wall_seconds": args.max_wall_seconds,
     }, indent=2), encoding="utf-8")

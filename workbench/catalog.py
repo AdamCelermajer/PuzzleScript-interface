@@ -155,7 +155,8 @@ def agent_identity(config: dict) -> dict:
     backend = config.get("agent_backend", "codex")
     backend = ("opencode" if backend in {"opencode", "OpenCodeAgent"}
                else config.get("harness") if config.get("harness") in {"tools", "raw"} else "codex")
-    model = (config.get("player") or {}).get("model", config.get("model"))
+    player = config.get("player")  # AVO records its player settings here; other runs may not
+    model = player.get("model", config.get("model")) if isinstance(player, dict) else config.get("model")
     outer = config.get("optimizer_model")
     def provider(value):
         return value.split("/", 1)[0] if value and "/" in value and (backend == "opencode" or value.startswith(("openrouter/", "nanogpt/"))) else "openai"
