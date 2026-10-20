@@ -579,3 +579,27 @@ def test_a_live_ps_agent_container_marks_a_non_avo_run_running(tmp_path):
                                                     "game_id": "ps_modality-v1", "max_wall_seconds": 0})
     row = next(r for r in snapshot(tmp_path, {str(folder.resolve()).casefold(): "ps-agent-abc"})["runs"] if r["id"] == run)
     assert row["status"] == "running" and row["container"] == "ps-agent-abc"
+
+
+def test_harness2_record_lists_coach_sessions_and_edits(tmp_path):
+    run = "output/workbench/20261020T142237-x/run-0001"
+    put(tmp_path, f"{run}/run_spec.json", {"schema": "run-spec-v2", "framework": "harness2", "options": {"k": 1},
+                                           "harness": "opencode", "model": "m", "effort": "low", "game_id": "g",
+                                           "max_wall_seconds": 0})
+    session = f"{run}/improver/sessions/harness2-prop-abc"
+    put(tmp_path, f"{session}/session.json", {"model": "nanogpt/qwen/qwen3.8-flash", "started_at": "2026-10-20T14:43:33Z"})
+    events = [{"type": "tool", "tool": "read", "text": '{"filePath": "/tmp/x/MISSION.md"}',
+               "output": "You are the DOMAIN harness editor for one task"},
+              {"type": "file_change", "text": "/tmp/x/context/harness/systemprompt.md"}, {"type": "turn_end", "text": ""}]
+    put(tmp_path, f"{session}/agent_events.jsonl", "\n".join(json.dumps(e) for e in events) + "\n")
+    put(tmp_path, f"{run}/harnesses/dom1/systemprompt.md", "Push the orange block onto the blue target.")
+    put(tmp_path, f"{run}/harnesses/inv1/README.md", "stub")
+    with client(tmp_path) as api:
+        record = api.get("/api/workbench/record", params={"run": run}).json()
+        timeline = api.get("/api/workbench/harness2/session", params={"run": run, "session": "harness2-prop-abc"}).json()
+        missing = api.get("/api/workbench/harness2/session", params={"run": run, "session": "nope"})
+    assert record["coach_sessions"][0] | {"id": "harness2-prop-abc"} == {
+        "id": "harness2-prop-abc", "stage": "DOM", "model": "nanogpt/qwen/qwen3.8-flash", "started_at": "2026-10-20T14:43:33Z",
+        "finished": True, "file_changes": 1, "events": 3, "length_cap": False}
+    assert record["harness_edits"] == {"dom1": {"systemprompt.md": "Push the orange block onto the blue target."}, "inv1": {}}
+    assert timeline["agent_events"]["total"] == 3 and missing.status_code == 404

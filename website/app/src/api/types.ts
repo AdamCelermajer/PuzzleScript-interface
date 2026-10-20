@@ -268,6 +268,9 @@ export interface RunRecord {
   /** Harness²: one direct-player run per rollout, in start order. */
   rollouts?: { label: string; result: Record<string, unknown> | null; latest_transition: Transition }[]
   adoption?: { adopted_label?: string; base_levels?: (number | null)[]; best_of_pool_levels?: number } | null
+  /** Harness²: the coach's sessions (INV, DOM, compose…) and the harness files each stage wrote. */
+  coach_sessions?: CoachSession[]
+  harness_edits?: Record<string, Record<string, string>>
 }
 
 // ---- AVO console (/avo/*)
@@ -525,4 +528,15 @@ export interface Pin {
   at: string | null
   note: string
   created_at: string
+}
+
+export interface CoachSession {
+  id: string
+  stage: 'INV' | 'DOM' | 'compose' | 'reflect' | 'select' | null
+  model: string | null
+  started_at: string | null
+  finished: boolean
+  file_changes: number
+  events: number
+  length_cap: boolean
 }

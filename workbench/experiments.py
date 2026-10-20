@@ -640,7 +640,25 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
                 "files": [name for name in names + notes if (path / name).is_file()],
                 "rollouts": [{"label": p.name, "result": read_json(p / "result.json") or None,
                               "latest_transition": last_record(p / "transitions.jsonl")} for p in rollouts],
-                "adoption": read_json(path / "adoption.json") or None}
+                "adoption": read_json(path / "adoption.json") or None,
+                **harness2_views(path)}
+
+    def harness2_views(path: Path) -> dict:
+        if not (path / "improver").is_dir() and not (path / "harnesses").is_dir():
+            return {}
+        from workbench.harness2_view import coach_sessions, harness_edits
+        return {"coach_sessions": coach_sessions(path), "harness_edits": harness_edits(path)}
+
+    @router.get("/harness2/session")
+    def harness2_session(run: str = Query(...), session: str = Query(..., pattern=r"^[\w.-]+$"),
+                         events_limit: int = Query(500, ge=1, le=5000)):
+        try:
+            events = run_path(run, root) / "improver" / "sessions" / session / "agent_events.jsonl"
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        if not events.is_file():
+            raise HTTPException(404, "No such coach session")
+        return {"agent_events": read_agent_events(events, events_limit)}
 
     @router.get("/experiments/log")
     def job_log(job: str = Query(...), run: str = Query(...)):

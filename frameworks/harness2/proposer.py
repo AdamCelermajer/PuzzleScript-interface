@@ -23,6 +23,8 @@ class InstalledProposer(Proposer):
                 return dict(base_environment)
 
         analysis = (self.audit_dir / "sessions" / cwd.name) if self.audit_dir else cwd / "analysis"
+        analysis.mkdir(parents=True, exist_ok=True)
+        (analysis / "mission.md").write_text(mission, encoding="utf-8")  # the run page labels the stage from it
         with ImproverSession().start(cwd, system, self.spec.model, self.spec.effort,
                                      "optimizer", analysis, provider=self.pin_provider) as session:
             config_path = Path(session.env["OPENCODE_CONFIG"])
