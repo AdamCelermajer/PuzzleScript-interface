@@ -60,7 +60,7 @@ def test_harness_listing_reports_readiness_without_secret_values(tmp_path, monke
     assert response.status_code == 200
     assert secret not in response.text
     entries = {entry["id"]: entry for entry in response.json()}
-    assert list(entries) == ["codex", "claude-code", "opencode", "antigravity", "bare"]
+    assert list(entries) == ["codex", "claude-code", "opencode", "opencode-lean", "antigravity", "bare"]
     for entry in entries.values():
         assert {"id", "label", "providers", "models", "efforts", "ready", "missing"} <= set(entry)
         assert entry["efforts"] == ["low", "medium", "high", "xhigh", "max"]
@@ -171,7 +171,7 @@ def test_options_optimizer_and_provider_pin_reach_commands(tmp_path):
     ({"optimizer_model": "gpt-5.6-sol"}, 400, "optimizer"),
     ({"frameworks": [{"id": "baseline", "options": {"max_steps": 0}}]}, 400, "--max-steps"),
     ({"frameworks": [{"id": "avo", "options": {"world_model_mode": "never"}}]}, 400, "--world-model-mode"),
-    ({"provider": "chutes"}, 400, "opencode and bare"),
+    ({"provider": "chutes"}, 400, "opencode-lean and bare"),
     ({"harnesses": ["bare"], "models": ["nanogpt/qwen/x"], "provider": "chutes"}, 400, "opencode harness only"),
     ({"harnesses": ["codex"], "models": ["claude-opus-5-5"]}, 400, "anthropic"),
     ({"harnesses": ["codex", "opencode"], "models": ["claude-opus-5-5"]}, 400, "No selected harness"),

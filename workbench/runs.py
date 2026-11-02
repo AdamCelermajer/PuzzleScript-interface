@@ -23,7 +23,7 @@ from workbench.catalog import (HARNESS_IDS, ROOT, legacy_enqueue_backend, live_c
                                read_json, run_path)
 from workbench.harness_catalog import model_error, model_provider
 
-Harness = Literal["codex", "claude-code", "opencode", "antigravity", "bare"]
+Harness = Literal["codex", "claude-code", "opencode", "opencode-lean", "antigravity", "bare"]
 Effort = Literal["low", "medium", "high", "xhigh", "max"]
 
 LAUNCH = ["uv", "run", "python", "-m", "harnesses.launch"]
@@ -151,8 +151,8 @@ def validate_request(config: RunRequest) -> tuple[list[tuple[str, str]], list[st
                 raise ValueError(f"{field} applies only to frameworks with an optimizer "
                                  f"({', '.join(f.id for f in FRAMEWORKS.values() if f.optimizer)})")
     if config.provider:
-        if any(h not in {"opencode", "bare"} for h in config.harnesses):
-            raise ValueError("Provider pinning applies only to the opencode and bare harnesses")
+        if any(h not in {"opencode", "opencode-lean", "bare"} for h in config.harnesses):
+            raise ValueError("Provider pinning applies only to the opencode, opencode-lean and bare harnesses")
         pinned = config.models + ([config.optimizer_model] if config.optimizer_model else [])
         if any(model_provider(m) not in {"openrouter", "nanogpt"} for m in pinned):
             raise ValueError("Provider pinning is only supported for OpenRouter and NanoGPT models")

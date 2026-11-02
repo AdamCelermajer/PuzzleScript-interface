@@ -31,9 +31,12 @@ HARNESSES = {
     "codex": {"label": "Codex CLI", "providers": ["openai"]},
     "claude-code": {"label": "Claude Code", "providers": ["anthropic"]},
     "opencode": {"label": "OpenCode", "providers": ["openrouter", "nanogpt", "vast"]},
+    "opencode-lean": {"label": "OpenCode lean", "providers": ["openrouter", "nanogpt", "vast"]},
     "antigravity": {"label": "Antigravity (agy)", "providers": ["google"]},
     "bare": {"label": "Bare tool loop", "providers": ["openrouter", "nanogpt"]},
 }
+# Harnesses that call a model API with a key from .env (harnesses/registry.py API_HARNESSES).
+API_HARNESSES = {"opencode", "opencode-lean", "bare"}
 PROVIDER_KEYS = {"openrouter": "OPENROUTER_API_KEY", "nanogpt": "NANOGPT_API_KEY"}
 # Self-hosted vLLM (vast.ai): no key, no public catalog; its endpoint URL has a default.
 KEYLESS_PROVIDERS = {"vast"}
@@ -186,14 +189,14 @@ def harness_listing(root: Path = ROOT, include_public_catalogs: bool = True) -> 
             missing.append("CLAUDE_CODE_OAUTH_TOKEN in .env")
         if harness == "antigravity" and docker["docker"] and not docker["agy_volume"]:
             missing.append(f"docker volume {AGY_VOLUME} (run python -m harnesses.launch login antigravity)")
-        if harness in {"opencode", "bare"}:
+        if harness in API_HARNESSES:
             ready_providers = [p for p in entry["providers"] if p in KEYLESS_PROVIDERS or PROVIDER_KEYS.get(p) in keys]
             entry["ready_providers"] = ready_providers
             if not ready_providers:
                 missing.append(" or ".join(f"{PROVIDER_KEYS[p]} in .env" for p in entry["providers"] if p in PROVIDER_KEYS))
-        entry.update(ready=not missing, missing=missing, manual_model_ids=harness in {"opencode", "bare"},
-                     provider_pin=harness in {"opencode", "bare"})
-        if harness in {"opencode", "bare"}:
+        entry.update(ready=not missing, missing=missing, manual_model_ids=harness in API_HARNESSES,
+                     provider_pin=harness in API_HARNESSES)
+        if harness in API_HARNESSES:
             entry["model_catalogs"] = catalogs
         result.append(entry)
     return result

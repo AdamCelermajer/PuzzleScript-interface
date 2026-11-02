@@ -261,13 +261,13 @@ class CliSession:
     # -- lifecycle -----------------------------------------------------------------
     def start(self, workspace: str | Path, system_prompt: str, model: str, effort: str, role: str,
               analysis_dir: str | Path, *, provider: str = "") -> "CliSession":
-        from harnesses.registry import resolve_model_for
+        from harnesses.registry import OPENCODE_HARNESSES, resolve_model_for
 
         require_container()
         if effort not in EFFORTS:
             raise HarnessError(f"Unsupported effort {effort!r}; use one of {', '.join(EFFORTS)}")
         self.provider, self.native_model = resolve_model_for(self.harness_id, model)
-        if provider and not (self.provider == "openrouter" or (self.provider == "nanogpt" and self.harness_id == "opencode")):
+        if provider and not (self.provider == "openrouter" or (self.provider == "nanogpt" and self.harness_id in OPENCODE_HARNESSES)):
             raise HarnessError("Provider pinning is supported for OpenRouter models and for NanoGPT models on opencode")
         self.workspace = Path(workspace).resolve()
         self.workspace.mkdir(parents=True, exist_ok=True)

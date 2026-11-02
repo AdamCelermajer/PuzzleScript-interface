@@ -1,6 +1,6 @@
 // Shapes returned by workbench/*.py (read from the Python source, revamp contract §4).
 
-export type HarnessId = 'codex' | 'claude-code' | 'opencode' | 'antigravity' | 'bare'
+export type HarnessId = 'codex' | 'claude-code' | 'opencode' | 'opencode-lean' | 'antigravity' | 'bare'
 export type Effort = 'low' | 'medium' | 'high' | 'xhigh' | 'max'
 /** Framework option values, keyed by option name (frameworks/base.py Option). */
 export type FrameworkOptions = Record<string, number | string | boolean>

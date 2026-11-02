@@ -22,6 +22,8 @@ from harnesses.base import CliSession, HarnessError, add_usage, usage_record
 from harnesses.model_provider import VAST_BASE_URL
 
 WEB_TOOLS = ("webfetch", "websearch", "codesearch")
+# opencode-lean also removes these: skills, a to-do list and sub-agents are coding-assistant features.
+LEAN_DENIED_TOOLS = ("skill", "todowrite", "task")
 FILE_TOOLS = {"edit", "write", "patch", "multiedit"}
 # OpenRouter's reasoning ceiling is xhigh (as in the bare harness).
 VARIANT = {"low": "low", "medium": "medium", "high": "high", "xhigh": "xhigh", "max": "xhigh"}
@@ -87,7 +89,7 @@ def image_input(provider: str, native_model: str) -> bool | None:
 
 def opencode_config(provider: str, native_model: str, instructions: Path, pin_provider: str = "",
                     images: bool = True, served: dict[str, Any] | None = None, effort: str = "",
-                    base_url: str = "") -> dict[str, Any]:
+                    base_url: str = "", lean: bool = False) -> dict[str, Any]:
     model: dict[str, Any] = {}
     options: dict[str, Any] = {}
     if images:
@@ -133,6 +135,12 @@ def opencode_config(provider: str, native_model: str, instructions: Path, pin_pr
         # the task tool general/explore.
         sampling = {"temperature": QWEN_SAMPLING["temperature"], "top_p": QWEN_SAMPLING["top_p"]}
         config["agent"].update({name: dict(sampling) for name in ("build", "plan", "general", "explore")})
+    if lean:
+        # The prompt file becomes the build agent's own prompt, which replaces OpenCode's (about 9k
+        # characters); only its short environment block stays. Denied tools are not offered at all.
+        config.pop("instructions")
+        config["agent"].setdefault("build", {})["prompt"] = "{file:" + str(instructions) + "}"
+        config["permission"].update({tool: "deny" for tool in LEAN_DENIED_TOOLS})
     return config
 
 
@@ -159,6 +167,7 @@ export default tool({{
 class OpenCodeSession(CliSession):
     harness_id = "opencode"
     native_tools = True
+    lean = False
 
     def prepare(self) -> None:
         self.binary = shutil.which("opencode") or "opencode"
@@ -177,7 +186,7 @@ class OpenCodeSession(CliSession):
                                **(served or {})}
         config.write_text(json.dumps(opencode_config(self.provider, self.native_model, instructions, self.pin_provider,
                                                      images=listed is not False, served=served, effort=self.effort,
-                                                     base_url=base_url),
+                                                     base_url=base_url, lean=self.lean),
                                      indent=2), encoding="utf-8")
         if "qwen" in self.native_model.lower() and self.provider != "vast":
             self.manifest_extra["sampling"] = "temperature 1.0, top_p 0.95, top_k 20 (Qwen thinking mode, set by us)"
@@ -189,6 +198,9 @@ class OpenCodeSession(CliSession):
         # and return nothing. Harness² upstream runs every OpenCode session with 64k.
         self.env["OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX"] = str(OUTPUT_TOKEN_MAX)
         self.manifest_extra["output_token_max"] = OUTPUT_TOKEN_MAX
+        if self.lean:
+            self.manifest_extra["system_prompt"] = "ours only, in place of OpenCode's (agent.build.prompt)"
+            self.manifest_extra["denied_tools"] = list(WEB_TOOLS + LEAN_DENIED_TOOLS)
         if (self.provider, self.native_model) in KNOWN_CONTEXT:
             self.manifest_extra["opencode_limit"] = {"context": KNOWN_CONTEXT[self.provider, self.native_model],
                                                      "output": OUTPUT_TOKEN_MAX}
@@ -271,3 +283,11 @@ class OpenCodeSession(CliSession):
             return {"type": "file_change", "tool": name, "text": str(arguments.get("filePath") or ""),
                     "output": str(output or "")}
         return {"type": "tool", "tool": name, "text": arguments, "output": str(output or "")}
+
+
+class OpenCodeLeanSession(OpenCodeSession):
+    """OpenCode with the caller's system prompt in place of its own, and without its skill, to-do and
+    sub-agent tools. Its loop, its other tools (bash, read, glob, grep, edit, write), the caller's
+    tools and its short environment block stay."""
+    harness_id = "opencode-lean"
+    lean = True

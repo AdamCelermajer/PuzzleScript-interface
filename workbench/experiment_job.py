@@ -13,7 +13,7 @@ from workbench.experiments import write_json
 
 
 REPORT_GRACE_SECONDS = 600
-HARNESS_IDS = {"codex", "claude-code", "opencode", "antigravity", "bare"}
+HARNESS_IDS = {"codex", "claude-code", "opencode", "opencode-lean", "antigravity", "bare"}
 LEGACY_BACKENDS = {"codex", "tools", "raw"}
 
 

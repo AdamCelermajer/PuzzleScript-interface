@@ -9,6 +9,7 @@ const HARNESS_VAR: Record<string, string> = {
   codex: 'var(--h-codex)',
   'claude-code': 'var(--h-claude-code)',
   opencode: 'var(--h-opencode)',
+  'opencode-lean': 'var(--h-opencode)',
   antigravity: 'var(--h-antigravity)',
   bare: 'var(--h-bare)',
 }
@@ -17,6 +18,7 @@ export const HARNESS_LABEL: Record<string, string> = {
   codex: 'Codex',
   'claude-code': 'Claude Code',
   opencode: 'OpenCode',
+  'opencode-lean': 'OpenCode lean',
   antigravity: 'Antigravity',
   bare: 'Bare loop',
 }

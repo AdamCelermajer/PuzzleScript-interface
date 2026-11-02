@@ -39,8 +39,9 @@ from frameworks.base import Framework
 from frameworks.registry import FRAMEWORK_IDS, get_framework
 from harnesses.base import EFFORTS, HarnessError
 from harnesses.model_provider import API_PROVIDERS
-from harnesses.registry import (AGY_VOLUME, HARNESS_IDS, IMAGE, ROOT, codex_auth_path, credentials_for,
-                                docker_object_exists, env_values, list_harnesses, resolve_model_for)
+from harnesses.registry import (AGY_VOLUME, API_HARNESSES, HARNESS_IDS, IMAGE, OPENCODE_HARNESSES, ROOT,
+                                codex_auth_path, credentials_for, docker_object_exists, env_values, list_harnesses,
+                                resolve_model_for)
 
 DEFAULT_ROOT = ROOT / "output"
 # Provider variables that may be unset (the vast.ai endpoint URL).
@@ -111,9 +112,9 @@ def validate(options: argparse.Namespace, framework: Framework) -> None:
         provider, _ = resolve_model_for(options.harness, model)
         if options.provider and provider not in {"openrouter", "nanogpt"}:
             raise HarnessError("--provider pins an upstream host; it needs openrouter/... or nanogpt/... models")
-        if options.provider and provider == "nanogpt" and options.harness != "opencode":
+        if options.provider and provider == "nanogpt" and options.harness not in OPENCODE_HARNESSES:
             raise HarnessError("--provider pins a NanoGPT host with the opencode harness only")
-    if options.provider and options.harness not in {"opencode", "bare"}:
+    if options.provider and options.harness not in API_HARNESSES:
         raise HarnessError("--provider applies to the opencode and bare harnesses only")
     if options.max_wall_seconds < 0:
         raise HarnessError("--max-wall-seconds must be >= 0 (0 = unlimited)")

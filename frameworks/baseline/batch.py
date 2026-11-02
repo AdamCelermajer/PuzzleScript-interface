@@ -213,7 +213,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument("--backend-url", default="http://host.docker.internal:8000")
     parser.add_argument("--harness", default="codex",
-                        choices=["codex", "claude-code", "opencode", "antigravity", "bare"])
+                        choices=["codex", "claude-code", "opencode", "opencode-lean", "antigravity", "bare"])
     parser.add_argument("--game-id", default="ps_sokoban_basic-v1")
     parser.add_argument("--model", action="append", help="Repeat to test multiple models")
     parser.add_argument(

@@ -27,9 +27,9 @@ interface RecordedRun {
   sessions: { folder: string; role: string | null; calls: number }[]
 }
 
-const HARNESS: Record<string, string> = { opencode: 'OpenCode', codex: 'Codex', 'claude-code': 'Claude Code', bare: 'bare', antigravity: 'Antigravity' }
+const HARNESS: Record<string, string> = { opencode: 'OpenCode', 'opencode-lean': 'OpenCode lean', codex: 'Codex', 'claude-code': 'Claude Code', bare: 'bare', antigravity: 'Antigravity' }
 const harnessName = (id: string | null) => (id ? HARNESS[id] ?? id : 'harness')
-const HARNESS_ORDER = ['opencode', 'codex', 'claude-code', 'bare', 'antigravity']
+const HARNESS_ORDER = ['opencode', 'opencode-lean', 'codex', 'claude-code', 'bare', 'antigravity']
 const when = (r: RecordedRun) => (r.modified ? new Date(r.modified).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : r.id)
 
 /** What the model was sent and what it did, as one conversation. */

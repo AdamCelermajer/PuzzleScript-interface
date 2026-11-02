@@ -165,7 +165,7 @@ def agent_identity(config: dict) -> dict:
             "optimizer_model": outer, "optimizer_provider": provider(outer) if outer else None}
 
 
-HARNESS_IDS = ("codex", "claude-code", "opencode", "antigravity", "bare")
+HARNESS_IDS = ("codex", "claude-code", "opencode", "opencode-lean", "antigravity", "bare")
 # Recorded identities of runs launched before the harnesses package existed.
 LEGACY_HARNESSES = {"codex": "codex", "tools": "bare", "raw": "bare-raw (legacy)", "opencode": "opencode (legacy)"}
 # run_spec.json schemas: v1 named a mode (baseline, baseline-plus, campaign); v2 names a framework.

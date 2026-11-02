@@ -92,7 +92,7 @@ export const usesOptimizer = (form: LaunchForm, frameworks: Framework[]) =>
 
 /** Provider pinning only applies to OpenRouter models on opencode/bare (workbench/runs.py validate_request). */
 export function providerPinApplies(f: Pick<LaunchForm, 'harnesses' | 'models'>): boolean {
-  return f.harnesses.length > 0 && f.harnesses.every((h) => h === 'opencode' || h === 'bare') && f.models.length > 0 && f.models.every((m) => m.startsWith('openrouter/'))
+  return f.harnesses.length > 0 && f.harnesses.every((h) => h === 'opencode' || h === 'opencode-lean' || h === 'bare') && f.models.length > 0 && f.models.every((m) => m.startsWith('openrouter/'))
 }
 
 /** Build the RunRequest. The API rejects optimizer fields when no selected framework has an optimizer, so they are omitted. */

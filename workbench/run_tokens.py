@@ -112,7 +112,7 @@ def _read(path: str, counted: dict, running: dict) -> None:
                     if event.get("type") == "step_finish" and isinstance(part.get("tokens"), dict):
                         counted[("part", part.get("id") or (path, number))] = _opencode(part["tokens"])
                 elif event.get("schema") == "agent-event-v1":
-                    if event.get("type") == "usage" and isinstance(usage, dict) and event.get("harness") != "opencode":
+                    if event.get("type") == "usage" and isinstance(usage, dict) and event.get("harness") not in ("opencode", "opencode-lean"):
                         key = ("event", event.get("session"), event.get("role"), turn, event.get("t"))
                         counted[key] = _record(*(usage.get(name) for name in KEYS))
                 elif event.get("method") == "thread/tokenUsage/updated":

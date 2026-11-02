@@ -48,7 +48,7 @@ def main() -> None:
     parser.add_argument("--model", default="gpt-5.6-sol")
     parser.add_argument("--effort", default="high")
     parser.add_argument("--harness", default="codex",
-                        choices=("codex", "claude-code", "opencode", "antigravity", "bare"))
+                        choices=("codex", "claude-code", "opencode", "opencode-lean", "antigravity", "bare"))
     parser.add_argument("--provider", default="")
     parser.add_argument("--max-environment-steps", type=int, default=200)
     parser.add_argument("--max-wall-seconds", type=float, default=3600)

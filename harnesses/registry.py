@@ -18,7 +18,10 @@ from harnesses.base import EFFORTS, CliSession, HarnessError
 ROOT = Path(__file__).resolve().parents[1]
 IMAGE = "puzzlescript-agents:local"
 AGY_VOLUME = "puzzlescript-agy-home"
-HARNESS_IDS = ("codex", "claude-code", "opencode", "antigravity", "bare")
+HARNESS_IDS = ("codex", "claude-code", "opencode", "opencode-lean", "antigravity", "bare")
+OPENCODE_HARNESSES = ("opencode", "opencode-lean")
+# Harnesses that call a model API with a key from .env (OpenRouter, NanoGPT, vast) rather than a login.
+API_HARNESSES = (*OPENCODE_HARNESSES, "bare")
 
 CODEX_MODELS = ("gpt-5.6-sol", "gpt-5.6-luna", "gpt-5.6-terra", "gpt-6-astra", "gpt-5.5", "gpt-5.3-codex-spark")
 CLAUDE_MODELS = ("claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5", "claude-fable-5-1")
@@ -32,6 +35,7 @@ EFFORT_FLAGS = {
     "codex": "-c model_reasoning_effort=<effort>",
     "claude-code": "--effort <effort>",
     "opencode": "--variant <effort> (max -> xhigh)",
+    "opencode-lean": "--variant <effort> (max -> xhigh)",
     "antigravity": "--effort <effort>",
     "bare": "reasoning.effort=<effort> (OpenRouter: max -> xhigh)",
 }
@@ -39,6 +43,7 @@ WEB_TOOLS = {
     "codex": 'web_search="disabled", features.browser_use/computer_use/apps/plugins=false',
     "claude-code": "--disallowedTools WebSearch WebFetch",
     "opencode": "opencode.json permission webfetch/websearch/codesearch = deny",
+    "opencode-lean": "opencode.json permission webfetch/websearch/codesearch (and skill/todowrite/task) = deny",
     "antigravity": "global PreToolUse hook denies search_web/read_url_content/browser_* (~/.gemini/config/hooks.json)",
     "bare": "no web tools exist (shell/read_file/write_file/view_image only)",
 }
@@ -51,6 +56,9 @@ HARNESSES: dict[str, dict[str, Any]] = {
                     "models": [{"id": m, "label": m} for m in CLAUDE_MODELS]},
     "opencode": {"id": "opencode", "label": "OpenCode", "providers": ["openrouter", "nanogpt", "vast"],
                  "cli": "opencode run --format json", "models": []},
+    "opencode-lean": {"id": "opencode-lean", "label": "OpenCode lean", "providers": ["openrouter", "nanogpt", "vast"],
+                      "cli": "opencode run --format json; our system prompt in place of OpenCode's, "
+                             "no skill / todowrite / task tools", "models": []},
     "antigravity": {"id": "antigravity", "label": "Antigravity (agy)", "providers": ["google"],
                     "cli": "agy -p --output-format stream-json",
                     "models": [{"id": m, "label": m} for m in ANTIGRAVITY_MODELS]},
@@ -86,7 +94,7 @@ def resolve_model_for(harness: str, model: str) -> tuple[str, str]:
         if provider != "openai" or model.startswith("claude-") or "/" in model:
             raise HarnessError("codex runs OpenAI model ids such as gpt-5.6-sol (ChatGPT login)")
         return "openai", native
-    if provider == "vast" and harness != "opencode":
+    if provider == "vast" and harness not in OPENCODE_HARNESSES:
         raise HarnessError("vast/<served-model-name> (self-hosted vLLM) runs on the opencode harness")
     if provider not in API_PROVIDERS:
         raise HarnessError(f"{harness} runs openrouter/<vendor>/<model> or nanogpt/<model> ids")
@@ -100,6 +108,8 @@ def session_class(harness: str) -> type[CliSession]:
         from harnesses.claude_code import ClaudeCodeSession as cls
     elif harness == "opencode":
         from harnesses.opencode import OpenCodeSession as cls
+    elif harness == "opencode-lean":
+        from harnesses.opencode import OpenCodeLeanSession as cls
     elif harness == "antigravity":
         from harnesses.antigravity import AntigravitySession as cls
     elif harness == "bare":
@@ -168,7 +178,7 @@ def missing_credentials(harness: str, *, env: dict[str, str] | None = None, prov
         missing.append(f"{codex_auth_path()} with a ChatGPT login (run `codex login`)")
     if harness == "claude-code" and not values.get("CLAUDE_CODE_OAUTH_TOKEN"):
         missing.append("CLAUDE_CODE_OAUTH_TOKEN in .env (create with `claude setup-token`)")
-    if harness in {"opencode", "bare"}:
+    if harness in API_HARNESSES:
         wanted = [API_PROVIDERS[provider] for provider in providers or HARNESSES[harness]["providers"]]
         keys = [details["env_key"] for details in wanted]
         # A provider with a default (the vast.ai endpoint) needs nothing in .env.
@@ -194,7 +204,7 @@ def list_harnesses(*, models_hook: Callable[[str], list[dict]] | None = None, ch
     listing = []
     for harness in HARNESS_IDS:
         entry = {key: (list(value) if isinstance(value, list) else value) for key, value in HARNESSES[harness].items()}
-        if harness in {"opencode", "bare"}:
+        if harness in API_HARNESSES:
             models: list[dict] = []
             for provider in entry["providers"]:
                 if models_hook is not None:

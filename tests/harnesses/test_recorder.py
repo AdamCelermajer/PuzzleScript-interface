@@ -158,3 +158,14 @@ def test_codex_input_with_developer_prompts_and_additional_tools():
     assert shown["system"] == ["You are Codex.", "Ours.\nSkills."]
     assert [t["name"] for t in shown["tools"]] == ["exec", "wait"]
     assert [m["role"] for m in shown["messages"]] == ["user"]
+
+
+def test_opencode_lean_puts_our_prompt_in_place_of_opencodes_and_drops_coding_tools(tmp_path):
+    config = opencode_config("openrouter", "qwen/qwen3.8-27b", tmp_path / "SYSTEM_PROMPT.md", lean=True)
+    assert "instructions" not in config
+    assert config["agent"]["build"]["prompt"] == "{file:" + str(tmp_path / "SYSTEM_PROMPT.md") + "}"
+    assert config["agent"]["build"]["temperature"] == 1.0  # the Qwen sampling stays
+    assert {tool: config["permission"][tool] for tool in ("skill", "todowrite", "task", "webfetch")} == {
+        "skill": "deny", "todowrite": "deny", "task": "deny", "webfetch": "deny"}
+    plain = opencode_config("openrouter", "qwen/qwen3.8-27b", tmp_path / "SYSTEM_PROMPT.md")
+    assert plain["instructions"] and "prompt" not in plain["agent"].get("build", {}) and "skill" not in plain["permission"]
