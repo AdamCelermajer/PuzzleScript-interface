@@ -63,7 +63,8 @@ batches created by the workbench; externally owned experiments are monitor-only.
 - `puzzlescript_interface/`: Node game engine and ARC-compatible Python service.
 - `client/arc/`: shared ARC adapter/types used by AVO and the direct player.
 - `client/engine/` and `client/runtime/`: historical rule-learning client; some utilities remain shared.
-- `studies/`: other research studies; `frameworks/avo/legacy/` and `studies/old_react/` preserve earlier approaches.
+- `studies/`: other research studies (their outputs are still listed by the workbench); `studies/old_react/` preserves an earlier approach.
+- `archive/`: code and documents no longer used (old website pages, AVO's legacy runner, the first proposal); not imported, not tested.
 - `benchmark/`: benchmark server and scoring tools; see its [README](benchmark/README.md).
 
 New workbench artifacts go under `output/workbench/<batch>/run-NNNN/`; CLI launches

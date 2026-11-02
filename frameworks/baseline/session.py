@@ -24,7 +24,6 @@ from pathlib import Path
 from typing import Any
 
 from harnesses.codex import codex_oauth_status  # noqa: F401  (re-exported for the workbench)
-from harnesses.codex import find_codex_bin as _find_codex_bin  # noqa: F401  (avo/legacy imports it)
 from frameworks import world_model
 from frameworks.baseline import prompt as baseline_prompt
 

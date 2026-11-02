@@ -26,7 +26,6 @@ frameworks/avo/
   evolution/                  outer x_i optimizer and fresh evaluation
   prompts/                    player and outer instructions
   tests/                      maintained tests
-  legacy/                     superseded experiments
   run.py                      one solver-building run
   evolve.py                   outer sequence of solver-building runs
 ```
