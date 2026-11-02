@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState, type ReactNode } from 'react'
 import { api, q } from '../api/client'
-import { Empty, ErrorBox, Loading, PageHeader, Select } from '../components/ui'
+import { ChipGroup, Empty, ErrorBox, Loading, PageHeader, Select } from '../components/ui'
 
 /** workbench/prompt_build.py `transcript`: one recorded session, read top to bottom. */
 interface Piece { source: 'ours' | 'harness' | 'unknown'; text: string }
@@ -29,7 +29,7 @@ interface RecordedRun {
 
 const HARNESS: Record<string, string> = { opencode: 'OpenCode', codex: 'Codex', 'claude-code': 'Claude Code', bare: 'bare', antigravity: 'Antigravity' }
 const harnessName = (id: string | null) => (id ? HARNESS[id] ?? id : 'harness')
-const comboOf = (r: RecordedRun) => `${r.mode} · ${harnessName(r.harness)}`
+const HARNESS_ORDER = ['opencode', 'codex', 'claude-code', 'bare', 'antigravity']
 const when = (r: RecordedRun) => (r.modified ? new Date(r.modified).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : r.id)
 
 /** What the model was sent and what it did, as one conversation. */
@@ -38,24 +38,29 @@ export function PromptBuildView() {
     queryKey: ['prompt-builds'],
     queryFn: ({ signal }) => api.get<{ runs: RecordedRun[] }>('/prompt-builds', signal),
   })
-  const [combo, setCombo] = useState('')
+  const [harness, setHarness] = useState('opencode')
+  const [mode, setMode] = useState('')
   const [folder, setFolder] = useState('')
   const list = runs.data?.runs ?? []  // framework mode first, newest first within it
-  const combos = [...new Set(list.map(comboOf))]
-  const shown = combos.includes(combo) ? combo : combos[0]
-  const ofCombo = list.filter((r) => comboOf(r) === shown)
-  const run = ofCombo[0]  // the latest recorded run of this framework and harness
+  const harnesses = HARNESS_ORDER.filter((h) => list.some((r) => r.harness === h))
+  const ofHarness = list.filter((r) => r.harness === harness)
+  const modes = [...new Set(ofHarness.map((r) => r.mode))]
+  const shownMode = modes.includes(mode) ? mode : modes[0]
+  const run = ofHarness.find((r) => r.mode === shownMode)  // the latest recorded run of this framework and harness
   const session = run?.sessions.find((s) => s.folder === folder) ?? run?.sessions[0]
   return (
     <div className="mx-auto flex max-w-[900px] flex-col gap-4">
       <PageHeader title="Prompt build" subtitle="Exactly what the model was sent, and what it did, in order." />
-      {runs.isLoading ? <Loading /> : runs.error ? <ErrorBox error={runs.error} /> : !run || !session ? (
-        <Empty title="No recorded runs yet">Runs started since 1 Nov 2026 appear here.</Empty>
-      ) : (
+      {runs.isLoading ? <Loading /> : runs.error ? <ErrorBox error={runs.error} /> : (
         <>
+          <ChipGroup options={harnesses} value={[harness]} single labels={HARNESS}
+                     onChange={(v) => { setHarness(v[0]); setMode(''); setFolder('') }} />
+          {!run || !session ? (
+            <Empty title={`No recorded run with ${harnessName(harness)} yet`}>Runs started since 1 Nov 2026 appear here.</Empty>
+          ) : <>
           <div className="flex flex-wrap items-center gap-2 text-[13px]">
-            <Select value={shown} onChange={(e) => { setCombo(e.target.value); setFolder('') }}>
-              {combos.map((c) => <option key={c} value={c}>{c}</option>)}
+            <Select value={shownMode} onChange={(e) => { setMode(e.target.value); setFolder('') }}>
+              {modes.map((m) => <option key={m} value={m}>{m}</option>)}
             </Select>
 
             {run.sessions.length > 1 && (
@@ -69,6 +74,7 @@ export function PromptBuildView() {
             After changing a prompt or the architecture, one short run of this framework refreshes it.
           </div>
           <Conversation key={`${run.id}|${session.folder}`} runId={run.id} folder={session.folder} />
+          </>}
         </>
       )}
     </div>
