@@ -85,11 +85,8 @@ def add_routes(router: APIRouter, root: Path, catalog_runs) -> None:
             if earlier.get("method") == "POST":
                 previous = view(earlier.get("request"))
                 break
-        same = 0
-        if previous is not None:
-            old, new = previous["messages"], shown["messages"]
-            while same < min(len(old), len(new)) and old[same] == new[same]:
-                same += 1
+        from workbench.prompt_build import kept_messages
+        same = kept_messages(previous["messages"], shown["messages"], directory) if previous is not None else 0
         return {**record, "view": shown, "previous_messages": len(previous["messages"]) if previous else None,
                 "unchanged_messages": same, "system_changed": bool(previous) and previous["system"] != shown["system"]}
 

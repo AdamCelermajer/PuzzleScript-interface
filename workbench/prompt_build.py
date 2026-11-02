@@ -4,6 +4,8 @@ order. Built from the calls/ folders harnesses/recorder.py writes: each request 
 so only what is new in it is shown, and the model's turns come from its replies."""
 from __future__ import annotations
 
+import functools
+import hashlib
 import json
 import os
 import re
@@ -79,6 +81,37 @@ def generic(text: str) -> str:
     return CHANGES.sub("changed <cells>", GRID.sub(r"\1<grid>\n", text))
 
 
+@functools.lru_cache(maxsize=4096)
+def _digest(path: str) -> str:
+    try:
+        return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    except OSError:
+        return path
+
+
+def _by_content(value, folder: Path):
+    if isinstance(value, dict):
+        if value.get("kind") == "image" and value.get("file"):
+            return {**value, "file": _digest(str(folder / value["file"]))}
+        if value.get("kind") == "tool_result" and value.get("images"):
+            value = {**value, "images": [_digest(str(folder / name)) for name in value["images"]]}
+        return {key: _by_content(item, folder) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_by_content(item, folder) for item in value]
+    return value
+
+
+def kept_messages(previous: list[dict], current: list[dict], folder: Path) -> int:
+    """How many of the previous request's messages the current one sends again unchanged. Every call
+    saves its images under its own name (0003-image-1.png, 0004-image-1.png), so images compare by content."""
+    kept = 0
+    while kept < min(len(previous), len(current)) and (
+            previous[kept] == current[kept]
+            or _by_content(previous[kept], folder) == _by_content(current[kept], folder)):
+        kept += 1
+    return kept
+
+
 def transcript(session: Path) -> dict:
     """The session as {session, system, tools, entries}; entries are us / model / result / note, in order."""
     records = [r for r in (read_json(p) for p in sorted((session / "calls").glob("[0-9][0-9][0-9][0-9].json")))
@@ -103,9 +136,7 @@ def transcript(session: Path) -> dict:
         shown = view(record.get("request"))
         kept = 0
         if previous is not None:
-            while kept < min(len(previous["messages"]), len(shown["messages"])) and \
-                    previous["messages"][kept] == shown["messages"][kept]:
-                kept += 1
+            kept = kept_messages(previous["messages"], shown["messages"], session / "calls")
             if kept < len(previous["messages"]):
                 entries.append({"who": "note", "text": f"Here {result['session']['harness'] or 'the harness'} "
                                 f"rewrote the context: only {kept} of the {len(previous['messages'])} earlier "
