@@ -2,7 +2,7 @@
 
 ``driver`` sets who drives the game: ``controller`` (run.py: we send one frame per call and get
 one action back, in one conversation, with a ``notes/`` folder the agent is asked to keep its
-working memory in) or ``agent`` (agent.py: the agent plays through ``python game.py`` in a folder
+working memory in) or ``agent`` (agentic.py: the agent plays through ``python game.py`` in a folder
 that persists for the whole run). The controller always has its notes folder; the plain mode
 without it was removed on 21 Oct 2026 (older runs record ``notes: false``).
 ``stop_after_levels`` ends the game once that many levels are completed, without showing the next
@@ -28,7 +28,7 @@ def entry(spec: dict, resume: bool, results: Path, parent: Path) -> list[str]:
     if options.get("driver") == "agent":
         if spec.get("continued_from"):
             raise ValueError("Runs where the agent drives cannot be continued; start a new run")
-        argv = ["frameworks.baseline.agent", "--harness", spec["harness"], "--model", spec["model"],
+        argv = ["frameworks.baseline.agentic", "--harness", spec["harness"], "--model", spec["model"],
                 "--effort", spec["effort"], "--game-id", spec["game_id"], "--backend-url", spec["backend_url"],
                 "--max-steps", str(options["max_steps"]), "--max-wall-seconds", str(spec["max_wall_seconds"]),
                 "--output-dir", str(results), "--provider", spec["provider"]]

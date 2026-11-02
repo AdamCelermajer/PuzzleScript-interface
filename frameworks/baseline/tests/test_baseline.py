@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from game.types import ActionInput, FrameData, GameAction, GameState, RenderedFrame
 from frameworks import world_model
-from frameworks.baseline.runner import CodexAgentRunner
+from frameworks.baseline.turn_based import TurnBasedRunner
 from frameworks.baseline import prompt as baseline_prompt
 from frameworks.baseline.session import CliGameSession, GameSessionConfig, game_instructions
 
@@ -73,13 +73,13 @@ class FakeSession:
         return response
 
 
-class CodexAgentTests(unittest.TestCase):
+class TurnBasedTests(unittest.TestCase):
     def test_unusable_reply_gets_corrected_without_advancing_the_game(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             frame = _frame([[2, 0]], image=True)
             env = FakeEnv(frame, [_frame([[0, 2]], state=GameState.WIN, levels_completed=1)])
             session = FakeSession([ValueError("No action in reply"), {"action": "ACTION4", "note": "move"}])
-            result = CodexAgentRunner(env, session, tmpdir, max_steps=1).run()
+            result = TurnBasedRunner(env, session, tmpdir, max_steps=1).run()
             self.assertTrue(result.solved)
             self.assertEqual(env.step_actions, [GameAction.ACTION4])
             self.assertEqual(result.decisions, 2)
@@ -90,7 +90,7 @@ class CodexAgentTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             env = FakeEnv(_frame([[2, 0]]), [_frame([[0, 2]], state=GameState.WIN, levels_completed=1)])
             session = FakeSession([{"action": "RESET"}, {"action": "ACTION4"}])
-            result = CodexAgentRunner(env, session, tmpdir, max_steps=5).run()
+            result = TurnBasedRunner(env, session, tmpdir, max_steps=5).run()
             self.assertIn("available_actions=ACTION1, ACTION2, ACTION3, ACTION4, RESET", session.calls[0]["prompt"])
             self.assertTrue(session.calls[1]["prompt"].startswith("Last action: RESET: nothing changed"))
             self.assertEqual(result.actions, [GameAction.RESET, GameAction.ACTION4])
@@ -99,7 +99,7 @@ class CodexAgentTests(unittest.TestCase):
     def test_grid_encoding_instructions_are_only_given_for_hex_projection(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             frame = _frame([[0, 0], [1, 2]])
-            runner = CodexAgentRunner(FakeEnv(frame, []), FakeSession([]), tmpdir, max_steps=1)
+            runner = TurnBasedRunner(FakeEnv(frame, []), FakeSession([]), tmpdir, max_steps=1)
             self.assertNotIn("2x2", runner._turn_prompt(frame, "", "", initial=True))
             frame.projection = {"mode": "visible-cell-v1"}  # the default: the system prompt explains it
             prompt = runner._turn_prompt(frame, "", "", initial=True)
@@ -134,7 +134,7 @@ class CodexAgentTests(unittest.TestCase):
                 ]
             )
 
-            result = CodexAgentRunner(
+            result = TurnBasedRunner(
                 env=env,
                 session=session,
                 output_dir=tmpdir,
@@ -207,7 +207,7 @@ class CodexAgentTests(unittest.TestCase):
                 ],
             )
             session = ModelKeepingSession([{"action": "ACTION4", "note": ""}] * 2, root / "ws")
-            result = CodexAgentRunner(env=env, session=session, output_dir=root / "out", max_steps=5).run()
+            result = TurnBasedRunner(env=env, session=session, output_dir=root / "out", max_steps=5).run()
 
             copies = root / "out" / "world_model_snapshots"
             self.assertEqual(sorted(p.name for p in copies.iterdir()),
@@ -294,7 +294,7 @@ class CodexAgentTests(unittest.TestCase):
                 ]
             )
 
-            result = CodexAgentRunner(
+            result = TurnBasedRunner(
                 env=env,
                 session=session,
                 output_dir=tmpdir,
@@ -319,7 +319,7 @@ class ContinuationTests(unittest.TestCase):
             (parent / "run_config.json").write_text(json.dumps({"max_steps": 2}))
             (parent / "transitions.jsonl").write_text(json.dumps({"action_index": 1, "action": "ACTION4", "before": before, "after": after}) + "\n")
             env = FakeEnv(_frame(before["grid"]), [_frame(after["grid"]), _frame([[0, 0, 2]], state=GameState.WIN, levels_completed=1)])
-            result = CodexAgentRunner(env, FakeSession([{"action": "ACTION4", "note": ""}]), root / "child", max_steps=1, continuation_from=parent).run()
+            result = TurnBasedRunner(env, FakeSession([{"action": "ACTION4", "note": ""}]), root / "child", max_steps=1, continuation_from=parent).run()
             self.assertTrue(result.solved)
             self.assertEqual(len(result.actions), 1)
             self.assertEqual(len(env.step_actions), 2)
@@ -339,7 +339,7 @@ class ContinuationTests(unittest.TestCase):
                 _frame(after["grid"]), _frame([[0, 0, 2]], state=GameState.WIN, levels_completed=1)
             ])
             session = FakeSession([{"action": "ACTION4", "note": ""}])
-            result = CodexAgentRunner(env, session, root / "child", max_steps=1, continuation_from=parent).run()
+            result = TurnBasedRunner(env, session, root / "child", max_steps=1, continuation_from=parent).run()
             self.assertTrue(result.solved)
             self.assertEqual(len(result.actions), 1)
             self.assertEqual(len(env.step_actions), 2)

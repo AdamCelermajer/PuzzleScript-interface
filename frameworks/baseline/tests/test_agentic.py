@@ -9,9 +9,9 @@ import pytest
 
 from game.types import GameAction, GameState
 
-from frameworks.baseline import agent as player
+from frameworks.baseline import agentic as player
 from frameworks.baseline import prompt as baseline_prompt
-from frameworks.baseline.agent import GameServer, play
+from frameworks.baseline.agentic import GameServer, play
 
 PNG = "data:image/png;base64," + base64.b64encode(b"\x89PNG fake").decode()
 

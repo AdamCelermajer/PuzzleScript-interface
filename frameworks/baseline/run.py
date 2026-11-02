@@ -15,7 +15,7 @@ if __package__ in {None, ""}:
 from game.arcade_env import ArcadeEnv
 
 from harnesses.registry import HARNESS_IDS
-from frameworks.baseline.runner import CodexAgentRunner
+from frameworks.baseline.turn_based import TurnBasedRunner
 from frameworks.baseline.session import CliGameSession, GameSessionConfig
 
 # Recorded harness names of runs launched before the harnesses package.
@@ -136,7 +136,7 @@ def main() -> None:
             ) as session:
                 if args.max_wall_seconds > 0:
                     session.deadline = time.monotonic() + args.max_wall_seconds
-                runner = CodexAgentRunner(
+                runner = TurnBasedRunner(
                     env=env,
                     session=session,
                     output_dir=output_dir,

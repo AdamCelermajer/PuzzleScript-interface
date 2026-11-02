@@ -1,4 +1,4 @@
-"""One PuzzleScript game, played by a coding agent that drives the game itself (frameworks.baseline.agent, Baseline with driver=agent)."""
+"""One PuzzleScript game, played by a coding agent that drives the game itself (frameworks.baseline.agentic, Baseline with driver=agent)."""
 from __future__ import annotations
 
 import hashlib
@@ -225,7 +225,7 @@ class PuzzleScriptAdapter:
         finally:
             shutil.rmtree(install.staging_dir)
         spec = self.run_spec
-        argv = [sys.executable, "-m", "frameworks.baseline.agent", "--harness", "opencode"]
+        argv = [sys.executable, "-m", "frameworks.baseline.agentic", "--harness", "opencode"]
         for key in ("model", "effort", "game_id", "backend_url", "provider", "max_wall_seconds"):
             argv += ["--" + key.replace("_", "-"), str(spec[key])]
         argv += ["--output-dir", str(run_dir), "--harness-dir", str(seed)]

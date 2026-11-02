@@ -43,7 +43,7 @@ directory outside the results tree.
   (`final.md`). Nobody asks for it during play; at the end the agent writes it as a report, also
   saved as the run's `world_model.md`.
 
-With `--driver agent` (`agent.py`) two more options apply:
+With `--driver agent` (`agentic.py`) two more options apply:
 
 - `--start FOLDER`: a repository folder (e.g. `studies/thursday/start/rules`) copied into the
   run as `start/` before the container starts; the agent's folder begins with exactly those

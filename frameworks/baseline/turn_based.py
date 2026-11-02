@@ -32,7 +32,7 @@ class CodexSession(Protocol):
 
 
 @dataclass(frozen=True)
-class CodexRunResult:
+class TurnBasedResult:
     status: str
     reason: str
     solved: bool
@@ -47,7 +47,7 @@ class CodexRunResult:
 
 
 @dataclass
-class CodexAgentRunner:
+class TurnBasedRunner:
     env: CodexEnv
     session: CodexSession
     output_dir: str | Path
@@ -78,7 +78,7 @@ class CodexAgentRunner:
         if self.stop_event is None:
             self.stop_event = Event()
 
-    def run(self) -> CodexRunResult:
+    def run(self) -> TurnBasedResult:
         self._emit(f"Codex agent output: {self.output_dir}")
         frame = self.env.reset()
         prior_history = []
@@ -293,7 +293,7 @@ class CodexAgentRunner:
             if pending is not None:  # play ended before the next turn: the final report is that update
                 snapshots.after_action(*pending)
             snapshots.final()
-        result = CodexRunResult(
+        result = TurnBasedResult(
             status=status,
             reason=reason,
             solved=solved,
@@ -333,7 +333,7 @@ class CodexAgentRunner:
         shutil.copyfile(source, target)
         return target
 
-    def _write_result(self, result: CodexRunResult) -> None:
+    def _write_result(self, result: TurnBasedResult) -> None:
         payload = {
             "status": result.status,
             "reason": result.reason,

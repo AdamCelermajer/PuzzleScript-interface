@@ -8,7 +8,7 @@ Baseline-plus gives a ``notes/`` directory as the agent's memory and an ``act.py
 that model step (acting is a tool call, so the agent never has to stop using tools to act).
 A turn without a submission falls back to parsing a final JSON reply. The turn prompt asks for
 ``notes/world_model.md``, its current model of the game, every 100 actions and after each
-level (``frameworks/baseline/runner.py``). ``notes/`` is mirrored to the run's ``workspace/`` folder for the
+level (``frameworks/baseline/turn_based.py``). ``notes/`` is mirrored to the run's ``workspace/`` folder for the
 catalog and continuations. With ``memento`` every turn starts a fresh harness session with the same system
 prompt and working folder, and the system prompt tells the agent so: only the folder (notes/) carries over.
 """

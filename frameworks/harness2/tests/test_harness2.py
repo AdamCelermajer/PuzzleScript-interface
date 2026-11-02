@@ -102,7 +102,7 @@ def test_adapter_protocol_trajectory_and_deliverables(tmp_path):
     context.assert_no_grader_verdicts(evidence)
     assert adapter.score(rd, adapter.tasks()[0])["levels_completed"] == 1
     argv = player.calls[0][0]
-    assert argv[argv.index("-m") + 1] == "frameworks.baseline.agent"
+    assert argv[argv.index("-m") + 1] == "frameworks.baseline.agentic"
     assert argv[argv.index("--harness") + 1] == "opencode"
     assert list((rd / "seed").iterdir()) == []  # stock OpenCode: the base harness adds no files
     (rd / "world_model.md").unlink()

@@ -539,7 +539,7 @@ def test_baseline_driver_agent_runs_the_agent_player():
             "game_id": "ps_modality-v1", "backend_url": "http://host.docker.internal:8000", "provider": "",
             "max_wall_seconds": 0, "options": BASELINE.check_options({"driver": "agent", "max_steps": 50})}
     argv = BASELINE.entry(spec, False, Path("/results"), Path("/parent"))
-    assert argv[0] == "frameworks.baseline.agent" and "--notes" not in argv and argv[argv.index("--max-steps") + 1] == "50"
+    assert argv[0] == "frameworks.baseline.agentic" and "--notes" not in argv and argv[argv.index("--max-steps") + 1] == "50"
     assert BASELINE.entry({**spec, "options": {**spec["options"], "driver": "controller"}}, False,
                           Path("/results"), Path("/parent"))[0] == "frameworks.baseline.run"
     assert BASELINE.variant_label(spec["options"]) == "Baseline · agent"
