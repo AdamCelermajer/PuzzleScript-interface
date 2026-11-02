@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 
-from workbench.experiments import read_agent_events
+from workbench.record_routes import read_agent_events
 from workbench.harness2_view import harness_diffs
 from workbench.session_view import session_prompts
 

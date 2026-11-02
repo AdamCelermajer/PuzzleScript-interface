@@ -17,24 +17,24 @@ The maintained workflows are the frameworks `avo` (campaigns), `baseline` (the m
 - `harnesses/` — agent harnesses (codex, claude-code, opencode, antigravity, bare) and `python -m harnesses.launch --framework <id> --harness <id> ...`, which runs every run in one Docker container. See `harnesses/README.md`.
 - Run outputs: new CLI runs default to `output/<framework>/<run>`, workbench launches to `output/workbench/<job>/run-NNNN`; older runs stay in `avo/output/` and `studies/codex_agent/output/` (archives the catalog still reads).
 
-Shared environment code and historical client:
+Shared environment code:
 
-- `client/` — shared ARC adapter/types plus the historical rule-learning agent, utilities and manual-play display. Do not move this folder wholesale: maintained runners import from it.
+- `game/` — the game as frameworks see it: `arcade_env.py` (reset/step/frames over the local service or official ARC), `types.py` (`GameAction`, `GameState`, `FrameData`) and `grid.py`. The first rule-learning agent that used to live with it is in `archive/client/`.
 - `puzzlescript_interface/` — the local PuzzleScript implementation of an ARC-compatible challenge surface. This includes the PuzzleScript games, Node.js runtime, and FastAPI adapter.
 
 ## Runtime Architecture
 
-The project has a deliberate split: the PuzzleScript game engine only exists as an npm package, so a **Node.js Express server** wraps it and exposes an internal REST API. A separate **Python ARC-compatible service** adapts that runtime into the public ARC-AGI-3 contract, and the **Python agent** talks only to that ARC surface.
+The project has a deliberate split: the PuzzleScript game engine only exists as an npm package, so a **Node.js Express server** wraps it and exposes an internal REST API. A separate **Python ARC-compatible service** adapts that runtime into the public ARC-AGI-3 contract, and the frameworks talk only to that ARC surface.
 
 ```
-Python Agent (client/engine/)
+Frameworks (frameworks/, through game/arcade_env.py)
     ↓ ARC toolkit / ARC REST
 PuzzleScript ARC Service (puzzlescript_interface/api/app.py)
     ↓ internal HTTP REST
 Node.js Server (puzzlescript_interface/runtime/server.js)  ←→  PuzzleScript npm package
 ```
 
-For official ARC-AGI-3 tasks, the Python agent communicates directly with the remote API through the same ARC toolkit path.
+For official ARC-AGI-3 tasks, the frameworks communicate directly with the remote API through the same ARC toolkit path.
 
 ## Setup & Running
 
@@ -45,7 +45,7 @@ uv sync            # Python deps (pip fallback: `pip install -r requirements.txt
 ```
 
 **Environment variables** — each harness has one provider: Codex uses the existing Codex OAuth login (`~/.codex/auth.json`), Claude Code uses `CLAUDE_CODE_OAUTH_TOKEN`, OpenCode and bare use `OPENROUTER_API_KEY` / `NANOGPT_API_KEY`, Antigravity uses the `puzzlescript-agy-home` Docker volume (`uv run python -m harnesses.launch login antigravity`). Optional `.env.example` settings:
-- `OPENROUTER_API_KEY` — OpenRouter API (AVO OpenRouter models and the historical rule agent)
+- `OPENROUTER_API_KEY` — OpenRouter API (OpenCode and bare harnesses)
 - `ARC_API_KEY` — ARC-AGI-3 official API (required only for official ARC-AGI-3 runs)
 - `OPENAI_API_KEY` — legacy, unused
 - `PORT` — optional port override for the Node.js PuzzleScript runtime (default `3000`)
@@ -70,35 +70,17 @@ npm run dev        # dev mode with auto-restart (nodemon)
 uv run python -m puzzlescript_interface.api.main
 ```
 
-**Historical rule-agent CLI:**
-```bash
-# Local PuzzleScript via the ARC-compatible service
-uv run python -m client.run_arc_agent --backend-url http://localhost:8000 --game-id ps_sokoban_basic-v1 --mode learn --max_steps 50
-
-# Official ARC-AGI-3
-uv run python -m client.run_arc_agent --backend-url https://three.arcprize.org --game-id ls20 --mode learn --max_steps 50
-```
-
-**Interactive human play (CLI client):**
-```bash
-uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
-```
-
 ## Key Source Files
 
 | File | Role |
 |------|------|
 | `puzzlescript_interface/runtime/server.js` | Node.js PuzzleScript runtime — session management, game execution, internal REST API |
 | `puzzlescript_interface/api/app.py` | ARC-compatible PuzzleScript service — game catalog, scorecards, `/api/...` routes |
-| `client/engine/agent.py` | Historical agent — rule learning, rule-based solving |
-| `client/arc/arcade_env.py` | ARC toolkit adapter used by the engine for both local PuzzleScript and official ARC |
-| `client/engine/llm_client.py` | LLM abstraction via `litellm` and OpenRouter |
-| `client/engine/goal_manager.py` | Game goal and subgoal prompt ownership |
-| `client/engine/induction.py` | Rule-induction prompt and candidate verification entrypoint |
-| `client/arc/types.py` | Shared ARC types: `GameAction`, `GameState`, `FrameData` |
-| `client/arc/base_env.py` | Abstract `BaseEnv` interface (`reset()` / `step()`) |
-| `client/runtime/runner.py` | Runtime action execution and rule-reasoning loop |
-| `client/run_arc_agent.py` | Generic CLI runner for ARC-compatible backends |
+| `game/arcade_env.py` | ARC toolkit adapter for both local PuzzleScript and official ARC |
+| `game/types.py` | Shared ARC types: `GameAction`, `GameState`, `FrameData` |
+| `frameworks/baseline/prompt.py` | What the baseline player is told, the same for both drivers |
+| `harnesses/base.py` | One agent session: start, turn, record every model call (`harnesses/recorder.py`) |
+| `harnesses/launch.py` | One Docker container per run |
 
 ## Data Flow
 
@@ -106,16 +88,6 @@ uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 2. `env.step(action)` → ARC toolkit ACTION → local service `/api/cmd/ACTION...` → FastAPI adapter forwards the action to the PuzzleScript runtime and returns `FrameData`
 3. `FrameData.frame` is a `list[list[list[int]]]`. Local PuzzleScript globally defaults to `visible-cell-v1`: one ID per rendered tile texture, values 0–65535. Identical visible pixels share an ID even when hidden objects differ. Official ARC retains its own 0–15 contract. `PUZZLESCRIPT_GRID_ENCODING=visible-cell-hex-v2` explicitly enables the legacy 2×2 hexadecimal encoding; never select encoding by game title.
 4. `FrameData.legend` is not currently populated by the ARC adapter and should not be relied on by ARC-compatible code
-
-## Historical Rule-Agent Learning Loop
-
-- In **learn** mode: agent perceives `FrameData`, records `(before_state, action, after_state)` evidence, and asks the LLM for executable logical rules that can be checked against the timeline.
-- In **solve** mode: the planner simulates with known logical rules. If no rule plan exists, the LLM proposes a subgoal and short legal action plan; the engine executes it and records the real transition as evidence.
-- Rule artifacts are stored under `client/rules/<game-id>/` as `timeline.jsonl` and `rules.json`. Use `client.inspect_rules` for a readable debug view.
-
-## Historical Rule-Agent LLM Configuration
-
-`llm_client.py` routes calls through OpenRouter. The default model is `anthropic/claude-opus-4.8` with low reasoning effort disabled unless configured. Calls carry a `purpose` label so routing can be customized later without reintroducing model tiers.
 
 ## Server REST API (internal behavior)
 

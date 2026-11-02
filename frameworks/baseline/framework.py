@@ -35,7 +35,7 @@ def entry(spec: dict, resume: bool, results: Path, parent: Path) -> list[str]:
         if options.get("start"):
             argv += ["--harness-dir", str(results / START), "--start", options["start"]]
         return argv + level_argv(options)
-    argv = ["frameworks.baseline.run", "--no-window", "--notes", "--harness", spec["harness"], "--model", spec["model"],
+    argv = ["frameworks.baseline.run", "--notes", "--harness", spec["harness"], "--model", spec["model"],
             "--effort", spec["effort"], "--game-id", spec["game_id"], "--backend-url", spec["backend_url"],
             "--max-steps", str(options["max_steps"]), "--max-wall-seconds", str(spec["max_wall_seconds"]),
             "--output-dir", str(results), "--provider", spec["provider"]]

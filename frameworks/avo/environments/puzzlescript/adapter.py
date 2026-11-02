@@ -8,9 +8,9 @@ from typing import Any
 
 import requests
 
-from client.arc.arcade_env import ArcadeEnv
-from client.arc.base_env import BaseEnv
-from client.arc.types import FrameData, GameAction, RenderedFrame
+from game.arcade_env import ArcadeEnv
+from game.base_env import BaseEnv
+from game.types import FrameData, GameAction, RenderedFrame
 from frameworks.avo.core.framework import Action, Comparison, Observation
 from frameworks.avo.isolation import IsolationError
 

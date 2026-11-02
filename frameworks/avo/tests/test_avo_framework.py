@@ -5,7 +5,7 @@ import unittest
 from dataclasses import dataclass
 from pathlib import Path
 
-from client.arc.types import ActionInput, FrameData, GameAction, GameState, RenderedFrame
+from game.types import ActionInput, FrameData, GameAction, GameState, RenderedFrame
 from frameworks.avo.core.framework import (
     Action,
     AvoLaboratory,

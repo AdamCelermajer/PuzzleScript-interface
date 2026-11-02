@@ -12,8 +12,8 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from client.arc.arcade_env import ArcadeEnv  # type: ignore[import-not-found]
-from client.arc.types import GameAction, GameState  # type: ignore[import-not-found]
+from game.arcade_env import ArcadeEnv  # type: ignore[import-not-found]
+from game.types import GameAction, GameState  # type: ignore[import-not-found]
 
 
 @dataclass

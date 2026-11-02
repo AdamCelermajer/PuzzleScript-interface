@@ -206,7 +206,7 @@ class ExperimentTests(unittest.TestCase):
         request = ExperimentRequest(kind="codex", game_ids=["one"], models=["sol", "luna"], efforts=["low", "high"], conditions=["baseline", "baseline-plus"], repeats=2)
         rows = plan_runs(request, self.root / "output/workbench/job", self.root)
         self.assertEqual(len(rows), 16)
-        self.assertTrue(all("--no-window" in r["command"] for r in rows))
+        self.assertTrue(all("frameworks.baseline.run" in r["command"] for r in rows))
         with self.assertRaises(ValueError):
             ExperimentRequest(kind="codex", game_ids=["one"], repeats=2, continue_from="output/parent")
 

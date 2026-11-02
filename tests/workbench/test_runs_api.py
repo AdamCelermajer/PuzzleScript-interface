@@ -234,14 +234,6 @@ def test_launch_writes_matrix_manifest_and_detaches_one_worker(tmp_path):
     assert rows[campaign["id"]]["variant"] == "AVO · solver score"
 
 
-def test_post_runs_without_frameworks_still_serves_rule_agent_start(tmp_path):
-    seen = []
-    with client(tmp_path, legacy_start=lambda payload: seen.append(payload) or {"run_id": "legacy"}) as api:
-        response = api.post("/api/workbench/runs", json={"agent_mode": "rule", "game_id": "g"})
-    assert response.status_code == 202 and response.json() == {"run_id": "legacy"}
-    assert seen == [{"agent_mode": "rule", "game_id": "g"}]
-
-
 # ---------------------------------------------------------------- worker budgets
 
 def test_unlimited_wall_harness_batch_has_no_deadline_and_completes(tmp_path):

@@ -124,10 +124,10 @@ debug_*.js
 # PuzzleScript interface runtime data
 
 puzzlescript_interface/.runtime/
-client/rules/
+archive/client/rules/
 studies/LIVE_framework/output/
 studies/codex_agent/output/
-client/avo/output/
+archive/client/avo/output/
 avo/output/
 studies/old_react/output/
 studies/goal_recognition/experiment/artifacts/*

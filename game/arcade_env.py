@@ -5,8 +5,8 @@ import requests
 from arc_agi import Arcade, OperationMode
 from arcengine import GameAction as ArcGameAction, GameState as ArcGameState
 
-from client.arc.base_env import BaseEnv
-from client.arc.types import (
+from game.base_env import BaseEnv
+from game.types import (
     ActionInput,
     FrameData,
     GameAction,

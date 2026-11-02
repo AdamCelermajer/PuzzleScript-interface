@@ -10,8 +10,8 @@ from threading import Event
 import time
 from typing import Callable, Protocol
 
-from client.arc.types import FrameData, GameAction, GameState
-from client.engine.utils import last_grid
+from game.types import FrameData, GameAction, GameState
+from game.grid import last_grid
 from frameworks import levels
 from frameworks.baseline import prompt as baseline_prompt
 from frameworks.world_model import Snapshots

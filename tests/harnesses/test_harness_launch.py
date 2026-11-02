@@ -164,7 +164,7 @@ def test_docker_command_is_plain_non_root_container(tmp_path):
 def test_stage_controller_excludes_games_env_outputs_and_tests(tmp_path):
     root = tmp_path / "repo"
     for name in ("frameworks/avo/evolve.py", "frameworks/avo/output/run/x.py", "frameworks/avo/tests/test_x.py",
-                 "frameworks/avo/legacy/old.py", "client/arc/types.py", "client/rules/g/rules.json",
+                 "game/types.py",
                  "harnesses/base.py", "harnesses/docker/Dockerfile", "frameworks/registry.py",
                  "frameworks/baseline/run.py", "frameworks/harness2/run.py", "avo/output/r/a.md", "studies/other/secret.py",
                  "puzzlescript_interface/games/g/script.txt", ".env", "frameworks/avo/.env"):
@@ -173,8 +173,8 @@ def test_stage_controller_excludes_games_env_outputs_and_tests(tmp_path):
     target = tmp_path / "staged"
     launch.stage_controller(target, root)
     staged = sorted(path.relative_to(target).as_posix() for path in target.rglob("*") if path.is_file())
-    assert staged == ["client/arc/types.py", "frameworks/avo/evolve.py", "frameworks/baseline/run.py",
-                      "frameworks/harness2/run.py", "frameworks/registry.py", "harnesses/base.py"]
+    assert staged == ["frameworks/avo/evolve.py", "frameworks/baseline/run.py",
+                      "frameworks/harness2/run.py", "frameworks/registry.py", "game/types.py", "harnesses/base.py"]
 
 
 def test_credentials_stage_only_the_chosen_harness(tmp_path, monkeypatch):
@@ -295,7 +295,7 @@ def test_baseline_entry_argv_and_continuation():
     spec = {**SPEC, "framework": "baseline", "harness": "claude-code", "model": "claude-haiku-5-5", "provider": "",
             "max_wall_seconds": 60, "options": {"max_steps": 3}, "continued_from": "C:/runs/parent"}
     argv = BASELINE.entry(spec, False, Path("/results"), Path("/parent"))
-    assert argv[:2] == ["frameworks.baseline.run", "--no-window"]
+    assert argv[:2] == ["frameworks.baseline.run", "--notes"]
     assert "--notes" in argv and argv[argv.index("--max-steps") + 1] == "3"
     assert argv[argv.index("--max-wall-seconds") + 1] == "60"
     assert Path(argv[argv.index("--continue-from") + 1]).as_posix() == "/parent"

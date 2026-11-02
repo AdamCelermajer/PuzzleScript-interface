@@ -7,7 +7,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from client.arc.types import GameAction, GameState
+from game.types import GameAction, GameState
 
 from frameworks.baseline import agent as player
 from frameworks.baseline import prompt as baseline_prompt

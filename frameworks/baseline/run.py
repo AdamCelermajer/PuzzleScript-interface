@@ -12,7 +12,7 @@ from pathlib import Path
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from client.arc.arcade_env import ArcadeEnv
+from game.arcade_env import ArcadeEnv
 
 from harnesses.registry import HARNESS_IDS
 from frameworks.baseline.runner import CodexAgentRunner
@@ -65,11 +65,6 @@ def main() -> None:
     parser.add_argument("--harness", choices=HARNESS_IDS, default="codex")
     parser.add_argument("--provider", default="",
                         help="Pin one OpenRouter provider slug (no fallback), e.g. alibaba or deepinfra.")
-    parser.add_argument(
-        "--no-window",
-        action="store_true",
-        help="Run headless without the tkinter dashboard.",
-    )
     args = parser.parse_args()
     if args.start_level < 1:
         parser.error("--start-level must be 1 or more")
@@ -89,24 +84,7 @@ def main() -> None:
             raise ValueError("Continuation must preserve the parent model, effort, notes, memento, harness, game and start level")
         if output_dir.resolve() == Path(args.continue_from).resolve() or output_dir.exists():
             raise ValueError("Continuation requires a fresh separate output directory")
-    dashboard = None
-    event_sink = _print_event
-    if not args.no_window:
-        from client.screen_dashboard import ScreenDashboard
-
-        dashboard = ScreenDashboard(
-            game_id=args.game_id,
-            mode=args.harness.upper(),
-            controls="One persistent agent session. Close or press Ctrl+C to stop.",
-        )
-        event_sink = dashboard.push_event
-
-    env = ArcadeEnv(
-        game_id=args.game_id,
-        backend_url=args.backend_url,
-        renderer=dashboard.render if dashboard is not None else None,
-        start_level=args.start_level,
-    )
+    env = ArcadeEnv(game_id=args.game_id, backend_url=args.backend_url, start_level=args.start_level)
     config = GameSessionConfig(
         model=args.model,
         effort=args.effort,
@@ -164,7 +142,7 @@ def main() -> None:
                     output_dir=output_dir,
                     max_steps=args.max_steps,
                     max_decisions=args.max_decisions,
-                    event_sink=event_sink,
+                    event_sink=_print_event,
                     workspace_enabled=config.workspace_enabled,
                     continuation_from=args.continue_from or None,
                     max_wall_seconds=args.max_wall_seconds,
@@ -187,13 +165,7 @@ def main() -> None:
             )
             raise
 
-    if dashboard is None:
-        run_agent()
-    else:
-        try:
-            dashboard.run_engine(run_agent)
-        finally:
-            dashboard.close()
+    run_agent()
 
     result = result_holder.get("result")
     if result is None:

@@ -45,8 +45,8 @@ from harnesses.registry import (AGY_VOLUME, HARNESS_IDS, IMAGE, ROOT, codex_auth
 DEFAULT_ROOT = ROOT / "output"
 # Provider variables that may be unset (the vast.ai endpoint URL).
 ENV_DEFAULTS = {details["env_key"]: details["default"] for details in API_PROVIDERS.values() if details.get("default")}
-CONTROLLER_TREES = ("client", "frameworks", "harnesses")
-SKIPPED_PARTS = {"output", "outputs", "__pycache__", ".venv", "rules", "tests", "legacy", "games", "docker",
+CONTROLLER_TREES = ("game", "frameworks", "harnesses")
+SKIPPED_PARTS = {"output", "outputs", "__pycache__", ".venv", "tests", "games", "docker",
                  "node_modules", "codex_request_capture"}
 SUFFIXES = {".py", ".md", ".txt", ".toml"}
 CONTAINER_GEMINI = "/home/agent/.gemini"

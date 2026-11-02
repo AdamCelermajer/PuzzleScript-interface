@@ -1,90 +1,20 @@
 from __future__ import annotations
 
-from pathlib import Path
+import os
 from typing import Literal
 
+import requests
 from fastapi import FastAPI, HTTPException, Query, Request, Response
-from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
-from workbench.models import (
-    CODEX_PROVIDER_ID,
-    DEFAULT_CODEX_MODEL,
-    DEFAULT_MODEL,
-    PROVIDER_ID,
-    public_model_catalog,
-    validate_codex_model_selection,
-    validate_model_selection,
-)
-from workbench import openrouter_account
+from harnesses.codex import codex_oauth_status
 from workbench.paper_investigation import CodexPaperAssistant, PaperAssistant
 from workbench.paper_library import PaperLibrary
-from workbench.run_manager import RunManager
 from workbench.experiments import create_router as create_experiments_router
 from experiement.bfs_solver.web_api import create_optimal_path_router
 from experiement.bfs_solver.web_manager import OptimalPathManager
-
-
-class StartRunRequest(BaseModel):
-    agent_mode: Literal["rule", "codex"] = "rule"
-    provider: Literal["openrouter", "codex_oauth"] = PROVIDER_ID
-    model: str = DEFAULT_MODEL
-    reasoning_effort: str = ""
-    backend: Literal["puzzlescript", "arc"] = "puzzlescript"
-    game_id: str = Field(default="ps_sokoban_basic-v1", min_length=1, max_length=160)
-    max_steps: int = Field(default=12, ge=1, le=200)
-    memory_mode: Literal["fresh", "resume"] = "fresh"
-    provide_legend: bool = True
-    provide_end_goal: bool = True
-    end_goal: str = Field(default="complete the level", max_length=500)
-
-    @field_validator("game_id")
-    @classmethod
-    def game_id_must_not_be_blank(cls, value: str) -> str:
-        stripped = value.strip()
-        if not stripped:
-            raise ValueError("game_id must not be blank")
-        return stripped
-
-    @field_validator("end_goal")
-    @classmethod
-    def end_goal_must_not_be_blank(cls, value: str) -> str:
-        stripped = value.strip()
-        if not stripped:
-            raise ValueError("end_goal must not be blank")
-        return stripped
-
-    @model_validator(mode="after")
-    def model_and_effort_must_match(self) -> "StartRunRequest":
-        if self.agent_mode == "codex":
-            self.provider = CODEX_PROVIDER_ID
-            if self.model == DEFAULT_MODEL:
-                self.model = DEFAULT_CODEX_MODEL
-            if not self.reasoning_effort:
-                self.reasoning_effort = "low"
-            validate_codex_model_selection(self.model, self.reasoning_effort)
-        else:
-            self.provider = PROVIDER_ID
-            validate_model_selection(self.model, self.reasoning_effort)
-        return self
-
-
-class ReplaceOpenRouterKeyRequest(BaseModel):
-    api_key: str = Field(min_length=10, max_length=512)
-
-    @field_validator("api_key")
-    @classmethod
-    def api_key_must_not_be_blank(cls, value: str) -> str:
-        stripped = value.strip()
-        if not stripped:
-            raise ValueError("api_key must not be blank")
-        return stripped
-
-
-class PromptUpdateRequest(BaseModel):
-    content: str = Field(min_length=1, max_length=100_000)
 
 
 class PaperChatTurn(BaseModel):
@@ -160,46 +90,29 @@ class PaperQuestionRecordCreate(BaseModel):
 
 
 def create_app(
-    manager: RunManager | None = None,
     optimal_path_manager: OptimalPathManager | None = None,
     paper_assistant: PaperAssistant | None = None,
     paper_library: PaperLibrary | None = None,
 ) -> FastAPI:
-    run_manager = manager or RunManager()
     path_manager = optimal_path_manager or OptimalPathManager()
     research_assistant = paper_assistant or CodexPaperAssistant()
-    library = paper_library or PaperLibrary(
-        Path(run_manager.rules_dir) / ".paper-library" if manager is not None else None
-    )
+    library = paper_library or PaperLibrary()
     app = FastAPI(
         title="PuzzleScript Workbench",
         version="1.0.0",
     )
     # Run catalogs and submissions are large JSON; compress them for remote (Tailscale) viewers.
     app.add_middleware(GZipMiddleware, minimum_size=4096)
-    app.state.run_manager = run_manager
     app.state.optimal_path_manager = path_manager
     app.state.paper_assistant = research_assistant
     app.state.paper_library = library
-    def start_rule_agent_run(payload: dict) -> dict:
-        # `POST /api/workbench/runs` without `modes` is the historical rule-agent start.
-        try:
-            request = StartRunRequest.model_validate(payload)
-        except ValidationError as exc:
-            raise RequestValidationError(exc.errors(include_url=False, include_context=False)) from exc
-        try:
-            run = run_manager.start(request.model_dump())
-        except RuntimeError as exc:
-            raise HTTPException(status_code=409, detail=str(exc)) from exc
-        return run.snapshot()
-
     from workbench.benchmarks import router as benchmarks_router
     from workbench.diary import router as diary_router
     from workbench.results import router as results_router
     from workbench.board import router as board_router
 
     app.include_router(create_optimal_path_router(path_manager))
-    app.include_router(create_experiments_router(legacy_start=start_rule_agent_run))
+    app.include_router(create_experiments_router())
     app.include_router(benchmarks_router)
     app.include_router(diary_router)
     app.include_router(results_router)
@@ -207,14 +120,17 @@ def create_app(
 
     @app.get("/api/workbench/health")
     def health() -> dict:
-        return run_manager.health()
+        return {"ok": True, "openrouter_configured": bool(os.getenv("OPENROUTER_API_KEY")),
+                "arc_configured": bool(os.getenv("ARC_API_KEY"))}
 
     @app.get("/api/workbench/games")
     def games(backend: Literal["puzzlescript", "arc"] = Query("puzzlescript")) -> dict:
         if backend == "arc":
             return {"backend": backend, "games": []}
         try:
-            catalog = run_manager.local_games()
+            response = requests.get("http://127.0.0.1:8000/api/games", timeout=10)
+            response.raise_for_status()
+            catalog = response.json() if isinstance(response.json(), list) else []
         except Exception as exc:
             raise HTTPException(
                 status_code=503,
@@ -222,14 +138,10 @@ def create_app(
             ) from exc
         return {"backend": backend, "games": catalog}
 
-    @app.get("/api/workbench/models")
-    def models() -> dict:
-        return public_model_catalog()
-
     @app.get("/api/workbench/codex/status")
     def codex_status(response: Response) -> dict:
         response.headers["Cache-Control"] = "no-store"
-        return run_manager.codex_status()
+        return codex_oauth_status()
 
     @app.get("/api/workbench/paper-investigation/papers")
     def list_papers(response: Response) -> dict:
@@ -380,119 +292,6 @@ def create_app(
             "answer": answer,
             "question_id": saved["id"],
         }
-
-    @app.get("/api/workbench/prompts")
-    def prompts(response: Response) -> dict:
-        response.headers["Cache-Control"] = "no-store"
-        return {"prompts": run_manager.prompt_store.catalog()}
-
-    @app.put("/api/workbench/prompts/{prompt_id}")
-    def save_prompt(
-        prompt_id: str, request: PromptUpdateRequest, response: Response
-    ) -> dict:
-        response.headers["Cache-Control"] = "no-store"
-        if run_manager.has_active_run():
-            raise HTTPException(
-                status_code=409,
-                detail="Stop the active run before changing prompts",
-            )
-        try:
-            return {"saved": True, "prompt": run_manager.prompt_store.save(
-                prompt_id, request.content
-            )}
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-        except ValueError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-    @app.delete("/api/workbench/prompts/{prompt_id}")
-    def reset_prompt(prompt_id: str, response: Response) -> dict:
-        response.headers["Cache-Control"] = "no-store"
-        if run_manager.has_active_run():
-            raise HTTPException(
-                status_code=409,
-                detail="Stop the active run before changing prompts",
-            )
-        try:
-            return {
-                "reset": True,
-                "prompt": run_manager.prompt_store.reset(prompt_id),
-            }
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @app.get("/api/workbench/openrouter/status")
-    def openrouter_status(response: Response) -> dict:
-        response.headers["Cache-Control"] = "no-store"
-        return openrouter_account.get_status()
-
-    @app.post("/api/workbench/openrouter/key")
-    def replace_openrouter_key(
-        request: ReplaceOpenRouterKeyRequest,
-        response: Response,
-    ) -> dict:
-        response.headers["Cache-Control"] = "no-store"
-        if run_manager.has_active_run():
-            raise HTTPException(
-                status_code=409,
-                detail="Stop the active run before replacing the OpenRouter key",
-            )
-        try:
-            status = openrouter_account.replace_key(request.api_key)
-        except ValueError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return {"saved": True, "status": status}
-
-    @app.get("/api/workbench/runs/current")
-    def current_run(response: Response) -> dict:
-        response.headers["Cache-Control"] = "no-store"
-        run = run_manager.current()
-        return {"run": run.snapshot() if run is not None else None}
-
-    @app.get("/api/workbench/runs/{run_id}")
-    def get_run(run_id: str) -> dict:
-        try:
-            return run_manager.get(run_id).snapshot()
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @app.post("/api/workbench/runs/{run_id}/stop", status_code=202)
-    def stop_run(run_id: str) -> dict:
-        try:
-            return run_manager.stop(run_id).snapshot()
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @app.get("/api/workbench/artifacts")
-    def artifacts(game_id: str = Query(..., min_length=1, max_length=160)) -> dict:
-        return {"game_id": game_id, "artifacts": run_manager.list_artifacts(game_id)}
-
-    @app.get("/api/workbench/artifacts/{artifact_id}")
-    def artifact_replay(
-        artifact_id: str,
-        game_id: str = Query(..., min_length=1, max_length=160),
-    ) -> dict:
-        try:
-            return run_manager.artifact_replay(game_id, artifact_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-
-    @app.delete("/api/workbench/artifacts/{artifact_id}", status_code=204)
-    def delete_artifact(
-        artifact_id: str,
-        game_id: str = Query(..., min_length=1, max_length=160),
-    ) -> Response:
-        try:
-            run_manager.delete_artifact(game_id, artifact_id)
-        except ValueError as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
-        except RuntimeError as exc:
-            raise HTTPException(status_code=409, detail=str(exc)) from exc
-        except KeyError as exc:
-            raise HTTPException(status_code=404, detail=str(exc)) from exc
-        return Response(status_code=204)
 
     return app
 

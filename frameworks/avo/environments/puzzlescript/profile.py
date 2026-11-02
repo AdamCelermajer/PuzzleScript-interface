@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
-from client.arc.arcade_env import ArcadeEnv
+from game.arcade_env import ArcadeEnv
 
 from frameworks.avo.core.framework import Observation, Transition
 from frameworks.avo.core.profile import TaskEvaluation

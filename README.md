@@ -35,7 +35,6 @@ dev server; `website:build` produces the static pages, not a standalone live bac
 | Results (`/runs/results.html`) | Compare individual outcomes and open their traces and artifacts |
 | AVO console (`/experiments/avo-lab.html`) | Candidate lineage, research and fresh evaluation frames, logs, artifacts and architecture |
 | Research | Papers, notes, goal recognition, optimal path and other studies |
-| Historical | The old rule-learning client and its architecture |
 
 AVO and direct-play launches require the `puzzlescript-agents:local` Docker image
 and the chosen harness's credentials. See [harnesses](harnesses/README.md).
@@ -61,8 +60,7 @@ batches created by the workbench; externally owned experiments are monitor-only.
   campaigns), one folder each plus `registry.py`; see its [README](frameworks/README.md).
 - `harnesses/`: coding-CLI harnesses and `python -m harnesses.launch` (one Docker container per run).
 - `puzzlescript_interface/`: Node game engine and ARC-compatible Python service.
-- `client/arc/`: shared ARC adapter/types used by AVO and the direct player.
-- `client/engine/` and `client/runtime/`: historical rule-learning client; some utilities remain shared.
+- `game/`: the game adapter and types every framework uses.
 - `studies/`: other research studies (their outputs are still listed by the workbench); `studies/old_react/` preserves an earlier approach.
 - `archive/`: code and documents no longer used (old website pages, AVO's legacy runner, the first proposal); not imported, not tested.
 - `benchmark/`: benchmark server and scoring tools; see its [README](benchmark/README.md).
@@ -79,13 +77,12 @@ artifacts remain tracked; no archive is deleted or silently migrated.
 ```powershell
 npm run local                         # Docker Node + ARC service, no workbench
 npm run benchmark:local               # benchmark stack
-uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 uv run python -m harnesses.launch --framework baseline --notes --harness codex --model gpt-5.6-sol `
   --effort low --game-id ps_sokoban_basic-v1 --backend-url http://host.docker.internal:8000
 uv run python -m frameworks.baseline.batch --game-id ps_sokoban_basic-v1 --repeats 3 --parallel 3
 ```
 
-The historical rule agent uses OpenRouter (`OPENROUTER_API_KEY`). Official ARC
+OpenCode and bare use OpenRouter (`OPENROUTER_API_KEY`). Official ARC
 runs require `ARC_API_KEY`; local games do not. Copy `.env.example` only if these
 optional settings are needed. The maintained Codex workflows use OAuth.
 

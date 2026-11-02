@@ -233,7 +233,7 @@ def create_router(root: Path = ROOT, backend_url: str | None = None,
                     if f.is_dir() and not f.is_symlink():
                         visit(Path(f.path), f"{label}/{f.name}", depth - 1)
 
-        visit(root / "client/rules" / game_id, f"client/rules/{game_id}", 3)
+        visit(root / "archive/client/rules" / game_id, f"archive/client/rules/{game_id}", 3)
         return records
 
     def goal_studies(game_id: str) -> list[dict]:

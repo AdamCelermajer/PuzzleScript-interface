@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from unittest.mock import patch
 
-from client.arc.types import ActionInput, FrameData, GameAction, GameState, RenderedFrame
+from game.types import ActionInput, FrameData, GameAction, GameState, RenderedFrame
 from frameworks import world_model
 from frameworks.baseline.runner import CodexAgentRunner
 from frameworks.baseline import prompt as baseline_prompt

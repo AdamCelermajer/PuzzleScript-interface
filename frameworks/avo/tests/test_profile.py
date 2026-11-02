@@ -8,7 +8,7 @@ from frameworks.avo.environments.puzzlescript.profile import PuzzleScriptProfile
 class PuzzleScriptProfileTests(unittest.TestCase):
     def test_extended_texture_ids_survive_adapter(self) -> None:
         from frameworks.avo.environments.puzzlescript.adapter import PuzzleScriptEnvironment
-        from client.arc.types import FrameData, GameState, GameAction, ActionInput
+        from game.types import FrameData, GameState, GameAction, ActionInput
         grid = [[[0, 16, 30, 64, 127, 128, 65535]]]
         frame = FrameData(frame=grid, state=GameState.PLAYING, levels_completed=0,
                           game_id="test", win_levels=1, guid="test", full_reset=True,

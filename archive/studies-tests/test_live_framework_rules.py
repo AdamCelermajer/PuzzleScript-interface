@@ -3,7 +3,7 @@ import unittest
 import json
 from pathlib import Path
 
-from client.arc.types import GameAction
+from game.types import GameAction
 from studies.LIVE_framework.model import SymbolFrame
 from studies.LIVE_framework.rules import LiveRuleModel
 
