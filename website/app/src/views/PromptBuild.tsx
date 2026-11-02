@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 import { api, q } from '../api/client'
 import { Empty, ErrorBox, Loading, PageHeader, Select } from '../components/ui'
-import { runHref } from '../lib/runs'
 
 /** workbench/prompt_build.py `transcript`: one recorded session, read top to bottom. */
 interface Piece { source: 'ours' | 'harness' | 'unknown'; text: string }
@@ -41,13 +39,12 @@ export function PromptBuildView() {
     queryFn: ({ signal }) => api.get<{ runs: RecordedRun[] }>('/prompt-builds', signal),
   })
   const [combo, setCombo] = useState('')
-  const [runId, setRunId] = useState('')
   const [folder, setFolder] = useState('')
   const list = runs.data?.runs ?? []  // framework mode first, newest first within it
   const combos = [...new Set(list.map(comboOf))]
   const shown = combos.includes(combo) ? combo : combos[0]
   const ofCombo = list.filter((r) => comboOf(r) === shown)
-  const run = ofCombo.find((r) => r.id === runId) ?? ofCombo[0]
+  const run = ofCombo[0]  // the latest recorded run of this framework and harness
   const session = run?.sessions.find((s) => s.folder === folder) ?? run?.sessions[0]
   return (
     <div className="mx-auto flex max-w-[900px] flex-col gap-4">
@@ -57,20 +54,19 @@ export function PromptBuildView() {
       ) : (
         <>
           <div className="flex flex-wrap items-center gap-2 text-[13px]">
-            <Select value={shown} onChange={(e) => { setCombo(e.target.value); setRunId(''); setFolder('') }}>
+            <Select value={shown} onChange={(e) => { setCombo(e.target.value); setFolder('') }}>
               {combos.map((c) => <option key={c} value={c}>{c}</option>)}
             </Select>
-            {ofCombo.length > 1 && (
-              <Select value={run.id} onChange={(e) => { setRunId(e.target.value); setFolder('') }} className="text-[12px]">
-                {ofCombo.map((r, i) => <option key={r.id} value={r.id}>{i === 0 ? 'latest run' : 'run'} · {when(r)}</option>)}
-              </Select>
-            )}
+
             {run.sessions.length > 1 && (
               <Select value={session.folder} onChange={(e) => setFolder(e.target.value)}>
                 {run.sessions.map((s) => <option key={s.folder} value={s.folder}>{s.role ?? s.folder}</option>)}
               </Select>
             )}
-            <Link className="text-[12px] text-accent" to={runHref(run.id)}>open run</Link>
+          </div>
+          <div className="text-[11.5px] text-faint">
+            From the latest recorded run ({when(run)}); grids and cell changes are shown as &lt;grid&gt; and &lt;cells&gt;.
+            After changing a prompt or the architecture, one short run of this framework refreshes it.
           </div>
           <Conversation key={`${run.id}|${session.folder}`} runId={run.id} folder={session.folder} />
         </>

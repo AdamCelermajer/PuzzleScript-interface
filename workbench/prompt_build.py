@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 from harnesses.recorder import view
@@ -69,6 +70,15 @@ def split(text: str, ours: list[str]) -> list[dict]:
     return [piece for piece in pieces if piece["text"].strip()]
 
 
+GRID = re.compile(r"(grid[^\n]*:\n)(?:[ \t]*-?\d+(?:[ \t]+-?\d+)*[ \t]*(?:\n|$))+")
+CHANGES = re.compile(r"changed \(\d+,\d+\) -?\d+->-?\d+(?:, \(\d+,\d+\) -?\d+->-?\d+)*")
+
+
+def generic(text: str) -> str:
+    """The game-specific parts of an observation as placeholders: the page is about the context."""
+    return CHANGES.sub("changed <cells>", GRID.sub(r"\1<grid>\n", text))
+
+
 def transcript(session: Path) -> dict:
     """The session as {session, system, tools, entries}; entries are us / model / result / note, in order."""
     records = [r for r in (read_json(p) for p in sorted((session / "calls").glob("[0-9][0-9][0-9][0-9].json")))
@@ -108,10 +118,11 @@ def transcript(session: Path) -> dict:
             for part in message["parts"]:
                 if part["kind"] == "tool_result":
                     of = calls.get(part.get("id"), "")
-                    entries.append({"who": "result", "of": of if len(of) <= 100 else of[:100] + "…", "text": part.get("text", ""),
+                    entries.append({"who": "result", "of": of if len(of) <= 100 else of[:100] + "…", "text": generic(part.get("text", "")),
                                     "images": part.get("images") or []})
                 elif part["kind"] == "text":
-                    entries.append({"who": "us", "pieces": split(part.get("text") or "", ours)})
+                    entries.append({"who": "us", "pieces": [{**piece, "text": generic(piece["text"])}
+                                                            for piece in split(part.get("text") or "", ours)]})
                 elif part["kind"] == "image":
                     entries.append({"who": "us", "image": part.get("file")})
         response = record.get("response") or {}
