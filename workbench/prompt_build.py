@@ -13,6 +13,9 @@ from pathlib import Path
 
 from harnesses.recorder import view
 
+# How each API carries the system prompt: a message role, or (Anthropic) a field of its own.
+SYSTEM_ROLE = {"chat-completions": "system", "anthropic-messages": "system field (not a message)",
+               "openai-responses": "developer"}
 SKIP = {"workspace", "frames", "initial_frames", "node_modules", "model_requests", "workspace_blobs", "raw",
         "world_model_snapshots", "calls"}
 
@@ -123,15 +126,16 @@ def transcript(session: Path) -> dict:
         system_prompt = ""
     ours = read_sent(session)
     result = {"session": {key: manifest.get(key) for key in ("harness", "model", "role", "game_tools")},
-              "system": [], "tools": [], "entries": []}
+              "system": [], "system_role": "", "tools": [], "entries": []}
     if not records:
         return result
     first = view(records[0].get("request"))
     result["system"] = split("\n\n".join(first["system"]), [system_prompt])
+    result["system_role"] = SYSTEM_ROLE.get(first["dialect"], first["dialect"])
     for tool in first["tools"]:
         definition = tool["definition"] if isinstance(tool["definition"], dict) else {}
         result["tools"].append({"name": tool["name"], "definition": definition})
-    entries, previous, calls = result["entries"], None, {}
+    entries, previous, calls, replied = result["entries"], None, {}, set()
     for record in records:
         shown = view(record.get("request"))
         kept = 0
@@ -145,24 +149,31 @@ def transcript(session: Path) -> dict:
                 entries.append({"who": "note", "text": "Here the system prompt changed."})
         for message in shown["messages"][kept:]:
             if message["role"] == "assistant":
-                continue  # the model's own turns come from its replies, which also hold its thinking
+                # The model's own turns come from its replies, which also hold its thinking; an assistant
+                # message it never sent (Claude Code adds "No response requested.") is the harness's.
+                text = "\n".join(p.get("text") or "" for p in message["parts"] if p.get("kind") == "text").strip()
+                if text and text not in replied:
+                    entries.append({"who": "model", "role": "assistant", "added": True, "thinking": "", "text": text,
+                                    "tool_calls": [], "error": ""})
+                continue
             for part in message["parts"]:
                 if part["kind"] == "tool_result":
                     of = calls.get(part.get("id"), "")
-                    entries.append({"who": "result", "of": of if len(of) <= 100 else of[:100] + "…", "text": generic(part.get("text", "")),
-                                    "images": part.get("images") or []})
+                    entries.append({"who": "result", "role": message["role"], "of": of if len(of) <= 100 else of[:100] + "…",
+                                    "text": generic(part.get("text", "")), "images": part.get("images") or []})
                 elif part["kind"] == "text":
-                    entries.append({"who": "us", "pieces": [{**piece, "text": generic(piece["text"])}
+                    entries.append({"who": "us", "role": message["role"], "pieces": [{**piece, "text": generic(piece["text"])}
                                                             for piece in split(part.get("text") or "", ours)]})
                 elif part["kind"] == "image":
-                    entries.append({"who": "us", "image": part.get("file")})
+                    entries.append({"who": "us", "role": message["role"], "image": part.get("file")})
         response = record.get("response") or {}
         tool_calls = []
         for call in response.get("tool_calls") or []:
             label = f"{call.get('name')}({call.get('arguments') or ''})"
             calls[call.get("id")] = label
             tool_calls.append(label)
-        entries.append({"who": "model", "thinking": response.get("reasoning") or "",
+        replied.add((response.get("content") or "").strip())
+        entries.append({"who": "model", "role": "assistant", "thinking": response.get("reasoning") or "",
                         "text": response.get("content") or "", "tool_calls": tool_calls,
                         "error": record.get("error") or ""})
         previous = shown

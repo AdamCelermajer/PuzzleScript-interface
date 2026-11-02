@@ -6,14 +6,15 @@ import { ChipGroup, Empty, ErrorBox, Loading, PageHeader, Select } from '../comp
 /** workbench/prompt_build.py `transcript`: one recorded session, read top to bottom. */
 interface Piece { source: 'ours' | 'harness' | 'unknown'; text: string }
 type Entry =
-  | { who: 'us'; pieces?: Piece[]; image?: string }
-  | { who: 'model'; thinking: string; text: string; tool_calls: string[]; error: string }
-  | { who: 'result'; of: string; text: string; images: string[] }
+  | { who: 'us'; role: string; pieces?: Piece[]; image?: string }
+  | { who: 'model'; role: string; added?: boolean; thinking: string; text: string; tool_calls: string[]; error: string }
+  | { who: 'result'; role: string; of: string; text: string; images: string[] }
   | { who: 'note'; text: string }
 
 interface Transcript {
   session: { harness: string | null; model: string | null; role: string | null; game_tools: string[] | null }
   system: Piece[]
+  system_role: string
   tools: { name: string; definition: unknown }[]
   entries: Entry[]
 }
@@ -97,7 +98,7 @@ function Conversation({ runId, folder }: { runId: string; folder: string }) {
   const image = (name: string) => `/api/workbench/record/calls/file${q({ run: runId, folder, name })}`
   return (
     <div className="flex flex-col gap-5 text-[13px]">
-      <Section title="System prompt">
+      <Section title="System prompt" role={t.system_role}>
         {t.system.map((p, i) => (
           <Fold key={i} label={`${p.source === 'ours' ? 'Our system prompt' : p.text.includes('<available_skills>') ? `${harness} skill list` : `${harness} system prompt${seenOurs >= 0 && i > seenOurs ? ', after ours' : ''}`} (${p.text.length.toLocaleString()} characters)`}>
             <Text>{p.text}</Text>
@@ -105,7 +106,7 @@ function Conversation({ runId, folder }: { runId: string; folder: string }) {
         ))}
       </Section>
 
-      <Section title="Tools">
+      <Section title="Tools" role="tools field (the provider writes them into the system part)">
         {theirTools.length > 0 && <Fold label={`${harness} tools (${theirTools.length}): ${theirTools.map((tool) => tool.name).join(', ')}`}>
           <Text>{JSON.stringify(theirTools.map((tool) => tool.definition), null, 2)}</Text>
         </Fold>}
@@ -128,9 +129,12 @@ const WHO = { us: 'US', model: 'MODEL', result: 'RESULT', note: '' }
 function Row({ n, entry, harness, image }: { n: number; entry: Entry; harness: string; image: (name: string) => string }) {
   if (entry.who === 'note') return <div className="my-2 rounded bg-warn-soft px-3 py-1.5 text-[12px] text-warn">{entry.text}</div>
   return (
-    <div className="grid grid-cols-[28px_64px_1fr] gap-2 border-b border-line py-2">
+    <div className="grid grid-cols-[28px_76px_1fr] gap-2 border-b border-line py-2">
       <div className="text-faint">{n}</div>
-      <div className={entry.who === 'model' ? 'font-semibold text-accent' : 'font-semibold text-muted'}>{WHO[entry.who]}</div>
+      <div className={entry.who === 'model' ? 'font-semibold text-accent' : 'font-semibold text-muted'}>
+        {WHO[entry.who]}
+        <div className="font-mono text-[10.5px] font-normal text-faint" title="the role this message has in the request">{entry.role}</div>
+      </div>
       <div className="flex min-w-0 flex-col gap-1">
         {entry.who === 'us' && (entry.image
           ? <img src={image(entry.image)} alt="" className="max-h-[200px] self-start rounded border border-line" style={{ imageRendering: 'pixelated' }} />
@@ -139,6 +143,7 @@ function Row({ n, entry, harness, image }: { n: number; entry: Entry; harness: s
             : <Text key={i}>{p.text}</Text>))}
         {entry.who === 'model' && <>
           {entry.thinking && <Fold label="thinking"><Text>{entry.thinking}</Text></Fold>}
+          {entry.added && <div className="text-[11px] text-faint">added by {harness}, not written by the model:</div>}
           {entry.text && <Text>{entry.text}</Text>}
           {entry.tool_calls.map((c, i) => c.length > 200
             ? <Fold key={i} label={`${c.slice(0, 100)}…`}><Text>{c}</Text></Fold>
@@ -155,10 +160,13 @@ function Row({ n, entry, harness, image }: { n: number; entry: Entry; harness: s
   )
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+function Section({ title, role, children }: { title: string; role?: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <div className="text-[11.5px] font-semibold tracking-wide text-faint uppercase">{title}</div>
+      <div className="text-[11.5px] font-semibold tracking-wide text-faint uppercase">
+        {title}
+        {role && <span className="ml-2 font-mono text-[10.5px] font-normal tracking-normal normal-case" title="how the request carries it">role: {role}</span>}
+      </div>
       {children}
     </div>
   )
