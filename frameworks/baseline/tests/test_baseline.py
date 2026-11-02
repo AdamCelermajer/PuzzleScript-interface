@@ -223,8 +223,8 @@ class TurnBasedTests(unittest.TestCase):
             self.assertEqual((copies / "final.md").read_text(encoding="utf-8"), "final report")
 
     def test_turn_based_prompt_is_the_agentic_one_but_for_the_line_on_moves(self) -> None:
-        self.assertEqual(game_instructions(True), baseline_prompt.SYSTEM_PROMPT
-                         + "Each turn you get one observation. Submit one action with: python act.py ACTION")
+        self.assertEqual(game_instructions(True, script="/x/act.py"), baseline_prompt.SYSTEM_PROMPT
+                         + "Each turn you get one observation. Submit one action with: python /x/act.py ACTION")
         self.assertTrue(game_instructions(True, tools=True).endswith("Submit one action with the act tool."))
         shared = baseline_prompt.SYSTEM_PROMPT
         self.assertEqual(baseline_prompt.system_prompt("agent", True), shared + "Play with the do tool.")

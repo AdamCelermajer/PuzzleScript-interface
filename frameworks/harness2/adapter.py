@@ -131,22 +131,23 @@ class PuzzleScriptAdapter:
             yardstick = "Solve the level; between two solving runs, fewer game actions is better."
             guidance = ("Each trajectory begins with whether the player solved the level and how many game actions "
                         "it used of its budget. Use these outcomes when comparing approaches. The player plays this "
-                        "one level in one session and one folder, only through the `do` tool (`python game.py do ACTION`; "
-                        "RESET is one of the actions), and finds the harness files in that folder at the start.")
+                        "one level in one session and one folder, only through the `do` tool (one call per "
+                        "action; RESET is one of the actions), and finds the harness files in that folder at the start.")
         else:
             yardstick = "Complete more levels; on a tie, use fewer game actions."
             guidance = ("Each trajectory begins with the run's levels completed and actions used. "
                         "Use these outcomes when comparing approaches. The player works in one session and "
-                        "one folder for the whole run, plays only through the `do` tool (`python game.py do ACTION`; "
-                        "RESET is one of the actions), and finds the harness files in that folder at the start.")
+                        "one folder for the whole run, plays only through the `do` tool (one call per "
+                        "action; RESET is one of the actions), and finds the harness files in that folder at the start.")
         self.spec = BenchSpec(
             name="puzzlescript", runs_root=self.root / "rollouts", install_mode="workspace_agents_md",
             prompts=BenchPrompts(
                 work="play an unfamiliar puzzle game through a command-line game tool, in a working folder that persists",
                 domain_word="puzzle mechanics", deliverable_word="environment model",
                 yardstick=yardstick,
-                inv_levers="Improve observation, hypothesis tracking, notes, helper scripts that call `python game.py`, "
-                           "planning, and recovery from dead ends.",
+                inv_levers="Improve observation, hypothesis tracking, notes, helper scripts that analyse what was "
+                           "observed or plan moves (they cannot play: only the do tool does), planning, and recovery "
+                           "from dead ends.",
                 dom_levers="Use the observed transitions to learn this game's objects, controls, and goals.",
                 domain_guidance=guidance,
             ),
@@ -162,9 +163,9 @@ class PuzzleScriptAdapter:
 
     def task_prompt(self, task_id: str) -> str:
         if self.level:
-            return ("Play one level of an unknown puzzle game with `python game.py` in your working folder. "
+            return ("Play one level of an unknown puzzle game with the do tool. "
                     "Solve it within the game action budget.")
-        return ("Play the unknown puzzle game with `python game.py` in your working folder. "
+        return ("Play the unknown puzzle game with the do tool. "
                 "Complete as many levels as possible within the game action budget.")
 
     def task_files(self, task_id: str) -> None:

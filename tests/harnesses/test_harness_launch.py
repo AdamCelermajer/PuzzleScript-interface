@@ -1,6 +1,7 @@
 """Registry, launcher, in-container entry, bare loop, baseline workspace and the AVO CliAgent."""
 import argparse
 import json
+import re
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -409,7 +410,7 @@ class FakeHarness:
 
 
 @pytest.mark.parametrize("enabled,kept", [(False, ["frame.png", "scratch.py", "tmpdir"]),
-                                          (True, [".act", "act.py", "frame.png", "notes", "scratch.py", "tmpdir"])])
+                                          (True, ["frame.png", "notes", "scratch.py", "tmpdir"])])
 def test_baseline_keeps_every_file_between_turns(tmp_path, monkeypatch, enabled, kept):
     from frameworks.baseline import session as module
     monkeypatch.setattr("harnesses.registry.create_session", lambda harness: FakeHarness())
@@ -437,10 +438,9 @@ class ActingHarness(FakeHarness):
         import subprocess
         import sys
         self.turn_number += 1
-        done = subprocess.run([sys.executable, "act.py", self.action, "--note", "why"], cwd=self.workspace,
-                              capture_output=True, text=True)
-        again = subprocess.run([sys.executable, "act.py", self.action], cwd=self.workspace,
-                               capture_output=True, text=True)
+        script = re.search(r"python (\S+act\.py) ACTION", self.prompt).group(1)  # given its path, not in the folder
+        done = subprocess.run([sys.executable, script, self.action, "--note", "why"], capture_output=True, text=True)
+        again = subprocess.run([sys.executable, script, self.action], capture_output=True, text=True)
         assert self.stop_check() and "Your turn ends now" in done.stdout and "already submitted" in again.stderr
         return TurnResult(text="", session_id="s", usage={}, events=[{"type": "command"}])
 
@@ -456,7 +456,8 @@ def test_baseline_act_py_submits_the_action(tmp_path, monkeypatch):
         game.available_actions = ["ACTION3", "ACTION4"]
         assert game.next_action("p") == {"operation": "ACT", "action": "ACTION3", "note": "why"}
         assert not game.session.stop_check()  # nothing stays submitted between turns
-        refused = subprocess.run([sys.executable, "act.py", "ACTION3"], cwd=workspace, capture_output=True, text=True)
+        assert not (workspace / "act.py").exists()
+        refused = subprocess.run([sys.executable, str(game.act_script), "ACTION3"], capture_output=True, text=True)
         assert "No game turn is open" in refused.stderr
         ActingHarness.action = "ACTION1"
         try:

@@ -5,8 +5,9 @@ back. Here, as in the Harness² paper, the agent gets one task and one working f
 for the whole run (Harness² places its candidate harness, AGENTS.md, .opencode/, scripts/, there
 first; this is Harness²'s player). It is told what the controller-driven player is told, word for word
 (frameworks/baseline/prompt.py), but for the line on how to move. The game is a command in that folder,
-``python game.py do ACTION`` (RESET is one more action), offered as the ``do`` tool
-to a harness that takes tools, and answered by a small server in this process: it owns the game
+``game.py do ACTION`` (RESET is one more action) in a folder of its own, outside the agent's, offered
+as the ``do`` tool to a harness that takes tools (others get its path), and answered by a small server in
+this process: it owns the game
 session and the action budget, and records every move in the baseline shape (transitions.jsonl,
 frames/, result.json) so the run page replays it. world_model.md, if the agent writes one, is copied
 after every 100 actions, each completed level and the end (frameworks/world_model.py). If it ends
@@ -95,9 +96,12 @@ class GameServer:
         self.frames = output_dir / "frames"
         self.frames.mkdir(parents=True, exist_ok=True)
         self.snapshots = world_model.Snapshots(workspace / world_model.NAME, output_dir)
-        self.rpc = workspace / RPC_DIR
+        # Outside the agent's folder: only the model plays, through the do tool.
+        self.home = Path(tempfile.mkdtemp(prefix="game-"))
+        self.script = self.home / "game.py"
+        self.rpc = self.home / RPC_DIR
         self.rpc.mkdir(parents=True, exist_ok=True)
-        (workspace / "game.py").write_text(GAME_CLI, encoding="utf-8")
+        self.script.write_text(GAME_CLI, encoding="utf-8")
         self.frame: FrameData = env.reset()
         self._save_picture()
         self._stop = threading.Event()
@@ -260,9 +264,9 @@ def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provid
 
     def open_session(turn_number: int = 0):
         new = create_session(harness)
-        new.game_tools = baseline_prompt.game_tools("agent", new)
-        new.start(workspace, baseline_prompt.system_prompt("agent", bool(new.game_tools)), model, effort, "player",
-                  output_dir, provider=provider)
+        new.game_tools = baseline_prompt.game_tools("agent", new, str(server.script))
+        new.start(workspace, baseline_prompt.system_prompt("agent", bool(new.game_tools), str(server.script)), model,
+                  effort, "player", output_dir, provider=provider)
         new.turn_number = turn_number  # raw/turn-<n>.jsonl keeps counting across sessions
         return new
 
@@ -318,8 +322,9 @@ def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provid
             if (workspace / name).is_file():
                 shutil.copyfile(workspace / name, output_dir / name)
         server.snapshots.final()
-        shutil.copytree(workspace, output_dir / "workspace", dirs_exist_ok=True, ignore=shutil.ignore_patterns(RPC_DIR))
+        shutil.copytree(workspace, output_dir / "workspace", dirs_exist_ok=True)
         shutil.rmtree(workspace, ignore_errors=True)
+        shutil.rmtree(server.home, ignore_errors=True)
     result = {"status": "error" if error else "completed", "reason": reason, "error": error or None,
               "solved": server.solved, "actions": server.actions, "action_count": len(server.actions),
               "agent_turns": turns, "final_state": getattr(server.frame.state, "value", str(server.frame.state)),

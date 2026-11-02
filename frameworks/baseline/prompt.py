@@ -2,8 +2,10 @@
 
 Both drivers share the system prompt, the observation text, the first message and the final
 report; only one line differs: how a move is sent (``act`` once per turn for the controller,
-``do`` as often as it likes for the agent). A harness that takes tools (``native_tools``) gets them as
-real tools that run the same scripts; any other harness runs the scripts through its shell.
+``do`` as often as it likes for the agent). The scripts behind them live outside the agent's folder, so
+only the model plays, one tool call per action: its own scripts can analyse and plan, not play. A
+harness that takes tools (``native_tools``) gets them as real tools; any other harness is given the
+script's path and runs it through its shell.
 """
 from __future__ import annotations
 
@@ -20,20 +22,20 @@ SYSTEM_PROMPT = (
 )
 PLAY = {
     ("controller", True): "Each turn you get one observation. Submit one action with the act tool.",
-    ("controller", False): "Each turn you get one observation. Submit one action with: python act.py ACTION",
+    ("controller", False): "Each turn you get one observation. Submit one action with: python {script} ACTION",
     ("agent", True): "Play with the do tool.",
-    ("agent", False): "Play with: python game.py do ACTION",
+    ("agent", False): "Play with: python {script} do ACTION",
 }
 ACTION_ARGUMENT = "one of the available actions"
 TOOLS = {
     "controller": [
         {"name": "act", "description": "Submit your action for this turn. This ends your turn; the next "
                                        "observation comes in the next turn.",
-         "argument": "action", "argument_description": ACTION_ARGUMENT, "command": ["python", "act.py"]},
+         "argument": "action", "argument_description": ACTION_ARGUMENT, "command": ["python", "{script}"]},
     ],
     "agent": [
         {"name": "do", "description": "Take one action now. Returns the new observation. Costs one action.",
-         "argument": "action", "argument_description": ACTION_ARGUMENT, "command": ["python", "game.py", "do"]},
+         "argument": "action", "argument_description": ACTION_ARGUMENT, "command": ["python", "{script}", "do"]},
     ],
 }
 # Only the legacy encodings need explaining beyond the system prompt's "one number per tile type".
@@ -47,13 +49,16 @@ REPORT_PROMPT = ("The game has ended ({reason}; levels completed {levels}/{total
                  + world_model.final_prompt() + " Then reply 'done'.")
 
 
-def system_prompt(driver: str, tools: bool) -> str:
-    return SYSTEM_PROMPT + PLAY[driver, tools]
+def system_prompt(driver: str, tools: bool, script: str = "") -> str:
+    return SYSTEM_PROMPT + PLAY[driver, tools].format(script=script)
 
 
-def game_tools(driver: str, session) -> list[dict]:
-    """The driver's tools for a harness that takes them; none otherwise (the prompt then names the scripts)."""
-    return TOOLS[driver] if getattr(session, "native_tools", False) else []
+def game_tools(driver: str, session, script: str) -> list[dict]:
+    """The driver's tools, running ``script``, for a harness that takes them; none otherwise (the prompt
+    then names the script)."""
+    if not getattr(session, "native_tools", False):
+        return []
+    return [{**tool, "command": [part.format(script=script) for part in tool["command"]]} for tool in TOOLS[driver]]
 
 
 def available(frame) -> list[str]:

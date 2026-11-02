@@ -1,22 +1,20 @@
-"""Direct-player session over any harness: one persistent agent conversation per episode.
+"""Turn-based player session over any harness: one persistent agent conversation per game.
 
-``CliGameSession.next_action(prompt, image_path)`` runs one harness turn in the
-agent workspace and returns the turn's single action. Nothing is deleted between turns
-and the CLI keeps its own tools. Baseline says nothing about a workspace;
-Baseline-plus gives a ``notes/`` directory as the agent's memory and an ``act.py`` command:
-``python act.py ACTION_NAME`` submits the turn's action, and the turn is cut at the end of
-that model step (acting is a tool call, so the agent never has to stop using tools to act).
-A turn without a submission falls back to parsing a final JSON reply. The turn prompt asks for
-``notes/world_model.md``, its current model of the game, every 100 actions and after each
-level (``frameworks/baseline/turn_based.py``). ``notes/`` is mirrored to the run's ``workspace/`` folder for the
-catalog and continuations. With ``memento`` every turn starts a fresh harness session with the same system
-prompt and working folder, and the system prompt tells the agent so: only the folder (notes/) carries over.
+``CliGameSession.next_action(prompt, image_path)`` runs one harness turn in the agent's folder and
+returns the turn's single action. The agent submits it with the ``act`` tool, which runs ``act.py``
+kept outside its folder (a harness without tools is given that script's path); the turn is cut
+at the end of that model step. A turn without a submission falls back to parsing a final JSON reply.
+What the agent is told is frameworks/baseline/prompt.py, word for word the agentic player's but for
+the line on moves. Nothing is deleted between turns; ``notes/`` is mirrored to the run's
+``workspace/`` folder for the catalog and continuations. With ``memento`` every turn starts a fresh
+harness session with the same system prompt and folder, and the agent is told so.
 """
 from __future__ import annotations
 
 import json
 import re
 import shutil
+import tempfile
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -33,7 +31,7 @@ NOTES_HISTORY = "notes_history"  # in the run folder: notes/ after every harness
 WORLD_MODEL_FILE = world_model.NAME  # in the working folder, as for the agentic player
 ACT_SCRIPT = "act.py"
 ACT_DIR = ".act"  # the open turn (turn.json) and its submitted action (submission.json)
-ACTION_HINT = f"Submit one available action with python {ACT_SCRIPT} ACTION_NAME."
+ACTION_HINT = "Submit one available action with python {script} ACTION_NAME."
 ACTION_HINT_TOOL = "Submit one available action with the act tool."
 
 # Placed in the agent workspace; it only records the action, the controller plays it.
@@ -102,11 +100,11 @@ MEMENTO_INSTRUCTIONS = (
 )
 
 
-def game_instructions(workspace_enabled: bool, memento: bool = False, tools: bool = False) -> str:
+def game_instructions(workspace_enabled: bool, memento: bool = False, tools: bool = False, script: str = "") -> str:
     """System prompt shared by every direct-player harness: with a workspace, the baseline prompt
     (frameworks/baseline/prompt.py), word for word the agentic player's but for the line on moves."""
     if workspace_enabled:
-        return baseline_prompt.system_prompt("controller", tools) + (MEMENTO_INSTRUCTIONS if memento else "")
+        return baseline_prompt.system_prompt("controller", tools, script) + (MEMENTO_INSTRUCTIONS if memento else "")
     text = (
         "You are playing a puzzle game. Return exactly one next game action per turn. "
         f"Your working directory contains {FRAME_NAME} (the current frame)."
@@ -172,7 +170,10 @@ class CliGameSession:
         self.session: Any = None
         self.turn_count = 0
         self.available_actions: list[str] = []  # set by the runner before each turn
-        self.action_hint = ACTION_HINT if config.workspace_enabled else ""
+        # act.py and its turn files live outside the agent's folder: only the model submits the action.
+        self.act_home = Path(tempfile.mkdtemp(prefix="act-")) if config.workspace_enabled else None
+        self.act_script = self.act_home / ACT_SCRIPT if self.act_home else None
+        self.action_hint = ACTION_HINT.format(script=self.act_script) if config.workspace_enabled else ""
 
     def __enter__(self) -> "CliGameSession":
         from harnesses.registry import create_session
@@ -182,14 +183,16 @@ class CliGameSession:
         initial_notes = sorted(path.relative_to(self.working_directory).as_posix()
                                for path in self.working_directory.rglob("*") if path.is_file())
         self.session = create_session(self.config.harness)
-        tools = baseline_prompt.game_tools("controller", self.session) if self.config.workspace_enabled else []
+        tools = (baseline_prompt.game_tools("controller", self.session, str(self.act_script))
+                 if self.config.workspace_enabled else [])
         self.session.game_tools = tools
         if tools:
             self.action_hint = ACTION_HINT_TOOL
-        instructions = game_instructions(self.config.workspace_enabled, self.config.memento, bool(tools))
+        instructions = game_instructions(self.config.workspace_enabled, self.config.memento, bool(tools),
+                                         str(self.act_script or ""))
         if self.config.workspace_enabled:
-            (self.working_directory / ACT_SCRIPT).write_text(ACT_PROGRAM, encoding="utf-8")
-            (self.working_directory / ACT_DIR).mkdir(exist_ok=True)
+            self.act_script.write_text(ACT_PROGRAM, encoding="utf-8")
+            (self.act_home / ACT_DIR).mkdir(exist_ok=True)
         self.session.start(self.working_directory, instructions, self.config.model, self.config.effort,
                            "player", self.artifact_directory, provider=self.config.provider)
         if self.config.workspace_enabled:
@@ -213,6 +216,8 @@ class CliGameSession:
         if self.session is not None:
             self.session.close()
         self.session = None
+        if self.act_home is not None:
+            shutil.rmtree(self.act_home, ignore_errors=True)
 
     def _timeout(self) -> float | None:
         timeout = self.config.turn_timeout
@@ -257,7 +262,7 @@ class CliGameSession:
                             dirs_exist_ok=True)
 
     def _act_path(self, name: str) -> Path:
-        return self.working_directory / ACT_DIR / name
+        return self.act_home / ACT_DIR / name
 
     def _open_turn(self) -> None:
         """Clear the last submission and tell act.py which actions this turn allows."""

@@ -1,5 +1,6 @@
 import base64
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -42,8 +43,8 @@ class Corridor:
         return self._frame()
 
 
-def game(workspace, *args):
-    out = subprocess.run([sys.executable, "game.py", *args], cwd=workspace, capture_output=True, text=True, timeout=30)
+def game(script, *args):
+    out = subprocess.run([sys.executable, str(script), *args], capture_output=True, text=True, timeout=30)
     return out.returncode, out.stdout
 
 
@@ -55,16 +56,16 @@ def test_game_command_plays_records_and_enforces_the_budget(tmp_path):
         text = server._status()  # what the first message shows
         assert "levels=0/2 actions_used=0/3" in text and "5 2 2" in text
         assert "available_actions=ACTION3, ACTION4, RESET" in text
-        assert game(workspace, "look")[0] == 1  # only do: its reply is the observation
+        assert game(server.script, "look")[0] == 1  # only do: its reply is the observation
         assert (workspace / "frame.png").read_bytes() == b"\x89PNG fake"
-        code, text = game(workspace, "do", "action4")
+        code, text = game(server.script, "do", "action4")
         assert code == 0 and text.startswith("Last action: ACTION4\nstate=PLAYING") and "2 5 2" in text
-        code, text = game(workspace, "do", "ACTION4")
+        code, text = game(server.script, "do", "ACTION4")
         assert "LEVEL COMPLETED (1/2)" in text
-        assert game(workspace, "do", "ACTION9")[0] == 1
-        code, text = game(workspace, "do", "reset")  # RESET is one more action
+        assert game(server.script, "do", "ACTION9")[0] == 1
+        code, text = game(server.script, "do", "reset")  # RESET is one more action
         assert code == 0 and "actions_used=3/3" in text
-        code, text = game(workspace, "do", "ACTION4")
+        code, text = game(server.script, "do", "ACTION4")
         assert code == 1 and "step_budget_exhausted" in text
     finally:
         server.stop()
@@ -82,6 +83,9 @@ class ScriptedSession:
 
     def start(self, workspace, system_prompt, model, effort, role, analysis_dir, provider=""):
         self.workspace, self.system_prompt = Path(workspace), system_prompt
+        # A harness without tools is given the game script's path; it is not in the agent's folder.
+        self.script = re.search(r"python (\S+game\.py) do ACTION", system_prompt).group(1)
+        assert not (self.workspace / "game.py").exists()
         assert (self.workspace / "AGENTS.md").read_text() == "Coach advice"
         return self
 
@@ -89,11 +93,11 @@ class ScriptedSession:
         self.turn_number += 1
         self.instructions.append(instruction)
         if instruction.startswith("The game has ended"):
-            self.refused = game(self.workspace, "do", "ACTION4")  # the game is closed for the final reports
+            self.refused = game(self.script, "do", "ACTION4")  # the game is closed for the final reports
             (self.workspace / "world_model.md").write_text("ACTION4 moves right.")
         else:
             for args in (self.plan.pop(0) if self.plan else []):
-                game(self.workspace, *args)
+                game(self.script, *args)
             (self.workspace / "notes.md").write_text(f"turn {len(self.instructions)}")
         return SimpleNamespace(text="ok", error="", timed_out=False, events=[])
 
@@ -170,7 +174,7 @@ def test_the_prompt_is_the_shared_one_and_notes_are_mirrored_live(tmp_path, monk
     monkeypatch.setattr(player, "create_session", lambda harness_id: session)
     play(Corridor(), tmp_path / "out", harness="opencode", model="m", effort="low", provider="",
          max_steps=10, max_wall_seconds=0, harness_dir=harness, notes=True)
-    assert session.system_prompt == baseline_prompt.system_prompt("agent", False)  # no native tools: the scripts
+    assert session.system_prompt == baseline_prompt.system_prompt("agent", False, session.script)  # no tools: its path
     assert session.instructions[0] == baseline_prompt.first_message(10, 1, Corridor().reset())
     assert (tmp_path / "out" / "workspace" / "notes" / "strategy.md").read_text() == "ACTION4 = right"
 
@@ -197,12 +201,12 @@ def test_level_target_ends_the_game_without_showing_the_next_level(tmp_path):
     workspace.mkdir()
     server = GameServer(LevelPictures(levels=3), workspace, output, max_steps=10, stop_after_levels=1).start()
     try:
-        game(workspace, "do", "ACTION4")
-        code, text = game(workspace, "do", "ACTION4")
+        game(server.script, "do", "ACTION4")
+        code, text = game(server.script, "do", "ACTION4")
         assert code == 0 and text.strip() == "ACTION4: LEVEL COMPLETED (1/3). Level target reached; the game is over."
         text = server._status()
         assert "level target is reached" in text and "grid" not in text and "frame.png" not in text
-        assert game(workspace, "do", "ACTION4")[0] == 1 and server.reason == "level_target_reached"
+        assert game(server.script, "do", "ACTION4")[0] == 1 and server.reason == "level_target_reached"
         assert (workspace / "frame.png").read_bytes() == b"level 0"  # the next level's picture never arrives
         assert len((output / "transitions.jsonl").read_text().splitlines()) == 1
     finally:
