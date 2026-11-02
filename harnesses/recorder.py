@@ -376,6 +376,19 @@ def _responses_item(item: dict) -> dict:
     return {"role": item.get("role") or kind, "parts": [{"kind": "other", "data": item}]}
 
 
+def _flat_tools(tools: list) -> list[dict]:
+    """Tools as {name, definition}, with those grouped in a namespace listed one by one."""
+    flat = []
+    for tool in tools:
+        if not isinstance(tool, dict):
+            continue
+        if tool.get("type") == "namespace":
+            flat += _flat_tools(tool.get("tools") or [])
+        else:
+            flat.append({"name": tool.get("name") or tool.get("type"), "definition": tool})
+    return flat
+
+
 def view(request: Any) -> dict:
     """A saved request of any dialect as {dialect, system, messages, tools, settings}."""
     if not isinstance(request, dict):
@@ -388,7 +401,16 @@ def view(request: Any) -> dict:
         items = request.get("input") or []
         items = [{"role": "user", "content": items}] if isinstance(items, str) else items
         system = [request["instructions"]] if request.get("instructions") else []
-        messages = [_responses_item(item) for item in items if isinstance(item, dict)]
+        messages = []
+        for item in (item for item in items if isinstance(item, dict)):
+            # Codex since 0.16x: its tools as an `additional_tools` item (nested in namespaces) and its
+            # system prompts as developer messages, all inside `input`.
+            if item.get("type") == "additional_tools":
+                tools += _flat_tools(item.get("tools") or [])
+            elif (item.get("type") or "message") == "message" and item.get("role") in ("developer", "system"):
+                system.append(_text_of(item.get("content")))
+            else:
+                messages.append(_responses_item(item))
         dialect, skip = "openai-responses", {"input", "instructions", "tools"}
     elif "system" in request and "messages" in request or "anthropic_version" in request:
         system = [_text_of(request.get("system"))] if request.get("system") else []

@@ -144,3 +144,17 @@ def test_opencode_adds_the_callers_tools_in_its_private_config(tmp_path, monkeyp
         assert json.loads((tmp_path / "analysis" / "session.json").read_text())["game_tools"] == ["do"]
     finally:
         session.close()
+
+
+def test_codex_input_with_developer_prompts_and_additional_tools():
+    from harnesses.recorder import view
+    shown = view({"model": "gpt", "input": [
+        {"type": "additional_tools", "role": "developer", "tools": [{"type": "namespace", "name": "functions", "tools": [
+            {"type": "custom", "name": "exec"}, {"type": "function", "name": "wait"}]}]},
+        {"type": "message", "role": "developer", "content": [{"type": "input_text", "text": "You are Codex."}]},
+        {"type": "message", "role": "developer", "content": [{"type": "input_text", "text": "Ours."},
+                                                             {"type": "input_text", "text": "Skills."}]},
+        {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Play."}]}]})
+    assert shown["system"] == ["You are Codex.", "Ours.\nSkills."]
+    assert [t["name"] for t in shown["tools"]] == ["exec", "wait"]
+    assert [m["role"] for m in shown["messages"]] == ["user"]
