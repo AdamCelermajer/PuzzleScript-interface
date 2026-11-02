@@ -8,7 +8,6 @@ import functools
 import hashlib
 import json
 import os
-import re
 from pathlib import Path
 
 from harnesses.recorder import view
@@ -73,15 +72,6 @@ def split(text: str, ours: list[str]) -> list[dict]:
     pieces = [{"source": "harness", "text": text[:at]}, {"source": "ours", "text": needle},
               *split(text[at + len(needle):], known)]
     return [piece for piece in pieces if piece["text"].strip()]
-
-
-GRID = re.compile(r"(grid[^\n]*:\n)(?:[ \t]*-?\d+(?:[ \t]+-?\d+)*[ \t]*(?:\n|$))+")
-CHANGES = re.compile(r"changed \(\d+,\d+\) -?\d+->-?\d+(?:, \(\d+,\d+\) -?\d+->-?\d+)*")
-
-
-def generic(text: str) -> str:
-    """The game-specific parts of an observation as placeholders: the page is about the context."""
-    return CHANGES.sub("changed <cells>", GRID.sub(r"\1<grid>\n", text))
 
 
 @functools.lru_cache(maxsize=4096)
@@ -160,9 +150,9 @@ def transcript(session: Path) -> dict:
                 if part["kind"] == "tool_result":
                     of = calls.get(part.get("id"), "")
                     entries.append({"who": "result", "role": message["role"], "of": of if len(of) <= 100 else of[:100] + "…",
-                                    "text": generic(part.get("text", "")), "images": part.get("images") or []})
+                                    "text": part.get("text", ""), "images": part.get("images") or []})
                 elif part["kind"] == "text":
-                    entries.append({"who": "us", "role": message["role"], "pieces": [{**piece, "text": generic(piece["text"])}
+                    entries.append({"who": "us", "role": message["role"], "pieces": [{**piece, "text": piece["text"]}
                                                             for piece in split(part.get("text") or "", ours)]})
                 elif part["kind"] == "image":
                     entries.append({"who": "us", "role": message["role"], "image": part.get("file")})

@@ -71,7 +71,7 @@ export function PromptBuildView() {
             )}
           </div>
           <div className="text-[11.5px] text-faint">
-            From the latest recorded run ({when(run)}); grids and cell changes are shown as &lt;grid&gt; and &lt;cells&gt;.
+            From the latest recorded run ({when(run)}), exactly as sent.
             After changing a prompt or the architecture, one short run of this framework refreshes it.
           </div>
           <Conversation key={`${run.id}|${session.folder}`} runId={run.id} folder={session.folder} />
