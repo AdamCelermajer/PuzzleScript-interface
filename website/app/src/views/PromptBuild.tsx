@@ -93,7 +93,7 @@ function Conversation({ runId, folder }: { runId: string; folder: string }) {
     <div className="flex flex-col gap-5 text-[13px]">
       <Section title="System prompt">
         {t.system.map((p, i) => (
-          <Fold key={i} label={`${p.source === 'ours' ? 'Our system prompt' : `${harness} system prompt${seenOurs >= 0 && i > seenOurs ? ', continued after ours' : ''}`} (${p.text.length.toLocaleString()} characters)`}>
+          <Fold key={i} label={`${p.source === 'ours' ? 'Our system prompt' : p.text.includes('<available_skills>') ? `${harness} skill list` : `${harness} system prompt${seenOurs >= 0 && i > seenOurs ? ', after ours' : ''}`} (${p.text.length.toLocaleString()} characters)`}>
             <Text>{p.text}</Text>
           </Fold>
         ))}
