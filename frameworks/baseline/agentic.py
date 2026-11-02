@@ -5,7 +5,7 @@ back. Here, as in the Harness² paper, the agent gets one task and one working f
 for the whole run (Harness² places its candidate harness, AGENTS.md, .opencode/, scripts/, there
 first; this is Harness²'s player). It is told what the controller-driven player is told, word for word
 (frameworks/baseline/prompt.py), but for the line on how to move. The game is a command in that folder,
-``python game.py look | do ACTION`` (RESET is one more action), offered as the ``look`` and ``do`` tools
+``python game.py do ACTION`` (RESET is one more action), offered as the ``do`` tool
 to a harness that takes tools, and answered by a small server in this process: it owns the game
 session and the action budget, and records every move in the baseline shape (transitions.jsonl,
 frames/, result.json) so the run page replays it. world_model.md, if the agent writes one, is copied
@@ -52,11 +52,11 @@ FAILED_TURNS = 3
 SESSION_ENDED = ("invalid request parameters", "context length", "context window", "maximum context",
                  "too many tokens", "prompt is too long")
 
-GAME_CLI = r'''"""The game. Usage: python game.py look | python game.py do ACTION"""
+GAME_CLI = r'''"""The game. Usage: python game.py do ACTION"""
 import json, sys, time, uuid
 from pathlib import Path
 
-if len(sys.argv) < 2 or sys.argv[1] not in ("look", "do") or (sys.argv[1] == "do") != (len(sys.argv) == 3):
+if len(sys.argv) < 2 or sys.argv[1] != "do" or (sys.argv[1] == "do") != (len(sys.argv) == 3):
     raise SystemExit(__doc__)
 root = Path(__file__).resolve().parent / ".game"
 name = uuid.uuid4().hex
@@ -78,7 +78,7 @@ FAILED_PROMPT = ("The last reply failed; continue playing the game: levels {leve
                  "{left} of {budget} actions left. Keep playing.")
 RESTART_PROMPT = ("This is a new session: the previous conversation could not continue. Your folder is as you left "
                   "it. The game is still running: levels {levels}/{total}, {left} of {budget} actions left. "
-                  "Keep playing.")
+                  "Keep playing.\n\n{observation}")
 
 
 class GameServer:
@@ -164,8 +164,6 @@ class GameServer:
 
     # -- commands ---------------------------------------------------------------------
     def handle(self, command: str, action: str) -> tuple[bool, str]:
-        if command == "look":
-            return True, self._status()
         if self.finished or self.closed:
             return False, f"The game session is over ({self.reason}). No more actions."
         try:
@@ -204,7 +202,7 @@ class GameServer:
         if self.level_target_reached:
             return True, (f"{name}: LEVEL COMPLETED ({self.frame.levels_completed}/{self.frame.win_levels}). "
                           "Level target reached; the game is over.")
-        last = baseline_prompt.change(name, before_grid, after_grid, before.levels_completed, self.frame)
+        last = baseline_prompt.last_action(name, before.levels_completed, self.frame)
         return True, baseline_prompt.observation(self.frame, len(self.actions), self.max_steps, last)
 
     # -- request loop -----------------------------------------------------------------
@@ -296,7 +294,7 @@ def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provid
                     if (output_dir / "session.json").is_file():  # keep the ended session's manifest
                         (output_dir / "session.json").replace(output_dir / f"session-{turns}.json")
                     session = open_session(session.turn_number)
-                    instruction = RESTART_PROMPT.format(**status())
+                    instruction = RESTART_PROMPT.format(**status(), observation=server._status())
                 else:
                     instruction = FAILED_PROMPT.format(**status())
                 continue

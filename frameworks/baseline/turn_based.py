@@ -208,7 +208,7 @@ class TurnBasedRunner:
             self.actions.append(action)
             solved = self._is_solved(next_frame)
             feedback = ""
-            last = baseline_prompt.change(action.name, before_grid, after_grid, frame.levels_completed, next_frame)
+            last = baseline_prompt.last_action(action.name, frame.levels_completed, next_frame)
             transition = {
                 "id": f"T{len(self.actions):06d}",
                 "timestamp": datetime.now().isoformat(timespec="seconds"),

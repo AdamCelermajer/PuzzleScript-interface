@@ -92,7 +92,7 @@ class TurnBasedTests(unittest.TestCase):
             session = FakeSession([{"action": "RESET"}, {"action": "ACTION4"}])
             result = TurnBasedRunner(env, session, tmpdir, max_steps=5).run()
             self.assertIn("available_actions=ACTION1, ACTION2, ACTION3, ACTION4, RESET", session.calls[0]["prompt"])
-            self.assertTrue(session.calls[1]["prompt"].startswith("Last action: RESET: nothing changed"))
+            self.assertTrue(session.calls[1]["prompt"].startswith("Last action: RESET\nstate="))
             self.assertEqual(result.actions, [GameAction.RESET, GameAction.ACTION4])
             self.assertEqual(env.step_actions, [GameAction.ACTION4])  # RESET went to env.reset()
 
@@ -153,7 +153,7 @@ class TurnBasedTests(unittest.TestCase):
                 self.assertNotIn("codex-test-world", call["prompt"])
                 self.assertNotIn("game_id=", call["prompt"])
                 self.assertNotIn("ACTION1=Up", call["prompt"])
-            self.assertTrue(session.calls[1]["prompt"].startswith("Last action: ACTION4: changed (0,0) 2->0"))
+            self.assertTrue(session.calls[1]["prompt"].startswith("Last action: ACTION4\nstate="))
             self.assertTrue(Path(session.calls[0]["image_path"]).exists())
             self.assertTrue(Path(session.calls[1]["image_path"]).exists())
 
@@ -227,7 +227,7 @@ class TurnBasedTests(unittest.TestCase):
                          + "Each turn you get one observation. Submit one action with: python act.py ACTION")
         self.assertTrue(game_instructions(True, tools=True).endswith("Submit one action with the act tool."))
         shared = baseline_prompt.SYSTEM_PROMPT
-        self.assertEqual(baseline_prompt.system_prompt("agent", True), shared + "Play with the look and do tools.")
+        self.assertEqual(baseline_prompt.system_prompt("agent", True), shared + "Play with the do tool.")
 
     def test_memento_opens_a_fresh_session_every_turn_and_says_so(self) -> None:
         self.assertTrue(game_instructions(True, memento=True).startswith(game_instructions(True)))

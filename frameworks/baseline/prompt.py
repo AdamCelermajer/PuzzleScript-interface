@@ -2,7 +2,7 @@
 
 Both drivers share the system prompt, the observation text, the first message and the final
 report; only one line differs: how a move is sent (``act`` once per turn for the controller,
-``look`` and ``do`` for the agent). A harness that takes tools (``native_tools``) gets them as
+``do`` as often as it likes for the agent). A harness that takes tools (``native_tools``) gets them as
 real tools that run the same scripts; any other harness runs the scripts through its shell.
 """
 from __future__ import annotations
@@ -21,8 +21,8 @@ SYSTEM_PROMPT = (
 PLAY = {
     ("controller", True): "Each turn you get one observation. Submit one action with the act tool.",
     ("controller", False): "Each turn you get one observation. Submit one action with: python act.py ACTION",
-    ("agent", True): "Play with the look and do tools.",
-    ("agent", False): "Play with: python game.py look | python game.py do ACTION",
+    ("agent", True): "Play with the do tool.",
+    ("agent", False): "Play with: python game.py do ACTION",
 }
 ACTION_ARGUMENT = "one of the available actions"
 TOOLS = {
@@ -32,10 +32,7 @@ TOOLS = {
          "argument": "action", "argument_description": ACTION_ARGUMENT, "command": ["python", "act.py"]},
     ],
     "agent": [
-        {"name": "look", "description": "Show the current observation. Costs no action.",
-         "command": ["python", "game.py", "look"]},
-        {"name": "do", "description": "Take one action now. Returns what changed and the new observation. "
-                                      "Costs one action.",
+        {"name": "do", "description": "Take one action now. Returns the new observation. Costs one action.",
          "argument": "action", "argument_description": ACTION_ARGUMENT, "command": ["python", "game.py", "do"]},
     ],
 }
@@ -78,15 +75,12 @@ def observation(frame, actions_used: int, max_steps: int, last: str = "") -> str
     return "\n".join(lines)
 
 
-def change(name: str, before_grid: list, after_grid: list, levels_before: int, frame) -> str:
-    """What an action did, for the observation's "Last action" line."""
+def last_action(name: str, levels_before: int, frame) -> str:
+    """The observation's "Last action" line: the action, and whether it completed a level. What changed
+    on the grid is left for the player to see."""
     if frame.levels_completed > levels_before:
         return f"{name}: LEVEL COMPLETED ({frame.levels_completed}/{frame.win_levels}). The grid below is the next level."
-    if len(before_grid) != len(after_grid) or (before_grid and len(before_grid[0]) != len(after_grid[0])):
-        return f"{name}: the grid changed size."
-    changed = [f"({r},{c}) {b}->{a}" for r, (rb, ra) in enumerate(zip(before_grid, after_grid))
-               for c, (b, a) in enumerate(zip(rb, ra)) if b != a]
-    return f"{name}: " + ("changed " + ", ".join(changed[:40]) if changed else "nothing changed")
+    return name
 
 
 def first_message(max_steps: int, start_level: int, frame) -> str:

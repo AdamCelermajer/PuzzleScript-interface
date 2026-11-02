@@ -42,7 +42,7 @@ Uses Google Research's [Harness²](https://github.com/google-research/harness2),
 
 The player is Baseline with `driver=agent` (`baseline/agentic.py`, notes off), set up as in the paper: one OpenCode session with one task and
 one working folder that persists for the whole rollout. It plays only through
-`python game.py look | do ACTION | reset` in that folder; a small server in the player
+the `do` tool (`python game.py do ACTION`, RESET is one of the actions) in that folder; a small server in the player
 process owns the game session and the action budget and records every move in the
 baseline shape (`transitions.jsonl`, `frames/`, `result.json`), so the run page replays
 each rollout. When the agent ends a turn with actions left it is told to continue in the

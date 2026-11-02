@@ -23,7 +23,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from harnesses.codex import codex_oauth_status  # noqa: F401  (re-exported for the workbench)
 from frameworks import world_model
 from frameworks.baseline import prompt as baseline_prompt
 

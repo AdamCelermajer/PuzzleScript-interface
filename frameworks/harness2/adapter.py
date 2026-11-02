@@ -131,14 +131,14 @@ class PuzzleScriptAdapter:
             yardstick = "Solve the level; between two solving runs, fewer game actions is better."
             guidance = ("Each trajectory begins with whether the player solved the level and how many game actions "
                         "it used of its budget. Use these outcomes when comparing approaches. The player plays this "
-                        "one level in one session and one folder, only through `python game.py look | do ACTION | "
-                        "reset`, and finds the harness files in that folder at the start.")
+                        "one level in one session and one folder, only through the `do` tool (`python game.py do ACTION`; "
+                        "RESET is one of the actions), and finds the harness files in that folder at the start.")
         else:
             yardstick = "Complete more levels; on a tie, use fewer game actions."
             guidance = ("Each trajectory begins with the run's levels completed and actions used. "
                         "Use these outcomes when comparing approaches. The player works in one session and "
-                        "one folder for the whole run, plays only through `python game.py look | do ACTION | "
-                        "reset`, and finds the harness files in that folder at the start.")
+                        "one folder for the whole run, plays only through the `do` tool (`python game.py do ACTION`; "
+                        "RESET is one of the actions), and finds the harness files in that folder at the start.")
         self.spec = BenchSpec(
             name="puzzlescript", runs_root=self.root / "rollouts", install_mode="workspace_agents_md",
             prompts=BenchPrompts(

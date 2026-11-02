@@ -137,10 +137,10 @@ def test_opencode_adds_the_callers_tools_in_its_private_config(tmp_path, monkeyp
     session.start(tmp_path / "ws", "S", "openrouter/qwen/qwen3.8-27b", "low", "player", tmp_path / "analysis")
     try:
         tools = session.private / "xdg_config_home" / "opencode" / "tools"
-        assert sorted(p.name for p in tools.iterdir()) == ["do.ts", "look.ts"]
+        assert sorted(p.name for p in tools.iterdir()) == ["do.ts"]
         source = (tools / "do.ts").read_text()
         assert "Bun.$`python game.py do ${args.action}`" in source and json.dumps(str(session.workspace)) in source
         assert not (session.workspace / ".opencode").exists()  # nothing in the agent's own folder
-        assert json.loads((tmp_path / "analysis" / "session.json").read_text())["game_tools"] == ["look", "do"]
+        assert json.loads((tmp_path / "analysis" / "session.json").read_text())["game_tools"] == ["do"]
     finally:
         session.close()

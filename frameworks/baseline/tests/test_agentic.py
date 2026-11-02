@@ -52,12 +52,13 @@ def test_game_command_plays_records_and_enforces_the_budget(tmp_path):
     workspace.mkdir()
     server = GameServer(Corridor(), workspace, output, max_steps=3).start()
     try:
-        code, text = game(workspace, "look")
-        assert code == 0 and "levels=0/2 actions_used=0/3" in text and "5 2 2" in text
+        text = server._status()  # what the first message shows
+        assert "levels=0/2 actions_used=0/3" in text and "5 2 2" in text
         assert "available_actions=ACTION3, ACTION4, RESET" in text
+        assert game(workspace, "look")[0] == 1  # only do: its reply is the observation
         assert (workspace / "frame.png").read_bytes() == b"\x89PNG fake"
         code, text = game(workspace, "do", "action4")
-        assert code == 0 and text.startswith("Last action: ACTION4: changed (0,0) 5->2, (0,1) 2->5")
+        assert code == 0 and text.startswith("Last action: ACTION4\nstate=PLAYING") and "2 5 2" in text
         code, text = game(workspace, "do", "ACTION4")
         assert "LEVEL COMPLETED (1/2)" in text
         assert game(workspace, "do", "ACTION9")[0] == 1
@@ -104,7 +105,7 @@ def test_play_continues_the_same_session_until_done_and_keeps_the_folder(tmp_pat
     harness = tmp_path / "harness"
     harness.mkdir()
     (harness / "AGENTS.md").write_text("Coach advice")
-    session = ScriptedSession([[("look",), ("do", "ACTION4")], [("do", "ACTION4"), ("do", "ACTION4"), ("do", "ACTION4")]])
+    session = ScriptedSession([[("do", "ACTION4")], [("do", "ACTION4"), ("do", "ACTION4"), ("do", "ACTION4")]])
     monkeypatch.setattr(player, "create_session", lambda harness_id: session)
     result = play(Corridor(), tmp_path / "out", harness="opencode", model="m", effort="low", provider="",
                   max_steps=10, max_wall_seconds=0, harness_dir=harness)
@@ -117,7 +118,7 @@ def test_play_continues_the_same_session_until_done_and_keeps_the_folder(tmp_pat
 
 
 def test_play_stops_an_idle_agent(tmp_path, monkeypatch):
-    session = ScriptedSession([[("look",)], [], []])
+    session = ScriptedSession([[], [], []])
     monkeypatch.setattr(player, "create_session", lambda harness_id: session)
     harness = tmp_path / "harness"
     harness.mkdir()
@@ -199,7 +200,7 @@ def test_level_target_ends_the_game_without_showing_the_next_level(tmp_path):
         game(workspace, "do", "ACTION4")
         code, text = game(workspace, "do", "ACTION4")
         assert code == 0 and text.strip() == "ACTION4: LEVEL COMPLETED (1/3). Level target reached; the game is over."
-        code, text = game(workspace, "look")
+        text = server._status()
         assert "level target is reached" in text and "grid" not in text and "frame.png" not in text
         assert game(workspace, "do", "ACTION4")[0] == 1 and server.reason == "level_target_reached"
         assert (workspace / "frame.png").read_bytes() == b"level 0"  # the next level's picture never arrives

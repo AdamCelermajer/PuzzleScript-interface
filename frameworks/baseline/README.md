@@ -32,7 +32,7 @@ directory outside the results tree.
 - Both drivers get the same prompt, word for word (`prompt.py`, since 2 Nov 2026): the same system
   prompt, the same observation text (status, available actions with `RESET` among them, grid), the
   same first message and the same final world-model report. Only one line differs: how a move is
-  sent, `act` once per turn for the controller, `look` and `do` for the agent. OpenCode gets these
+  sent, `act` once per turn for the controller, `do` as often as it likes for the agent. OpenCode gets these
   as real tools (custom tools in its private config) that run the same scripts (`act.py`,
   `game.py`); the other harnesses run the scripts through their shell. Before 2 Nov the two
   prompts differed (reset, image path, notes, scripts, world model, solver).
