@@ -99,9 +99,9 @@ def test_one_view_of_chat_anthropic_and_responses_requests():
         {"type": "reasoning", "summary": [], "encrypted_content": "x"},
         {"type": "function_call", "name": "exec_command", "arguments": "{}", "call_id": "f"},
         {"type": "function_call_output", "call_id": "f", "output": "done"}]})
-    assert responses["dialect"] == "openai-responses" and responses["system"] == ["I"]
-    assert [p["kind"] for m in responses["messages"] for p in m["parts"]] == ["text", "reasoning", "tool_call", "tool_result"]
-    assert responses["messages"][1]["parts"][0]["text"] == "[encrypted reasoning]"
+    assert responses["dialect"] == "openai-responses" and responses["system"] == ["I", "dev"]  # developer = system
+    assert [p["kind"] for m in responses["messages"] for p in m["parts"]] == ["reasoning", "tool_call", "tool_result"]
+    assert responses["messages"][0]["parts"][0]["text"] == "[encrypted reasoning]"
 
 
 def test_assemble_reads_anthropic_and_responses_streams():
