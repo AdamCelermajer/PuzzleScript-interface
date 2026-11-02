@@ -66,42 +66,6 @@ class ScriptedAgent:
         )
 
 
-class SelfCheckingAgent:
-    checks = []
-
-    def __init__(self, config) -> None:
-        self.config = config
-
-    def run(self, gateway, workspace) -> AgentRunResult:
-        workspace = Path(workspace)
-        (workspace / "solver.py").write_text(
-            """import argparse, json, sys
-parser = argparse.ArgumentParser()
-parser.add_argument('--play', action='store_true')
-parser.add_argument('--max-steps')
-parser.parse_args()
-for line in sys.stdin:
-    json.loads(line)
-    print(json.dumps({'action': 'A1'}), flush=True)
-""",
-            encoding="utf-8",
-        )
-        gateway.handle("observe")
-        type(self).checks = [
-            gateway.handle("evaluate_solver", {"max_actions": 5}),
-            gateway.handle("evaluate_solver", {"max_actions": 5}),
-        ]
-        transcript = workspace / "agent_transcript.jsonl"
-        transcript.write_text("{}\n", encoding="utf-8")
-        return AgentRunResult(
-            finish_reason="self checks complete",
-            terminal=False,
-            turns=1,
-            final_response="done",
-            transcript_path=transcript,
-        )
-
-
 def test_execute_player_run_preserves_single_run_behavior_and_fitness() -> None:
     with tempfile.TemporaryDirectory() as raw:
         root = Path(raw)
@@ -176,7 +140,7 @@ def test_player_run_has_no_internal_theory_budget() -> None:
         base_prompt = root / "base.txt"
         manifest.write_text("id='one-step'", encoding="utf-8")
         prompt.write_text("environment instructions", encoding="utf-8")
-        base_prompt.write_text("solver builder instructions", encoding="utf-8")
+        base_prompt.write_text("base instructions", encoding="utf-8")
         loaded = LoadedProfile(
             implementation=OneStepProfile(),
             prompt=prompt.read_text(encoding="utf-8"),
@@ -200,55 +164,3 @@ def test_player_run_has_no_internal_theory_budget() -> None:
         assert "candidates" not in result.summary
         assert "theory_candidates" not in result.summary
         assert not (root / "run/candidates").exists()
-
-
-def test_player_can_run_two_fresh_solver_self_checks_without_research_steps() -> None:
-    with tempfile.TemporaryDirectory() as raw:
-        root = Path(raw)
-        manifest = root / "profile.toml"
-        prompt = root / "prompt.md"
-        base_prompt = root / "base.txt"
-        manifest.write_text("id='one-step'", encoding="utf-8")
-        prompt.write_text("environment instructions", encoding="utf-8")
-        base_prompt.write_text("solver builder instructions", encoding="utf-8")
-
-        def loaded_profile() -> LoadedProfile:
-            return LoadedProfile(
-                implementation=OneStepProfile(),
-                prompt=prompt.read_text(encoding="utf-8"),
-                settings={},
-                manifest_path=manifest,
-                prompt_path=prompt,
-                manifest_hash="manifest-hash",
-                prompt_hash="prompt-hash",
-            )
-
-        with patch("frameworks.avo.run_once.CliAgent", SelfCheckingAgent), patch(
-            "frameworks.avo.run_once.load_profile", side_effect=lambda *_: loaded_profile()
-        ):
-            result = execute_player_run(
-                loaded_profile=loaded_profile(),
-                output_dir=root / "run",
-                workspace=root / "workspace",
-                settings=PlayerRunSettings(
-                    base_prompt=base_prompt,
-                    max_solver_self_checks=2,
-                    solver_self_check_max_environment_steps=5,
-                ),
-            )
-
-        assert result.environment_steps == 0
-        assert len(result.summary["solver_self_checks"]) == 2
-        expected_fitness = json.loads(
-            (root / "run/self_check/check_01/solver_evaluation.json").read_text(
-                encoding="utf-8"
-            )
-        )["fitness"]
-        assert [check["result"] for check in SelfCheckingAgent.checks] == [
-            {"fitness": expected_fitness},
-            {"fitness": expected_fitness},
-        ]
-        assert "evidence" not in json.dumps(SelfCheckingAgent.checks)
-        assert "output_dir" not in json.dumps(SelfCheckingAgent.checks)
-        assert (root / "run/self_check/check_01/evidence.jsonl").is_file()
-        assert (root / "run/self_check/check_02/evidence.jsonl").is_file()

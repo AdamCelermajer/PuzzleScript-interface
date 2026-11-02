@@ -1,4 +1,4 @@
-"""AVO's research score: no solver; a candidate scores the levels its own research session completes."""
+"""AVO's score: no solver; a candidate scores the levels its own research session completes."""
 from __future__ import annotations
 
 import json
@@ -11,14 +11,15 @@ import pytest
 
 from frameworks import world_model
 from frameworks.avo import evolve, research_score
-from frameworks.avo.client.turns import RESEARCH_RUN_INSTRUCTION
+from frameworks.avo.client.turns import DEFAULT_PROMPT_PATH, INNER_RUN_INSTRUCTION
 from frameworks.avo.core.agent_backend import AgentRunResult
 from frameworks.avo.core.framework import Action, Comparison, Observation
 from frameworks.avo.core.profile import LoadedProfile, TaskEvaluation
-from frameworks.avo.core.tool_gateway import RESEARCH_AGENT_INTERFACE, FileToolServer
+from frameworks.avo.core.tool_gateway import AGENT_INTERFACE, FileToolServer
+from frameworks.avo.environments.puzzlescript.profile import PuzzleScriptProfile
 from frameworks.avo.evolution.evaluator import CandidateEvaluator, PlayerEvaluationConfig
 from frameworks.avo.evolution.store import EvolutionStore
-from frameworks.avo.evolution.tool_server import RESEARCH_OPTIMIZER_INTERFACE
+from frameworks.avo.evolution.tool_server import OPTIMIZER_INTERFACE
 from frameworks.avo.run_once import PlayerRunResult, PlayerRunSettings, execute_player_run
 
 PUZZLESCRIPT = Path(research_score.__file__).parent / "environments" / "puzzlescript"
@@ -50,7 +51,7 @@ class LevelEnvironment:
 
 class LevelProfile:
     profile_id = "levels"
-    objective = "Build solver.py."
+    objective = "Reach the last level."
 
     def __init__(self) -> None:
         self.environment = LevelEnvironment()
@@ -63,10 +64,9 @@ class LevelProfile:
 
 def loaded_profile(root: Path) -> LoadedProfile:
     prompt = root / "prompt.md"
-    prompt.write_text("Build solver.py.", encoding="utf-8")
-    (root / research_score.ENVIRONMENT_PROMPT).write_text("Advance through the game.", encoding="utf-8")
+    prompt.write_text("Advance through the game.", encoding="utf-8")
     (root / "profile.toml").write_text("id='levels'", encoding="utf-8")
-    return LoadedProfile(implementation=LevelProfile(), prompt="Build solver.py.", settings={},
+    return LoadedProfile(implementation=LevelProfile(), prompt="Advance through the game.", settings={},
                          manifest_path=root / "profile.toml", prompt_path=prompt, manifest_hash="m", prompt_hash="p")
 
 
@@ -80,7 +80,7 @@ def test_best_progress_is_the_most_levels_reached_even_after_a_reset() -> None:
     assert research_score.best_progress([]) == {"best_levels_completed": 0, "actions_to_best": 0, "win_levels": 0}
 
 
-def test_rank_breaks_fitness_ties_by_fewer_actions_and_keeps_solver_order() -> None:
+def test_rank_breaks_fitness_ties_by_fewer_actions_and_keeps_archived_solver_order() -> None:
     research = [{"id": "a", "fitness": 2.0, "score": {"actions_to_best": 90}},
                 {"id": "b", "fitness": 2.0, "score": {"actions_to_best": 40}},
                 {"id": "c", "fitness": 1.0, "score": {"actions_to_best": 5}}]
@@ -89,22 +89,19 @@ def test_rank_breaks_fitness_ties_by_fewer_actions_and_keeps_solver_order() -> N
     assert max(solver, key=research_score.rank)["id"] == "a"  # the earliest, as before
 
 
-def test_research_prompts_and_interfaces_have_no_solver() -> None:
-    texts = {"base": research_score.BASE_PROMPT.read_text(encoding="utf-8"),
-             "outer": research_score.OUTER_PROMPT.read_text(encoding="utf-8"),
-             "task": (PUZZLESCRIPT / research_score.ENVIRONMENT_PROMPT).read_text(encoding="utf-8"),
-             "agent interface": RESEARCH_AGENT_INTERFACE, "optimizer interface": RESEARCH_OPTIMIZER_INTERFACE,
-             "first instruction": RESEARCH_RUN_INSTRUCTION}
+def test_prompts_and_interfaces_have_no_solver() -> None:
+    texts = {"base": DEFAULT_PROMPT_PATH.read_text(encoding="utf-8"),
+             "outer": evolve.OUTER_PROMPT.read_text(encoding="utf-8"),
+             "task": (PUZZLESCRIPT / "prompt.md").read_text(encoding="utf-8"),
+             "objective": PuzzleScriptProfile.objective,
+             "agent interface": AGENT_INTERFACE, "optimizer interface": OPTIMIZER_INTERFACE,
+             "first instruction": INNER_RUN_INSTRUCTION}
     for name, text in texts.items():
         for word in ("solver.py", "evaluate_solver", "self-check", "self_check", "solver change", "solver delta"):
             assert word not in text, (name, word)
     assert "Do not write solver code, simulators, mock games or test harnesses" in texts["outer"]
     assert "world_model.md" in texts["base"] and "avo_tool.py archive ." in texts["base"]
     assert "evidence CANDIDATE_ID research --offset" in texts["optimizer interface"]
-    # The observation-encoding part of the task prompt is the solver prompt's, word for word.
-    marker = "The board's encoding is named next to it."
-    solver_task = (PUZZLESCRIPT / "prompt.md").read_text(encoding="utf-8")
-    assert texts["task"][texts["task"].index(marker):] == solver_task[solver_task.index(marker):]
 
 
 class ResearchingAgent:
@@ -121,7 +118,7 @@ class ResearchingAgent:
             gateway.handle("probe", {"action_id": "A1"})
         gateway.handle("reset", {"reason": "replay from the start"})
         gateway.handle("probe", {"action_id": "A1"})
-        with pytest.raises(RuntimeError):
+        with pytest.raises(ValueError, match="Unknown AVO tool"):
             gateway.handle("evaluate_solver", {"max_actions": 5})
         type(self).seen = {"config": self.config, "budgets": gateway.handle("status")["budgets"],
                            "interface": (workspace / "AGENT_INTERFACE.md").read_text(encoding="utf-8"),
@@ -135,21 +132,19 @@ def test_research_session_has_no_solver_and_scores_its_best_level(tmp_path) -> N
     with patch("frameworks.avo.run_once.CliAgent", ResearchingAgent):
         result = execute_player_run(loaded_profile=loaded_profile(tmp_path), output_dir=tmp_path / "run",
                                     workspace=tmp_path / "workspace",
-                                    settings=PlayerRunSettings(base_prompt=research_score.BASE_PROMPT,
-                                                               max_solver_self_checks=0, fitness="research"))
+                                    settings=PlayerRunSettings())
 
     seen = ResearchingAgent.seen
-    assert seen["config"].first_instruction == RESEARCH_RUN_INSTRUCTION
+    assert Path(seen["config"].prompt_path) == DEFAULT_PROMPT_PATH
     assert "Advance through the game." in seen["config"].task_instructions
-    assert "Build solver.py." not in seen["config"].task_instructions
     assert world_model.keep_instruction() in seen["config"].task_instructions
-    assert seen["interface"] == RESEARCH_AGENT_INTERFACE and research_score.RESEARCH_OBJECTIVE in seen["mission"]
+    assert seen["interface"] == AGENT_INTERFACE and LevelProfile.objective in seen["mission"]
     assert not any("solver" in key for key in seen["budgets"])
     summary = result.summary
     assert (summary["best_levels_completed"], summary["actions_to_best"], summary["win_levels"]) == (2, 2, 3)
     assert result.task.fitness == 1  # the last board, after the reset
     config = json.loads((tmp_path / "run" / "run_config.json").read_text(encoding="utf-8"))
-    assert config["fitness"] == "research" and config["objective"] == research_score.RESEARCH_OBJECTIVE
+    assert config["fitness"] == "research" and config["objective"] == LevelProfile.objective
     assert not (tmp_path / "run" / "self_check").exists()
 
 
@@ -157,7 +152,7 @@ def test_evaluator_scores_research_progress_and_children_inherit_the_workspace(t
     root = tmp_path / "evolution"
     store = EvolutionStore.create(root, root / "outer")
     evaluator = CandidateEvaluator(PlayerEvaluationConfig(
-        profile="fake", profile_settings={}, player=PlayerRunSettings(fitness="research")))
+        profile="fake", profile_settings={}, player=PlayerRunSettings()))
     best = iter([(2, 90), (2, 40)])
 
     def fake_execute_player_run(**kwargs):
@@ -175,8 +170,7 @@ def test_evaluator_scores_research_progress_and_children_inherit_the_workspace(t
                                                              "actions_to_best": actions, "win_levels": 3})
 
     with patch("frameworks.avo.evolution.evaluator.load_profile", return_value=SimpleNamespace()), \
-            patch("frameworks.avo.evolution.evaluator.execute_player_run", side_effect=fake_execute_player_run), \
-            patch("frameworks.avo.evolution.evaluator.evaluate_solver_workspace") as solver:
+            patch("frameworks.avo.evolution.evaluator.execute_player_run", side_effect=fake_execute_player_run):
         store.create_seed("x_0001", "play")
         first = evaluator.evaluate(store.get_candidate("x_0001"), store.next_run_dir("x_0001"))
         store.record_evaluation(first)
@@ -185,13 +179,12 @@ def test_evaluator_scores_research_progress_and_children_inherit_the_workspace(t
         store.register_draft("x_0002")
         store.record_evaluation(evaluator.evaluate(store.get_candidate("x_0002"), store.next_run_dir("x_0002")))
 
-    solver.assert_not_called()
     assert inherited == "2 levels"
     assert (first.fitness, first.success, first.environment_steps) == (2.0, False, 100)
     assert first.score["actions_to_best"] == 90 and first.score["research_levels_completed"] == 2
     generation = root / "x_0001"
     assert not (generation / "evaluation").exists() and (generation / "solver" / "world_model.md").is_file()
-    assert json.loads((generation / "summary.json").read_text(encoding="utf-8"))["solver_evaluation"] is None
+    assert "solver_evaluation" not in json.loads((generation / "summary.json").read_text(encoding="utf-8"))
     assert store.population_summary()["best"]["candidate_id"] == "x_0002"  # same levels in fewer actions
     assert store.inspect("x_0001")["latest_run"]["trace_summary"]["deepest_level"] == 2
 
@@ -201,7 +194,7 @@ def test_continue_levels_starts_each_research_session_where_the_previous_one_sto
     store = EvolutionStore.create(root, root / "outer")
     progress = root / "level_progress.json"
     evaluator = CandidateEvaluator(PlayerEvaluationConfig(
-        profile="fake", profile_settings={"game_id": "g"}, player=PlayerRunSettings(fitness="research"),
+        profile="fake", profile_settings={"game_id": "g"}, player=PlayerRunSettings(),
         level_progress=progress))
     reached = iter([2, 0, 3])  # the second session takes no action: its best is 0, but it started at level 3
     settings = []
@@ -250,10 +243,10 @@ class ResearchOptimizer:
         return SimpleNamespace(finish_reason="done", turns=1)
 
 
-def test_research_campaign_uses_the_research_prompts_and_keeps_its_fitness(tmp_path, monkeypatch) -> None:
+def test_campaign_records_the_research_score_and_resumes(tmp_path, monkeypatch) -> None:
     profile = loaded_profile(tmp_path)
     output = tmp_path / "campaign"
-    argv = ["evolve", "--output-dir", str(output), "--fitness", "research", "--harness", "opencode"]
+    argv = ["evolve", "--output-dir", str(output), "--harness", "opencode"]
     monkeypatch.setattr(sys, "argv", argv)
     with patch("frameworks.avo.evolve.load_profile", return_value=profile), \
             patch("frameworks.avo.evolve.new_workspace", return_value=tmp_path / "optimizer"), \
@@ -261,39 +254,31 @@ def test_research_campaign_uses_the_research_prompts_and_keeps_its_fitness(tmp_p
         evolve.main()
 
     seen = ResearchOptimizer.seen
-    assert seen["prompt"] == research_score.OUTER_PROMPT and seen["interface"] == RESEARCH_OPTIMIZER_INTERFACE
-    assert research_score.RESEARCH_OBJECTIVE in seen["mission"]
-    player = seen["evaluator"].player
-    assert (player.fitness, Path(player.base_prompt), player.max_solver_self_checks) == \
-        ("research", research_score.BASE_PROMPT, 0)
+    assert seen["prompt"] == evolve.OUTER_PROMPT and seen["interface"] == OPTIMIZER_INTERFACE
+    assert LevelProfile.objective in seen["mission"]
+    assert Path(seen["evaluator"].player.base_prompt) == DEFAULT_PROMPT_PATH
     config = json.loads((output / "evolution_config.json").read_text(encoding="utf-8"))
-    assert config["fitness"] == "research" and config["objective"] == research_score.RESEARCH_OBJECTIVE
+    assert config["fitness"] == "research" and config["objective"] == LevelProfile.objective
+    assert "fresh_solver_max_environment_steps" not in config and "final_solver" not in config
     assert "research_success" in json.loads((output / "evolution_summary.json").read_text(encoding="utf-8"))
-    # A resumed campaign keeps its fitness.
-    monkeypatch.setattr(sys, "argv", [*argv[:3], "--fitness", "solver", "--harness", "opencode",
-                                      "--resume-saved-campaign"])
+    monkeypatch.setattr(sys, "argv", [*argv, "--resume-saved-campaign"])
     with patch("frameworks.avo.evolve.load_profile", return_value=profile), \
             patch("frameworks.avo.evolve.new_workspace", return_value=tmp_path / "optimizer-2"), \
-            pytest.raises(ValueError, match="fitness"):
-        evolve.main()
-
-
-def test_campaign_without_the_option_is_scored_by_its_solver_as_before(tmp_path, monkeypatch) -> None:
-    from frameworks.avo.client.turns import DEFAULT_PROMPT_PATH
-    from frameworks.avo.evolution.tool_server import OPTIMIZER_INTERFACE
-
-    output = tmp_path / "campaign"
-    monkeypatch.setattr(sys, "argv", ["evolve", "--output-dir", str(output), "--harness", "opencode"])
-    with patch("frameworks.avo.evolve.load_profile", return_value=loaded_profile(tmp_path)), \
-            patch("frameworks.avo.evolve.new_workspace", return_value=tmp_path / "optimizer"), \
             patch("frameworks.avo.evolve.CliAgent", ResearchOptimizer):
         evolve.main()
+    assert ResearchOptimizer.seen["prompt"] == evolve.OUTER_PROMPT
 
-    seen = ResearchOptimizer.seen
-    assert seen["prompt"] == evolve.OUTER_PROMPT and seen["interface"] == OPTIMIZER_INTERFACE
-    assert "Build solver.py." in seen["mission"]
-    player = seen["evaluator"].player
-    assert (player.fitness, Path(player.base_prompt), player.max_solver_self_checks) == ("solver", DEFAULT_PROMPT_PATH, 2)
-    config = json.loads((output / "evolution_config.json").read_text(encoding="utf-8"))
-    assert config["fitness"] == "solver" and config["fitness_owner"] == "fresh solver levels completed"
-    assert "solver_success" in json.loads((output / "evolution_summary.json").read_text(encoding="utf-8"))
+
+def test_a_solver_score_campaign_cannot_resume(tmp_path, monkeypatch) -> None:
+    output = tmp_path / "campaign"
+    output.mkdir()
+    (output / "lineage.json").write_text(json.dumps({"schema_version": 1, "candidates": [], "evaluations": []}),
+                                         encoding="utf-8")
+    for saved in ({"harness": "opencode"}, {"harness": "opencode", "fitness": "solver"}):  # no fitness = solver
+        (output / "evolution_config.json").write_text(json.dumps(saved), encoding="utf-8")
+        monkeypatch.setattr(sys, "argv", ["evolve", "--output-dir", str(output), "--harness", "opencode",
+                                          "--resume-saved-campaign"])
+        with patch("frameworks.avo.evolve.load_profile", return_value=loaded_profile(tmp_path)), \
+                patch("frameworks.avo.evolve.new_workspace", return_value=tmp_path / "optimizer"), \
+                pytest.raises(ValueError, match="archived on 2 Nov 2026"):
+            evolve.main()

@@ -10,7 +10,6 @@ from typing import Any, Mapping, Protocol
 
 from frameworks.avo.core.profile import load_profile
 from frameworks.avo.evolution.candidate import CandidateEvaluation, RunCandidate
-from frameworks.avo.evolution.solver_evaluation import SolverEvaluation, evaluate_solver_workspace
 from frameworks.avo.run_once import PlayerRunSettings, execute_player_run
 from frameworks.avo.isolation import new_workspace, cleanup_private_directory
 
@@ -28,9 +27,8 @@ class PlayerEvaluationConfig:
     profile: str | Path
     profile_settings: Mapping[str, Any]
     player: PlayerRunSettings
-    fresh_solver_max_environment_steps: int = 1_500
     # continue_levels: each research session starts at the level where the previous one stopped (frameworks/levels.py);
-    # this file records that level across evaluations and resumes. The solver is still scored from level 1.
+    # this file records that level across evaluations and resumes.
     level_progress: Path | None = None
 
 
@@ -41,7 +39,7 @@ def research_start_level(path: Path | None) -> int:
 
 
 class CandidateEvaluator:
-    """Trusted evaluation of a complete run candidate in a fresh environment."""
+    """Trusted evaluation of a complete run candidate: its research session in a fresh environment is the score."""
 
     def __init__(self, config: PlayerEvaluationConfig) -> None:
         self.config = config
@@ -60,19 +58,10 @@ class CandidateEvaluator:
         # for every x_i.
         loaded = load_profile(self.config.profile, {**self.config.profile_settings, "start_level": start_level}
                               if start_level > 1 else self.config.profile_settings)
-        # AVO's research score (frameworks/avo/research_score.py): no solver; the research run is scored.
-        research = player.fitness == "research"
         generation_dir = run_dir.resolve()
         clean_layout = generation_dir == candidate.root.resolve()
         research_dir = generation_dir / "research" if clean_layout else generation_dir
-        evaluation_dir = (
-            generation_dir / "evaluation"
-            if clean_layout
-            else generation_dir / "solver_evaluation"
-        )
         research_dir.mkdir(parents=True, exist_ok=True)
-        if not research:
-            evaluation_dir.mkdir(parents=True, exist_ok=True)
         # Keep work outside the repository's AGENTS/config chain. Linux cleanup
         # follows verified archival; Windows retains its ACL-safe behavior.
         with nullcontext(new_workspace()) as raw:
@@ -102,53 +91,29 @@ class CandidateEvaluator:
                 if not unarchived and not archive_report["preserved"]:
                     cleanup_private_directory(workspace)
 
-            # The researching Codex player's progress is evidence, not fitness.
-            # Reloading the profile creates a second fresh game in which only the
-            # archived solver may act. Only progress in this fresh game owns fitness.
-            # Under the research score there is no solver: the research progress is the fitness.
-            # Either way the final workspace goes to solver/, which children inherit.
+            # The final workspace goes to solver/ (its historical name), which children inherit.
             archived_workspace = result.output_dir / "workspace"
-            solver_workspace = (
+            final_workspace = (
                 generation_dir / "solver" if clean_layout else archived_workspace
             )
             if clean_layout:
-                if solver_workspace.exists():
-                    shutil.rmtree(solver_workspace)
-                shutil.move(str(archived_workspace), str(solver_workspace))
+                if final_workspace.exists():
+                    shutil.rmtree(final_workspace)
+                shutil.move(str(archived_workspace), str(final_workspace))
                 research_summary = result.output_dir / "final_summary.json"
                 if research_summary.is_file():
                     research_summary.replace(result.output_dir / "summary.json")
 
-            if research:
-                progress = result.summary
-                levels, win_levels = int(progress["best_levels_completed"]), int(progress["win_levels"])
-                scored = SolverEvaluation(
-                    fitness=float(levels),
-                    success=0 < win_levels <= levels,
-                    terminal=result.task.terminal,
-                    score={"research_levels_completed": levels, "actions_to_best": progress["actions_to_best"],
-                           "win_levels": win_levels},
-                    finish_reason=result.finish_reason,
-                    environment_steps=result.environment_steps,
-                )
-            else:
-                solver_loaded = load_profile(
-                    self.config.profile, self.config.profile_settings
-                )
-                scored = evaluate_solver_workspace(
-                    loaded_profile=solver_loaded,
-                    workspace=solver_workspace,
-                    output_dir=evaluation_dir,
-                    max_environment_steps=self.config.fresh_solver_max_environment_steps,
-                    max_wall_seconds=player.max_wall_seconds,
-                )
+        # The score is the most levels the research session completed (frameworks/avo/research_score.py).
+        levels, win_levels = int(result.summary["best_levels_completed"]), int(result.summary["win_levels"])
+        fitness, success = float(levels), 0 < win_levels <= levels
 
         research_evaluation = dict(result.summary)
         if clean_layout:
             transcript_name = Path(str(research_evaluation.get("transcript", ""))).name
             if transcript_name:
                 research_evaluation["transcript"] = str(
-                    solver_workspace / transcript_name
+                    final_workspace / transcript_name
                 )
             research_evaluation["output_dir"] = str(research_dir)
             (research_dir / "summary.json").write_text(
@@ -156,7 +121,9 @@ class CandidateEvaluator:
             )
 
         combined_score = {
-            **dict(scored.score),
+            "research_levels_completed": levels,
+            "actions_to_best": result.summary["actions_to_best"],
+            "win_levels": win_levels,
             "research_fitness": result.task.fitness,
             "research_score": result.task.score,
             "research_environment_actions": result.environment_steps,
@@ -165,16 +132,15 @@ class CandidateEvaluator:
         }
         final_summary = {
             "candidate_id": candidate.candidate_id,
-            "success": scored.success,
-            "terminal": scored.terminal,
-            "fitness": scored.fitness,
+            "success": success,
+            "terminal": result.task.terminal,
+            "fitness": fitness,
             "score": combined_score,
-            "finish_reason": scored.finish_reason,
-            "environment_steps": scored.environment_steps,
+            "finish_reason": result.finish_reason,
+            "environment_steps": result.environment_steps,
             "research_evaluation": research_evaluation,
             "research": str(research_dir),
-            "solver": str(solver_workspace),
-            "solver_evaluation": None if research else str(evaluation_dir),
+            "solver": str(final_workspace),
             "output_dir": str(generation_dir),
         }
         summary_name = "summary.json" if clean_layout else "final_summary.json"
@@ -186,12 +152,12 @@ class CandidateEvaluator:
         return CandidateEvaluation(
             evaluation_id="evaluation" if clean_layout else generation_dir.name,
             candidate_id=candidate.candidate_id,
-            fitness=scored.fitness,
-            success=scored.success,
-            terminal=scored.terminal,
+            fitness=fitness,
+            success=success,
+            terminal=result.task.terminal,
             score=combined_score,
-            finish_reason=scored.finish_reason,
-            environment_steps=scored.environment_steps,
+            finish_reason=result.finish_reason,
+            environment_steps=result.environment_steps,
             agent_turns=result.agent_turns,
             run_dir=generation_dir,
             recorded_at=datetime.now(timezone.utc).isoformat(),

@@ -40,8 +40,8 @@ AVO and direct-play launches require the `puzzlescript-agents:local` Docker imag
 and the chosen harness's credentials. See [harnesses](harnesses/README.md).
 Use `http://host.docker.internal:8000` for the host ARC backend from Docker.
 Parallel campaigns are independent per-game lineages; they do not share research.
-Only fresh autonomous solver evaluation owns AVO fitness. Research levels are
-separate diagnostic evidence.
+AVO fitness is the levels a candidate's research session completes, fewer actions
+breaking ties; solver-scored AVO was archived on 2 Nov 2026.
 
 The direct Codex player uses the existing Codex OAuth login. Baseline+ enables
 its persistent note tools. Continuation creates a separate session/run, verifies

@@ -6,14 +6,17 @@ closed; the native commands below describe the controller interface, not the
 supported Windows launch path. See `harnesses/README.md`.
 
 AVO gives a persistent Codex session an isolated workspace and a small interface to an
-unknown environment. Codex researches the game and leaves a reusable `solver.py`.
+unknown environment. Codex advances through the game as far as it can, keeping
+`world_model.md`; a candidate scores the levels its research session completes (fewer
+actions break ties). There is no solver: solver-scored AVO was archived on 2 Nov 2026
+(`archive/avo-solver/`).
 
 The agent decides how to use its workspace. It may create notes, scripts, simulations,
 tests, intermediate representations, or temporary hardcoded transitions. The framework
 does not impose an internal hypothesis format or candidate-publication workflow.
 
 The framework owns observations, environment execution, checkpoints, budgets, terminal
-detection, artifact archival, and fresh solver evaluation. Action IDs remain opaque.
+detection, artifact archival, and scoring. Action IDs remain opaque.
 
 ## Layout
 
@@ -23,11 +26,12 @@ frameworks/avo/
   core/                       environment execution and evidence
   client/                     persistent Codex client
   environments/puzzlescript/ PuzzleScript adapter, prompt, and fitness
-  evolution/                  outer x_i optimizer and fresh evaluation
+  evolution/                  outer x_i optimizer and candidate evaluation
   prompts/                    player and outer instructions
   tests/                      maintained tests
-  run.py                      one solver-building run
-  evolve.py                   outer sequence of solver-building runs
+  research_score.py           a session's best level and the tie-break
+  run.py                      one research run
+  evolve.py                   outer sequence of research runs
 ```
 
 ## Run PuzzleScript

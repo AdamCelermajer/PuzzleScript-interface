@@ -15,8 +15,9 @@ class PuzzleScriptProfile:
     environment: PuzzleScriptEnvironment
     profile_id: str = "puzzlescript"
     objective: str = (
-        "Build and validate a reusable autonomous solver that can win from a fresh reset "
-        "without further Codex reasoning; manually chosen gameplay progress is only research."
+        "Advance as far as possible through the game during each research session, building on what "
+        "earlier candidates learned. There is no solver: the levels completed during research are the "
+        "score (fewer actions breaks ties). Keep world_model.md up to date as you learn."
     )
 
     def evaluate(

@@ -28,11 +28,7 @@ class AvoToolGateway:
         profile: EnvironmentProfile,
         *,
         budget: GatewayBudget | None = None,
-        solver_self_check: Callable[[int, int], Mapping[str, Any]] | None = None,
-        max_solver_self_checks: int = 2,
-        max_solver_self_check_steps: int = 1_500,
         on_step: Callable[[int, float, float], None] | None = None,
-        solver: bool = True,
         final_report: str | None = None,
     ) -> None:
         self.laboratory = laboratory
@@ -40,14 +36,8 @@ class AvoToolGateway:
         self.final_report = final_report
         # Called after every environment step with (steps taken, fitness before, fitness after).
         self.on_step = on_step
-        # False for AVO's research score (frameworks/avo/research_score.py): no solver, no self-checks.
-        self.solver = solver
         self.profile = profile
         self.budget = budget or GatewayBudget()
-        self.solver_self_check = solver_self_check
-        self.max_solver_self_checks = max_solver_self_checks
-        self.max_solver_self_check_steps = max_solver_self_check_steps
-        self.self_checks: list[dict[str, Any]] = []
         self.started_at = time.monotonic()
         self.environment_steps = 0
         self.finished = False
@@ -97,7 +87,7 @@ class AvoToolGateway:
         }
 
     def _budget_payload(self) -> dict[str, Any]:
-        budgets = {
+        return {
             "environment_steps_used": self.environment_steps,
             "environment_steps_remaining": max(
                 0, self.budget.max_environment_steps - self.environment_steps
@@ -106,54 +96,6 @@ class AvoToolGateway:
                 0.0,
                 self.budget.max_wall_seconds - (time.monotonic() - self.started_at),
             ),
-        }
-        if self.solver:
-            budgets["solver_self_checks_used"] = len(self.self_checks)
-            budgets["solver_self_checks_remaining"] = max(
-                0, self.max_solver_self_checks - len(self.self_checks)
-            )
-        return budgets
-
-    def _evaluate_solver(self, params: Mapping[str, Any]) -> dict[str, Any]:
-        if self.solver_self_check is None:
-            raise RuntimeError("Fresh solver self-evaluation is not configured")
-        if len(self.self_checks) >= self.max_solver_self_checks:
-            raise RuntimeError("Solver self-evaluation limit exhausted")
-        max_actions = int(params.get("max_actions", self.max_solver_self_check_steps))
-        if max_actions < 1 or max_actions > self.max_solver_self_check_steps:
-            raise ValueError(
-                f"max_actions must be between 1 and {self.max_solver_self_check_steps}"
-            )
-        check_number = len(self.self_checks) + 1
-        self.laboratory.store.append(
-            "solver_self_check_started",
-            {"check_number": check_number, "max_actions": max_actions},
-        )
-        try:
-            private_result = dict(self.solver_self_check(check_number, max_actions))
-            result = {"fitness": float(private_result["fitness"])}
-            record = {
-                "check_number": check_number,
-                "max_actions": max_actions,
-                "result": _jsonable(result),
-            }
-        except Exception as exc:
-            record = {
-                "check_number": check_number,
-                "max_actions": max_actions,
-                "error": f"{type(exc).__name__}: {exc}",
-            }
-            self.self_checks.append(record)
-            self.laboratory.store.append("solver_self_check_failed", record)
-            raise
-        self.self_checks.append(record)
-        self.laboratory.store.append("solver_self_check_completed", record)
-        return {
-            **record,
-            "checks_remaining": max(
-                0, self.max_solver_self_checks - len(self.self_checks)
-            ),
-            "research_budgets": self._budget_payload(),
         }
 
     def _observation_payload(self) -> dict[str, Any]:
@@ -390,8 +332,6 @@ class AvoToolGateway:
                 return self._history_payload(params)
             if method == "archive":
                 return self._archive_workspace(params)
-            if method == "evaluate_solver":
-                return self._evaluate_solver(params)
             if method == "probe":
                 return self._probe(params)
             if method == "reset":
@@ -435,7 +375,6 @@ python avo_tool.py mission
 python avo_tool.py history [--offset N --limit N]
 python avo_tool.py history --move N
 python avo_tool.py archive .
-python avo_tool.py evaluate_solver --max-actions N
 python avo_tool.py probe ACTION_ID --rationale "why this experiment"
 python avo_tool.py reset --reason "why a fresh episode is needed"
 python avo_tool.py checkpoint --label "why this state is useful"
@@ -465,12 +404,6 @@ Images are viewed on demand. Each request is recorded with its episode and obser
 fingerprint, and the original PNG remains in the run artifacts. Environments without
 a rendered image return an explicit error.
 
-`evaluate_solver` launches the current `solver.py` alone in a separate fresh game and
-returns only its provisional scalar fitness. The evaluation trajectory and detailed score
-are withheld from the inner session and retained as framework-owned artifacts. It does not
-spend the research action budget or own final fitness. At most two self-checks are available;
-revise the solver between them.
-
 Reset starts a new episode without erasing prior evidence. Use it deliberately
 when an experiment or strategy must be evaluated from a controlled initial state.
 If the environment supports checkpoints, save a promising state and restore it to
@@ -484,14 +417,6 @@ run but does not declare success; only the task evaluator can do that. Do not
 edit `.avo_rpc/`. Before returning, archive the workspace so its contents become
 part of the run record.
 """
-
-# AVO's research score (frameworks/avo/research_score.py) has no solver, so no self-check.
-RESEARCH_AGENT_INTERFACE = AGENT_INTERFACE.replace(
-    "python avo_tool.py evaluate_solver --max-actions N\n", ""
-).replace(
-    AGENT_INTERFACE[AGENT_INTERFACE.index("`evaluate_solver` launches"):AGENT_INTERFACE.index("Reset starts")], ""
-)
-
 
 AGENT_CLI = r'''from __future__ import annotations
 
@@ -552,8 +477,6 @@ finish = sub.add_parser("finish")
 finish.add_argument("reason")
 archive = sub.add_parser("archive")
 archive.add_argument("workspace_dir", nargs="?", default=".")
-evaluate_solver = sub.add_parser("evaluate_solver")
-evaluate_solver.add_argument("--max-actions", type=int, default=1500)
 args = parser.parse_args()
 params = {}
 if args.method == "history":
@@ -585,8 +508,6 @@ elif args.method == "archive":
         relative = relative_path.as_posix()
         files[relative] = base64.b64encode(path.read_bytes()).decode("ascii")
     params["files"] = files
-elif args.method == "evaluate_solver":
-    params["max_actions"] = args.max_actions
 call(args.method, params)
 '''
 
@@ -608,7 +529,7 @@ class FileToolServer:
         self.rpc_root.mkdir(parents=True, exist_ok=True)
         (self.workspace / "avo_tool.py").write_text(AGENT_CLI, encoding="utf-8")
         (self.workspace / "AGENT_INTERFACE.md").write_text(
-            AGENT_INTERFACE if getattr(self.gateway, "solver", True) else RESEARCH_AGENT_INTERFACE,
+            AGENT_INTERFACE,
             encoding="utf-8",
         )
         (self.workspace / "MISSION.md").write_text(

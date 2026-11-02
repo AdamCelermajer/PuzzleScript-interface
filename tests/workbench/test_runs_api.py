@@ -144,13 +144,12 @@ def test_preview_builds_matrix_with_contract_commands_and_never_starts(tmp_path,
         assert "--provider" not in command
     # Matched rows share a match id across frameworks, so the two Baseline drivers and AVO compare in one launch.
     matched = [r for r in data["runs"] if r["harness"] == "codex" and r["effort"] == "low"]
-    assert {r["variant"] for r in matched} == {"Baseline", "Baseline · agent", "AVO · solver score"}
+    assert {r["variant"] for r in matched} == {"Baseline", "Baseline · agent", "AVO · research score"}
     assert len({r["match_id"] for r in matched}) == 1
 
 
 def test_options_optimizer_and_provider_pin_reach_commands(tmp_path):
-    body = {"frameworks": [{"id": "avo", "options": {"max_evaluations": 3, "research_moves": 50, "solver_moves": 60,
-                                                     "fitness": "research"}}],
+    body = {"frameworks": [{"id": "avo", "options": {"max_evaluations": 3, "research_moves": 50}}],
             "harnesses": ["opencode"], "models": ["openrouter/qwen/qwen3.8-27b"],
             "optimizer_model": "openrouter/deepseek/deepseek-v4.1-flash", "optimizer_effort": "max",
             "efforts": ["high"], "games": ["ps_modality-v1"], "provider": "chutes",
@@ -161,9 +160,9 @@ def test_options_optimizer_and_provider_pin_reach_commands(tmp_path):
     assert arg(command, "--optimizer-model") == "openrouter/deepseek/deepseek-v4.1-flash"
     assert arg(command, "--optimizer-effort") == "max" and arg(command, "--effort") == "high"
     assert arg(command, "--provider") == "chutes" and arg(command, "--backend-url") == "http://10.0.0.5:8000"
-    assert [arg(command, f) for f in ("--max-wall-seconds", "--max-evaluations", "--research-moves", "--solver-moves")] == \
-        ["3600", "3", "50", "60"]
-    assert arg(command, "--fitness") == "research" and run["variant"] == "AVO · research score"
+    assert [arg(command, f) for f in ("--max-wall-seconds", "--max-evaluations", "--research-moves")] == \
+        ["3600", "3", "50"]
+    assert "--fitness" not in command and run["variant"] == "AVO · research score"
 
 
 @pytest.mark.parametrize("change, status, message", [
@@ -231,7 +230,7 @@ def test_launch_writes_matrix_manifest_and_detaches_one_worker(tmp_path):
     # The catalog shows queued rows with normalized identity before artifacts exist.
     rows = {r["id"]: r for r in snapshot(tmp_path, {})["runs"]}
     assert rows[campaign["id"]]["framework"] == "avo" and rows[campaign["id"]]["harness"] == campaign["harness"]
-    assert rows[campaign["id"]]["variant"] == "AVO · solver score"
+    assert rows[campaign["id"]]["variant"] == "AVO · research score"
 
 
 # ---------------------------------------------------------------- worker budgets

@@ -18,7 +18,7 @@ game and have no gameplay actions.
 python avo_evolve_tool.py population
 python avo_evolve_tool.py initial
 python avo_evolve_tool.py inspect CANDIDATE_ID
-python avo_evolve_tool.py evidence CANDIDATE_ID research|evaluation|self_check_01|self_check_02 --offset N --limit N
+python avo_evolve_tool.py evidence CANDIDATE_ID research --offset N --limit N
 python avo_evolve_tool.py fork PARENT_ID CHILD_ID
 python avo_evolve_tool.py register CANDIDATE_ID
 python avo_evolve_tool.py evaluate CANDIDATE_ID
@@ -30,15 +30,15 @@ Workflow:
 
 1. If the population is empty, read `initial`, design x_0001 in the prepared
    `drafts/x_0001/`, then register and evaluate it.
-2. Inspect an evaluated candidate's trusted result, solver source, parent diff,
-   and trace summary. Page through research, self-check, or final `evidence` whenever
+2. Inspect an evaluated candidate's trusted result, notes,
+   and trace summary. Page through research `evidence` whenever
    boards or transitions matter.
-3. State one falsifiable hypothesis, then fork it. The child draft inherits the final solver, notes, and helper programs
+3. State one falsifiable hypothesis, then fork it. The child draft inherits the final notes, world_model.md, and helper programs
    produced by the parent's evaluated run.
 4. Edit only `drafts/CHILD_ID/STRATEGY.md` and files below its `seed/`. Specify
    the observed failure, research question, bounded experiment, pass/fail evidence,
    and what must remain unchanged. Do not delegate the high-level hypothesis to the
-   player. Prescribe a solver delta only when existing evidence already supports it.
+   player. Prescribe a strategy change only when existing evidence already supports it.
 5. Register the child, making it immutable.
 6. Evaluate it from a fresh environment.
 
@@ -51,18 +51,6 @@ Equal-fitness candidates remain in the population. Registered candidates, evalua
 artifacts, `lineage.json`, and `.avo_evolution_rpc/` are framework-owned and must not
 be edited.
 """
-
-# AVO's research score (frameworks/avo/research_score.py): no solver, only research evidence.
-RESEARCH_OPTIMIZER_INTERFACE = (
-    OPTIMIZER_INTERFACE
-    .replace("research|evaluation|self_check_01|self_check_02", "research")
-    .replace("trusted result, solver source, parent diff,\n   and trace summary. Page through research, self-check, "
-             "or final `evidence`", "trusted result, notes,\n   and trace summary. Page through research `evidence`")
-    .replace("inherits the final solver, notes, and helper programs",
-             "inherits the final notes, world_model.md, and helper programs")
-    .replace("Prescribe a solver delta only", "Prescribe a strategy change only")
-)
-
 
 OPTIMIZER_CLI = r'''from __future__ import annotations
 
@@ -106,10 +94,7 @@ inspect = sub.add_parser("inspect")
 inspect.add_argument("candidate_id")
 evidence = sub.add_parser("evidence")
 evidence.add_argument("candidate_id")
-evidence.add_argument(
-    "phase",
-    choices=("research", "evaluation", "self_check_01", "self_check_02"),
-)
+evidence.add_argument("phase", choices=("research",))
 evidence.add_argument("--offset", type=int, default=0)
 evidence.add_argument("--limit", type=int, default=20)
 fork = sub.add_parser("fork")
@@ -143,12 +128,10 @@ call(args.method, params)
 class EvolutionFileToolServer:
     """Filesystem RPC exposing only outer candidate-management operations."""
 
-    def __init__(self, gateway: EvolutionGateway, workspace: str | Path,
-                 interface: str = OPTIMIZER_INTERFACE) -> None:
+    def __init__(self, gateway: EvolutionGateway, workspace: str | Path) -> None:
         from frameworks.avo.core.model_view import ModelView
         self.gateway = gateway
         self.workspace = Path(workspace).resolve()
-        self.interface = interface
         self.model_view = ModelView(self.workspace, (gateway.store.root,))
         self.rpc_root = self.workspace / ".avo_evolution_rpc"
         self._stop = threading.Event()
@@ -162,7 +145,7 @@ class EvolutionFileToolServer:
             encoding="utf-8",
         )
         (self.workspace / "AGENT_INTERFACE.md").write_text(
-            self.interface,
+            OPTIMIZER_INTERFACE,
             encoding="utf-8",
         )
         (self.workspace / "MISSION.md").write_text(

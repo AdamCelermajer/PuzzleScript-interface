@@ -12,12 +12,10 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from frameworks.avo.core.framework import Action, Comparison, Observation
 from frameworks.avo.core.profile import TaskEvaluation
 from frameworks.avo.evolution.candidate import CandidateEvaluation, RunCandidate
 from frameworks.avo.evolution.evaluator import CandidateEvaluator, PlayerEvaluationConfig
 from frameworks.avo.evolution.gateway import EvolutionBudget, EvolutionGateway
-from frameworks.avo.evolution.solver_evaluation import SolverEvaluation, evaluate_solver_workspace
 from frameworks.avo.evolution.store import EvolutionStore
 from frameworks.avo.evolution.tool_server import EvolutionFileToolServer, OPTIMIZER_INTERFACE
 from frameworks.avo.run_once import PlayerRunResult, PlayerRunSettings
@@ -45,11 +43,7 @@ class DeterministicEvaluator:
             f"FITNESS = {fitness}\n",
             encoding="utf-8",
         )
-        (workspace / "solver.py").write_text(
-            f"FITNESS = {fitness}\n",
-            encoding="utf-8",
-        )
-        evaluation_dir = run_dir / "evaluation"
+        evaluation_dir = run_dir / "research"
         evaluation_dir.mkdir()
         before_observation = {
             "payload": {"frame": [[[int(fitness)]]]},
@@ -212,8 +206,7 @@ class EvolutionTests(unittest.TestCase):
                 "learned by x_0001",
                 inspected["latest_run"]["learned_notes"]["NOTES.md"],
             )
-            self.assertIn("FITNESS = 4.0", inspected["latest_run"]["solver"]["source"])
-            self.assertIsNotNone(inspected["latest_run"]["solver"]["sha256"])
+            self.assertNotIn("solver", inspected["latest_run"])
             self.assertEqual(inspected["latest_run"]["trace_summary"]["deepest_level"], 4)
             self.assertEqual(
                 inspected["latest_run"]["trace_summary"][
@@ -235,7 +228,7 @@ class EvolutionTests(unittest.TestCase):
                 "evidence",
                 {
                     "candidate_id": "x_0001",
-                    "phase": "evaluation",
+                    "phase": "research",
                     "offset": 0,
                     "limit": 1,
                 },
@@ -246,30 +239,8 @@ class EvolutionTests(unittest.TestCase):
                 evidence["events"][0]["payload"]["before"]["payload"]["frame"],
                 [[[4]]],
             )
-            self_check_dir = (
-                root
-                / "evolution"
-                / "x_0001"
-                / "research"
-                / "self_check"
-                / "check_01"
-            )
-            self_check_dir.mkdir(parents=True)
-            (self_check_dir / "evidence.jsonl").write_text(
-                json.dumps({"type": "episode_started", "payload": {"board": [[4]]}})
-                + "\n",
-                encoding="utf-8",
-            )
-            self_check_evidence = gateway.handle(
-                "evidence",
-                {
-                    "candidate_id": "x_0001",
-                    "phase": "self_check_01",
-                },
-            )
-            self.assertEqual(
-                self_check_evidence["events"][0]["payload"]["board"], [[4]]
-            )
+            with self.assertRaisesRegex(ValueError, "phase must be research"):
+                gateway.handle("evidence", {"candidate_id": "x_0001", "phase": "evaluation"})
             with self.assertRaisesRegex(ValueError, "already evaluated"):
                 gateway.handle("evaluate", {"candidate_id": "x_0001"})
 
@@ -287,19 +258,6 @@ class EvolutionTests(unittest.TestCase):
             self.assertFalse(second_draft.exists())
             second = gateway.handle("evaluate", {"candidate_id": "x_0002"})
             self.assertEqual(second["evaluation"]["fitness"], 6)
-            second_inspected = gateway.handle("inspect", {"candidate_id": "x_0002"})
-            self.assertNotEqual(
-                second_inspected["latest_run"]["solver"]["sha256"],
-                second_inspected["latest_run"]["solver"]["parent_sha256"],
-            )
-            self.assertIn(
-                "-FITNESS = 4.0",
-                second_inspected["latest_run"]["solver"]["diff_from_parent"],
-            )
-            self.assertIn(
-                "+FITNESS = 6.0",
-                second_inspected["latest_run"]["solver"]["diff_from_parent"],
-            )
 
             third_fork = gateway.handle(
                 "fork", {"parent_id": "x_0002", "child_id": "x_0003"}
@@ -438,9 +396,7 @@ class EvolutionTests(unittest.TestCase):
             )
             loaded_instances = [
                 SimpleNamespace(name="research-one"),
-                SimpleNamespace(name="solver-one"),
                 SimpleNamespace(name="research-two"),
-                SimpleNamespace(name="solver-two"),
             ]
             seen_workspaces: list[str] = []
 
@@ -457,7 +413,7 @@ class EvolutionTests(unittest.TestCase):
                     agent_turns=1,
                     environment_steps=3,
                     output_dir=run_dir,
-                    summary={},
+                    summary={"best_levels_completed": 2, "actions_to_best": 3, "win_levels": 4},
                 )
 
             with patch(
@@ -466,24 +422,14 @@ class EvolutionTests(unittest.TestCase):
             ) as load, patch(
                 "frameworks.avo.evolution.evaluator.execute_player_run",
                 side_effect=fake_execute_player_run,
-            ), patch(
-                "frameworks.avo.evolution.evaluator.evaluate_solver_workspace",
-                return_value=SolverEvaluation(
-                    fitness=1.5,
-                    success=False,
-                    terminal=False,
-                    score={"solver_levels_completed": 2, "model_score": 0.75},
-                    finish_reason="completed",
-                    environment_steps=2,
-                ),
             ):
                 evaluator.evaluate(candidate, root / "run_001")
                 evaluator.evaluate(candidate, root / "run_002")
 
-            self.assertEqual(load.call_count, 4)
+            self.assertEqual(load.call_count, 2)
             self.assertNotEqual(seen_workspaces[0], seen_workspaces[1])
 
-    def test_clean_generation_layout_and_separate_fresh_solver_budget(self) -> None:
+    def test_clean_generation_layout(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "evolution"
             store = EvolutionStore.create(root, root / "outer")
@@ -493,7 +439,6 @@ class EvolutionTests(unittest.TestCase):
                     profile="fake",
                     profile_settings={},
                     player=PlayerRunSettings(max_environment_steps=300),
-                    fresh_solver_max_environment_steps=1_500,
                 )
             )
 
@@ -501,7 +446,6 @@ class EvolutionTests(unittest.TestCase):
                 research = Path(kwargs["output_dir"])
                 archived = research / "workspace"
                 archived.mkdir(parents=True)
-                (archived / "solver.py").write_text("print('solver')\n", encoding="utf-8")
                 (archived / "NOTES.md").write_text("learned movement\n", encoding="utf-8")
                 (archived / "agent_transcript.jsonl").write_text("{}\n", encoding="utf-8")
                 (research / "final_summary.json").write_text("{}", encoding="utf-8")
@@ -514,39 +458,28 @@ class EvolutionTests(unittest.TestCase):
                     summary={
                         "transcript": str(archived / "agent_transcript.jsonl"),
                         "output_dir": str(research),
+                        "best_levels_completed": 1, "actions_to_best": 7, "win_levels": 4,
                     },
                 )
 
-            fresh_result = SolverEvaluation(
-                fitness=0.5,
-                success=False,
-                terminal=False,
-                score={"solver_levels_completed": 1, "model_score": 0.5},
-                finish_reason="fresh evaluation complete",
-                environment_steps=1_500,
-            )
             with patch(
                 "frameworks.avo.evolution.evaluator.load_profile",
-                side_effect=[SimpleNamespace(name="research"), SimpleNamespace(name="fresh")],
+                side_effect=[SimpleNamespace(name="research")],
             ), patch(
                 "frameworks.avo.evolution.evaluator.execute_player_run",
                 side_effect=fake_execute_player_run,
-            ), patch(
-                "frameworks.avo.evolution.evaluator.evaluate_solver_workspace",
-                return_value=fresh_result,
-            ) as fresh:
+            ):
                 evaluation = evaluator.evaluate(candidate, store.next_run_dir("x_0001"))
 
             generation = root / "x_0001"
             self.assertEqual(evaluation.run_dir, generation.resolve())
             self.assertTrue((generation / "seed" / "NOTES.md").is_file())
             self.assertTrue((generation / "research" / "summary.json").is_file())
-            self.assertTrue((generation / "solver" / "solver.py").is_file())
-            self.assertTrue((generation / "evaluation").is_dir())
+            self.assertTrue((generation / "solver" / "NOTES.md").is_file())
+            self.assertFalse((generation / "evaluation").exists())
             self.assertTrue((generation / "summary.json").is_file())
             self.assertFalse((generation / "research" / "workspace").exists())
-            self.assertEqual(fresh.call_args.kwargs["max_environment_steps"], 1_500)
-            self.assertEqual(fresh.call_args.kwargs["workspace"], generation / "solver")
+            self.assertEqual((evaluation.fitness, evaluation.score["actions_to_best"]), (1.0, 7))
 
             store.record_evaluation(evaluation)
             child = store.fork("x_0001", "x_0002")
@@ -555,97 +488,6 @@ class EvolutionTests(unittest.TestCase):
                 (child_seed / "NOTES.md").read_text(encoding="utf-8"),
                 "learned movement\n",
             )
-
-    def test_fresh_solver_evaluation_scores_fresh_progress(self) -> None:
-        class CounterEnvironment:
-            value = 0
-
-            def reset(self):
-                self.value = 0
-                return self._observation()
-
-            def step(self, action: Action):
-                self.value += 1
-                return self._observation()
-
-            def _observation(self):
-                won = self.value >= 2
-                return Observation(
-                    payload={"value": self.value},
-                    status="WIN" if won else "PLAYING",
-                    progress={"levels_completed": self.value, "win_levels": 2},
-                    available_actions=("A1",),
-                )
-
-            def compare(self, expected: Observation, actual: Observation):
-                exact = (
-                    expected.payload == actual.payload
-                    and expected.status == actual.status
-                    and expected.progress == actual.progress
-                )
-                return Comparison(
-                    exact=exact,
-                    prospective_accuracy=float(expected.payload == actual.payload),
-                    status_accuracy=float(expected.status == actual.status),
-                    progress_accuracy=float(expected.progress == actual.progress),
-                )
-
-        class CounterProfile:
-            profile_id = "counter"
-            objective = "solve"
-
-            def __init__(self):
-                self.environment = CounterEnvironment()
-
-            def evaluate(self, history, current):
-                completed = int(current.progress["levels_completed"])
-                return TaskEvaluation(
-                    terminal=current.status == "WIN",
-                    success=current.status == "WIN",
-                    fitness=float(completed),
-                    score={"levels_completed": completed},
-                )
-
-        solver_source = r'''import argparse, json, sys
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--play", action="store_true")
-parser.add_argument("--max-steps", type=int, default=10)
-args = parser.parse_args()
-if args.play:
-    for line in sys.stdin:
-        json.loads(line)
-        print(json.dumps({"action": "A1"}), flush=True)
-else:
-    raise SystemExit("fresh evaluation must use --play")
-'''
-        with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw)
-            workspace = root / "workspace"
-            workspace.mkdir()
-            (workspace / "solver.py").write_text(solver_source, encoding="utf-8")
-            # The solver runs as a plain subprocess in its own scratch copy.
-            result = evaluate_solver_workspace(
-                loaded_profile=SimpleNamespace(implementation=CounterProfile()),
-                workspace=workspace,
-                output_dir=root / "evaluation",
-                max_environment_steps=10,
-                max_wall_seconds=10,
-            )
-            unlimited = evaluate_solver_workspace(
-                loaded_profile=SimpleNamespace(implementation=CounterProfile()),
-                workspace=workspace,
-                output_dir=root / "evaluation-no-wall-limit",
-                max_environment_steps=10,
-                max_wall_seconds=0,
-            )
-            self.assertTrue(unlimited.success)
-            self.assertEqual(unlimited.environment_steps, 2)
-
-            self.assertEqual(result.score["solver_levels_completed"], 2)
-            self.assertEqual(result.score["solver_environment_actions"], 2)
-            self.assertEqual(result.fitness, 2.0)
-            self.assertTrue(result.success)
 
 
 if __name__ == "__main__":

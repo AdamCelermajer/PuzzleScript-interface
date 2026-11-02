@@ -53,8 +53,7 @@ class Avo3Test(unittest.TestCase):
             self.assertNotIn("next_attempt_research_moves", gateway.handle("status")["budgets"])
 
     def test_launch_flags(self) -> None:
-        options = AVO.check_options({"fitness": "research", "research_moves_schedule": "30,50,100,200,500",
-                                     "attempt_world_model": True, "final_solver": True, "solver_moves": 1000})
+        options = AVO.check_options({"research_moves_schedule": "30,50,100,200,500", "attempt_world_model": True})
         spec = {"options": options, "max_wall_seconds": 0, "game_id": "ps_modality-v1", "backend_url": "http://b",
                 "harness": "opencode", "model": "openrouter/qwen/qwen3.8-27b", "effort": "high",
                 "optimizer_model": "openrouter/qwen/qwen3.8-27b", "optimizer_effort": "high", "provider": "near-ai"}
@@ -63,7 +62,9 @@ class Avo3Test(unittest.TestCase):
         self.assertEqual(argv[argv.index("--player-max-environment-steps") + 1], "30")
         self.assertEqual(argv[argv.index("--research-moves-schedule") + 1], "30,50,100,200,500")
         self.assertIn("--attempt-world-model", argv)
-        self.assertIn("--final-solver", argv)
+        for removed in ("fitness", "solver_moves", "final_solver"):
+            with self.assertRaises(ValueError):
+                AVO.check_options({removed: "research" if removed == "fitness" else 1})
 
     def test_inner_player_is_asked_for_its_world_model_once(self) -> None:
         from frameworks.avo.core.tool_gateway import AvoToolGateway

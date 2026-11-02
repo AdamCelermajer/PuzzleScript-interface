@@ -1,11 +1,10 @@
-"""What the AVO player and its solver see of an observation.
+"""What the AVO player sees of an observation.
 
 A move's PuzzleScript observation holds every board the engine produced: the board before
 the move, then one board per engine step (several while something slides). The player sees
 only the current board, the last one, as a plain grid like Harness²'s ``game.py``;
-``history --move N`` prints every board of one move. ``solver.py`` reads the same
-current-board observation as JSON. The evidence store and the laboratory history keep every
-board unchanged.
+``history --move N`` prints every board of one move. The evidence store and the laboratory
+history keep every board unchanged.
 """
 from __future__ import annotations
 
@@ -31,21 +30,6 @@ def boards(observation: Any) -> list[list[list[Any]]] | None:
     if isinstance(frames, list) and frames and all(_is_grid(frame) for frame in frames):
         return frames
     return None
-
-
-def current_only(observation: Any) -> Any:
-    """The observation with only its current board and no pixel table: what solver.py reads."""
-    if not isinstance(observation, Mapping):
-        return observation
-    result = dict(observation)
-    grids = boards(observation)
-    if grids is not None:
-        result["payload"] = {**observation["payload"], "frame": [grids[-1]]}
-    metadata = observation.get("metadata")
-    if isinstance(metadata, Mapping) and isinstance(metadata.get("projection"), Mapping):
-        projection = {key: value for key, value in metadata["projection"].items() if key != "patterns"}
-        result["metadata"] = {**metadata, "projection": projection}
-    return result
 
 
 def grid_text(grid: list[list[Any]]) -> str:

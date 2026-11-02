@@ -4,13 +4,11 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from types import SimpleNamespace
 
 from frameworks.avo.core import player_view
 from frameworks.avo.core.framework import Action, AvoLaboratory, Comparison, Observation
 from frameworks.avo.core.profile import TaskEvaluation
 from frameworks.avo.core.tool_gateway import AvoToolGateway, FileToolServer, GatewayBudget
-from frameworks.avo.evolution.solver_evaluation import evaluate_solver_workspace
 
 PATTERNS = {"0": [[[1, 2, 3, 255]]], "1": [[[4, 5, 6, 255]]]}
 
@@ -131,39 +129,6 @@ class PlayerViewTests(unittest.TestCase):
             self.assertEqual(gateway.handle("history", {})["count"], 3)
             with self.assertRaisesRegex(ValueError, "No move 9"):
                 gateway.handle("history", {"move": 9})
-
-    def test_the_solver_reads_the_current_board_only(self) -> None:
-        observation = {"payload": {"frame": [[[1]], [[2]], [[3]]]}, "status": "PLAYING",
-                       "metadata": {"projection": {"mode": "visible-cell-v1", "patterns": PATTERNS}}}
-        current = player_view.current_only(observation)
-        self.assertEqual(current["payload"]["frame"], [[[3]]])
-        self.assertEqual(current["metadata"]["projection"], {"mode": "visible-cell-v1"})
-        self.assertEqual(len(observation["payload"]["frame"]), 3)  # the record is untouched
-
-        solver = r'''import argparse, json, sys
-parser = argparse.ArgumentParser()
-parser.add_argument("--play", action="store_true")
-parser.add_argument("--max-steps", type=int)
-parser.parse_args()
-for number, line in enumerate(sys.stdin):
-    print(line.strip(), file=sys.stderr, flush=True)
-    print(json.dumps({"action": "A2" if number == 0 else "A1"}), flush=True)
-'''
-        with tempfile.TemporaryDirectory() as root:
-            workspace = Path(root) / "workspace"
-            workspace.mkdir()
-            (workspace / "solver.py").write_text(solver, encoding="utf-8")
-            result = evaluate_solver_workspace(
-                loaded_profile=SimpleNamespace(implementation=SlideProfile(SlideEnvironment())),
-                workspace=workspace, output_dir=Path(root) / "evaluation",
-                max_environment_steps=3, max_wall_seconds=30)
-            seen = [json.loads(line)["observation"] for line in
-                    (Path(root) / "evaluation" / "solver_stderr.txt").read_text(encoding="utf-8").splitlines()]
-        self.assertTrue(result.success)
-        # After A2 the record holds 2 boards; the solver sees only the current one.
-        self.assertEqual([observation["payload"]["frame"] for observation in seen],
-                         [[[[1, 0, 0, 0]]], [[[1, 0, 0, 0]]]])
-        self.assertNotIn("patterns", json.dumps(seen))
 
 
 if __name__ == "__main__":

@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from frameworks.avo import research_score
-from frameworks.avo.client.turns import DEFAULT_PROMPT_PATH, RESEARCH_RUN_INSTRUCTION, AgentConfig, CliAgent
+from frameworks.avo.client.turns import DEFAULT_PROMPT_PATH, AgentConfig, CliAgent
 from frameworks.avo.core.framework import AvoLaboratory, JsonValue, _jsonable
-from frameworks.avo.core.profile import LoadedProfile, TaskEvaluation, load_profile
+from frameworks.avo.core.profile import LoadedProfile, TaskEvaluation
 from frameworks.avo.core.run_store import RunStore
 from frameworks.avo.core.tool_gateway import AvoToolGateway, GatewayBudget
 from frameworks import world_model
@@ -22,12 +22,8 @@ class PlayerRunSettings:
     max_environment_steps: int = 200
     max_wall_seconds: float = 3600
     max_agent_turns: int = 4
-    max_solver_self_checks: int = 2
-    solver_self_check_max_environment_steps: int = 1_500
     harness: str = "codex"
     provider: str = ""
-    # "research": no solver; the session's own levels are the score (frameworks/avo/research_score.py).
-    fitness: str = "solver"
     # AVO3: after the attempt, one last turn asks for world_model.md (copied to world_model_snapshots/final.md).
     final_world_model: bool = False
 
@@ -55,9 +51,6 @@ def execute_player_run(
     """Execute one isolated player run and persist its trusted artifacts."""
 
     store = RunStore.create(output_dir)
-    research = settings.fitness == "research"
-    if research:  # the research objective and task prompt
-        loaded_profile = research_score.research_profile(loaded_profile)
     workspace_path = Path(workspace).resolve()
     workspace_path.mkdir(parents=True, exist_ok=True)
     base_prompt_path = Path(settings.base_prompt).resolve()
@@ -70,7 +63,7 @@ def execute_player_run(
         "profile_prompt_hash": loaded_profile.prompt_hash,
         "profile_settings": _jsonable(loaded_profile.settings),
         "objective": loaded_profile.implementation.objective,
-        "fitness": settings.fitness,
+        "fitness": "research",
         "agent_backend": "CliAgent",
         "harness": settings.harness,
         "provider": settings.provider,
@@ -81,10 +74,6 @@ def execute_player_run(
         "max_environment_steps": settings.max_environment_steps,
         "max_wall_seconds": settings.max_wall_seconds,
         "max_agent_turns": settings.max_agent_turns,
-        "max_solver_self_checks": settings.max_solver_self_checks,
-        "solver_self_check_max_environment_steps": (
-            settings.solver_self_check_max_environment_steps
-        ),
         "workspace_isolation": "temporary directory in the run's Docker container",
     }
     if candidate_id is not None:
@@ -108,27 +97,6 @@ def execute_player_run(
             "run_candidate_id": candidate_id,
         },
     )
-    def self_check(check_number: int, max_actions: int) -> Mapping[str, Any]:
-        from frameworks.avo.evolution.solver_evaluation import evaluate_solver_workspace
-
-        check_dir = store.root / "self_check" / f"check_{check_number:02d}"
-        # A research session that started at a later level (continue_levels) still checks its solver from level 1.
-        fresh_profile = load_profile(
-            loaded_profile.manifest_path,
-            {key: value for key, value in loaded_profile.settings.items() if key != "start_level"},
-        )
-        result = evaluate_solver_workspace(
-            loaded_profile=fresh_profile,
-            workspace=workspace_path,
-            output_dir=check_dir,
-            max_environment_steps=max_actions,
-            max_wall_seconds=settings.max_wall_seconds,
-        )
-        # The inner player may use the scalar as a regression signal, but the
-        # evaluator trajectory remains framework-owned. Full artifacts stay in
-        # check_dir for trusted outer-loop inspection after the run.
-        return {"fitness": result.fitness}
-
     # The research session keeps world_model.md in its workspace; copies go to <run>/world_model_snapshots/.
     snapshots = world_model.Snapshots(workspace_path / world_model.NAME, store.root)
     gateway = AvoToolGateway(
@@ -138,11 +106,7 @@ def execute_player_run(
             max_environment_steps=settings.max_environment_steps,
             max_wall_seconds=settings.max_wall_seconds,
         ),
-        solver_self_check=None if research else self_check,
-        max_solver_self_checks=settings.max_solver_self_checks,
-        max_solver_self_check_steps=settings.solver_self_check_max_environment_steps,
         on_step=snapshots.after_action,
-        solver=not research,
         final_report=("This attempt's game session has ended; do not take more game actions. "
                       + world_model.final_prompt()) if settings.final_world_model else None,
     )
@@ -165,7 +129,6 @@ def execute_player_run(
         session_role="inner_player",
         harness=settings.harness,
         provider=settings.provider,
-        first_instruction=RESEARCH_RUN_INSTRUCTION if research else "",
         session_metadata={
             "candidate_id": candidate_id,
             "profile_id": loaded_profile.implementation.profile_id,
@@ -190,7 +153,6 @@ def execute_player_run(
         "finish_reason": agent_result.finish_reason,
         "agent_turns": agent_result.turns,
         "environment_steps": gateway.environment_steps,
-        "solver_self_checks": _jsonable(gateway.self_checks),
         "final_status": current.status,
         "transcript": str(store.root / "workspace" / agent_result.transcript_path.name),
         "evidence": str(store.evidence_file),
@@ -199,7 +161,7 @@ def execute_player_run(
         "agent_events": str(store.root / "analysis" / "agent_events.jsonl"),
         "output_dir": str(store.root),
     }
-    # The research score's fitness, and where a continue_levels campaign's next session starts.
+    # The candidate's score, and where a continue_levels campaign's next session starts.
     summary.update(research_score.best_progress(laboratory.history))
     store.write_json("final_summary.json", summary)
     return PlayerRunResult(

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import difflib
 import hashlib
 import json
 import shutil
@@ -36,22 +35,9 @@ _INHERITANCE_EXCLUDES = {
 }
 
 
-def _solver_details(path: Path) -> tuple[str | None, str | None]:
-    if not path.is_file():
-        return None, None
-    source = path.read_text(encoding="utf-8", errors="replace")[:100_000]
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    return source, digest
-
-
 def _trace_summary(run_dir: Path) -> dict[str, JsonValue] | None:
-    paths = [
-        run_dir / "evaluation" / "evidence.jsonl",
-        run_dir / "solver_evaluation" / "evidence.jsonl",
-        run_dir / "evidence.jsonl",
-    ]
-    if not (run_dir / "evaluation").exists():  # research score: the research run is the scored one
-        paths.append(run_dir / "research" / "evidence.jsonl")
+    # The research run is the scored one (run_dir itself in the legacy layout).
+    paths = [run_dir / "research" / "evidence.jsonl", run_dir / "evidence.jsonl"]
     evidence_path = next((path for path in paths if path.is_file()), None)
     if evidence_path is None:
         return None
@@ -374,10 +360,6 @@ class EvolutionStore:
         latest = self.latest_evaluation(candidate.candidate_id)
         final_summary: JsonValue = None
         learned_notes: dict[str, JsonValue] = {}
-        solver_source: str | None = None
-        solver_sha256: str | None = None
-        parent_solver_sha256: str | None = None
-        solver_diff: str | None = None
         trace_summary: dict[str, JsonValue] | None = None
         if latest is not None:
             run_dir = Path(str(latest["run_dir"]))
@@ -391,28 +373,7 @@ class EvolutionStore:
             final_workspace = run_dir / (
                 "workspace" if self.legacy_layout else "solver"
             )
-            solver_source, solver_sha256 = _solver_details(final_workspace / "solver.py")
             trace_summary = _trace_summary(run_dir)
-            if candidate.parent_ids:
-                parent_id = candidate.parent_ids[0]
-                parent_latest = self.latest_evaluation(parent_id)
-                if parent_latest is not None:
-                    parent_run = Path(str(parent_latest["run_dir"]))
-                    parent_workspace = parent_run / (
-                        "workspace" if self.legacy_layout else "solver"
-                    )
-                    parent_source, parent_solver_sha256 = _solver_details(
-                        parent_workspace / "solver.py"
-                    )
-                    if parent_source is not None and solver_source is not None:
-                        solver_diff = "".join(
-                            difflib.unified_diff(
-                                parent_source.splitlines(keepends=True),
-                                solver_source.splitlines(keepends=True),
-                                fromfile=f"{parent_id}/solver.py",
-                                tofile=f"{candidate.candidate_id}/solver.py",
-                            )
-                        )[:100_000]
             if final_workspace.is_dir():
                 note_files = sorted(
                     path
@@ -435,12 +396,6 @@ class EvolutionStore:
             "latest_run": {
                 "final_summary": final_summary,
                 "learned_notes": learned_notes,
-                "solver": {
-                    "sha256": solver_sha256,
-                    "parent_sha256": parent_solver_sha256,
-                    "source": solver_source,
-                    "diff_from_parent": solver_diff,
-                },
                 "trace_summary": trace_summary,
             },
         }
@@ -454,11 +409,8 @@ class EvolutionStore:
         limit: int = 20,
     ) -> dict[str, JsonValue]:
         safe_id = validate_candidate_id(candidate_id)
-        valid_phases = {"research", "evaluation", "self_check_01", "self_check_02"}
-        if phase not in valid_phases:
-            raise ValueError(
-                "phase must be research, evaluation, self_check_01, or self_check_02"
-            )
+        if phase != "research":
+            raise ValueError("phase must be research")
         if offset < 0:
             raise ValueError("offset must be non-negative")
         if limit < 1 or limit > 100:
@@ -467,23 +419,7 @@ class EvolutionStore:
         if latest is None:
             raise ValueError(f"Evaluate {safe_id} before reading its evidence")
         run_dir = Path(str(latest["run_dir"]))
-        if phase.startswith("self_check_"):
-            research_dir = run_dir if self.legacy_layout else run_dir / "research"
-            check_number = int(phase.rsplit("_", 1)[1])
-            evidence_path = (
-                research_dir
-                / "self_check"
-                / f"check_{check_number:02d}"
-                / "evidence.jsonl"
-            )
-        elif self.legacy_layout:
-            evidence_path = (
-                run_dir / "evidence.jsonl"
-                if phase == "research"
-                else run_dir / "solver_evaluation" / "evidence.jsonl"
-            )
-        else:
-            evidence_path = run_dir / phase / "evidence.jsonl"
+        evidence_path = (run_dir if self.legacy_layout else run_dir / "research") / "evidence.jsonl"
         if not evidence_path.is_file():
             raise ValueError(f"{safe_id} has no saved {phase} evidence")
 

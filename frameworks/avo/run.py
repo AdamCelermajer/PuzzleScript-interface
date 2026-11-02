@@ -53,8 +53,6 @@ def main() -> None:
     parser.add_argument("--max-environment-steps", type=int, default=200)
     parser.add_argument("--max-wall-seconds", type=float, default=3600)
     parser.add_argument("--max-agent-turns", type=int, default=4)
-    parser.add_argument("--max-solver-self-checks", type=int, default=2)
-    parser.add_argument("--solver-self-check-max-environment-steps", type=int, default=1_500)
     parser.add_argument("--output-dir", default="")
     args = parser.parse_args()
 
@@ -76,10 +74,6 @@ def main() -> None:
             max_environment_steps=args.max_environment_steps,
             max_wall_seconds=args.max_wall_seconds,
             max_agent_turns=args.max_agent_turns,
-            max_solver_self_checks=args.max_solver_self_checks,
-            solver_self_check_max_environment_steps=(
-                args.solver_self_check_max_environment_steps
-            ),
         ),
     )
     print(json.dumps(result.summary, indent=2))

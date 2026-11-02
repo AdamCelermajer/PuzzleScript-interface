@@ -16,10 +16,11 @@ describe('runIdentity', () => {
     expect(optionsText({ max_steps: 200, notes: true }, 0)).toBe('max steps 200 · notes · unlimited wall')
     expect(optionsText({ notes: false }, 5400)).toBe('1.5h wall')
   })
-  it('names what scores an AVO campaign; older campaigns were scored by their solver', () => {
-    expect(campaignScore({ fitness: 'research' })).toBe('research levels')
-    expect(campaignScore({ fitness: 'solver' })).toBe('solver levels')
-    expect(campaignScore({ world_model_mode: 'final-only' })).toBe('solver levels')
+  it('names what scores an AVO campaign; archived campaigns were scored by their solver', () => {
+    expect(campaignScore({ world_model_mode: 'final-only' })).toBe('research levels')
+    expect(campaignScore({ solver_moves: 400, fitness: 'research' })).toBe('research levels')
+    expect(campaignScore({ solver_moves: 400, fitness: 'solver' })).toBe('solver levels')
+    expect(campaignScore({ solver_moves: 400 })).toBe('solver levels')
     expect(campaignScore(null)).toBe('solver levels')
   })
 })

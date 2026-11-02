@@ -94,7 +94,7 @@ def options(**overrides):
     values = dict(framework="baseline", harness="claude-code", model="claude-haiku-5-5", optimizer_model="",
                   optimizer_effort="", effort="low", game_id="ps_modality-v1",
                   backend_url="http://host.docker.internal:8000", output_dir="", max_wall_seconds=0, max_steps=3,
-                  notes=True, max_evaluations=None, research_moves=None, solver_moves=None, world_model_mode=None,
+                  notes=True, max_evaluations=None, research_moves=None, world_model_mode=None,
                   provider="", resume=False, continue_from="")
     values.update(overrides)
     return argparse.Namespace(**values)
@@ -115,9 +115,8 @@ def test_run_spec_records_framework_and_options():
     campaign = launch.run_spec(options(framework="avo", harness="opencode", model="openrouter/qwen/qwen3.8-27b",
                                        max_evaluations=2, research_moves=30, max_steps=None, notes=None), AVO)
     assert campaign["optimizer_model"] == "openrouter/qwen/qwen3.8-27b" and campaign["optimizer_effort"] == "low"
-    assert campaign["options"] == {"max_evaluations": 2, "research_moves": 30, "solver_moves": 400,
-                                   "world_model_mode": "final-only", "fitness": "solver",
-                                   "research_moves_schedule": "", "attempt_world_model": False, "final_solver": False,
+    assert campaign["options"] == {"max_evaluations": 2, "research_moves": 30, "world_model_mode": "final-only",
+                                   "research_moves_schedule": "", "attempt_world_model": False,
                                    "continue_levels": False}
 
 
@@ -145,8 +144,9 @@ def test_registry_describes_every_framework():
     listing = {entry["id"]: entry for entry in list_frameworks()}
     assert set(listing) == set(FRAMEWORKS) and json.dumps(listing)
     assert listing["avo"]["optimizer"] and listing["avo"]["restart"] == "resume"
-    assert BASELINE.variant_label({}) == "Baseline" and AVO.variant_label({}) == "AVO · solver score"  # older AVO runs
-    assert AVO.variant_label({"fitness": "research"}) == "AVO · research score"
+    assert BASELINE.variant_label({}) == "Baseline" and AVO.variant_label({}) == "AVO · research score"
+    assert AVO.variant_label({"solver_moves": 400}) == "AVO · solver score"  # archived, from before the fitness option
+    assert AVO.variant_label({"solver_moves": 400, "fitness": "research"}) == "AVO · research score"
     assert BASELINE.variant_label({"notes": False}) == "Baseline · no notes (old)"  # recorded before 21 Oct
     for framework in FRAMEWORKS.values():
         framework.check_options({})  # every default is valid
@@ -206,7 +206,7 @@ def test_avo_resume_requires_same_harness_and_maps_legacy_names(tmp_path):
     campaign.mkdir()
     (campaign / "lineage.json").write_text("{}")
     (campaign / "evolution_config.json").write_text(json.dumps(
-        {"harness": "tools", "provider": "", "profile_settings": {"game_id": "ps_modality-v1"},
+        {"harness": "tools", "provider": "", "fitness": "research", "profile_settings": {"game_id": "ps_modality-v1"},
          "world_model_mode": "final-only"}))
     spec = {"harness": "bare", "provider": "", "game_id": "ps_modality-v1",
             "options": {"world_model_mode": "final-only"}}
@@ -259,8 +259,7 @@ def test_launch_refuses_a_used_output_directory(tmp_path, monkeypatch):
 SPEC = {"schema": "run-spec-v2", "framework": "avo", "harness": "opencode", "model": "openrouter/qwen/qwen3.8-27b",
         "optimizer_model": "openrouter/qwen/qwen3.8-27b", "effort": "high", "optimizer_effort": "low",
         "game_id": "ps_modality-v1", "backend_url": "http://host.docker.internal:8000", "max_wall_seconds": 0,
-        "options": {"max_evaluations": 8, "research_moves": 400, "solver_moves": 300,
-                    "world_model_mode": "between-hypotheses"},
+        "options": {"max_evaluations": 8, "research_moves": 400, "world_model_mode": "between-hypotheses"},
         "provider": "deepinfra", "continued_from": None}
 
 
@@ -271,25 +270,25 @@ def test_avo_entry_argv():
         return argv[argv.index(flag) + 1]
     assert argv[0] == "frameworks.avo.evolve" and argv[-1] == "--resume-saved-campaign"
     assert value("--harness") == "opencode" and value("--optimizer-effort") == "low" and value("--player-effort") == "high"
-    assert value("--player-max-environment-steps") == "400" and value("--fresh-solver-max-environment-steps") == "300"
+    assert value("--player-max-environment-steps") == "400" and value("--max-evaluations") == "8"
     assert value("--max-wall-seconds") == "0" and value("--world-model-mode") == "between-hypotheses"
     assert value("--provider") == "deepinfra" and "game_id=ps_modality-v1" in argv
     assert Path(value("--output-dir")).as_posix() == "/results/campaign"
-    assert value("--fitness") == "solver"  # a spec from before the fitness option
-    research = AVO.entry({**SPEC, "options": {**SPEC["options"], "fitness": "research"}}, False, Path("/r"), Path("/p"))
-    assert research[research.index("--fitness") + 1] == "research"
+    assert not any("solver" in item or item == "--fitness" for item in argv)
 
 
-def test_avo_resume_keeps_the_fitness(tmp_path):
+def test_avo_resumes_research_campaigns_only(tmp_path):
     campaign = tmp_path / "campaign"
     campaign.mkdir()
     (campaign / "lineage.json").write_text("{}")
-    (campaign / "evolution_config.json").write_text(json.dumps(
-        {"harness": "opencode", "provider": "deepinfra", "profile_settings": {"game_id": "ps_modality-v1"},
-         "world_model_mode": "between-hypotheses"}))  # recorded before the fitness option: solver
+    saved = {"harness": "opencode", "provider": "deepinfra", "profile_settings": {"game_id": "ps_modality-v1"},
+             "world_model_mode": "between-hypotheses"}
+    for fitness in ({}, {"fitness": "solver"}):  # recorded before the fitness option, or solver-scored
+        (campaign / "evolution_config.json").write_text(json.dumps({**saved, **fitness}))
+        with pytest.raises(ValueError, match="solver-score campaigns were archived on 2 Nov 2026"):
+            AVO.check_restart(SPEC, tmp_path)
+    (campaign / "evolution_config.json").write_text(json.dumps({**saved, "fitness": "research"}))
     AVO.check_restart(SPEC, tmp_path)
-    with pytest.raises(ValueError, match="fitness"):
-        AVO.check_restart({**SPEC, "options": {**SPEC["options"], "fitness": "research"}}, tmp_path)
 
 
 def test_baseline_entry_argv_and_continuation():

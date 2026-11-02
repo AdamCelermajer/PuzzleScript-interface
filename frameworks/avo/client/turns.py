@@ -21,7 +21,7 @@ DEFAULT_PROMPT_PATH = Path(__file__).resolve().parents[1] / "prompts" / "base_ag
 
 INNER_RUN_INSTRUCTION = (
     "Operate the AVO run autonomously now. Use AGENT_INTERFACE.md and pursue "
-    "MISSION.md. Switch the solver into a bounded discovery phase. Use the nearest "
+    "MISSION.md. Start with a bounded discovery phase. Use the nearest "
     "reproducible checkpoint, or replay a recorded action prefix, and locate the "
     "earliest predicted-versus-observed transition mismatch. Treat every rule, "
     "state key, and plan as falsifiable. Build a frontier from real transitions "
@@ -40,11 +40,6 @@ INNER_RUN_INSTRUCTION = (
     "graph-changing model update; otherwise take the best untried frontier action. "
     "Do not merely explain what you would do."
 )
-# AVO's research score (frameworks/avo/research_score.py) has no solver.
-RESEARCH_RUN_INSTRUCTION = INNER_RUN_INSTRUCTION.replace(
-    "Switch the solver into a bounded discovery phase.", "Start with a bounded discovery phase."
-)
-
 REPORT_GRACE_SECONDS = 300.0
 
 CONTINUE_INSTRUCTION = (
@@ -69,7 +64,6 @@ class AgentConfig:
     session_metadata: Mapping[str, Any] | None = None
     harness: str = "codex"
     provider: str = ""  # pinned OpenRouter upstream slug (opencode/bare); empty = OpenRouter routing
-    first_instruction: str = ""  # replaces the role's opening instruction when set
 
 
 def initial_instruction(session_role: str) -> str:
@@ -95,7 +89,7 @@ def drive_turns(
     agent turn and returns its final text. Budgets, finishing, and the final
     world-model report retries are identical for every harness.
     """
-    instruction = config.first_instruction or initial_instruction(config.session_role)
+    instruction = initial_instruction(config.session_role)
     final_response = ""
     turns = 0
     reporting = False
@@ -135,9 +129,8 @@ def drive_turns(
         elif status["task"]["terminal"]:
             if not status["finished"]:
                 gateway.handle("finish", {"reason": "environment terminal"})
-        elif (status["budgets"].get("environment_steps_remaining") == 0
-              and "solver_self_checks_used" not in status["budgets"]):
-            # Research score (no solver): with no moves left there is nothing more to do in this attempt.
+        elif status["budgets"].get("environment_steps_remaining") == 0:
+            # With no moves left there is nothing more to do in this attempt.
             if not status["finished"]:
                 gateway.handle("finish", {"reason": "environment step budget exhausted"})
         if turn_number >= config.max_turns and not gateway.handle("status")["finished"]:

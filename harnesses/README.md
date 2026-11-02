@@ -58,7 +58,7 @@ uv run python -m harnesses.launch --framework baseline --notes --harness claude-
   --effort low --game-id ps_modality-v1 --backend-url http://host.docker.internal:8000 --max-steps 50
 uv run python -m harnesses.launch --framework avo --harness opencode --model openrouter/qwen/qwen3.8-27b `
   --effort high --game-id ps_modality-v1 --backend-url http://host.docker.internal:8000 `
-  --max-evaluations 8 --research-moves 400 --solver-moves 400 --world-model-mode final-only
+  --max-evaluations 8 --research-moves 400 --world-model-mode final-only
 uv run python -m harnesses.launch check [--harness H] [--deep]     # JSON readiness
 uv run python -m harnesses.launch smoke --harness codex --model gpt-5.6-sol   # two tiny real turns
 uv run python -m harnesses.launch login antigravity [--tui]       # once, interactive
@@ -68,9 +68,9 @@ Common options (contract §3): `--framework`, `--harness`, `--model`, `--effort`
 `--game-id`, `--backend-url`, `--output-dir`, `--max-wall-seconds` (0 = unlimited),
 `--provider`, `--memory`, `--cpus`, `--dry-run`. Each framework option becomes a flag
 (`baseline`: `--max-steps`, `--notes`; `avo`: `--max-evaluations`, `--research-moves`,
-`--solver-moves`, `--world-model-mode`). Only frameworks with an optimizer (`avo`) take
+`--world-model-mode`, ...). Only frameworks with an optimizer (`avo`) take
 `--optimizer-model`/`--optimizer-effort`; `--resume` (avo in DIR; refuses a different
-harness/provider/game/condition) and `--continue-from PARENT` (baseline; new DIR)
+harness/provider/game/condition, and archived solver-score campaigns) and `--continue-from PARENT` (baseline; new DIR)
 follow the framework's restart kind.
 `localhost` backend URLs are rewritten to `host.docker.internal`.
 
@@ -102,8 +102,6 @@ Permission prompts are disabled in every CLI: the container is the sandbox, so
 `CliSession.start` refuses to run outside a container (`HARNESS_CONTAINER=1`, set by
 the launcher, or `/.dockerenv`) unless `HARNESS_ALLOW_HOST=1` is set. There
 is no Codex sandbox, request proxy, request guard or ACL handling any more.
-AVO solver evaluation runs `solver.py` as a plain subprocess in its own scratch
-copy (no credentials in its environment, timeout per action and wall budget).
 
 ## Honest limits (accepted)
 

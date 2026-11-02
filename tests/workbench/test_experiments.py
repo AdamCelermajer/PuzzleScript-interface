@@ -544,7 +544,7 @@ class ExperimentTests(unittest.TestCase):
         args = ["--framework", "avo", "--harness", "codex", "--output-dir", str(output), "--game-id", "test-game",
                 "--backend-url", "http://host.docker.internal:8000", "--optimizer-model", "gpt-5.6-sol",
                 "--model", "gpt-5.6-luna", "--optimizer-effort", "low", "--effort", "high",
-                "--max-evaluations", "2", "--research-moves", "30", "--solver-moves", "50"]
+                "--max-evaluations", "2", "--research-moves", "30"]
         with patch.dict("os.environ", {"CODEX_HOME":str(auth_dir)}), patch.object(launch, "stage_controller"), \
                 patch.object(launch.subprocess, "run", side_effect=subprocess_run):
             self.assertEqual(launch.launch(args), 0)

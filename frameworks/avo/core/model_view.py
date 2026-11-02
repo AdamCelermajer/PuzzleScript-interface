@@ -61,7 +61,7 @@ class ModelView:
         for name, item in value.items():
             if name in _PRIVATE_KEYS:
                 continue
-            if name in {"solver_evaluation", "solver", "research", "evaluation"} and isinstance(item, str):
+            if name in {"solver", "research", "evaluation"} and isinstance(item, str):
                 continue
             if name in {"path", "draft_path", "artifact_path"}:
                 # Candidate archive paths have no model-visible role. Local

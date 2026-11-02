@@ -71,44 +71,6 @@ class AvoToolGatewayTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "step budget exhausted"):
                 gateway.handle("probe", {"action_id": "A2"})
 
-    def test_solver_self_checks_are_fresh_separate_and_limited_to_two(self) -> None:
-        with tempfile.TemporaryDirectory() as root:
-            calls: list[tuple[int, int]] = []
-
-            def self_check(check_number: int, max_actions: int):
-                calls.append((check_number, max_actions))
-                return {
-                    "fitness": float(check_number),
-                    "evidence": "must-not-be-returned-by-real-self-check",
-                }
-
-            environment = CounterEnvironment()
-            lab = AvoLaboratory(environment, [], Path(root) / "evidence")
-            gateway = AvoToolGateway(
-                lab,
-                CounterProfile(environment),
-                budget=GatewayBudget(max_environment_steps=3),
-                solver_self_check=self_check,
-                max_solver_self_checks=2,
-                max_solver_self_check_steps=20,
-            )
-
-            first = gateway.handle("evaluate_solver", {"max_actions": 10})
-            second = gateway.handle("evaluate_solver", {"max_actions": 20})
-
-            self.assertEqual(calls, [(1, 10), (2, 20)])
-            self.assertEqual(first["result"], {"fitness": 1.0})
-            self.assertNotIn("evidence", json.dumps(first))
-            self.assertEqual(first["checks_remaining"], 1)
-            self.assertEqual(second["checks_remaining"], 0)
-            self.assertEqual(gateway.environment_steps, 0)
-            self.assertEqual(
-                gateway.handle("status")["budgets"]["environment_steps_remaining"],
-                3,
-            )
-            with self.assertRaisesRegex(RuntimeError, "limit exhausted"):
-                gateway.handle("evaluate_solver", {"max_actions": 1})
-
     def test_observation_has_opaque_actions_and_probe_needs_no_candidate(self) -> None:
         with tempfile.TemporaryDirectory() as root:
             environment = CounterEnvironment()

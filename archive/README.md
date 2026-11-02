@@ -15,3 +15,4 @@ Nothing here is imported or tested; paths inside may point to where the files us
 | `client/` | the first rule-learning agent, its dashboards and play tools, and its tests; its game adapter is now `game/` | 2 Nov 2026 |
 | `studies-tests/` | tests of the study code in `studies/` (that code imports the archived client) | 2 Nov 2026 |
 | `workbench/` | the API's run manager for the first agent, its OpenRouter key and model routes | 2 Nov 2026 |
+| `avo-solver/` | AVO's solver score: fresh `solver.py` evaluation and self-checks, the final solver, and the solver prompts; AVO runs research mode only (old campaigns stay readable, not resumable) | 2 Nov 2026 |

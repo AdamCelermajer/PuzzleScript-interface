@@ -48,9 +48,11 @@ export function runIdentity(row: Pick<CatalogRun, 'framework' | 'variant' | 'kin
   return { framework: 'baseline', variant: String(row.condition ?? '').startsWith('baseline-plus') ? 'Baseline' : 'Baseline · no notes (old)' }
 }
 
-/** What scores an AVO campaign's candidates; campaigns from before the fitness option were scored by their solver. */
+/** What scores an AVO campaign's candidates. Solver scoring was archived on 2 Nov 2026: those campaigns
+ *  recorded solver_moves, and fitness=research unless they were solver-scored; no options at all is older still. */
 export const campaignScore = (options: FrameworkOptions | null | undefined) =>
-  options?.fitness === 'research' ? 'research levels' : 'solver levels'
+  (options ? options.fitness ?? ('solver_moves' in options ? 'solver' : 'research') : 'solver') === 'research'
+    ? 'research levels' : 'solver levels'
 
 /** `max steps 200 · notes · 4h wall` from a framework's options. */
 export function optionsText(options: FrameworkOptions | null | undefined, maxWallSeconds?: number | null): string {

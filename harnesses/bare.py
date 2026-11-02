@@ -23,8 +23,8 @@ MAX_STEPS_PER_TURN = 300
 CONTEXT_CHARS = int(os.environ.get("HARNESS_BARE_CONTEXT_CHARS", "400000"))
 DEFAULT_COMMAND_SECONDS = 600
 OUTPUT_HEAD, OUTPUT_TAIL = 4_000, 12_000
-# Candidate evaluation and solver self-checks block until a whole run finishes.
-_LONG_COMMAND = re.compile(r"avo_evolve_tool\.py\s+evaluate\b|avo_tool\.py\s+evaluate_solver\b")
+# Candidate evaluation blocks until a whole run finishes.
+_LONG_COMMAND = re.compile(r"avo_evolve_tool\.py\s+evaluate\b")
 PROTECTED_DIRS = {".avo_rpc", ".avo_evolution_rpc"}
 
 TOOLS_PROTOCOL = """
