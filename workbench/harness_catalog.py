@@ -30,11 +30,13 @@ ANTIGRAVITY_MODELS = ["gemini-3.8-flash-high", "gemini-3.8-flash-medium", "gemin
 HARNESSES = {
     "codex": {"label": "Codex CLI", "providers": ["openai"]},
     "claude-code": {"label": "Claude Code", "providers": ["anthropic"]},
-    "opencode": {"label": "OpenCode", "providers": ["openrouter", "nanogpt"]},
+    "opencode": {"label": "OpenCode", "providers": ["openrouter", "nanogpt", "vast"]},
     "antigravity": {"label": "Antigravity (agy)", "providers": ["google"]},
     "bare": {"label": "Bare tool loop", "providers": ["openrouter", "nanogpt"]},
 }
 PROVIDER_KEYS = {"openrouter": "OPENROUTER_API_KEY", "nanogpt": "NANOGPT_API_KEY"}
+# Self-hosted vLLM (vast.ai): no key, no public catalog; its endpoint URL has a default.
+KEYLESS_PROVIDERS = {"vast"}
 
 
 def model_provider(model: str) -> str:
@@ -43,6 +45,8 @@ def model_provider(model: str) -> str:
         return "openrouter"
     if model.startswith("nanogpt/"):
         return "nanogpt"
+    if model.startswith("vast/"):
+        return "vast"
     if re.fullmatch(r"claude-[a-z]+-\d+(?:-\d+)*", model):
         return "anthropic"
     if model in ANTIGRAVITY_MODELS or re.fullmatch(r"(?:gemini|claude|gpt-oss)-[a-z0-9.-]+-(?:low|medium|high)", model):
@@ -60,6 +64,8 @@ def model_error(harness: str, model: str) -> str | None:
             return "Use openrouter/vendor/model for OpenRouter models"
     if model.startswith("nanogpt/") and any(not part for part in model.removeprefix("nanogpt/").split("/")):
         return "Use nanogpt/model with a model ID from the NanoGPT catalog"
+    if model.startswith("vast/") and any(not part for part in model.removeprefix("vast/").split("/")):
+        return "Use vast/<served-model-name> for the self-hosted vLLM"
     provider = model_provider(model)
     if provider not in HARNESSES[harness]["providers"]:
         return f"{model} is a {provider} model; {harness} runs {', '.join(HARNESSES[harness]['providers'])} models"
@@ -181,7 +187,7 @@ def harness_listing(root: Path = ROOT, include_public_catalogs: bool = True) -> 
         if harness == "antigravity" and docker["docker"] and not docker["agy_volume"]:
             missing.append(f"docker volume {AGY_VOLUME} (run python -m harnesses.launch login antigravity)")
         if harness in {"opencode", "bare"}:
-            ready_providers = [p for p in entry["providers"] if PROVIDER_KEYS.get(p) in keys]
+            ready_providers = [p for p in entry["providers"] if p in KEYLESS_PROVIDERS or PROVIDER_KEYS.get(p) in keys]
             entry["ready_providers"] = ready_providers
             if not ready_providers:
                 missing.append(" or ".join(f"{PROVIDER_KEYS[p]} in .env" for p in entry["providers"] if p in PROVIDER_KEYS))

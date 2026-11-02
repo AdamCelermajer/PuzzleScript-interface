@@ -47,5 +47,6 @@ def create_profile(settings: dict[str, Any]) -> PuzzleScriptProfile:
         game_id=str(settings["game_id"]),
         backend_url=str(settings.get("backend_url", "http://localhost:8000")),
         api_key=str(settings.get("api_key", "")) or None,
+        start_level=int(settings.get("start_level", 1)),  # set per research session by continue_levels
     ))
     return PuzzleScriptProfile(PuzzleScriptEnvironment(raw_environment))

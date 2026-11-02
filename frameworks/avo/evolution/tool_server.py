@@ -52,6 +52,17 @@ artifacts, `lineage.json`, and `.avo_evolution_rpc/` are framework-owned and mus
 be edited.
 """
 
+# AVO's research score (frameworks/avo/research_score.py): no solver, only research evidence.
+RESEARCH_OPTIMIZER_INTERFACE = (
+    OPTIMIZER_INTERFACE
+    .replace("research|evaluation|self_check_01|self_check_02", "research")
+    .replace("trusted result, solver source, parent diff,\n   and trace summary. Page through research, self-check, "
+             "or final `evidence`", "trusted result, notes,\n   and trace summary. Page through research `evidence`")
+    .replace("inherits the final solver, notes, and helper programs",
+             "inherits the final notes, world_model.md, and helper programs")
+    .replace("Prescribe a solver delta only", "Prescribe a strategy change only")
+)
+
 
 OPTIMIZER_CLI = r'''from __future__ import annotations
 
@@ -132,10 +143,12 @@ call(args.method, params)
 class EvolutionFileToolServer:
     """Filesystem RPC exposing only outer candidate-management operations."""
 
-    def __init__(self, gateway: EvolutionGateway, workspace: str | Path) -> None:
+    def __init__(self, gateway: EvolutionGateway, workspace: str | Path,
+                 interface: str = OPTIMIZER_INTERFACE) -> None:
         from frameworks.avo.core.model_view import ModelView
         self.gateway = gateway
         self.workspace = Path(workspace).resolve()
+        self.interface = interface
         self.model_view = ModelView(self.workspace, (gateway.store.root,))
         self.rpc_root = self.workspace / ".avo_evolution_rpc"
         self._stop = threading.Event()
@@ -149,7 +162,7 @@ class EvolutionFileToolServer:
             encoding="utf-8",
         )
         (self.workspace / "AGENT_INTERFACE.md").write_text(
-            OPTIMIZER_INTERFACE,
+            self.interface,
             encoding="utf-8",
         )
         (self.workspace / "MISSION.md").write_text(

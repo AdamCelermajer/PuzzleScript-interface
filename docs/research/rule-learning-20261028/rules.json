@@ -1,0 +1,30 @@
+{
+ "ps_modality-v1": [
+  {"id": "M1", "kind": "visible", "rule": "Controls: four moves (up, down, left, right). There is no use for an action button."},
+  {"id": "M2", "kind": "visible", "rule": "Walking into a crate pushes it one cell (Sokoban push); crates cannot be pulled."},
+  {"id": "M3", "kind": "visible", "rule": "A crate cannot be pushed into another crate or off the grid; the push is refused."},
+  {"id": "M4", "kind": "hidden", "rule": "Floor colour restricts the player: a step from a white (light) tile onto a black (dark) tile, or from black onto white, is refused."},
+  {"id": "M5", "kind": "hidden", "rule": "Grey tiles connect both colours: the player can step onto grey from white or black, and from grey onto white or black."},
+  {"id": "M6", "kind": "hidden", "rule": "Pushing also depends on floor: a player on white/grey can push only a crate standing on white/grey, a player on black only a crate standing on black; otherwise the push is refused."},
+  {"id": "M7", "kind": "hidden", "rule": "The crate itself is not restricted by colour: a pushed crate may move onto any floor colour (which changes who can push it next)."},
+  {"id": "M8", "kind": "visible", "rule": "Win: when every crate is on a target (blue tile) the level is completed and the next level loads."}
+ ],
+ "ps_icecrates-v1": [
+  {"id": "I1", "kind": "visible", "rule": "Controls: four moves (up, down, left, right)."},
+  {"id": "I2", "kind": "visible", "rule": "Ice sliding: after a move the player keeps sliding in that direction until the next cell is a wall, water or a crate that cannot move."},
+  {"id": "I3", "kind": "visible", "rule": "Pushing: sliding into a crate pushes it, and the player and crate slide together until the crate hits an obstacle; both stop, the player next to the crate."},
+  {"id": "I4", "kind": "hidden", "rule": "Chains: a pushed crate that runs into another crate pushes that crate too; the whole row moves together."},
+  {"id": "I5", "kind": "visible", "rule": "Water blocks the player: the player cannot enter water and stops in front of it."},
+  {"id": "I6", "kind": "hidden", "rule": "A crate pushed into water fills it: the crate disappears, the water becomes walkable floor, and the player can then slide across it."},
+  {"id": "I7", "kind": "hidden", "rule": "Win: the player must come to rest (stop) on the goal tile; sliding over the goal does not complete the level."}
+ ],
+ "ps_knightoban-v1": [
+  {"id": "K1", "kind": "visible", "rule": "Controls: four moves plus an action button (ACTION5) that confirms a choice."},
+  {"id": "K2", "kind": "visible", "rule": "Walls block the player; orange (normal) crates are pushed one cell Sokoban-style and cannot be pushed into walls or crates."},
+  {"id": "K3", "kind": "hidden", "rule": "Red crates jump like a chess knight: walking into a red crate moves the player into its cell, and the crate can land two cells further in the push direction and one cell to either side (an L-shaped move)."},
+  {"id": "K4", "kind": "hidden", "rule": "A red-crate landing cell must be empty (no wall, crate or player); if no landing cell is free the move is refused."},
+  {"id": "K5", "kind": "hidden", "rule": "Choosing: the possible landing cells are shown (dark red); while choosing, the move keys switch which landing cell is selected and the player does not move."},
+  {"id": "K6", "kind": "hidden", "rule": "The action button (ACTION5) confirms: the red crate is placed on the selected landing cell and normal play resumes."},
+  {"id": "K7", "kind": "visible", "rule": "Win: the level is completed when every target (dark blue tile) is covered by a crate of either kind."}
+ ]
+}

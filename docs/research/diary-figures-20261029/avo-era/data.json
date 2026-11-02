@@ -1,0 +1,7661 @@
+{
+ "generated_from": "run folders under avo/output, output/ and studies/codex_agent/output",
+ "token_definition": "total = input tokens (including cache hits) + output tokens (including reasoning), summed over every model session (outer optimizer + inner research agents) found in the run folder",
+ "midas": [
+  {
+   "id": "avo/output/evolution/midas-live-v01-20260825",
+   "label": "Aug 25 Sol/Sol, in-run levels",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 5,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-25T20:26:52.466367+00:00",
+     "hours": 0.508,
+     "cum_tokens": 6623434
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 6,
+     "win_levels": 15,
+     "best": 6.0,
+     "recorded_at": "2026-08-25T21:09:41.283653+00:00",
+     "hours": 1.221,
+     "cum_tokens": 18007969
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 6,
+     "win_levels": 15,
+     "best": 6.0,
+     "recorded_at": "2026-08-25T21:35:31.366581+00:00",
+     "hours": 1.652,
+     "cum_tokens": 24811272
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 6,
+     "win_levels": 15,
+     "best": 6.0,
+     "recorded_at": "2026-08-25T22:05:25.075921+00:00",
+     "hours": 2.15,
+     "cum_tokens": 36564933
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 8,
+     "win_levels": 15,
+     "best": 8.0,
+     "recorded_at": "2026-08-25T22:28:24.013948+00:00",
+     "hours": 2.533,
+     "cum_tokens": 44475656
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 8.0,
+   "solved": false,
+   "tokens": {
+    "total": 44882344,
+    "input": 44667624,
+    "cached": 43453184,
+    "output": 214720,
+    "threads": 6,
+    "thread_totals": {
+     "01a03a7e-fe8a-7283-81be-b590dad4a84c": 5865833,
+     "01a03aa8-0022-70c1-b999-b4e1e8e5c46d": 9554801,
+     "01a03ac4-904f-7341-849e-d0fa51de854e": 4893110,
+     "01a03adb-c1d8-7b61-acc8-adee7fdd03f4": 9453689,
+     "01a03af6-34fb-7280-97b3-d37ad8d1a6ba": 5942293,
+     "01a03a7e-9a09-78b3-a622-662c29587558": 9172618
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-solver-v03-20260827",
+   "label": "Aug 27 v03",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-27T18:59:45.385577+00:00",
+     "hours": 0.534,
+     "cum_tokens": 7252842
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 7420211,
+    "input": 7368798,
+    "cached": 7060736,
+    "output": 51413,
+    "threads": 2,
+    "thread_totals": {
+     "01a0447a-8ea2-7623-bdda-c6f18ae54a3c": 6698526,
+     "01a0447a-3d7f-7093-b70e-2059f38659c6": 721685
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-solver-v04-20260827",
+   "label": "Aug 27 v04",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 8,
+     "win_levels": 15,
+     "best": 8.0,
+     "recorded_at": "2026-08-27T20:14:48.388520+00:00",
+     "hours": 0.745,
+     "cum_tokens": 13429263
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 8.0,
+   "solved": false,
+   "tokens": {
+    "total": 14236749,
+    "input": 14151616,
+    "cached": 13784064,
+    "output": 85133,
+    "threads": 2,
+    "thread_totals": {
+     "01a044b3-bded-78a3-b35b-e292cfe32b8c": 12629651,
+     "01a044b3-3899-7142-b201-2c72d68ff7c2": 1607098
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-solver-clean-v08-20260827",
+   "label": "Aug 27 clean v08",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-27T21:54:40.117033+00:00",
+     "hours": 1.026,
+     "cum_tokens": 24270069
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 24967432,
+    "input": 24883321,
+    "cached": 24379136,
+    "output": 84111,
+    "threads": 5,
+    "thread_totals": {
+     "01a044ff-8f03-77a2-a540-0c580e1c8b65": 22505982,
+     "01a04536-9c87-7e81-be7c-f4012df9e275": 146093,
+     "01a0453a-b294-78a0-9820-117c2edf7257": 294402,
+     "01a044ff-5e0d-7dc2-9489-082cafe82668": 1617994,
+     "01a04537-fa0c-7a31-974c-a52811ad9d22": 402961
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-luna-medium-sol-high-20260828T144003",
+   "label": "Aug 28 Luna/Sol",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 15,
+     "best": 2.0,
+     "recorded_at": "2026-08-28T13:02:40.746888+00:00",
+     "hours": 1.369,
+     "cum_tokens": 6369083
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 15,
+     "best": 2.0,
+     "recorded_at": "2026-08-28T13:13:00.081747+00:00",
+     "hours": 1.541,
+     "cum_tokens": 8545990
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T13:20:41.954306+00:00",
+     "hours": 1.669,
+     "cum_tokens": 10464194
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T13:28:44.238936+00:00",
+     "hours": 1.803,
+     "cum_tokens": 12544064
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T13:35:13.854764+00:00",
+     "hours": 1.911,
+     "cum_tokens": 14184790
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T13:41:30.542728+00:00",
+     "hours": 2.016,
+     "cum_tokens": 15356860
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T13:50:18.896726+00:00",
+     "hours": 2.163,
+     "cum_tokens": 17231282
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T13:56:27.227799+00:00",
+     "hours": 2.265,
+     "cum_tokens": 18640973
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T14:05:35.084333+00:00",
+     "hours": 2.417,
+     "cum_tokens": 22064830
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T14:09:26.608747+00:00",
+     "hours": 2.481,
+     "cum_tokens": 23092049
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 3.0,
+   "solved": false,
+   "tokens": {
+    "total": 23260682,
+    "input": 23105520,
+    "cached": 21972736,
+    "output": 155162,
+    "threads": 12,
+    "thread_totals": {
+     "01a0482b-c87b-77a1-bfe6-d769497933c7": 3436471,
+     "01a04877-4f55-75d3-b6bc-574edb6a7514": 5178162,
+     "01a0482c-1332-7791-920a-ad0ad45d9629": 2932612,
+     "01a04879-c5a9-7ef3-b05f-12ae3bda8411": 1676405,
+     "01a04881-95d7-7902-8362-8c855017f118": 1418745,
+     "01a04888-e171-7dc2-8b81-95d66c53310c": 1582277,
+     "01a0488f-d1f1-7441-86d0-26b4cc92f22a": 1265182,
+     "01a04895-b91e-78f2-9f18-f459a2b27a85": 747532,
+     "01a0489b-b017-7441-adaf-f9b790816ce3": 1281763,
+     "01a048a4-252b-7892-a6a2-d55c7e16b7df": 676530,
+     "01a048a9-5c23-7cf2-9b78-73c67eec662d": 2608014,
+     "01a048b1-76a2-7140-ae2b-076a53b92de4": 456989
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-luna-medium-sol-high-20260828T200612",
+   "label": "Aug 28 Luna/Sol (2)",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 1.0,
+     "recorded_at": "2026-08-28T17:15:56.526316+00:00",
+     "hours": 0.16,
+     "cum_tokens": 3195032
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 1.0,
+     "recorded_at": "2026-08-28T17:24:49.425741+00:00",
+     "hours": 0.308,
+     "cum_tokens": 5543013
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 1.0,
+     "recorded_at": "2026-08-28T17:32:54.513856+00:00",
+     "hours": 0.443,
+     "cum_tokens": 8903047
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 2,
+     "win_levels": 15,
+     "best": 2.0,
+     "recorded_at": "2026-08-28T17:40:58.306699+00:00",
+     "hours": 0.577,
+     "cum_tokens": 12420417
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 2,
+     "win_levels": 15,
+     "best": 2.0,
+     "recorded_at": "2026-08-28T17:48:06.235578+00:00",
+     "hours": 0.696,
+     "cum_tokens": 15816266
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 2,
+     "win_levels": 15,
+     "best": 2.0,
+     "recorded_at": "2026-08-28T17:53:54.990324+00:00",
+     "hours": 0.793,
+     "cum_tokens": 18551773
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 19992584,
+    "input": 19886292,
+    "cached": 19052288,
+    "output": 106292,
+    "threads": 8,
+    "thread_totals": {
+     "01a04956-18bb-7b21-b93e-f8536699bc64": 7855638,
+     "01a04956-538c-7ca1-b09c-cb19a7faaffb": 2877591,
+     "01a04960-aee4-73d1-9b96-c9b92ed0ba7e": 1373560,
+     "01a04968-a821-7621-93ca-62662c27a421": 2120430,
+     "01a0496f-8576-7311-ada5-501539e7c503": 1922128,
+     "01a04976-b0c5-7b12-a9f8-8ec6c4e453c2": 1745257,
+     "01a0497c-ee61-7943-ae75-d9d8eda3806b": 1465079,
+     "01a04982-995e-7ed3-a337-7e0f8b52f2e8": 632901
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-outer-evidence-luna-medium-sol-high-20260828T210529",
+   "label": "Aug 28 Luna/Sol, outer evidence",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 30,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 1.0,
+     "recorded_at": "2026-08-28T18:16:10.947847+00:00",
+     "hours": 0.176,
+     "cum_tokens": 2807206
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 15,
+     "best": 2.0,
+     "recorded_at": "2026-08-28T18:28:16.750130+00:00",
+     "hours": 0.377,
+     "cum_tokens": 7411810
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 2.0,
+     "recorded_at": "2026-08-28T18:35:51.578763+00:00",
+     "hours": 0.503,
+     "cum_tokens": 10186078
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T18:47:12.189748+00:00",
+     "hours": 0.693,
+     "cum_tokens": 14044357
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T18:55:19.598042+00:00",
+     "hours": 0.828,
+     "cum_tokens": 17572356
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T19:03:06.259889+00:00",
+     "hours": 0.958,
+     "cum_tokens": 21078347
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T19:11:33.739094+00:00",
+     "hours": 1.099,
+     "cum_tokens": 25482782
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T19:18:30.093589+00:00",
+     "hours": 1.214,
+     "cum_tokens": 28735686
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 2,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T19:27:34.202718+00:00",
+     "hours": 1.365,
+     "cum_tokens": 34100035
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-28T19:34:00.393969+00:00",
+     "hours": 1.473,
+     "cum_tokens": 37691087
+    },
+    {
+     "n": 11,
+     "candidate": "x_0011",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T19:41:18.065343+00:00",
+     "hours": 1.594,
+     "cum_tokens": 40259051
+    },
+    {
+     "n": 12,
+     "candidate": "x_0012",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T19:49:41.545126+00:00",
+     "hours": 1.734,
+     "cum_tokens": 45074658
+    },
+    {
+     "n": 13,
+     "candidate": "x_0013",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:02:53.004429+00:00",
+     "hours": 1.954,
+     "cum_tokens": 46787552
+    },
+    {
+     "n": 14,
+     "candidate": "x_0014",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:06:31.421582+00:00",
+     "hours": 2.015,
+     "cum_tokens": 48262012
+    },
+    {
+     "n": 15,
+     "candidate": "x_0015",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:11:45.696421+00:00",
+     "hours": 2.102,
+     "cum_tokens": 49504881
+    },
+    {
+     "n": 16,
+     "candidate": "x_0016",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:15:32.430116+00:00",
+     "hours": 2.165,
+     "cum_tokens": 50542655
+    },
+    {
+     "n": 17,
+     "candidate": "x_0017",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:20:05.597535+00:00",
+     "hours": 2.241,
+     "cum_tokens": 52195279
+    },
+    {
+     "n": 18,
+     "candidate": "x_0018",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:24:47.147135+00:00",
+     "hours": 2.319,
+     "cum_tokens": 53796840
+    },
+    {
+     "n": 19,
+     "candidate": "x_0019",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:28:39.569169+00:00",
+     "hours": 2.383,
+     "cum_tokens": 55397156
+    },
+    {
+     "n": 20,
+     "candidate": "x_0020",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:32:17.659763+00:00",
+     "hours": 2.444,
+     "cum_tokens": 56802141
+    },
+    {
+     "n": 21,
+     "candidate": "x_0021",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:52:18.160052+00:00",
+     "hours": 2.778,
+     "cum_tokens": 58520741
+    },
+    {
+     "n": 22,
+     "candidate": "x_0022",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T20:56:39.751241+00:00",
+     "hours": 2.85,
+     "cum_tokens": 59538355
+    },
+    {
+     "n": 23,
+     "candidate": "x_0023",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T21:02:04.620670+00:00",
+     "hours": 2.94,
+     "cum_tokens": 61159691
+    },
+    {
+     "n": 24,
+     "candidate": "x_0024",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T21:06:53.450737+00:00",
+     "hours": 3.021,
+     "cum_tokens": 62932799
+    },
+    {
+     "n": 25,
+     "candidate": "x_0025",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T21:19:41.177215+00:00",
+     "hours": 3.234,
+     "cum_tokens": 66320479
+    },
+    {
+     "n": 26,
+     "candidate": "x_0026",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T21:34:31.439567+00:00",
+     "hours": 3.481,
+     "cum_tokens": 72094852
+    },
+    {
+     "n": 27,
+     "candidate": "x_0027",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-28T21:42:52.494859+00:00",
+     "hours": 3.62,
+     "cum_tokens": 74411657
+    },
+    {
+     "n": 28,
+     "candidate": "x_0028",
+     "levels": 6,
+     "win_levels": 15,
+     "best": 6.0,
+     "recorded_at": "2026-08-28T21:50:40.922143+00:00",
+     "hours": 3.751,
+     "cum_tokens": 76848193
+    },
+    {
+     "n": 29,
+     "candidate": "x_0029",
+     "levels": 6,
+     "win_levels": 15,
+     "best": 6.0,
+     "recorded_at": "2026-08-28T22:00:54.544975+00:00",
+     "hours": 3.921,
+     "cum_tokens": 78938863
+    },
+    {
+     "n": 30,
+     "candidate": "x_0030",
+     "levels": 6,
+     "win_levels": 15,
+     "best": 6.0,
+     "recorded_at": "2026-08-28T22:14:02.955964+00:00",
+     "hours": 4.14,
+     "cum_tokens": 82466776
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 6.0,
+   "solved": false,
+   "tokens": {
+    "total": 82925310,
+    "input": 82521616,
+    "cached": 79035136,
+    "output": 403694,
+    "threads": 37,
+    "thread_totals": {
+     "01a0498c-5eae-7a22-b443-fa7e89b990fa": 21907274,
+     "01a049dd-df78-76a2-a3d0-ed22bfeacc39": 2675469,
+     "01a049f2-212c-7200-9183-bd6467dee542": 7806893,
+     "01a04a1f-de87-7251-9e49-d8e9b4736f7d": 3613355,
+     "01a04a34-21ee-72d3-8449-0fc50d849e87": 2665190,
+     "01a04a40-9cf6-7bf3-9730-ebc045a3773b": 6198310,
+     "01a04a5c-8c7d-7a70-8071-72337ecfe55e": 3180240,
+     "01a0498d-54f1-72b0-8dd8-7be4be0ca7e7": 2333663,
+     "01a04999-13bf-7cf3-a09f-611e2262263c": 3068568,
+     "01a049a3-03bc-7dc2-99d1-e3bc5a1f305a": 1504837,
+     "01a049a9-e252-7871-84c6-ed6a6a7aa974": 1537087,
+     "01a049b3-ee62-7393-a585-ebb8d5c4c3a8": 1581199,
+     "01a049bb-87aa-7682-88c4-300a952b0c40": 1246447,
+     "01a049c2-8184-7e70-b774-5113c9866a24": 1531106,
+     "01a049ca-475c-79d3-abeb-8a7890b931aa": 662636,
+     "01a049d0-4a46-7703-81e5-3b565e32db12": 1954669,
+     "01a049d8-715b-7a21-8c67-6c16ad25fbb7": 781858,
+     "01a049df-3bf4-7522-8409-f01fa33d096c": 1127832,
+     "01a049e5-2224-7c83-98c3-fafe411eee84": 3263408,
+     "01a049f5-d217-7891-b786-2dbb57d88946": 281361,
+     "01a049f8-871c-7cc1-b519-359fd1656d08": 682695,
+     "01a049fc-a4cf-7aa0-911f-7732e44b6c6b": 324351,
+     "01a04a00-9ea0-7411-a1e8-a7c7772166bb": 334616,
+     "01a04a04-3ead-7b10-a7c6-7a6c8943ded9": 746056,
+     "01a04a08-a785-78a1-97fd-394e0b97c585": 547580,
+     "01a04a0c-79b8-7b71-bef2-06491476b949": 664815,
+     "01a04a0f-fa46-7303-9b26-0e303b678e8e": 434285,
+     "01a04a22-467f-7dd3-8703-934d9deaadbe": 479611,
+     "01a04a26-483c-7063-8c45-a1328bf01ced": 411070,
+     "01a04a2a-8ff7-7711-bf2d-e18157ba3969": 680910,
+     "01a04a2e-d13f-7953-bb9c-7922294ee65d": 844342,
+     "01a04a39-bec3-7183-b225-53471c0e1863": 1245143,
+     "01a04a44-be58-70b3-b840-89e9850670ff": 2471652,
+     "01a04a4e-21d0-7b12-bc87-596e9bc00dd4": 1085141,
+     "01a04a55-46bf-7fe0-9d3e-d2061861d53e": 766128,
+     "01a04a60-7f5e-7200-b167-7b73ea3bbe70": 371618,
+     "01a04a69-77b6-71b3-bb43-8f44d391ef0c": 1913895
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-outer-sol-high-inner-sol-high-x20-budget300-20260831T013257",
+   "label": "Aug 31 Sol/Sol, 300 research",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-30T22:47:30.283621+00:00",
+     "hours": 0.239,
+     "cum_tokens": 3217978
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T22:56:03.845006+00:00",
+     "hours": 0.381,
+     "cum_tokens": 5077228
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T23:12:15.224255+00:00",
+     "hours": 0.651,
+     "cum_tokens": 11097203
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T23:23:10.029855+00:00",
+     "hours": 0.833,
+     "cum_tokens": 15942748
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T23:31:17.011506+00:00",
+     "hours": 0.968,
+     "cum_tokens": 19794166
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T23:35:33.831601+00:00",
+     "hours": 1.04,
+     "cum_tokens": 21557087
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T23:39:53.481150+00:00",
+     "hours": 1.112,
+     "cum_tokens": 23463057
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T23:45:41.398588+00:00",
+     "hours": 1.208,
+     "cum_tokens": 25626657
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-30T23:54:00.744939+00:00",
+     "hours": 1.347,
+     "cum_tokens": 29269247
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-31T00:06:11.079701+00:00",
+     "hours": 1.55,
+     "cum_tokens": 34321355
+    },
+    {
+     "n": 11,
+     "candidate": "x_0011",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-31T00:17:20.318764+00:00",
+     "hours": 1.736,
+     "cum_tokens": 39571195
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 39944888,
+    "input": 39763288,
+    "cached": 38359040,
+    "output": 181600,
+    "threads": 13,
+    "thread_totals": {
+     "01a054cd-fd26-7152-9e02-b4515253485b": 23872966,
+     "01a054ce-eff4-75c1-b482-8aa94c26a458": 2591585,
+     "01a054dc-d85c-7613-9749-adcfc18835ca": 1029437,
+     "01a054e3-d390-7173-8be2-616eb454d966": 2879759,
+     "01a054f2-a9e6-7cf2-9075-5bbc36c6eab8": 2246546,
+     "01a054fc-6634-7af2-a8b9-4ac1fa7d7c3b": 1762383,
+     "01a05504-34d5-7da1-8ec2-25a4900cd6ce": 484199,
+     "01a05507-fc06-7e72-a861-4eb2b5476bdb": 581958,
+     "01a0550b-ae8f-7783-962a-bb0137d0c856": 508230,
+     "01a05511-471a-76c1-8ac6-c2b79b99a884": 1163856,
+     "01a0551b-d87c-7033-8faf-8644f244cf32": 1433852,
+     "01a05524-6824-78a0-ab9a-c838b76a4a4b": 1373401,
+     "01a0552e-3942-77e2-9c69-0a33278e2109": 16716
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-outer-sol-high-fast-inner-sol-high-fast-x20-research500-eval1500-20260831T031836",
+   "label": "Aug 31 Sol/Sol fast, 500 research",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-31T00:52:34.019426+00:00",
+     "hours": 0.563,
+     "cum_tokens": 7124301
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 3,
+     "win_levels": 15,
+     "best": 3.0,
+     "recorded_at": "2026-08-31T01:09:39.795835+00:00",
+     "hours": 0.848,
+     "cum_tokens": 11866950
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-31T01:19:42.964330+00:00",
+     "hours": 1.016,
+     "cum_tokens": 15356254
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 17262125,
+    "input": 17119717,
+    "cached": 16423168,
+    "output": 142408,
+    "threads": 5,
+    "thread_totals": {
+     "01a0552e-b79c-7083-896d-6107f3fcc6a1": 6301281,
+     "01a0552f-9f9c-73a2-808f-5884b88f59b2": 5983973,
+     "01a0554f-e38d-7f90-966a-d9f9edd7bd8b": 2964015,
+     "01a0555e-d93d-7253-b2ec-91d39507b21d": 1518758,
+     "01a05569-9599-7702-9ef8-7e4815d7111e": 494098
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-outer-sol-high-inner-sol-high-x20-discovery-research500-eval1500-20260831T042951",
+   "label": "Aug 31 Sol/Sol discovery, 500 research",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 1,
+     "win_levels": 15,
+     "best": 1.0,
+     "recorded_at": "2026-08-31T01:58:37.709500+00:00",
+     "hours": 0.472,
+     "cum_tokens": 5742301
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-31T02:16:37.147049+00:00",
+     "hours": 0.772,
+     "cum_tokens": 9217439
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 4,
+     "win_levels": 15,
+     "best": 4.0,
+     "recorded_at": "2026-08-31T02:39:32.164248+00:00",
+     "hours": 1.154,
+     "cum_tokens": 13585046
+    }
+   ],
+   "win_levels": 15,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 14793648,
+    "input": 14669012,
+    "cached": 14013696,
+    "output": 124636,
+    "threads": 5,
+    "thread_totals": {
+     "01a05570-1d3d-71e3-a27f-4a3f489be838": 3191769,
+     "01a05571-4717-7210-a987-7d3f24eeb767": 5245435,
+     "01a0558d-16f9-7bb1-bd1b-58891fe236b9": 2616799,
+     "01a0559d-1e03-7d30-80bf-f7788b8f7ce5": 3096117,
+     "01a055b0-f9bd-7633-b050-9a096e8318ea": 643528
+    }
+   }
+  }
+ ],
+ "midas_no_evaluation": [
+  {
+   "id": "avo/output/evolution/midas-solver-v01-20260827",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 450391,
+    "input": 448455,
+    "cached": 375296,
+    "output": 1936,
+    "threads": 2,
+    "thread_totals": {
+     "01a04471-1916-7910-9ab1-f70563989658": 200711,
+     "01a04470-bd92-7a62-a446-c02836d2b65c": 249680
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-solver-v02-20260827",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 213267,
+    "input": 212147,
+    "cached": 164864,
+    "output": 1120,
+    "threads": 2,
+    "thread_totals": {
+     "01a04478-5e1c-7563-89d4-d177fc9ea257": 77277,
+     "01a04478-051d-7102-a1e7-c80de0383f6b": 135990
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-solver-clean-v05-20260827",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 195728,
+    "input": 194210,
+    "cached": 162816,
+    "output": 1518,
+    "threads": 2,
+    "thread_totals": {
+     "01a044ec-4e97-74b3-a211-d8d67edb02ae": 112584,
+     "01a044eb-f6cd-7080-94df-a5743c2f7e89": 83144
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-solver-clean-v06-20260827",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 3486208,
+    "input": 3452019,
+    "cached": 3280128,
+    "output": 34189,
+    "threads": 2,
+    "thread_totals": {
+     "01a044f2-e07a-70b2-aaec-815f73b79059": 3040251,
+     "01a044f2-a603-7832-8871-a5656bc64129": 445957
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-solver-clean-v07-20260827",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "environment profile TaskEvaluation.fitness",
+   "max_evaluations": 4,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 176079,
+    "input": 174279,
+    "cached": 107008,
+    "output": 1800,
+    "threads": 2,
+    "thread_totals": {
+     "01a044fe-7cb1-74a2-9659-19c99bacede9": 126816,
+     "01a044fe-44ae-79f1-bea0-9149495b775d": 49263
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-model-first-v01-20260828",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-sol high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
+   "max_evaluations": 2,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 3880303,
+    "input": 3833281,
+    "cached": 3559680,
+    "output": 47022,
+    "threads": 2,
+    "thread_totals": {
+     "01a04783-3558-7d40-8530-69e34f673013": 3234124,
+     "01a04782-f176-7e61-9ca5-be6a7cb320c2": 646179
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-model-first-luna-high-20260828",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-5.6-luna high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
+   "max_evaluations": 6,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 13225361,
+    "input": 13166225,
+    "cached": 12866304,
+    "output": 59136,
+    "threads": 2,
+    "thread_totals": {
+     "01a047f8-23da-74d2-91e3-f0b97a4a5aa2": 989756,
+     "01a047f8-6c02-70b3-a128-254d4c2cef53": 12235605
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-model-first-luna-high-v01-20260828",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-5.6-luna high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
+   "max_evaluations": 2,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 11278660,
+    "input": 11214377,
+    "cached": 10810112,
+    "output": 64283,
+    "threads": 3,
+    "thread_totals": {
+     "01a04799-ac09-7091-bcbf-67e4dc01bee8": 8589762,
+     "01a047ac-9ba7-7c21-ab31-6e994c3f8146": 1604942,
+     "01a04799-68cd-7081-88e3-2f02167ce594": 1083956
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-model-first-luna-high-v02-20260828",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-5.6-luna high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
+   "max_evaluations": 2,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 7519127,
+    "input": 7468043,
+    "cached": 7230464,
+    "output": 51084,
+    "threads": 2,
+    "thread_totals": {
+     "01a047b1-da9e-7c63-abc2-75687d600a0b": 6675990,
+     "01a047b1-9cbc-7db0-99c1-cd14946adc61": 843137
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-model-first-luna-high-v03-20260828",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-5.6-luna high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
+   "max_evaluations": 2,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 8873350,
+    "input": 8811715,
+    "cached": 8492800,
+    "output": 61635,
+    "threads": 3,
+    "thread_totals": {
+     "01a047c7-4ba2-7501-93a7-b7350e42bc07": 6588322,
+     "01a047ed-c6b4-7bf2-adaf-90565001bbae": 864341,
+     "01a047c7-0215-78c1-ace1-847be0413aeb": 1420687
+    }
+   }
+  },
+  {
+   "id": "avo/output/evolution/midas-spark-high-sol-high-20260828",
+   "label": "",
+   "group": "",
+   "game": "ps_midas-v1",
+   "inner": "gpt-5.3-codex-spark high",
+   "outer": "gpt-5.6-sol high",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels multiplied by prospective model accuracy",
+   "max_evaluations": 10,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 17604297,
+    "input": 17458918,
+    "cached": 16786560,
+    "output": 145379,
+    "threads": 3,
+    "thread_totals": {
+     "01a04818-067c-7a80-a1d0-16f0d923b089": 662329,
+     "01a04818-69fe-7a81-bb1e-1e18b2b1cc9e": 16786442,
+     "01a04825-a36c-7750-bb87-9ad9daf34304": 155526
+    }
+   }
+  }
+ ],
+ "multi": [
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/modality-04/campaign",
+   "label": "Modality",
+   "group": "Sep 8 Astra/Luna",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:01.120875+00:00",
+     "hours": 0.299,
+     "cum_tokens": 9653310
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:42:06.478608+00:00",
+     "hours": 0.584,
+     "cum_tokens": 15152305
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-08T00:07:03.514352+00:00",
+     "hours": 1.0,
+     "cum_tokens": 16498743
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": {
+    "total": 16520163,
+    "input": 16394850,
+    "cached": 15670656,
+    "output": 125313,
+    "threads": 6,
+    "thread_totals": {
+     "01a07e1f-f255-7650-b9a7-df9b72d503ed": 607505,
+     "01a07e4e-3e9b-7e21-bf4d-badb7ebf8853": 101755,
+     "01a07e20-ab59-7f90-a0fc-faf8ba02cd8b": 9551550,
+     "01a07e31-9bd4-7dd3-a97a-496ff4329f1c": 5227709,
+     "01a07e41-5e6e-74d0-9698-1d02c88cbe01": 24772,
+     "01a07e4e-9398-77e0-83ee-a9016d51a609": 1006872
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/purple-04/campaign",
+   "label": "Purple",
+   "group": "Sep 8 Astra/Luna",
+   "game": "ps_purple-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:25:18.047902+00:00",
+     "hours": 0.304,
+     "cum_tokens": 4449505
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-08T00:13:45.363675+00:00",
+     "hours": 1.112,
+     "cum_tokens": 18395420
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-08T00:40:52.151076+00:00",
+     "hours": 1.564,
+     "cum_tokens": 24051512
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-08T00:48:17.212918+00:00",
+     "hours": 1.687,
+     "cum_tokens": 25438815
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": {
+    "total": 25477447,
+    "input": 25271364,
+    "cached": 24267520,
+    "output": 206083,
+    "threads": 7,
+    "thread_totals": {
+     "01a07e1f-f2fe-7103-9ae6-2aeaebc6d33a": 285462,
+     "01a07e4e-4d11-7890-9dce-87a32bc9e68c": 592921,
+     "01a07e20-a395-70b0-95f0-1260cb132c03": 4374100,
+     "01a07e32-3fbb-7832-8cf0-6d65477ac06d": 7710982,
+     "01a07e4e-aed9-71a0-b301-29d2e414ad6f": 5944874,
+     "01a07e5e-3f64-72e2-9965-e039312741d9": 5391486,
+     "01a07e76-da45-7cc0-8d53-fcebba6fb11f": 1177622
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/magnetic-04/campaign",
+   "label": "Magnetic",
+   "group": "Sep 8 Astra/Luna",
+   "game": "ps_magnetic-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-07T23:28:41.045574+00:00",
+     "hours": 0.36,
+     "cum_tokens": 6280191
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-08T00:06:37.365434+00:00",
+     "hours": 0.993,
+     "cum_tokens": 14729027
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": {
+    "total": 14757450,
+    "input": 14626365,
+    "cached": 13962368,
+    "output": 131085,
+    "threads": 5,
+    "thread_totals": {
+     "01a07e1f-f3c6-7b52-af6c-0bfc16500150": 287837,
+     "01a07e4e-6593-7801-8dbd-fcaa53d7279d": 132171,
+     "01a07e20-bca0-7e03-8d16-eb44fad84d9b": 6144614,
+     "01a07e34-b117-70d2-95e5-c71ac8ae9baa": 5946813,
+     "01a07e4e-c607-76f1-bfe5-1200299a7c79": 2246015
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908-r3/knightoban-04/campaign",
+   "label": "Knightoban",
+   "group": "Sep 8 Astra/Luna",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:38:06.396355+00:00",
+     "hours": 0.285,
+     "cum_tokens": 7474157
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-08T00:13:51.622416+00:00",
+     "hours": 0.881,
+     "cum_tokens": 17086829
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 1,
+     "win_levels": 6,
+     "best": 1.0,
+     "recorded_at": "2026-09-08T12:38:34.875948+00:00",
+     "hours": 13.293,
+     "cum_tokens": 43255543
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 1.0,
+     "recorded_at": "2026-09-08T13:02:29.731226+00:00",
+     "hours": 13.692,
+     "cum_tokens": 51437045
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 2,
+     "win_levels": 6,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T13:25:28.643163+00:00",
+     "hours": 14.075,
+     "cum_tokens": 59950743
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T13:50:45.684562+00:00",
+     "hours": 14.496,
+     "cum_tokens": 68571064
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 4,
+     "win_levels": 6,
+     "best": 4.0,
+     "recorded_at": "2026-09-08T14:02:51.450980+00:00",
+     "hours": 14.698,
+     "cum_tokens": 70148764
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 6,
+     "win_levels": 6,
+     "best": 6.0,
+     "recorded_at": "2026-09-08T14:13:46.962158+00:00",
+     "hours": 14.88,
+     "cum_tokens": 72046107
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 6.0,
+   "solved": true,
+   "tokens": {
+    "total": 72148194,
+    "input": 71657863,
+    "cached": 69183872,
+    "output": 490331,
+    "threads": 14,
+    "thread_totals": {
+     "01a07e2c-b2de-7a93-b206-d8c828549477": 190257,
+     "01a07e4e-58d3-7cb2-ba5f-c7c2f44e0f18": 552513,
+     "01a080c3-c80c-7010-b168-951b28854662": 2988232,
+     "01a07e2d-5d2b-7ce1-9dfc-692ae51e7d8f": 7406044,
+     "01a07e3d-6312-7f00-9354-bac394c8936f": 1464843,
+     "01a07e4e-c24e-7842-a566-6f135baa4654": 7917758,
+     "01a07e5e-1862-7b31-9191-09c2efa8df26": 3121444,
+     "01a080c4-26b4-7d01-9f0b-f48c81118a1a": 9154336,
+     "01a080e0-c9a8-7583-98ac-078f50d997df": 13106143,
+     "01a08107-f5ce-7b92-ae07-33b6f6c8d771": 7652066,
+     "01a0811d-69e0-7ec3-abc9-e6e6ed048044": 8032159,
+     "01a08132-7879-7ad1-b6a0-1de3eb167ed2": 8046846,
+     "01a08149-c3aa-7072-9e0a-9cbbdcee5531": 1117912,
+     "01a08154-bcdd-7583-9c92-a3a0cd8d367f": 1397641
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908-r3/atlas-04/campaign",
+   "label": "Atlas Shrank",
+   "group": "Sep 8 Astra/Luna",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T00:21:15.368435+00:00",
+     "hours": 1.223,
+     "cum_tokens": 25632868
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T00:42:52.984673+00:00",
+     "hours": 1.584,
+     "cum_tokens": 32505911
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T11:40:37.176511+00:00",
+     "hours": 12.546,
+     "cum_tokens": 36268291
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T12:00:34.886816+00:00",
+     "hours": 12.879,
+     "cum_tokens": 42130473
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T12:26:04.584901+00:00",
+     "hours": 13.304,
+     "cum_tokens": 48806964
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 3,
+     "win_levels": 12,
+     "best": 3.0,
+     "recorded_at": "2026-09-08T12:46:18.387129+00:00",
+     "hours": 13.641,
+     "cum_tokens": 53970792
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 4,
+     "win_levels": 12,
+     "best": 4.0,
+     "recorded_at": "2026-09-08T13:18:01.683566+00:00",
+     "hours": 14.169,
+     "cum_tokens": 57716526
+    }
+   ],
+   "win_levels": 12,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 68873019,
+    "input": 68369804,
+    "cached": 66137728,
+    "output": 503215,
+    "threads": 14,
+    "thread_totals": {
+     "01a07e20-b1ad-7f80-bd2f-e1d5ef5b5fba": 94677,
+     "01a07e4e-7025-74f0-972e-6b387a72965c": 640238,
+     "01a080c3-e489-7ba3-a35c-c063b7869423": 3030785,
+     "01a07e21-5a86-74b1-ac50-787b804bd5a1": 15174302,
+     "01a07e3d-e898-78c0-b216-f289465478fb": 768843,
+     "01a07e4e-c8fd-7523-a4bf-704128c6041c": 9494496,
+     "01a07e65-56f7-7d91-9ec7-7b70eb84d148": 6578506,
+     "01a07e78-7e70-7170-b63e-9d94070e195d": 957667,
+     "01a080c4-7089-72c0-8361-5af17bd7a045": 2508422,
+     "01a080d2-d1b9-7800-aeae-bca49875388a": 5667324,
+     "01a080e4-dfb8-7bb3-94e2-1ab894958ff5": 6403826,
+     "01a080fc-3ef5-7f41-98c2-570382cf755a": 4834880,
+     "01a0810e-f650-7291-b371-4e8db15a7c01": 3065549,
+     "01a0812b-e402-7d23-b57f-73bd8764dad2": 9653504
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908-r3/enqueue-04/campaign",
+   "label": "Enqueue",
+   "group": "Sep 8 Astra/Luna",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:46.688692+00:00",
+     "hours": 0.334,
+     "cum_tokens": 7030264
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T12:03:50.580962+00:00",
+     "hours": 12.968,
+     "cum_tokens": 45770763
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 84958064,
+    "input": 84443140,
+    "cached": 81929856,
+    "output": 514924,
+    "threads": 15,
+    "thread_totals": {
+     "01a07e1e-bf8d-7df3-9a1d-d46791e3d92d": 433459,
+     "01a07e4e-7d0e-7ac3-a2ca-a234774a232c": 689833,
+     "01a080c3-fa8b-72e1-91f0-1c5f03756d60": 1108582,
+     "01a07e1f-746a-7313-81ab-657c7f948413": 6865058,
+     "01a07e32-73f4-7591-b11e-9b9705866a5d": 3561427,
+     "01a07e3e-4acb-7931-a715-7dd61af3f866": 1243208,
+     "01a07e4e-d448-70d1-b99b-f338023061c5": 11334755,
+     "01a07e63-a168-7d50-b793-6e82f1628fbb": 10213424,
+     "01a07e77-3fa9-7ad3-b6be-44fe3ded4674": 1819195,
+     "01a080c4-4fbe-7b63-b37e-a5a9edba278c": 7360032,
+     "01a080d9-76d9-7593-9089-3b2b23548b6d": 2158209,
+     "01a080e8-213d-77c3-9b8e-d11e16c9c32e": 7801556,
+     "01a080fa-4a47-7743-8ca3-31df677bd8ca": 3904103,
+     "01a08109-3db2-7cb3-a85e-09843c4f607b": 12136400,
+     "01a08125-281c-7672-aaa8-54af47d7b6e1": 14328823
+    }
+   }
+  },
+  {
+   "id": "output/opencode-modality-muse-20260910-02/campaign",
+   "label": "Modality",
+   "group": "Sep 10 OpenCode muse-spark",
+   "game": "ps_modality-v1",
+   "inner": "opencode/muse-spark-1.3-contributor-free default",
+   "outer": "opencode/muse-spark-1.3-contributor-free default",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-09T21:23:21.794606+00:00",
+     "hours": 0.171,
+     "cum_tokens": 3002092
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-09T21:34:16.130338+00:00",
+     "hours": 0.352,
+     "cum_tokens": 7498141
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-09T21:58:02.508744+00:00",
+     "hours": 0.748,
+     "cum_tokens": 19374538
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-09T22:06:54.057555+00:00",
+     "hours": 0.896,
+     "cum_tokens": 23965670
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-09T22:30:08.338475+00:00",
+     "hours": 1.283,
+     "cum_tokens": 33549467
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-09T22:51:07.086841+00:00",
+     "hours": 1.633,
+     "cum_tokens": 45806716
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-09T23:00:40.311666+00:00",
+     "hours": 1.792,
+     "cum_tokens": 54312223
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-09T23:09:47.939498+00:00",
+     "hours": 1.944,
+     "cum_tokens": 60648476
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-09T23:23:54.496218+00:00",
+     "hours": 2.18,
+     "cum_tokens": 82432362
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 3.0,
+   "solved": false,
+   "tokens": {
+    "total": 87171801,
+    "input": 86668747,
+    "cached": 85311104,
+    "output": 503054,
+    "threads": 11,
+    "thread_totals": {
+     "opencode:None": 7295530,
+     "opencode:ses_f77fb991fffeIPUSgH4iFLWs0k": 38486660,
+     "opencode:ses_f77f9f53bffe7AvcBWUJ9S6JWV": 2829607,
+     "opencode:ses_f77eec247ffe6huS31nlBPpiX8": 3140605,
+     "opencode:ses_f77e4bc92ffebMd7hA7OJS4Mwt": 8926014,
+     "opencode:ses_f77d0b66bffeG8TirGcfoY4TQp": 1240877,
+     "opencode:ses_f77c94433ffeDUV0SON2nZsMYR": 7702855,
+     "opencode:ses_f77b2fb5cffeWKrD4jxf5dvHDq": 7261992,
+     "opencode:ses_f779fb28dffeXdwuTTCdkQdi74": 1296604,
+     "opencode:ses_f7797272cffe2t3l7fMRcncVpm": 1695527,
+     "opencode:ses_f778eb6fdffeXZEx0zKU7npDSN": 7295530
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0001/campaign",
+   "label": "Feeling like filling",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_feeling_like_filling-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:33:48.524686+00:00",
+     "hours": 0.153,
+     "cum_tokens": 1340967
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 1,
+     "win_levels": 6,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T11:43:52.612657+00:00",
+     "hours": 0.321,
+     "cum_tokens": 2979874
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T11:57:47.846915+00:00",
+     "hours": 0.553,
+     "cum_tokens": 5836325
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 6,
+     "win_levels": 6,
+     "best": 6.0,
+     "recorded_at": "2026-09-14T12:12:50.526172+00:00",
+     "hours": 0.804,
+     "cum_tokens": 7319440
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 6.0,
+   "solved": true,
+   "tokens": {
+    "total": 7538863,
+    "input": 7455619,
+    "cached": 6993408,
+    "output": 83244,
+    "threads": 5,
+    "thread_totals": {
+     "01a09fa9-516f-7cb0-9613-10404c3fe82a": 1008854,
+     "01a09fa9-df24-7272-ac76-520c7870db22": 1255858,
+     "01a09fb2-a525-7c81-a281-a848e60e818a": 1500172,
+     "01a09fbb-a1b3-7552-bcb4-6b5b7206320c": 2651279,
+     "01a09fc8-c2b2-7da1-882e-c7a39ab799b7": 1122700
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0002/campaign",
+   "label": "Feeling like filling",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_feeling_like_filling-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:33:31.020971+00:00",
+     "hours": 0.149,
+     "cum_tokens": 1370188
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:40:12.576969+00:00",
+     "hours": 0.26,
+     "cum_tokens": 2045702
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 1,
+     "win_levels": 6,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T11:58:38.012033+00:00",
+     "hours": 0.567,
+     "cum_tokens": 4857700
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 6,
+     "win_levels": 6,
+     "best": 6.0,
+     "recorded_at": "2026-09-14T12:16:46.147701+00:00",
+     "hours": 0.87,
+     "cum_tokens": 7003298
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 6.0,
+   "solved": true,
+   "tokens": {
+    "total": 7296852,
+    "input": 7226235,
+    "cached": 6613632,
+    "output": 70617,
+    "threads": 5,
+    "thread_totals": {
+     "01a09fa9-512f-7f12-8ef1-43c5746d8a59": 1524976,
+     "01a09fa9-ecfb-7192-9cd7-99e2278037b6": 1276762,
+     "01a09fb2-fe33-7cf1-b6a3-aed75bb359d5": 397158,
+     "01a09fb8-f50c-7ca1-ad72-aadd13005b8b": 2400050,
+     "01a09fc9-6d3b-79f3-9911-e7247bf0bf5d": 1697906
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0003/campaign",
+   "label": "Mowing",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_mowing-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:38:04.519178+00:00",
+     "hours": 0.225,
+     "cum_tokens": 2744206
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-14T11:49:40.669777+00:00",
+     "hours": 0.418,
+     "cum_tokens": 4539059
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-14T11:57:55.805370+00:00",
+     "hours": 0.556,
+     "cum_tokens": 5564017
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-14T12:09:41.535718+00:00",
+     "hours": 0.752,
+     "cum_tokens": 7754901
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-14T12:19:24.031753+00:00",
+     "hours": 0.914,
+     "cum_tokens": 9797665
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-14T12:27:26.099236+00:00",
+     "hours": 1.047,
+     "cum_tokens": 11807523
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-14T12:33:04.656194+00:00",
+     "hours": 1.141,
+     "cum_tokens": 13079368
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": {
+    "total": 13497835,
+    "input": 13374128,
+    "cached": 12541056,
+    "output": 123707,
+    "threads": 8,
+    "thread_totals": {
+     "01a09fa9-5005-7a03-8526-39a67f06f3ef": 2607175,
+     "01a09fa9-c8da-76a0-b54e-e7136b8a3d9e": 2657964,
+     "01a09fb6-784d-7a72-8dc5-7cca089fcab1": 1636728,
+     "01a09fc0-fcd9-7e71-8724-c26b74e805b2": 829772,
+     "01a09fc8-a3a9-7b53-9a13-9fc2616b7d7e": 1885844,
+     "01a09fd3-ad6a-7d22-a315-77f6c6d9ef22": 1651178,
+     "01a09fdc-a251-7bb1-a84a-69f9541af4be": 1612660,
+     "01a09fe4-5a6c-7672-9c69-e2d68e8b7670": 616514
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0004/campaign",
+   "label": "Mowing",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_mowing-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T11:33:37.325378+00:00",
+     "hours": 0.15,
+     "cum_tokens": 1517654
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T11:43:35.334869+00:00",
+     "hours": 0.317,
+     "cum_tokens": 3320592
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-14T11:59:34.031127+00:00",
+     "hours": 0.583,
+     "cum_tokens": 6029765
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-14T12:11:58.757394+00:00",
+     "hours": 0.79,
+     "cum_tokens": 8023899
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": {
+    "total": 8253716,
+    "input": 8169082,
+    "cached": 7647104,
+    "output": 84634,
+    "threads": 5,
+    "thread_totals": {
+     "01a09fa9-5022-7863-ba47-9856c3159231": 1123937,
+     "01a09fa9-ed1c-78f2-8467-eacb79a9f433": 1429454,
+     "01a09fb2-864a-7482-a8d5-4d83da444cca": 1640554,
+     "01a09fbb-8c0b-7980-be3e-ba76696fe152": 2471890,
+     "01a09fca-8828-7592-98cd-1b119926bfa6": 1587881
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0009/campaign",
+   "label": "Fatigued square maze",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_fatigued_square_maze-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:41:38.648205+00:00",
+     "hours": 0.121,
+     "cum_tokens": 1367519
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:51:20.800598+00:00",
+     "hours": 0.282,
+     "cum_tokens": 2841164
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 1,
+     "win_levels": 8,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T12:58:46.443282+00:00",
+     "hours": 0.406,
+     "cum_tokens": 4020579
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 4,
+     "win_levels": 8,
+     "best": 4.0,
+     "recorded_at": "2026-09-14T13:08:43.855375+00:00",
+     "hours": 0.572,
+     "cum_tokens": 5476631
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 8,
+     "win_levels": 8,
+     "best": 8.0,
+     "recorded_at": "2026-09-14T13:12:51.573776+00:00",
+     "hours": 0.641,
+     "cum_tokens": 6321133
+    }
+   ],
+   "win_levels": 8,
+   "best_levels": 8.0,
+   "solved": true,
+   "tokens": {
+    "total": 6716970,
+    "input": 6638751,
+    "cached": 6050304,
+    "output": 78219,
+    "threads": 6,
+    "thread_totals": {
+     "01a09fe9-4160-7cc1-8026-15a3a2052785": 1628573,
+     "01a09fe9-c144-78b0-93a6-b29fdf4ff164": 1293557,
+     "01a09ff0-be61-7722-a696-10da8454a16f": 1307132,
+     "01a09ff9-6cbc-75c1-8278-6356616b94bc": 947512,
+     "01a0a000-ae23-7b93-a59b-39873b9399e4": 1046239,
+     "01a0a009-6a78-7ab3-99fc-7ccc6ada9f00": 493957
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0010/campaign",
+   "label": "Fatigued square maze",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_fatigued_square_maze-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 1,
+     "win_levels": 8,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T12:46:02.225808+00:00",
+     "hours": 0.193,
+     "cum_tokens": 2814205
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 1,
+     "win_levels": 8,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T12:55:32.442640+00:00",
+     "hours": 0.351,
+     "cum_tokens": 4466774
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 8,
+     "win_levels": 8,
+     "best": 8.0,
+     "recorded_at": "2026-09-14T13:07:06.356476+00:00",
+     "hours": 0.544,
+     "cum_tokens": 6645433
+    }
+   ],
+   "win_levels": 8,
+   "best_levels": 8.0,
+   "solved": true,
+   "tokens": {
+    "total": 6866540,
+    "input": 6798196,
+    "cached": 6273536,
+    "output": 68344,
+    "threads": 4,
+    "thread_totals": {
+     "01a09fe9-4180-7dc2-92ad-eb034842e485": 719482,
+     "01a09fe9-cc01-7790-b814-a09b7c285537": 2745608,
+     "01a09ff4-e747-7161-ae8d-c45dc0dc526f": 1504145,
+     "01a09ffd-6e3a-7001-9654-c8005e37315c": 1897305
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142104Z-storage-recovery/run-0005/campaign",
+   "label": "2D whale world",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_2d_whale_world-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:35:13.863589+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:42:52.930093+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:51:37.146927+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:02:42.235962+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:16:15.251796+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:40:00.858042+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:51:53.549268+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:10:23.124507+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 6,
+     "win_levels": 8,
+     "best": 6.0,
+     "recorded_at": "2026-09-14T15:30:14.428434+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 8,
+     "win_levels": 8,
+     "best": 8.0,
+     "recorded_at": "2026-09-14T15:38:16.603163+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 8,
+   "best_levels": 8.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T142104Z-storage-recovery/run-0006/campaign",
+   "label": "2D whale world",
+   "group": "Sep 14 Astra/Luna",
+   "game": "ps_2d_whale_world-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:32:09.213972+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:46:50.455898+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:01:19.427919+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:18:14.496890+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 1,
+     "win_levels": 8,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T12:28:52.825447+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 4,
+     "win_levels": 8,
+     "best": 4.0,
+     "recorded_at": "2026-09-14T12:43:47.967040+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 6,
+     "win_levels": 8,
+     "best": 6.0,
+     "recorded_at": "2026-09-14T15:06:56.373814+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 6,
+     "win_levels": 8,
+     "best": 6.0,
+     "recorded_at": "2026-09-14T15:17:56.157593+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 8,
+     "win_levels": 8,
+     "best": 8.0,
+     "recorded_at": "2026-09-14T15:23:04.092321+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 8,
+   "best_levels": 8.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T213636Z-usage-recovery/run-0001/campaign",
+   "label": "Compressed",
+   "group": "Sep 14 Astra/Luna xhigh",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:03:42.187704+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:42:27.291597+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T20:21:59.339892+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-14T23:36:20.461353+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-15T00:46:50.464730+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-15T01:33:26.979645+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T213636Z-usage-recovery/run-0002/campaign",
+   "label": "Compressed",
+   "group": "Sep 14 Astra/Luna xhigh",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:00:45.165094+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:26:25.973157+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T22:26:40.732692+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T23:54:48.841864+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-15T00:32:54.188792+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-15T01:18:56.480167+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-15T02:09:01.922430+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-15T03:08:53.044759+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T03:51:05.501846+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-15T04:12:54.399268+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T213636Z-usage-recovery/run-0003/campaign",
+   "label": "Using pushers",
+   "group": "Sep 14 Astra/Luna xhigh",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T18:55:24.400464+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:34:50.696454+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T23:53:30.627327+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-15T03:25:12.267257+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-15T04:15:57.837075+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T05:28:23.046577+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T12:40:30.115086+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T15:10:56.532103+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-15T15:30:17.754210+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T213636Z-usage-recovery/run-0004/campaign",
+   "label": "Using pushers",
+   "group": "Sep 14 Astra/Luna xhigh",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:45:14.947894+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T20:22:27.335522+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T00:46:10.372291+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T07:09:17.728976+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T12:41:48.020217+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T14:21:31.575787+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T16:19:26.877357+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-15T19:08:45.575177+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 3.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-96361f28/run-0001/campaign",
+   "label": "IceCrates",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_icecrates-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 5,
+     "win_levels": 6,
+     "best": 5.0,
+     "recorded_at": "2026-09-22T07:57:18.189183+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 6,
+     "win_levels": 6,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T08:04:56.753150+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 6.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-96361f28/run-0002/campaign",
+   "label": "IceCrates",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_icecrates-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 6,
+     "win_levels": 6,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T07:53:44.356027+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 6.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-96361f28/run-0003/campaign",
+   "label": "Portal Ban",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_portal_ban-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 3,
+     "win_levels": 5,
+     "best": 3.0,
+     "recorded_at": "2026-09-22T08:25:47.748268+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 5,
+     "win_levels": 5,
+     "best": 5.0,
+     "recorded_at": "2026-09-22T08:35:18.516712+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 5,
+   "best_levels": 5.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-96361f28/run-0004/campaign",
+   "label": "Portal Ban",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_portal_ban-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 3,
+     "win_levels": 5,
+     "best": 3.0,
+     "recorded_at": "2026-09-22T08:28:56.183268+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 5,
+     "win_levels": 5,
+     "best": 5.0,
+     "recorded_at": "2026-09-22T08:42:57.356540+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 5,
+   "best_levels": 5.0,
+   "solved": true,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-04b2a088/run-0001/campaign",
+   "label": "Enqueue",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:05:44.782945+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:15:45.609532+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:23:39.058313+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:34:03.586506+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:41:10.492173+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:49:21.890625+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:57:14.555847+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 8.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-04b2a088/run-0002/campaign",
+   "label": "Enqueue",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T07:54:13.644082+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:02:45.918666+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:09:26.699758+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:17:27.221437+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:24:54.714586+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:33:41.099326+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T08:46:32.241150+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-22T09:03:10.146262+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 8.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-04b2a088/run-0003/campaign",
+   "label": "Atlas Shrank",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 6,
+     "win_levels": 12,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T08:11:44.997215+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 6,
+     "win_levels": 12,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T08:36:03.289477+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 6,
+     "win_levels": 12,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T08:52:31.005310+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 12,
+   "best_levels": 6.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260922T104342-04b2a088/run-0004/campaign",
+   "label": "Atlas Shrank",
+   "group": "Sep 22 Astra/Astra",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-6-astra low",
+   "outer": "gpt-6-astra high",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 5,
+     "win_levels": 12,
+     "best": 5.0,
+     "recorded_at": "2026-09-22T08:21:05.217566+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 6,
+     "win_levels": 12,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T08:32:26.836740+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 6,
+     "win_levels": 12,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T08:47:44.537186+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 6,
+     "win_levels": 12,
+     "best": 6.0,
+     "recorded_at": "2026-09-22T08:59:19.623182+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 12,
+   "best_levels": 6.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260923T145406-40bfa276/run-0001/campaign",
+   "label": "Modality",
+   "group": "Sep 23 DeepSeek Flash",
+   "game": "ps_modality-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 15,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 4,
+     "win_levels": 4,
+     "best": 4.0,
+     "recorded_at": "2026-09-23T13:04:07.352777+00:00",
+     "hours": 1.163,
+     "cum_tokens": 29374302
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 4.0,
+   "solved": true,
+   "tokens": {
+    "total": 30743986,
+    "input": 30066811,
+    "cached": 29001216,
+    "output": 677175,
+    "threads": 2,
+    "thread_totals": {
+     "01a0ce1d-c552-74a2-9d31-131f3707c880": 2087470,
+     "01a0ce1f-d16a-7382-a6f7-a86ebd0124ac": 28656516
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260923T145406-40bfa276/run-0003/campaign",
+   "label": "IceCrates",
+   "group": "Sep 23 DeepSeek Flash",
+   "game": "ps_icecrates-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 15,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 6,
+     "win_levels": 6,
+     "best": 6.0,
+     "recorded_at": "2026-09-23T14:42:45.533000+00:00",
+     "hours": 2.807,
+     "cum_tokens": 39627250
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 6.0,
+   "solved": true,
+   "tokens": {
+    "total": 46265700,
+    "input": 45279606,
+    "cached": 42811392,
+    "output": 986094,
+    "threads": 4,
+    "thread_totals": {
+     "01a0ce1d-c5b5-7132-8224-8e01893f9729": 2726221,
+     "01a0d334-c39c-7ef3-b46c-e1118dbd741d": 3626509,
+     "01a0d32e-0979-78e1-8a89-fed6695b241e": 1395714,
+     "01a0ce20-6fdc-7b60-9750-01cf3675765f": 38517256
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260923T160431-1fbf9810/run-0001/campaign",
+   "label": "Knightoban",
+   "group": "Sep 23 DeepSeek Flash",
+   "game": "ps_knightoban-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 15,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 6,
+     "win_levels": 6,
+     "best": 6.0,
+     "recorded_at": "2026-09-23T17:21:38.112134+00:00",
+     "hours": 4.282,
+     "cum_tokens": 72188104
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 6.0,
+   "solved": true,
+   "tokens": {
+    "total": 73293247,
+    "input": 72270394,
+    "cached": 69019648,
+    "output": 1022853,
+    "threads": 2,
+    "thread_totals": {
+     "01a0ce5e-4159-71a0-a642-3aa9c6d50f71": 2510871,
+     "01a0ce5f-c5c5-7070-a5d8-81fc5c8cb39e": 70782376
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260924T084030-resume-cb21528d/run-0001/campaign",
+   "label": "Enqueue",
+   "group": "Sep 23 DeepSeek Flash",
+   "game": "ps_enqueue-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash medium",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 4,
+     "win_levels": 14,
+     "best": 4.0,
+     "recorded_at": "2026-09-24T04:09:53.163929+00:00",
+     "hours": 5.991,
+     "cum_tokens": 136931145
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T06:27:52.986318+00:00",
+     "hours": 8.291,
+     "cum_tokens": 169375771
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T08:26:37.882458+00:00",
+     "hours": 10.27,
+     "cum_tokens": 212398511
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 8.0,
+   "solved": false,
+   "tokens": {
+    "total": 247284014,
+    "input": 243891719,
+    "cached": 238082176,
+    "output": 3392295,
+    "threads": 5,
+    "thread_totals": {
+     "01a0d1ee-5e1e-7563-8d4b-9a86732df61d": 61845388,
+     "01a0d051-e00f-7621-9513-d51b6c0a7568": 136931145,
+     "01a0d1ee-b461-7f43-adb8-266e2b989a1d": 32213232,
+     "01a0d26e-f0cc-7c91-811c-1de1fa952891": 11566032,
+     "01a0d2bd-c76b-7841-a74a-1e97ac270b87": 4728217
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260924T012255-d419258c/run-0001/campaign",
+   "label": "Enqueue",
+   "group": "Sep 24 GPT-6 Luna/Sol",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-6-luna high",
+   "outer": "gpt-6-sol high",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 14,
+     "best": 0.0,
+     "recorded_at": "2026-09-23T23:06:58.782246+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 1,
+     "win_levels": 14,
+     "best": 1.0,
+     "recorded_at": "2026-09-23T23:23:32.132076+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 1,
+     "win_levels": 14,
+     "best": 1.0,
+     "recorded_at": "2026-09-23T23:32:49.533320+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 1,
+     "win_levels": 14,
+     "best": 1.0,
+     "recorded_at": "2026-09-23T23:46:06.719410+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 1,
+     "win_levels": 14,
+     "best": 1.0,
+     "recorded_at": "2026-09-24T00:08:55.857316+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-24T00:50:07.051082+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-24T01:03:30.221903+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 4,
+     "win_levels": 14,
+     "best": 4.0,
+     "recorded_at": "2026-09-24T01:20:14.118500+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 5,
+     "win_levels": 14,
+     "best": 5.0,
+     "recorded_at": "2026-09-24T01:39:00.252694+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 5,
+     "win_levels": 14,
+     "best": 5.0,
+     "recorded_at": "2026-09-24T01:54:23.722065+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 11,
+     "candidate": "x_0011",
+     "levels": 6,
+     "win_levels": 14,
+     "best": 6.0,
+     "recorded_at": "2026-09-24T02:44:23.551660+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 12,
+     "candidate": "x_0014",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T05:28:50.753885+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 13,
+     "candidate": "x_0015",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T05:50:25.408041+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 14,
+     "candidate": "x_0016",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T06:33:30.623706+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 15,
+     "candidate": "x_0018",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T08:12:38.198885+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 16,
+     "candidate": "x_0019",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T08:50:57.714602+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 17,
+     "candidate": "x_0020",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T09:20:04.517425+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 18,
+     "candidate": "x_0021",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T09:37:15.170721+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 19,
+     "candidate": "x_0022",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T10:23:27.529069+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 20,
+     "candidate": "x_0023",
+     "levels": 8,
+     "win_levels": 14,
+     "best": 8.0,
+     "recorded_at": "2026-09-24T10:42:40.982658+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 8.0,
+   "solved": false,
+   "tokens": null
+  }
+ ],
+ "direct": [
+  {
+   "id": "output/codex_agent/luna-high-baseline-vs-plus-20260904-151524/baseline",
+   "label": "Luna high \u00b7 baseline",
+   "model": "gpt-5.6-luna",
+   "effort": "high",
+   "date": "2026-09-04",
+   "level_up_at_action": [
+    33,
+    49
+   ],
+   "final_state": "WIN",
+   "condition": "baseline",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": 2,
+   "win_levels": 2,
+   "actions": 49,
+   "task_goal_reached": true,
+   "has_result": true,
+   "error": null,
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/luna-high-baseline-vs-plus-20260904-151524/baseline-plus",
+   "label": "Luna high \u00b7 baseline+",
+   "model": "gpt-5.6-luna",
+   "effort": "high",
+   "date": "2026-09-04",
+   "level_up_at_action": [
+    42,
+    58
+   ],
+   "final_state": "WIN",
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": 2,
+   "win_levels": 2,
+   "actions": 58,
+   "task_goal_reached": true,
+   "has_result": true,
+   "error": null,
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/gpt55-medium-baseline-plus-notes-fixed-20260904-161913",
+   "label": "GPT-5.5 medium \u00b7 baseline+, notes fixed",
+   "model": "gpt-5.5",
+   "effort": "medium",
+   "date": "2026-09-04",
+   "level_up_at_action": [
+    58,
+    74
+   ],
+   "final_state": "WIN",
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": 2,
+   "win_levels": 2,
+   "actions": 74,
+   "task_goal_reached": true,
+   "has_result": true,
+   "error": null,
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/baseline-vs-plus-20260904-135358/baseline",
+   "label": "GPT-5.5 medium \u00b7 baseline",
+   "model": "gpt-5.5",
+   "effort": "medium",
+   "date": "2026-09-04",
+   "level_up_at_action": [],
+   "final_state": "PLAYING",
+   "condition": "baseline",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": 0,
+   "win_levels": 2,
+   "actions": 100,
+   "task_goal_reached": false,
+   "has_result": true,
+   "error": null,
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/run-20260904-234208",
+   "label": "GPT-5.5 medium \u00b7 baseline+",
+   "model": "gpt-5.5",
+   "effort": "medium",
+   "date": "2026-09-04",
+   "level_up_at_action": [],
+   "final_state": "PLAYING",
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": 0,
+   "win_levels": 2,
+   "actions": 100,
+   "task_goal_reached": false,
+   "has_result": true,
+   "error": null,
+   "tokens": {
+    "total": 8296490,
+    "input": 8257314,
+    "cached": 7907584,
+    "output": 39176,
+    "threads": 1,
+    "thread_totals": {
+     "session:output/codex_agent/run-20260904-234208": 8296490
+    }
+   }
+  },
+  {
+   "id": "studies/codex_agent/output/20260904-final-gpt55-medium-baseline-sokoban-basic",
+   "label": "GPT-5.5 medium \u00b7 baseline, 200 steps",
+   "model": "gpt-5.5",
+   "effort": "medium",
+   "date": "2026-09-04",
+   "level_up_at_action": [],
+   "final_state": "PLAYING",
+   "condition": "baseline",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 200,
+   "levels": 0,
+   "win_levels": 2,
+   "actions": 200,
+   "task_goal_reached": false,
+   "has_result": true,
+   "error": null,
+   "tokens": null
+  },
+  {
+   "id": "studies/codex_agent/output/20260904-final-gpt55-medium-baseline-plus-plus-sokoban-basic",
+   "label": "GPT-5.5 medium \u00b7 baseline++, 200 steps",
+   "model": "gpt-5.5",
+   "effort": "medium",
+   "date": "2026-09-04",
+   "level_up_at_action": [],
+   "final_state": "PLAYING",
+   "condition": "baseline-plus-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 200,
+   "levels": 0,
+   "win_levels": 2,
+   "actions": 200,
+   "task_goal_reached": false,
+   "has_result": true,
+   "error": null,
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/gpt55-xhigh-baseline-plus-20260905-audit",
+   "label": "GPT-5.5 xhigh \u00b7 baseline+",
+   "model": "gpt-5.5",
+   "effort": "xhigh",
+   "date": "2026-09-05",
+   "level_up_at_action": [
+    86
+   ],
+   "final_state": "PLAYING",
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": 1,
+   "win_levels": 2,
+   "actions": 100,
+   "task_goal_reached": false,
+   "has_result": true,
+   "error": null,
+   "tokens": {
+    "total": 13287823,
+    "input": 13037544,
+    "cached": 12270080,
+    "output": 250279,
+    "threads": 1,
+    "thread_totals": {
+     "session:output/codex_agent/gpt55-xhigh-baseline-plus-20260905-audit": 13287823
+    }
+   }
+  },
+  {
+   "id": "output/codex_agent/luna-medium-baseline-150-20260905-v4",
+   "label": "Luna medium \u00b7 baseline",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": "PLAYING",
+   "condition": "baseline",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": 0,
+   "win_levels": 2,
+   "actions": 150,
+   "task_goal_reached": false,
+   "has_result": true,
+   "error": null,
+   "tokens": {
+    "total": 6823272,
+    "input": 6799463,
+    "cached": 6528512,
+    "output": 23809,
+    "threads": 1,
+    "thread_totals": {
+     "session:output/codex_agent/luna-medium-baseline-150-20260905-v4": 6823272
+    }
+   }
+  },
+  {
+   "id": "output/codex_agent/luna-medium-baseline-plus-150-20260905-v4",
+   "label": "Luna medium \u00b7 baseline+",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": "PLAYING",
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": 0,
+   "win_levels": 2,
+   "actions": 150,
+   "task_goal_reached": false,
+   "has_result": true,
+   "error": null,
+   "tokens": {
+    "total": 6413850,
+    "input": 6392456,
+    "cached": 6152832,
+    "output": 21394,
+    "threads": 1,
+    "thread_totals": {
+     "session:output/codex_agent/luna-medium-baseline-plus-150-20260905-v4": 6413850
+    }
+   }
+  },
+  {
+   "id": "output/codex_agent/modality-55-high-baseline-plus-1000-20260907T181409-r3",
+   "label": "GPT-5.5 high \u00b7 baseline+",
+   "model": "gpt-5.5",
+   "effort": "high",
+   "date": "2026-09-07",
+   "level_up_at_action": [
+    17,
+    56,
+    126
+   ],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_modality-v1",
+   "max_steps": 1000,
+   "levels": 3,
+   "win_levels": 4,
+   "actions": 293,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": null,
+   "tokens": {
+    "total": 43519290,
+    "input": 43130815,
+    "cached": 41763456,
+    "output": 388475,
+    "threads": 1,
+    "thread_totals": {
+     "session:output/codex_agent/modality-55-high-baseline-plus-1000-20260907T181409-r3": 43519290
+    }
+   }
+  }
+ ],
+ "single": [
+  {
+   "id": "avo/output/20260823T185546",
+   "model": "gpt-5.6-sol",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": null
+  },
+  {
+   "id": "avo/output/20260823T190032",
+   "model": "gpt-5.6-sol",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": null
+  },
+  {
+   "id": "avo/output/20260823T191110",
+   "model": "gpt-5.6-sol",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": null
+  },
+  {
+   "id": "avo/output/20260823T195926",
+   "model": "anthropic/claude-opus-5-fast",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": null
+  },
+  {
+   "id": "avo/output/20260823T200521",
+   "model": "anthropic/claude-opus-5-fast",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": {
+    "total": 148009,
+    "input": 131496,
+    "cached": 0,
+    "output": 16513,
+    "threads": 1,
+    "thread_totals": {
+     "provider:avo/output/20260823T200521": 148009
+    }
+   }
+  },
+  {
+   "id": "avo/output/20260823T200837",
+   "model": "anthropic/claude-opus-5-fast",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": {
+    "total": 153652,
+    "input": 138791,
+    "cached": 0,
+    "output": 14861,
+    "threads": 1,
+    "thread_totals": {
+     "provider:avo/output/20260823T200837": 153652
+    }
+   }
+  },
+  {
+   "id": "avo/output/20260823T201145",
+   "model": "anthropic/claude-opus-5-fast",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": {
+    "total": 0,
+    "input": 0,
+    "cached": 0,
+    "output": 0,
+    "threads": 1,
+    "thread_totals": {
+     "provider:avo/output/20260823T201145": 0
+    }
+   }
+  },
+  {
+   "id": "avo/output/20260823T201214",
+   "model": "anthropic/claude-opus-5-fast",
+   "game": "ps_sokoban_basic-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": {
+    "total": 12014,
+    "input": 10990,
+    "cached": 0,
+    "output": 1024,
+    "threads": 1,
+    "thread_totals": {
+     "provider:avo/output/20260823T201214": 12014
+    }
+   }
+  },
+  {
+   "id": "avo/output/sokoban-basic-full-20260824",
+   "model": "gpt-5.6-sol",
+   "game": "ps_sokoban_basic-v1",
+   "levels": 2,
+   "win_levels": 2,
+   "success": true,
+   "environment_steps": 126,
+   "tokens": null
+  },
+  {
+   "id": "avo/output/sokoban-basic-full-v04-20260824",
+   "model": "gpt-5.6-sol",
+   "game": "ps_sokoban_basic-v1",
+   "levels": 2,
+   "win_levels": 2,
+   "success": true,
+   "environment_steps": 84,
+   "tokens": null
+  },
+  {
+   "id": "avo/output/midas-full-v01-20260825",
+   "model": "gpt-5.6-sol",
+   "game": "ps_midas-v1",
+   "levels": 4,
+   "win_levels": 15,
+   "success": false,
+   "environment_steps": 1000,
+   "tokens": null
+  },
+  {
+   "id": "avo/output/midas-full-v02-20260825",
+   "model": "gpt-5.6-sol",
+   "game": "ps_midas-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": {
+    "total": 3093490,
+    "input": 3062462,
+    "cached": 2850560,
+    "output": 31028,
+    "threads": 1,
+    "thread_totals": {
+     "01a03970-6e6f-7593-9292-ef9f99f445da": 3093490
+    }
+   }
+  },
+  {
+   "id": "avo/output/midas-full-v03-20260825",
+   "model": "gpt-5.6-sol",
+   "game": "ps_midas-v1",
+   "levels": 4,
+   "win_levels": 15,
+   "success": false,
+   "environment_steps": 794,
+   "tokens": {
+    "total": 8315261,
+    "input": 8266366,
+    "cached": 8047104,
+    "output": 48895,
+    "threads": 1,
+    "thread_totals": {
+     "01a03983-3309-7580-a9ac-b766e09d854c": 8315261
+    }
+   }
+  },
+  {
+   "id": "avo/output/midas-visible-v04-20260825",
+   "model": "gpt-5.6-sol",
+   "game": "ps_midas-v1",
+   "levels": null,
+   "win_levels": null,
+   "success": null,
+   "environment_steps": null,
+   "tokens": {
+    "total": 4146944,
+    "input": 4118866,
+    "cached": 3967744,
+    "output": 28078,
+    "threads": 1,
+    "thread_totals": {
+     "01a039c8-f356-7961-8898-025bde735a8e": 4146944
+    }
+   }
+  },
+  {
+   "id": "avo/output/midas-visible-patterns-v05-20260825",
+   "model": "gpt-5.6-sol",
+   "game": "ps_midas-v1",
+   "levels": 4,
+   "win_levels": 15,
+   "success": false,
+   "environment_steps": 1000,
+   "tokens": {
+    "total": 11602446,
+    "input": 11546340,
+    "cached": 11287296,
+    "output": 56106,
+    "threads": 1,
+    "thread_totals": {
+     "01a039da-cfae-70e3-8fdd-363d1c3781c9": 11602446
+    }
+   }
+  },
+  {
+   "id": "avo/output/midas-checkpoints-v06-20260825",
+   "model": "gpt-5.6-sol",
+   "game": "ps_midas-v1",
+   "levels": 4,
+   "win_levels": 15,
+   "success": false,
+   "environment_steps": 1000,
+   "tokens": {
+    "total": 6016950,
+    "input": 5978450,
+    "cached": 5822208,
+    "output": 38500,
+    "threads": 1,
+    "thread_totals": {
+     "01a039f9-9204-7b30-83bd-8c6e30723168": 6016950
+    }
+   }
+  }
+ ],
+ "multi_other": [
+  {
+   "id": "output/avo-six-live-20260908/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908/run-0002/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_purple-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908/run-0003/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908/run-0004/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_magnetic-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908/run-0005/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908/run-0006/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r2/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r3/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r4/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r5/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r5/run-0002/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_purple-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r5/run-0003/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r5/run-0004/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_magnetic-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r5/run-0005/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r5/run-0006/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r6/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r6/run-0002/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_purple-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r6/run-0003/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r6/run-0004/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_magnetic-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r6/run-0005/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r6/run-0006/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 5235180,
+    "input": 5185956,
+    "cached": 5001088,
+    "output": 49224,
+    "threads": 2,
+    "thread_totals": {
+     "01a07e0f-32a7-7712-bec5-8c3b8b70aa01": 79823,
+     "01a07e0f-e72d-7910-a8d3-9f065c948795": 5155357
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/run-0002/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_purple-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 5253738,
+    "input": 5211827,
+    "cached": 5018624,
+    "output": 41911,
+    "threads": 2,
+    "thread_totals": {
+     "01a07e0f-4128-7881-bc46-26c5f0110ed6": 111626,
+     "01a07e0f-f431-72c2-a609-eabb34d3babb": 5142112
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/run-0003/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 3652158,
+    "input": 3616340,
+    "cached": 3362816,
+    "output": 35818,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e0f-410a-7f41-ac06-d88b26727c83": 190874,
+     "01a07e10-1a37-7261-8de9-498a602cb76b": 34169,
+     "01a07e1b-8c4e-7b23-b741-61a05b00ee76": 3427115
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/run-0004/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_magnetic-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 5537939,
+    "input": 5494547,
+    "cached": 5260672,
+    "output": 43392,
+    "threads": 2,
+    "thread_totals": {
+     "01a07e0f-40ab-7b10-9c02-d208a9b74fd7": 110351,
+     "01a07e0f-fac6-7750-b261-b629603cc7da": 5427588
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/run-0005/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 5429131,
+    "input": 5377324,
+    "cached": 5209216,
+    "output": 51807,
+    "threads": 2,
+    "thread_totals": {
+     "01a07e0f-4189-7222-835a-55c802daf79c": 119534,
+     "01a07e0f-f5d8-7600-b28b-f0d3ca2c0d31": 5309597
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/run-0006/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 2605773,
+    "input": 2580818,
+    "cached": 2459008,
+    "output": 24955,
+    "threads": 2,
+    "thread_totals": {
+     "01a07e0f-40e7-7e13-9551-672ab1019963": 91556,
+     "01a07e0f-e651-71b2-98e4-bae1aa3cd0b3": 2514217
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/atlas-02/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 16037822,
+    "input": 15939618,
+    "cached": 15594752,
+    "output": 98204,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e20-b1ad-7f80-bd2f-e1d5ef5b5fba": 94677,
+     "01a07e21-5a86-74b1-ac50-787b804bd5a1": 15174302,
+     "01a07e3d-e898-78c0-b216-f289465478fb": 768843
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/atlas-03/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 16037822,
+    "input": 15939618,
+    "cached": 15594752,
+    "output": 98204,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e20-b1ad-7f80-bd2f-e1d5ef5b5fba": 94677,
+     "01a07e21-5a86-74b1-ac50-787b804bd5a1": 15174302,
+     "01a07e3d-e898-78c0-b216-f289465478fb": 768843
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/enqueue-02/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:46.688692+00:00",
+     "hours": 0.334,
+     "cum_tokens": 7030264
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 12103152,
+    "input": 11997143,
+    "cached": 11522688,
+    "output": 106009,
+    "threads": 4,
+    "thread_totals": {
+     "01a07e1e-bf8d-7df3-9a1d-d46791e3d92d": 433459,
+     "01a07e1f-746a-7313-81ab-657c7f948413": 6865058,
+     "01a07e32-73f4-7591-b11e-9b9705866a5d": 3561427,
+     "01a07e3e-4acb-7931-a715-7dd61af3f866": 1243208
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/enqueue-03/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:46.688692+00:00",
+     "hours": 0.334,
+     "cum_tokens": 7030264
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 12103152,
+    "input": 11997143,
+    "cached": 11522688,
+    "output": 106009,
+    "threads": 4,
+    "thread_totals": {
+     "01a07e1e-bf8d-7df3-9a1d-d46791e3d92d": 433459,
+     "01a07e1f-746a-7313-81ab-657c7f948413": 6865058,
+     "01a07e32-73f4-7591-b11e-9b9705866a5d": 3561427,
+     "01a07e3e-4acb-7931-a715-7dd61af3f866": 1243208
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/knightoban-02/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:38:06.396355+00:00",
+     "hours": 0.285,
+     "cum_tokens": 7474157
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 9061144,
+    "input": 8995236,
+    "cached": 8643968,
+    "output": 65908,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e2c-b2de-7a93-b206-d8c828549477": 190257,
+     "01a07e2d-5d2b-7ce1-9dfc-692ae51e7d8f": 7406044,
+     "01a07e3d-6312-7f00-9354-bac394c8936f": 1464843
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/knightoban-03/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:38:06.396355+00:00",
+     "hours": 0.285,
+     "cum_tokens": 7474157
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 9061144,
+    "input": 8995236,
+    "cached": 8643968,
+    "output": 65908,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e2c-b2de-7a93-b206-d8c828549477": 190257,
+     "01a07e2d-5d2b-7ce1-9dfc-692ae51e7d8f": 7406044,
+     "01a07e3d-6312-7f00-9354-bac394c8936f": 1464843
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/magnetic-02/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_magnetic-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-07T23:28:41.045574+00:00",
+     "hours": 0.36,
+     "cum_tokens": 6280191
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 3.0,
+   "solved": false,
+   "tokens": {
+    "total": 12379264,
+    "input": 12274972,
+    "cached": 11819520,
+    "output": 104292,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e1f-f3c6-7b52-af6c-0bfc16500150": 287837,
+     "01a07e20-bca0-7e03-8d16-eb44fad84d9b": 6144614,
+     "01a07e34-b117-70d2-95e5-c71ac8ae9baa": 5946813
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/magnetic-03/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_magnetic-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 3,
+     "win_levels": 4,
+     "best": 3.0,
+     "recorded_at": "2026-09-07T23:28:41.045574+00:00",
+     "hours": 0.36,
+     "cum_tokens": 6280191
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 3.0,
+   "solved": false,
+   "tokens": {
+    "total": 12379264,
+    "input": 12274972,
+    "cached": 11819520,
+    "output": 104292,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e1f-f3c6-7b52-af6c-0bfc16500150": 287837,
+     "01a07e20-bca0-7e03-8d16-eb44fad84d9b": 6144614,
+     "01a07e34-b117-70d2-95e5-c71ac8ae9baa": 5946813
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/modality-02/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:01.120875+00:00",
+     "hours": 0.299,
+     "cum_tokens": 9653310
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:42:06.478608+00:00",
+     "hours": 0.584,
+     "cum_tokens": 15152305
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 15411536,
+    "input": 15309236,
+    "cached": 14745088,
+    "output": 102300,
+    "threads": 4,
+    "thread_totals": {
+     "01a07e1f-f255-7650-b9a7-df9b72d503ed": 607505,
+     "01a07e20-ab59-7f90-a0fc-faf8ba02cd8b": 9551550,
+     "01a07e31-9bd4-7dd3-a97a-496ff4329f1c": 5227709,
+     "01a07e41-5e6e-74d0-9698-1d02c88cbe01": 24772
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/modality-03/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:01.120875+00:00",
+     "hours": 0.299,
+     "cum_tokens": 9653310
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 4,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:42:06.478608+00:00",
+     "hours": 0.584,
+     "cum_tokens": 15152305
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 15411536,
+    "input": 15309236,
+    "cached": 14745088,
+    "output": 102300,
+    "threads": 4,
+    "thread_totals": {
+     "01a07e1f-f255-7650-b9a7-df9b72d503ed": 607505,
+     "01a07e20-ab59-7f90-a0fc-faf8ba02cd8b": 9551550,
+     "01a07e31-9bd4-7dd3-a97a-496ff4329f1c": 5227709,
+     "01a07e41-5e6e-74d0-9698-1d02c88cbe01": 24772
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/purple-02/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_purple-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:25:18.047902+00:00",
+     "hours": 0.304,
+     "cum_tokens": 4449505
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 12370544,
+    "input": 12280842,
+    "cached": 11801600,
+    "output": 89702,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e1f-f2fe-7103-9ae6-2aeaebc6d33a": 285462,
+     "01a07e20-a395-70b0-95f0-1260cb132c03": 4374100,
+     "01a07e32-3fbb-7832-8cf0-6d65477ac06d": 7710982
+    }
+   }
+  },
+  {
+   "id": "output/avo-six-live-20260908-r7/repairs/purple-03/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_purple-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:25:18.047902+00:00",
+     "hours": 0.304,
+     "cum_tokens": 4449505
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 12370544,
+    "input": 12280842,
+    "cached": 11801600,
+    "output": 89702,
+    "threads": 3,
+    "thread_totals": {
+     "01a07e1f-f2fe-7103-9ae6-2aeaebc6d33a": 285462,
+     "01a07e20-a395-70b0-95f0-1260cb132c03": 4374100,
+     "01a07e32-3fbb-7832-8cf0-6d65477ac06d": 7710982
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908/atlas-04/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T00:21:15.368435+00:00",
+     "hours": 1.223,
+     "cum_tokens": 25632868
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T00:42:52.984673+00:00",
+     "hours": 1.584,
+     "cum_tokens": 32505911
+    }
+   ],
+   "win_levels": 12,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 33708729,
+    "input": 33478829,
+    "cached": 32499712,
+    "output": 229900,
+    "threads": 7,
+    "thread_totals": {
+     "01a07e20-b1ad-7f80-bd2f-e1d5ef5b5fba": 94677,
+     "01a07e4e-7025-74f0-972e-6b387a72965c": 640238,
+     "01a07e21-5a86-74b1-ac50-787b804bd5a1": 15174302,
+     "01a07e3d-e898-78c0-b216-f289465478fb": 768843,
+     "01a07e4e-c8fd-7523-a4bf-704128c6041c": 9494496,
+     "01a07e65-56f7-7d91-9ec7-7b70eb84d148": 6578506,
+     "01a07e78-7e70-7170-b63e-9d94070e195d": 957667
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908/enqueue-04/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:46.688692+00:00",
+     "hours": 0.334,
+     "cum_tokens": 7030264
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 36160359,
+    "input": 35918347,
+    "cached": 34734976,
+    "output": 242012,
+    "threads": 8,
+    "thread_totals": {
+     "01a07e1e-bf8d-7df3-9a1d-d46791e3d92d": 433459,
+     "01a07e4e-7d0e-7ac3-a2ca-a234774a232c": 689833,
+     "01a07e1f-746a-7313-81ab-657c7f948413": 6865058,
+     "01a07e32-73f4-7591-b11e-9b9705866a5d": 3561427,
+     "01a07e3e-4acb-7931-a715-7dd61af3f866": 1243208,
+     "01a07e4e-d448-70d1-b99b-f338023061c5": 11334755,
+     "01a07e63-a168-7d50-b793-6e82f1628fbb": 10213424,
+     "01a07e77-3fa9-7ad3-b6be-44fe3ded4674": 1819195
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908/knightoban-04/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 19,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:38:06.396355+00:00",
+     "hours": 0.285,
+     "cum_tokens": 7474157
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-08T00:13:51.622416+00:00",
+     "hours": 0.881,
+     "cum_tokens": 17086829
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 20652859,
+    "input": 20506422,
+    "cached": 19785344,
+    "output": 146437,
+    "threads": 6,
+    "thread_totals": {
+     "01a07e2c-b2de-7a93-b206-d8c828549477": 190257,
+     "01a07e4e-58d3-7cb2-ba5f-c7c2f44e0f18": 552513,
+     "01a07e2d-5d2b-7ce1-9dfc-692ae51e7d8f": 7406044,
+     "01a07e3d-6312-7f00-9354-bac394c8936f": 1464843,
+     "01a07e4e-c24e-7842-a566-6f135baa4654": 7917758,
+     "01a07e5e-1862-7b31-9191-09c2efa8df26": 3121444
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908-r2/atlas-04/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_atlas_shrank-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T00:21:15.368435+00:00",
+     "hours": 1.223,
+     "cum_tokens": 25632868
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T00:42:52.984673+00:00",
+     "hours": 1.584,
+     "cum_tokens": 32505911
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 2,
+     "win_levels": 12,
+     "best": 2.0,
+     "recorded_at": "2026-09-08T11:22:44.960183+00:00",
+     "hours": 12.248,
+     "cum_tokens": 36199685
+    }
+   ],
+   "win_levels": 12,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 36305403,
+    "input": 36042910,
+    "cached": 34902016,
+    "output": 262493,
+    "threads": 10,
+    "thread_totals": {
+     "01a07e20-b1ad-7f80-bd2f-e1d5ef5b5fba": 94677,
+     "01a07e4e-7025-74f0-972e-6b387a72965c": 640238,
+     "01a080b6-9bee-7a11-80d4-ed80b1b9c934": 123138,
+     "01a07e21-5a86-74b1-ac50-787b804bd5a1": 15174302,
+     "01a07e3d-e898-78c0-b216-f289465478fb": 768843,
+     "01a07e4e-c8fd-7523-a4bf-704128c6041c": 9494496,
+     "01a07e65-56f7-7d91-9ec7-7b70eb84d148": 6578506,
+     "01a07e78-7e70-7170-b63e-9d94070e195d": 957667,
+     "01a080b7-0961-7bc2-a868-bcdf885c49ee": 2428313,
+     "01a080c2-65f2-7803-9844-ad17b17c76b7": 45223
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908-r2/enqueue-04/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 2,
+     "win_levels": 14,
+     "best": 2.0,
+     "recorded_at": "2026-09-07T23:25:46.688692+00:00",
+     "hours": 0.334,
+     "cum_tokens": 7030264
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 2.0,
+   "solved": false,
+   "tokens": {
+    "total": 40041238,
+    "input": 39759284,
+    "cached": 38415360,
+    "output": 281954,
+    "threads": 10,
+    "thread_totals": {
+     "01a07e1e-bf8d-7df3-9a1d-d46791e3d92d": 433459,
+     "01a07e4e-7d0e-7ac3-a2ca-a234774a232c": 689833,
+     "01a080b6-ae69-7a50-a1d7-f2e99905ee4b": 78045,
+     "01a07e1f-746a-7313-81ab-657c7f948413": 6865058,
+     "01a07e32-73f4-7591-b11e-9b9705866a5d": 3561427,
+     "01a07e3e-4acb-7931-a715-7dd61af3f866": 1243208,
+     "01a07e4e-d448-70d1-b99b-f338023061c5": 11334755,
+     "01a07e63-a168-7d50-b793-6e82f1628fbb": 10213424,
+     "01a07e77-3fa9-7ad3-b6be-44fe3ded4674": 1819195,
+     "01a080b7-0445-7231-b8c8-ba77a5d88c86": 3802834
+    }
+   }
+  },
+  {
+   "id": "output/avo-three-continue-x10-20260908-r2/knightoban-04/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "gpt-5.6-luna high",
+   "outer": "gpt-6-astra low",
+   "world_model_mode": null,
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-07T23:38:06.396355+00:00",
+     "hours": 0.285,
+     "cum_tokens": 7474157
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 6,
+     "best": 0.0,
+     "recorded_at": "2026-09-08T00:13:51.622416+00:00",
+     "hours": 0.881,
+     "cum_tokens": 17086829
+    }
+   ],
+   "win_levels": 6,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 25750899,
+    "input": 25561092,
+    "cached": 24640512,
+    "output": 189807,
+    "threads": 8,
+    "thread_totals": {
+     "01a07e2c-b2de-7a93-b206-d8c828549477": 190257,
+     "01a07e4e-58d3-7cb2-ba5f-c7c2f44e0f18": 552513,
+     "01a080b6-7f2f-79d0-a457-92fc7c5a64ca": 81559,
+     "01a07e2d-5d2b-7ce1-9dfc-692ae51e7d8f": 7406044,
+     "01a07e3d-6312-7f00-9354-bac394c8936f": 1464843,
+     "01a07e4e-c24e-7842-a566-6f135baa4654": 7917758,
+     "01a07e5e-1862-7b31-9191-09c2efa8df26": 3121444,
+     "01a080b7-2b6f-7943-bc1a-ab6d6bcfe30d": 5016481
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0005/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_2d_whale_world-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:35:13.863589+00:00",
+     "hours": 0.177,
+     "cum_tokens": 1620098
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:42:52.930093+00:00",
+     "hours": 0.305,
+     "cum_tokens": 3037758
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:51:37.146927+00:00",
+     "hours": 0.45,
+     "cum_tokens": 4240837
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:02:42.235962+00:00",
+     "hours": 0.635,
+     "cum_tokens": 6677118
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:16:15.251796+00:00",
+     "hours": 0.861,
+     "cum_tokens": 9486464
+    }
+   ],
+   "win_levels": 8,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 13557881,
+    "input": 13429939,
+    "cached": 12795392,
+    "output": 127942,
+    "threads": 7,
+    "thread_totals": {
+     "01a09fa9-5168-7ff0-9113-ce4ac111fafa": 3309422,
+     "01a09fa9-c8ce-7f03-a250-469e103717e7": 1522303,
+     "01a09fb3-c862-7f42-a856-49a366106014": 1214387,
+     "01a09fba-dfc0-76d0-ad98-d37553a91352": 840769,
+     "01a09fc2-c356-7433-9e6f-0e167033dc94": 2022976,
+     "01a09fcd-1205-77e3-a2de-c103d3137b35": 2345143,
+     "01a09fda-24e9-7a82-82b8-418c107d8500": 2302881
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0006/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_2d_whale_world-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:32:09.213972+00:00",
+     "hours": 0.126,
+     "cum_tokens": 1160087
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T11:46:50.455898+00:00",
+     "hours": 0.371,
+     "cum_tokens": 4657144
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:01:19.427919+00:00",
+     "hours": 0.612,
+     "cum_tokens": 7214576
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 8,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:18:14.496890+00:00",
+     "hours": 0.894,
+     "cum_tokens": 9559348
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 1,
+     "win_levels": 8,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T12:28:52.825447+00:00",
+     "hours": 1.071,
+     "cum_tokens": 11538320
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 4,
+     "win_levels": 8,
+     "best": 4.0,
+     "recorded_at": "2026-09-14T12:43:47.967040+00:00",
+     "hours": 1.32,
+     "cum_tokens": 13560230
+    }
+   ],
+   "win_levels": 8,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 15218328,
+    "input": 15094334,
+    "cached": 14294400,
+    "output": 123994,
+    "threads": 7,
+    "thread_totals": {
+     "01a09fa9-5132-7291-8766-88001d3dd18f": 3543770,
+     "01a09fa9-f034-7df3-89ee-f6d5e524bba3": 989230,
+     "01a09fb1-5938-76e0-ada0-9ffa16b60842": 3330312,
+     "01a09fbf-a399-7b81-8ced-1dfea1ee8699": 2164125,
+     "01a09fcb-dae3-7773-8448-5f837578b8eb": 2002714,
+     "01a09fdb-6d1d-7452-9624-44f8277f9c99": 1680416,
+     "01a09fe5-6d6b-7df3-8cb1-614ae4f26baf": 1507761
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0007/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:23:37.825243+00:00",
+     "hours": 0.162,
+     "cum_tokens": 1413988
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:34:11.320328+00:00",
+     "hours": 0.338,
+     "cum_tokens": 2910406
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 4391003,
+    "input": 4347620,
+    "cached": 3953920,
+    "output": 43383,
+    "threads": 4,
+    "thread_totals": {
+     "01a09fd6-77b7-70d1-8de1-136d315f540f": 1430257,
+     "01a09fd6-ee50-7001-bd18-a64406b41066": 1279049,
+     "01a09fe0-17ce-7402-85cd-204e58c13d88": 1303849,
+     "01a09fea-02c0-70f3-82cb-c775d6b177c0": 377848
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0008/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:24:29.085269+00:00",
+     "hours": 0.177,
+     "cum_tokens": 1478925
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:36:12.929241+00:00",
+     "hours": 0.372,
+     "cum_tokens": 3228616
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:48:39.331479+00:00",
+     "hours": 0.579,
+     "cum_tokens": 5398428
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:58:41.467544+00:00",
+     "hours": 0.747,
+     "cum_tokens": 7195274
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 8300190,
+    "input": 8217684,
+    "cached": 7744640,
+    "output": 82506,
+    "threads": 5,
+    "thread_totals": {
+     "01a09fd6-77db-70c1-9bd0-e338bd89d09d": 2007117,
+     "01a09fd7-13d8-7641-b889-d97164a47794": 1329804,
+     "01a09fe1-1f1d-7d81-a5fa-7e7c67a06e93": 1550466,
+     "01a09feb-f152-70c3-8db5-773d4a4ea88f": 1869214,
+     "01a09ff7-9d30-7a91-8f46-ff20f5397487": 1543589
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0011/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:59:44.041527+00:00",
+     "hours": 0.177,
+     "cum_tokens": 2710874
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:07:04.129475+00:00",
+     "hours": 0.299,
+     "cum_tokens": 3627280
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:17:37.528470+00:00",
+     "hours": 0.475,
+     "cum_tokens": 5404947
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:28:01.765828+00:00",
+     "hours": 0.648,
+     "cum_tokens": 6889468
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 9346830,
+    "input": 9260696,
+    "cached": 8645504,
+    "output": 86134,
+    "threads": 6,
+    "thread_totals": {
+     "01a09ff6-bdfa-7cb1-8042-cbcfae2d820a": 1624544,
+     "01a09ff7-41cc-7dc1-8280-110d9d4e9983": 2614932,
+     "01a0a001-3870-7442-a465-5a153a85738d": 779330,
+     "01a0a007-d710-7ed0-b4de-f3678896bea7": 1585048,
+     "01a0a011-f217-7851-9b51-e95aa1361ca6": 1144971,
+     "01a0a01b-3cca-7663-a927-9687956d6931": 1598005
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0012/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:59:57.632708+00:00",
+     "hours": 0.18,
+     "cum_tokens": 2406319
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:09:35.116307+00:00",
+     "hours": 0.34,
+     "cum_tokens": 4238615
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:24:39.907004+00:00",
+     "hours": 0.592,
+     "cum_tokens": 9183145
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 12114652,
+    "input": 12022481,
+    "cached": 11424768,
+    "output": 92171,
+    "threads": 5,
+    "thread_totals": {
+     "01a09ff6-be38-7891-8eb3-0a3e8ed2db1e": 2011053,
+     "01a09ff7-76ca-77b1-becb-82fb0e8f46c2": 2240572,
+     "01a0a001-b9d1-72d1-9512-6e48a4ca1ba2": 1551625,
+     "01a0a00a-98d8-7231-b718-cbf72307cb03": 4502016,
+     "01a0a018-4ebf-7202-b8a7-2a72ad12a8a9": 1809386
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260914T142104Z-storage-recovery/run-0007/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:23:37.825243+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:34:11.320328+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:34:30.586644+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:42:37.175291+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:50:20.499903+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:00:25.980609+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:10:57.243009+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:18:47.918302+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:23:11.897247+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:31:42.778266+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T142104Z-storage-recovery/run-0008/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:24:29.085269+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:36:12.929241+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:48:39.331479+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:58:41.467544+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:37:58.969973+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:48:02.811461+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:57:35.796172+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:10:18.412459+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:19:53.533030+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:30:34.522468+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T142104Z-storage-recovery/run-0011/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:59:44.041527+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:07:04.129475+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:17:37.528470+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:28:01.765828+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:35:44.697330+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:44:53.513092+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:04:17.461367+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T15:49:54.096398+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T16:12:13.883870+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T16:22:52.560785+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 1.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T142104Z-storage-recovery/run-0012/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna medium",
+   "outer": "gpt-6-astra medium",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T12:59:57.632708+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:09:35.116307+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T13:24:39.907004+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 4,
+     "candidate": "x_0004",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:34:11.821701+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 5,
+     "candidate": "x_0005",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:42:23.663305+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 6,
+     "candidate": "x_0006",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T14:55:07.288033+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 7,
+     "candidate": "x_0007",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T15:21:33.833745+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 8,
+     "candidate": "x_0008",
+     "levels": 1,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T15:48:28.003552+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 9,
+     "candidate": "x_0009",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T16:01:46.144522+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 10,
+     "candidate": "x_0010",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 1.0,
+     "recorded_at": "2026-09-14T16:19:44.850945+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 1.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T212836-8fa9be08/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:03:42.187704+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:42:27.291597+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 3,
+     "candidate": "x_0003",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T20:21:59.339892+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T212836-8fa9be08/run-0002/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_compressed-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:00:45.165094+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:26:25.973157+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T212836-8fa9be08/run-0003/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T18:55:24.400464+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:34:50.696454+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260914T212836-8fa9be08/run-0004/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_using_pushers-v1",
+   "inner": "gpt-5.6-luna xhigh",
+   "outer": "gpt-6-astra xhigh",
+   "world_model_mode": "between-hypotheses",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 10,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T19:45:14.947894+00:00",
+     "hours": null,
+     "cum_tokens": null
+    },
+    {
+     "n": 2,
+     "candidate": "x_0002",
+     "levels": 0,
+     "win_levels": 4,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T20:22:27.335522+00:00",
+     "hours": null,
+     "cum_tokens": null
+    }
+   ],
+   "win_levels": 4,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": null
+  },
+  {
+   "id": "output/workbench/20260923T145406-40bfa276/run-0002/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_knightoban-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 15,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 21211557,
+    "input": 20805890,
+    "cached": 20561152,
+    "output": 405667,
+    "threads": 2,
+    "thread_totals": {
+     "01a0ce1d-c5d9-7032-94ec-1aa4f8003e34": 865481,
+     "01a0ce1e-ff2f-7b42-9e74-c3ccca4d8ed3": 20346076
+    }
+   }
+  },
+  {
+   "id": "output/workbench/20260924T010548-df1831ea/run-0001/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_enqueue-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 20,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 4,
+     "win_levels": 14,
+     "best": 4.0,
+     "recorded_at": "2026-09-24T04:09:53.163929+00:00",
+     "hours": 6.066,
+     "cum_tokens": 143533529
+    }
+   ],
+   "win_levels": 14,
+   "best_levels": 4.0,
+   "solved": false,
+   "tokens": {
+    "total": 201717706,
+    "input": 199382255,
+    "cached": 193614592,
+    "output": 2335451,
+    "threads": 3,
+    "thread_totals": {
+     "01a0d04d-c813-7431-bd36-574cc7ef4cb9": 25036616,
+     "01a0d051-e00f-7621-9513-d51b6c0a7568": 136931145,
+     "01a0d1aa-b057-7cb2-acf0-ec70e73cec6c": 39749945
+    }
+   }
+  },
+  {
+   "id": "output/deepseek-max-trace-probe-20260923-r2/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 1,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 453617,
+    "input": 392103,
+    "cached": 323968,
+    "output": 61514,
+    "threads": 2,
+    "thread_totals": {
+     "01a0ce1a-d934-7b01-a907-198029ee012b": 216636,
+     "01a0ce1d-44fb-72f2-bd92-136a7e098db3": 236981
+    }
+   }
+  },
+  {
+   "id": "output/deepseek-max-trace-probe-20260923/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_modality-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash max",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 1,
+   "evaluations": [],
+   "win_levels": null,
+   "best_levels": null,
+   "solved": false,
+   "tokens": {
+    "total": 64310,
+    "input": 59484,
+    "cached": 40832,
+    "output": 4826,
+    "threads": 1,
+    "thread_totals": {
+     "01a0ce17-8cd5-7b53-a98a-245b1e88517a": 64310
+    }
+   }
+  },
+  {
+   "id": "output/codex-openrouter-side-test-20260914/campaign-smoke/campaign",
+   "label": "",
+   "group": "aborted or resumed segment",
+   "game": "ps_sokoban_basic-v1",
+   "inner": "openrouter/deepseek/deepseek-v4.1-flash low",
+   "outer": "openrouter/deepseek/deepseek-v4.1-flash low",
+   "world_model_mode": "final-only",
+   "fitness_owner": "fresh solver levels completed",
+   "max_evaluations": 1,
+   "evaluations": [
+    {
+     "n": 1,
+     "candidate": "x_0001",
+     "levels": 0,
+     "win_levels": 2,
+     "best": 0.0,
+     "recorded_at": "2026-09-14T10:20:59.967996+00:00",
+     "hours": 0.074,
+     "cum_tokens": 572821
+    }
+   ],
+   "win_levels": 2,
+   "best_levels": 0.0,
+   "solved": false,
+   "tokens": {
+    "total": 572821,
+    "input": 542555,
+    "cached": 443520,
+    "output": 30266,
+    "threads": 2,
+    "thread_totals": {
+     "01a09f6b-15c6-7a42-aca7-3da92f294dc9": 136365,
+     "01a09f6c-18fb-7e82-a183-62e4347ce56c": 436456
+    }
+   }
+  }
+ ],
+ "direct_aborted": [
+  {
+   "id": "output/codex_agent/luna-medium-baseline-150-20260905-audit",
+   "label": "",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "Unapproved model tool: exec",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/luna-medium-baseline-plus-150-20260905-audit",
+   "label": "",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "Unapproved model tool: exec",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/luna-medium-baseline-150-20260905-v2",
+   "label": "",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "initialize response missing required metadata (user_agent='/0.153.1 (Windows 10.0.26200; x86_64) dumb (codex_python_sdk; 0.1.0b2)', server_name='', server_version='0.153.1 (Windows 10.0.26200; x86_64) dumb (codex_python_sdk; 0.1.0b2)')",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/luna-medium-baseline-150-20260905-v3",
+   "label": "",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "Unapproved model tool: exec",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/luna-medium-baseline-plus-150-20260905-v2",
+   "label": "",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "initialize response missing required metadata (user_agent='/0.153.1 (Windows 10.0.26200; x86_64) dumb (codex_python_sdk; 0.1.0b2)', server_name='', server_version='0.153.1 (Windows 10.0.26200; x86_64) dumb (codex_python_sdk; 0.1.0b2)')",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/luna-medium-baseline-plus-150-20260905-v3",
+   "label": "",
+   "model": "gpt-5.6-luna",
+   "effort": "medium",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 150,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "Unapproved model tool: exec",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/gpt55-xhigh-baseline-plus-continuation50-20260905",
+   "label": "",
+   "model": "gpt-5.5",
+   "effort": "xhigh",
+   "date": "2026-09-05",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 50,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "Unapproved model tool: tool_search",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/run-20260904-233705",
+   "label": "",
+   "model": "gpt-5.5",
+   "effort": "medium",
+   "date": "2026-09-04",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": 0,
+   "win_levels": 2,
+   "actions": 9,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "",
+   "tokens": {
+    "total": 157677,
+    "input": 152173,
+    "cached": 112384,
+    "output": 5504,
+    "threads": 1,
+    "thread_totals": {
+     "session:output/codex_agent/run-20260904-233705": 157677
+    }
+   }
+  },
+  {
+   "id": "output/codex_agent/modality-55-high-baseline-plus-1000-20260907T181409",
+   "label": "",
+   "model": "gpt-5.5",
+   "effort": "high",
+   "date": "2026-09-07",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_modality-v1",
+   "max_steps": 1000,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "Unapproved model tool: tool_search",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/modality-55-high-baseline-plus-1000-20260907T181409-r2",
+   "label": "",
+   "model": "gpt-5.5",
+   "effort": "high",
+   "date": "2026-09-07",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_modality-v1",
+   "max_steps": 1000,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": "Unapproved model tool: update_plan",
+   "tokens": null
+  },
+  {
+   "id": "output/codex_agent/baseline-vs-plus-20260904-135358/baseline-plus",
+   "label": "",
+   "model": "gpt-5.5",
+   "effort": "medium",
+   "date": "2026-09-04",
+   "level_up_at_action": [],
+   "final_state": null,
+   "condition": "baseline-plus",
+   "game": "ps_sokoban_basic-v1",
+   "max_steps": 100,
+   "levels": null,
+   "win_levels": null,
+   "actions": null,
+   "task_goal_reached": false,
+   "has_result": false,
+   "error": null,
+   "tokens": null
+  }
+ ],
+ "overview": {
+  "runs": 72,
+  "total_tokens": 1475547035,
+  "cached_tokens": 1409396926,
+  "output_tokens": 14182376,
+  "by_group": {
+   "opus": {
+    "runs": 3,
+    "tokens": 313675,
+    "solved": 0
+   },
+   "sol_single": {
+    "runs": 5,
+    "tokens": 33175091,
+    "solved": 0
+   },
+   "midas": {
+    "runs": 21,
+    "tokens": 356588744,
+    "solved": 0
+   },
+   "luna": {
+    "runs": 27,
+    "tokens": 435123509,
+    "solved": 10
+   },
+   "opencode": {
+    "runs": 1,
+    "tokens": 87171801,
+    "solved": 0
+   },
+   "deepseek": {
+    "runs": 9,
+    "tokens": 484675813,
+    "solved": 3
+   },
+   "direct": {
+    "runs": 6,
+    "tokens": 78498402,
+    "solved": 0
+   }
+  },
+  "entities": [
+   {
+    "id": "output/avo-six-live-20260908-r7/repairs/modality-04/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 16520163,
+    "cached": 15670656,
+    "output": 125313
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/repairs/purple-04/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 25477447,
+    "cached": 24267520,
+    "output": 206083
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/repairs/magnetic-04/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 14757450,
+    "cached": 13962368,
+    "output": 131085
+   },
+   {
+    "id": "output/avo-three-continue-x10-20260908-r3/knightoban-04/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 72148194,
+    "cached": 69183872,
+    "output": 490331
+   },
+   {
+    "id": "output/avo-three-continue-x10-20260908-r3/atlas-04/campaign",
+    "group": "luna",
+    "outcome": "partial",
+    "tokens": 68873019,
+    "cached": 66137728,
+    "output": 503215
+   },
+   {
+    "id": "output/avo-three-continue-x10-20260908-r3/enqueue-04/campaign",
+    "group": "luna",
+    "outcome": "partial",
+    "tokens": 84958064,
+    "cached": 81929856,
+    "output": 514924
+   },
+   {
+    "id": "output/opencode-modality-muse-20260910-02/campaign",
+    "group": "opencode",
+    "outcome": "partial",
+    "tokens": 87171801,
+    "cached": 85311104,
+    "output": 503054
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0001/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 7538863,
+    "cached": 6993408,
+    "output": 83244
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0002/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 7296852,
+    "cached": 6613632,
+    "output": 70617
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0003/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 13497835,
+    "cached": 12541056,
+    "output": 123707
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0004/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 8253716,
+    "cached": 7647104,
+    "output": 84634
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0009/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 6716970,
+    "cached": 6050304,
+    "output": 78219
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0010/campaign",
+    "group": "luna",
+    "outcome": "solved",
+    "tokens": 6866540,
+    "cached": 6273536,
+    "output": 68344
+   },
+   {
+    "id": "output/workbench/20260923T145406-40bfa276/run-0001/campaign",
+    "group": "deepseek",
+    "outcome": "solved",
+    "tokens": 30743986,
+    "cached": 29001216,
+    "output": 677175
+   },
+   {
+    "id": "output/workbench/20260923T145406-40bfa276/run-0003/campaign",
+    "group": "deepseek",
+    "outcome": "solved",
+    "tokens": 46265700,
+    "cached": 42811392,
+    "output": 986094
+   },
+   {
+    "id": "output/workbench/20260923T160431-1fbf9810/run-0001/campaign",
+    "group": "deepseek",
+    "outcome": "solved",
+    "tokens": 73293247,
+    "cached": 69019648,
+    "output": 1022853
+   },
+   {
+    "id": "output/workbench/20260924T084030-resume-cb21528d/run-0001/campaign",
+    "group": "deepseek",
+    "outcome": "partial",
+    "tokens": 247284014,
+    "cached": 238082176,
+    "output": 3392295
+   },
+   {
+    "id": "avo/output/evolution/midas-live-v01-20260825",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 44882344,
+    "cached": 43453184,
+    "output": 214720
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-v03-20260827",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 7420211,
+    "cached": 7060736,
+    "output": 51413
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-v04-20260827",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 14236749,
+    "cached": 13784064,
+    "output": 85133
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-clean-v08-20260827",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 24967432,
+    "cached": 24379136,
+    "output": 84111
+   },
+   {
+    "id": "avo/output/evolution/midas-luna-medium-sol-high-20260828T144003",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 23260682,
+    "cached": 21972736,
+    "output": 155162
+   },
+   {
+    "id": "avo/output/evolution/midas-luna-medium-sol-high-20260828T200612",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 19992584,
+    "cached": 19052288,
+    "output": 106292
+   },
+   {
+    "id": "avo/output/evolution/midas-outer-evidence-luna-medium-sol-high-20260828T210529",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 82925310,
+    "cached": 79035136,
+    "output": 403694
+   },
+   {
+    "id": "avo/output/evolution/midas-outer-sol-high-inner-sol-high-x20-budget300-20260831T013257",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 39944888,
+    "cached": 38359040,
+    "output": 181600
+   },
+   {
+    "id": "avo/output/evolution/midas-outer-sol-high-fast-inner-sol-high-fast-x20-research500-eval1500-20260831T031836",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 17262125,
+    "cached": 16423168,
+    "output": 142408
+   },
+   {
+    "id": "avo/output/evolution/midas-outer-sol-high-inner-sol-high-x20-discovery-research500-eval1500-20260831T042951",
+    "group": "midas",
+    "outcome": "partial",
+    "tokens": 14793648,
+    "cached": 14013696,
+    "output": 124636
+   },
+   {
+    "id": "output/codex_agent/run-20260904-234208",
+    "group": "direct",
+    "outcome": "none",
+    "tokens": 8296490,
+    "cached": 7907584,
+    "output": 39176
+   },
+   {
+    "id": "output/codex_agent/gpt55-xhigh-baseline-plus-20260905-audit",
+    "group": "direct",
+    "outcome": "partial",
+    "tokens": 13287823,
+    "cached": 12270080,
+    "output": 250279
+   },
+   {
+    "id": "output/codex_agent/luna-medium-baseline-150-20260905-v4",
+    "group": "direct",
+    "outcome": "none",
+    "tokens": 6823272,
+    "cached": 6528512,
+    "output": 23809
+   },
+   {
+    "id": "output/codex_agent/luna-medium-baseline-plus-150-20260905-v4",
+    "group": "direct",
+    "outcome": "none",
+    "tokens": 6413850,
+    "cached": 6152832,
+    "output": 21394
+   },
+   {
+    "id": "output/codex_agent/modality-55-high-baseline-plus-1000-20260907T181409-r3",
+    "group": "direct",
+    "outcome": "partial",
+    "tokens": 43519290,
+    "cached": 41763456,
+    "output": 388475
+   },
+   {
+    "id": "avo/output/20260823T200521",
+    "group": "opus",
+    "outcome": "none",
+    "tokens": 148009,
+    "cached": 0,
+    "output": 16513
+   },
+   {
+    "id": "avo/output/20260823T200837",
+    "group": "opus",
+    "outcome": "none",
+    "tokens": 153652,
+    "cached": 0,
+    "output": 14861
+   },
+   {
+    "id": "avo/output/20260823T201214",
+    "group": "opus",
+    "outcome": "none",
+    "tokens": 12014,
+    "cached": 0,
+    "output": 1024
+   },
+   {
+    "id": "avo/output/midas-full-v02-20260825",
+    "group": "sol_single",
+    "outcome": "none",
+    "tokens": 3093490,
+    "cached": 2850560,
+    "output": 31028
+   },
+   {
+    "id": "avo/output/midas-full-v03-20260825",
+    "group": "sol_single",
+    "outcome": "partial",
+    "tokens": 8315261,
+    "cached": 8047104,
+    "output": 48895
+   },
+   {
+    "id": "avo/output/midas-visible-v04-20260825",
+    "group": "sol_single",
+    "outcome": "none",
+    "tokens": 4146944,
+    "cached": 3967744,
+    "output": 28078
+   },
+   {
+    "id": "avo/output/midas-visible-patterns-v05-20260825",
+    "group": "sol_single",
+    "outcome": "partial",
+    "tokens": 11602446,
+    "cached": 11287296,
+    "output": 56106
+   },
+   {
+    "id": "avo/output/midas-checkpoints-v06-20260825",
+    "group": "sol_single",
+    "outcome": "partial",
+    "tokens": 6016950,
+    "cached": 5822208,
+    "output": 38500
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-v01-20260827",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 450391,
+    "cached": 375296,
+    "output": 1936
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-v02-20260827",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 213267,
+    "cached": 164864,
+    "output": 1120
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-clean-v05-20260827",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 195728,
+    "cached": 162816,
+    "output": 1518
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-clean-v06-20260827",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 3486208,
+    "cached": 3280128,
+    "output": 34189
+   },
+   {
+    "id": "avo/output/evolution/midas-solver-clean-v07-20260827",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 176079,
+    "cached": 107008,
+    "output": 1800
+   },
+   {
+    "id": "avo/output/evolution/midas-model-first-v01-20260828",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 3880303,
+    "cached": 3559680,
+    "output": 47022
+   },
+   {
+    "id": "avo/output/evolution/midas-model-first-luna-high-20260828",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 13225361,
+    "cached": 12866304,
+    "output": 59136
+   },
+   {
+    "id": "avo/output/evolution/midas-model-first-luna-high-v01-20260828",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 11278660,
+    "cached": 10810112,
+    "output": 64283
+   },
+   {
+    "id": "avo/output/evolution/midas-model-first-luna-high-v02-20260828",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 7519127,
+    "cached": 7230464,
+    "output": 51084
+   },
+   {
+    "id": "avo/output/evolution/midas-model-first-luna-high-v03-20260828",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 8873350,
+    "cached": 8492800,
+    "output": 61635
+   },
+   {
+    "id": "avo/output/evolution/midas-spark-high-sol-high-20260828",
+    "group": "midas",
+    "outcome": "none",
+    "tokens": 17604297,
+    "cached": 16786560,
+    "output": 145379
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/run-0001/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 5235180,
+    "cached": 5001088,
+    "output": 49224
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/run-0002/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 5253738,
+    "cached": 5018624,
+    "output": 41911
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/run-0003/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 3652158,
+    "cached": 3362816,
+    "output": 35818
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/run-0004/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 5537939,
+    "cached": 5260672,
+    "output": 43392
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/run-0005/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 5429131,
+    "cached": 5209216,
+    "output": 51807
+   },
+   {
+    "id": "output/avo-six-live-20260908-r7/run-0006/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 2605773,
+    "cached": 2459008,
+    "output": 24955
+   },
+   {
+    "id": "output/avo-three-continue-x10-20260908-r2/atlas-04/campaign",
+    "group": "luna",
+    "outcome": "partial",
+    "tokens": 2596674,
+    "cached": 2496299,
+    "output": 18774
+   },
+   {
+    "id": "output/avo-three-continue-x10-20260908-r2/enqueue-04/campaign",
+    "group": "luna",
+    "outcome": "partial",
+    "tokens": 3880879,
+    "cached": 3723296,
+    "output": 27328
+   },
+   {
+    "id": "output/avo-three-continue-x10-20260908-r2/knightoban-04/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 5098040,
+    "cached": 4878211,
+    "output": 37577
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0005/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 13557881,
+    "cached": 12795392,
+    "output": 127942
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0006/campaign",
+    "group": "luna",
+    "outcome": "partial",
+    "tokens": 15218328,
+    "cached": 14294400,
+    "output": 123994
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0007/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 4391003,
+    "cached": 3953920,
+    "output": 43383
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0008/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 8300190,
+    "cached": 7744640,
+    "output": 82506
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0011/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 9346830,
+    "cached": 8645504,
+    "output": 86134
+   },
+   {
+    "id": "output/workbench/20260914T142420-astra-luna-six-pairs/run-0012/campaign",
+    "group": "luna",
+    "outcome": "none",
+    "tokens": 12114652,
+    "cached": 11424768,
+    "output": 92171
+   },
+   {
+    "id": "output/workbench/20260923T145406-40bfa276/run-0002/campaign",
+    "group": "deepseek",
+    "outcome": "none",
+    "tokens": 21211557,
+    "cached": 20561152,
+    "output": 405667
+   },
+   {
+    "id": "output/workbench/20260924T010548-df1831ea/run-0001/campaign",
+    "group": "deepseek",
+    "outcome": "partial",
+    "tokens": 64786561,
+    "cached": 62184048,
+    "output": 750087
+   },
+   {
+    "id": "output/deepseek-max-trace-probe-20260923-r2/campaign",
+    "group": "deepseek",
+    "outcome": "none",
+    "tokens": 453617,
+    "cached": 323968,
+    "output": 61514
+   },
+   {
+    "id": "output/deepseek-max-trace-probe-20260923/campaign",
+    "group": "deepseek",
+    "outcome": "none",
+    "tokens": 64310,
+    "cached": 40832,
+    "output": 4826
+   },
+   {
+    "id": "output/codex-openrouter-side-test-20260914/campaign-smoke/campaign",
+    "group": "deepseek",
+    "outcome": "none",
+    "tokens": 572821,
+    "cached": 443520,
+    "output": 30266
+   },
+   {
+    "id": "output/codex_agent/run-20260904-233705",
+    "group": "direct",
+    "outcome": "none",
+    "tokens": 157677,
+    "cached": 112384,
+    "output": 5504
+   }
+  ]
+ }
+}

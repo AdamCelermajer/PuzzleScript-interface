@@ -1,4 +1,4 @@
-import type { AgentEvent, AvoLogEntry } from '../api/types'
+import type { AgentEvent, AvoLogEntry, SessionPrompts } from '../api/types'
 
 export type EventKind = 'message' | 'prompt' | 'reasoning' | 'command' | 'file_change' | 'tool' | 'image' | 'usage' | 'error' | 'turn_end' | 'environment' | 'other'
 
@@ -14,10 +14,15 @@ export interface TimelineItem {
   turn: number | null
   at: string | null
   role?: string | null
+  /** File edits: unified diff, and a note when it is partial. */
+  diff?: string
+  diffNote?: string
 }
 
 const KNOWN: EventKind[] = ['message', 'reasoning', 'command', 'file_change', 'tool', 'image', 'usage', 'error', 'turn_end']
 const firstLine = (text: string, limit = 200) => (text.split('\n').find((l) => l.trim()) ?? '').slice(0, limit)
+/** A prompt's most telling line: the first that is not a bare heading such as "Transition feedback:". */
+const promptLine = (text: string) => (text.split('\n').find((l) => l.trim() && !l.trim().endsWith(':')) ?? firstLine(text)).slice(0, 200)
 
 export function fromAgentEvent(event: AgentEvent, index: number): TimelineItem {
   const kind = (KNOWN as string[]).includes(event.type) ? (event.type as EventKind) : 'other'
@@ -47,7 +52,46 @@ export function fromAgentEvent(event: AgentEvent, index: number): TimelineItem {
     turn: event.turn ?? null,
     at: event.t ?? null,
     role: event.role,
+    diff: kind === 'file_change' && event.diff ? event.diff : undefined,
+    diffNote: kind === 'file_change' && event.diff_note ? event.diff_note : undefined,
   }
+}
+
+/**
+ * The prompts we sent, placed in the timeline: the system prompt (and mission) before everything,
+ * and each turn's message just before that turn's first event. Collapsed like any other item.
+ */
+export function withPrompts(items: TimelineItem[], prompts: SessionPrompts | null | undefined, context = 'session'): TimelineItem[] {
+  if (!prompts) return items
+  const out: TimelineItem[] = []
+  const firstTurn = items.find((i) => i.turn !== null)?.turn ?? 1
+  const opening = (id: string, title: string, text: string) => out.push({ id, kind: 'prompt', title, summary: firstLine(text), body: text, turn: firstTurn, at: items[0]?.at ?? null, role: 'user' })
+  if (prompts.system) opening(`${context}-system`, 'System prompt', prompts.system)
+  if (prompts.mission) opening(`${context}-mission`, 'Mission', prompts.mission)
+  const placed = new Set<string>()
+  for (const item of items) {
+    const key = item.turn === null ? '' : String(item.turn)
+    if (key && !placed.has(key)) {
+      placed.add(key)
+      const text = prompts.turns[key]
+      if (text) out.push({ id: `${context}-turn-${key}`, kind: 'prompt', title: 'Prompt to agent', summary: promptLine(text), body: text, turn: item.turn, at: item.at, role: 'user' })
+    }
+    out.push(item)
+  }
+  return out
+}
+
+/** One line of a unified diff, classified for colouring. */
+export type DiffLine = { kind: 'add' | 'del' | 'hunk' | 'head' | 'same'; text: string }
+
+export function diffLines(diff: string): DiffLine[] {
+  return diff.split('\n').map((text) => ({
+    kind: text.startsWith('+++') || text.startsWith('---') ? 'head'
+      : text.startsWith('@@') ? 'hunk'
+        : text.startsWith('+') ? 'add'
+          : text.startsWith('-') ? 'del' : 'same',
+    text,
+  }))
 }
 
 export function fromAvoLog(entry: AvoLogEntry): TimelineItem {

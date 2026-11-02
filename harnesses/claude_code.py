@@ -19,6 +19,7 @@ from uuid import uuid4
 from harnesses.base import CliSession, usage_record
 
 DISALLOWED_TOOLS = ("WebSearch", "WebFetch")
+ANTHROPIC_API = "https://api.anthropic.com"
 FILE_TOOLS = {"Write", "Edit", "MultiEdit", "NotebookEdit"}
 
 
@@ -33,6 +34,7 @@ class ClaudeCodeSession(CliSession):
         self.env["CLAUDE_CONFIG_DIR"] = str(config_dir)
         self.env.setdefault("DISABLE_AUTOUPDATER", "1")
         self.env.setdefault("CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC", "1")
+        self.env["ANTHROPIC_BASE_URL"] = self.record_calls(ANTHROPIC_API)
         self._pending: dict[str, dict[str, Any]] = {}
 
     def command(self, instruction: str, images: Sequence[Path]) -> list[str]:
@@ -62,6 +64,10 @@ class ClaudeCodeSession(CliSession):
                 "type": "base64", "media_type": media,
                 "data": base64.b64encode(image.read_bytes()).decode("ascii")}})
         return json.dumps({"type": "user", "message": {"role": "user", "content": content}}) + "\n"
+
+    def step_finished(self, event: dict[str, Any]) -> bool:
+        # The tool results of an assistant step come back as one user event.
+        return event.get("type") == "user"
 
     def normalize(self, event: dict[str, Any]) -> list[dict[str, Any]]:
         kind = event.get("type")

@@ -6,6 +6,7 @@ runs: [output/opencode-modality-muse-20260910-02]
 commits: []
 docs: [docs/research/three-game-mechanics-demo.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Docker preflights passed; a six-game smoke passed 6/6 (`output/avo-docker-six-smoke`).

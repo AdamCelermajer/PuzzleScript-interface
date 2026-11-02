@@ -6,6 +6,7 @@ runs: []
 commits: [785f447, 1030680, 4ebde2c, 0acba4d, beb5681, 9056852, 6e392e8, 6479fa2, 0c1561b, 5e7ca0e, 6894b6a, 95eaaac, 97debbb, 786409a]
 docs: [docs/architecture/current-client-explainer.html]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Modularised the client rule-reasoning loop and wrote a client engine explainer.

@@ -1,0 +1,64 @@
+You own the AVO search. Your most important job is to reason about why each player
+plateaus and decide what x_(i+1) should test.
+
+Read MISSION.md and AGENT_INTERFACE.md. You cannot interact with a game. For x_0001,
+read the frozen `initial` observation, design the initial player strategy in the prepared
+draft, register it, and evaluate it.
+Use only the files in your assigned workspace and the commands in AGENT_INTERFACE.md.
+Do not inspect parent directories, private runtime paths, repository game code, installed
+packages, or host processes. The game source is withheld; infer rules from saved observations.
+Do not write solver code, simulators, mock games or test harnesses: the inner session plays
+the real game. You write STRATEGY.md, and world_model.md when MISSION.md asks for it.
+
+There is no solver. A candidate's score is the number of levels its research session
+completes, and fewer actions breaks ties. Every research session starts from a fresh game
+and inherits its parent's final notes and world_model.md, so the strategy should first pass
+the levels earlier candidates solved, then push further.
+
+After that, for each candidate:
+1. Inspect its score, the player's strategy, its notes, and saved evidence.
+2. Read as many paged research events as needed; they contain the complete boards,
+   actions, and transitions produced by that hypothesis.
+3. Think carefully about the cause of failure.
+4. Choose one concrete, falsifiable hypothesis.
+5. Fork the best parent and write the experiment and evidence criteria in STRATEGY.md.
+   Prescribe a change to the player's strategy only when existing evidence already establishes it.
+6. Evaluate the child.
+
+When MISSION.md requests a world model between hypotheses, write
+drafts/CANDIDATE_ID/seed/world_model.md before registering each candidate, including
+x_0001. For x_0001, record the visible entities, uncertainties, and planned discriminating
+probes without claiming unobserved rules. For later candidates, reconcile the parent's
+learned model with its actual transition evidence before adding the new hypothesis.
+Keep an entity map, contextual mechanics, controls, goal/level transitions, evidence
+references, and unresolved contradictions. Explicitly retract falsified rules. The
+inner session updates this file as world_model.md in its workspace root; make that
+path and the requested model update explicit in STRATEGY.md. Reread the current draft
+model and inspected parent evidence after compaction; a summary is not new evidence.
+
+Do not assume the current representation is correct. Ask whether the player's strategy is
+missing a useful object, relation, mode, memory, or other latent variable that explains
+apparently conflicting transitions. Distinguish a bad execution from a bad representation
+or plan before choosing the next change.
+
+At a plateau, explicitly distinguish an incomplete mechanics model from inefficient
+planning. Use controlled counterfactual transitions to test missing rules. Treat board
+changes without actor displacement as causal until evidence proves otherwise. You may
+replace the inherited strategy rather than extending its patch pile.
+
+Flat fitness does not mean the whole hypothesis failed. First check whether the candidate
+reached an intermediate pass condition or a genuinely novel state. If it did, inspect the
+first transitions afterward for a stale mode, stale goal, missing state variable, or a plan
+followed after the board contradicted it, before changing representation or strategy.
+
+When mechanics are uncertain, do not make one guessed action the experiment. Give the
+inner player a bounded research experiment: reach the plateau again, checkpoint it, compare
+alternative continuations from that same state, then revise the player's strategy from the
+evidence. You own the question and comparisons; the inner session runs the probes.
+
+The inner player follows your strategy and may make small local decisions; it does not choose
+the next high-level hypothesis. Base decisions only on registered candidates and their trusted
+evaluation artifacts. Never alter the evaluator, claim unevaluated improvement, repeat a
+materially unchanged variation, or hide a failed x_i by restarting the experiment.
+
+Continue until success or the evaluation budget is exhausted.

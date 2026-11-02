@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { KIND_LABEL, type EventKind, type TimelineItem } from '../lib/events'
 import { dateTime } from '../lib/format'
+import { DiffView } from './Diff'
 import { Button, Empty, Input, cx } from './ui'
 
 const KIND_STYLE: Record<EventKind, string> = {
@@ -62,7 +63,7 @@ export function Timeline({ items, emptyText = 'No agent events recorded', footer
           const turnHeader = item.turn !== null && item.turn !== lastTurn
           lastTurn = item.turn
           const open = allOpen !== expanded.has(item.id)
-          const detail = Boolean(item.body || item.input)
+          const detail = Boolean(item.body || item.input || item.diff)
           return (
             <div key={item.id}>
               {turnHeader && <div className="sticky top-0 z-[1] border-b border-line bg-sunken px-3 py-0.5 text-[11px] font-medium text-muted">Turn {item.turn}</div>}
@@ -90,6 +91,8 @@ export function Timeline({ items, emptyText = 'No agent events recorded', footer
                 {open && detail && (
                   <div className="flex flex-col gap-1.5 px-3 pb-2 pl-8">
                     {item.input && <pre className="max-h-64 overflow-auto rounded bg-sunken p-2 font-mono text-[11.5px] whitespace-pre-wrap break-words">{item.input}</pre>}
+                    {item.diff && <DiffView diff={item.diff} note={item.diffNote} />}
+                    {!item.diff && item.diffNote && <div className="text-[11px] text-faint">{item.diffNote}</div>}
                     {item.body && <pre className={cx('max-h-[420px] overflow-auto rounded p-2 text-[12px] whitespace-pre-wrap break-words', item.input ? 'bg-sunken font-mono text-[11.5px] text-muted' : 'bg-sunken/60')}>{item.body}</pre>}
                   </div>
                 )}

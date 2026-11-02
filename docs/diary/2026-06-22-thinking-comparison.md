@@ -6,6 +6,7 @@ runs: []
 commits: [3c97a7a, 792fb13]
 docs: []
 reconstructed: true
+brief: true
 ---
 ## Did
 - Ran the rule agent on `ps_sokoban_basic-v1` from one shared start state (grid and image hashes checked) with a 5-step cap.

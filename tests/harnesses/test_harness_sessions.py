@@ -151,13 +151,94 @@ def test_opencode_private_config_declares_model_and_denies_web(tmp_path):
     assert session.command("again", [])[-2:] == ["--session", "ses_1"]
 
 
+def test_opencode_qwen_gets_qwen_sampling_and_openrouter_gets_the_effort(tmp_path):
+    # OpenCode alone would send temperature 0.55, top_p 1, no top_k and no effort for any "qwen" id.
+    session = started("opencode", tmp_path, "openrouter/qwen/qwen3.8-27b", effort="high", provider="chutes")
+    config = json.loads(Path(session.env["OPENCODE_CONFIG"]).read_text())
+    model = config["provider"]["openrouter"]["models"]["qwen/qwen3.8-27b"]
+    assert model["temperature"] is True and model["options"]["top_k"] == 20
+    assert model["options"]["reasoning"] == {"effort": "high"}
+    assert config["agent"]["build"] == {"temperature": 1.0, "top_p": 0.95} and config["agent"]["title"] == {"disable": True}
+    manifest = json.loads((session.analysis_dir / "session.json").read_text())
+    assert manifest["effort_sent"] == "high" and manifest["sampling"].startswith("temperature 1.0")
+    other = json.loads(Path(started("opencode", tmp_path / "o", "openrouter/google/gemini-3.5-flash").env["OPENCODE_CONFIG"]).read_text())
+    assert other["agent"] == {"title": {"disable": True}}  # no title request to a second model
+    assert "options" not in other["provider"]["openrouter"]["models"]["google/gemini-3.5-flash"]
+
+
+def test_opencode_pins_a_nanogpt_host_strictly(tmp_path):
+    session = started("opencode", tmp_path, "nanogpt/qwen/qwen3.8-27b:thinking", provider="deepinfra")
+    config = json.loads(Path(session.env["OPENCODE_CONFIG"]).read_text())
+    assert config["provider"]["nanogpt"]["models"]["qwen/qwen3.8-27b:thinking"]["options"]["provider"] == {
+        "only": ["deepinfra"], "allow_fallbacks": False}
+
+
+def test_opencode_declares_the_real_context_of_openrouter_qwen_27b(tmp_path):
+    # models.dev lists 1M tokens for this id; a pinned 262k host would reject the request before OpenCode compacts.
+    session = started("opencode", tmp_path, "openrouter/qwen/qwen3.8-27b", provider="chutes")
+    model = json.loads(Path(session.env["OPENCODE_CONFIG"]).read_text())["provider"]["openrouter"]["models"]["qwen/qwen3.8-27b"]
+    assert model["limit"] == {"context": 262144, "output": 64000}
+    assert model["options"]["provider"] == {"order": ["chutes"], "allow_fallbacks": False}
+    assert json.loads((session.analysis_dir / "session.json").read_text())["opencode_limit"]["context"] == 262144
+    other = started("opencode", tmp_path / "other", "openrouter/qwen/qwen3.8-flash")
+    assert "limit" not in json.loads(Path(other.env["OPENCODE_CONFIG"]).read_text())["provider"]["openrouter"]["models"]["qwen/qwen3.8-flash"]
+
+
 def test_opencode_nanogpt_is_a_custom_openai_compatible_provider(tmp_path):
     session = started("opencode", tmp_path, "nanogpt/deepseek/deepseek-v4.1-flash")
     provider = json.loads(Path(session.env["OPENCODE_CONFIG"]).read_text())["provider"]["nanogpt"]
     assert provider["npm"] == "@ai-sdk/openai-compatible"
-    assert provider["options"] == {"baseURL": "https://nano-gpt.com/api/v1", "apiKey": "{env:NANOGPT_API_KEY}"}
+    # OpenCode calls the recorder, which forwards to NanoGPT.
+    assert provider["options"]["apiKey"] == "{env:NANOGPT_API_KEY}"
+    assert provider["options"]["baseURL"] == session.recorder_url + "/api/v1" and session.recorder.upstream == "https://nano-gpt.com"
     assert "deepseek/deepseek-v4.1-flash" in provider["models"]
 
+
+
+def serve(monkeypatch, served=None, error=None):
+    """Fake vLLM /v1/models for the vast provider."""
+    import io
+    import urllib.error
+    calls = []
+
+    def urlopen(url, timeout):
+        calls.append(url)
+        if error:
+            raise urllib.error.URLError(error)
+        return io.BytesIO(json.dumps({"data": served or []}).encode())
+    monkeypatch.setattr("harnesses.opencode.urllib.request.urlopen", urlopen)
+    return calls
+
+
+def test_opencode_vast_declares_endpoint_limits_thinking_and_records_them(tmp_path, monkeypatch):
+    monkeypatch.setenv("VAST_LLM_BASE_URL", "http://host.docker.internal:18100/v1/")
+    calls = serve(monkeypatch, [{"id": "q3.8-27b-fp8", "root": "Qwen/Qwen3.8-27B-FP8", "max_model_len": 262144}])
+    session = started("opencode", tmp_path, "vast/q3.8-27b-fp8")
+    assert calls == ["http://host.docker.internal:18100/v1/models"]
+    provider = json.loads(Path(session.env["OPENCODE_CONFIG"]).read_text())["provider"]["vast"]
+    assert provider["npm"] == "@ai-sdk/openai-compatible"
+    assert provider["options"]["apiKey"] == "unused" and provider["options"]["baseURL"] == session.recorder_url + "/v1"
+    assert session.recorder.upstream == "http://host.docker.internal:18100"
+    model = provider["models"]["q3.8-27b-fp8"]
+    assert model["modalities"]["input"] == ["text", "image"] and model["attachment"] is True
+    assert model["limit"] == {"context": 262144, "output": 64000}  # OpenCode compacts only with a declared limit
+    assert model["options"] == {"chat_template_kwargs": {"enable_thinking": True, "reasoning_effort": "xhigh"}}
+    manifest = json.loads((session.analysis_dir / "session.json").read_text())
+    assert (manifest["endpoint"], manifest["served_model"], manifest["served_weights"]) == (
+        "http://host.docker.internal:18100/v1", "q3.8-27b-fp8", "Qwen/Qwen3.8-27B-FP8")
+    assert manifest["opencode_limit"] == {"context": 262144, "output": 64000} and manifest["image_input"] is True
+    assert manifest["thinking"]["reasoning_effort"] == "xhigh" and manifest["sampling"].startswith("temperature 1.0")
+    command = session.command("play", [])
+    assert command[command.index("-m") + 1] == "vast/q3.8-27b-fp8"
+
+
+def test_opencode_vast_fails_fast_when_the_endpoint_is_down_or_serves_another_model(tmp_path, monkeypatch):
+    serve(monkeypatch, error="connection refused")
+    with pytest.raises(HarnessError, match="SSH tunnel"):
+        started("opencode", tmp_path / "a", "vast/q3.8-27b-fp8")
+    serve(monkeypatch, [{"id": "other", "max_model_len": 1}])
+    with pytest.raises(HarnessError, match="serves other, not q3.8-27b-fp8"):
+        started("opencode", tmp_path / "b", "vast/q3.8-27b-fp8")
 
 
 def test_opencode_declares_image_input_from_the_provider_model_list(tmp_path, monkeypatch):
@@ -201,6 +282,19 @@ def test_opencode_normalization(tmp_path):
     assert events[1]["exit_code"] == 0 and events[2]["text"] == "/w/notes/a.md"
     assert session.session_id == "ses_9" and session.final_text() == "ACTION2"
     assert session._usage["input"] == 110 and session._usage["cached"] == 60 and session._usage["output"] == 6
+
+
+def test_opencode_compaction_summary_is_not_part_of_the_answer(tmp_path):
+    # Seen on 21 Oct (vast.ai compaction test): summary text, synthetic "Continue ..." part, answer.
+    session = started("opencode", tmp_path, "openrouter/qwen/qwen3.8-27b")
+    feed(session, [
+        {"type": "tool_use", "sessionID": "s", "part": {"type": "tool", "tool": "bash", "state": {"input": {"command": "cat f"}}}},
+        {"type": "text", "sessionID": "s", "part": {"type": "text", "text": "## Goal\nsummary"}},
+        {"type": "text", "sessionID": "s", "part": {"type": "text", "synthetic": True, "metadata": {"compaction_continue": True},
+                                                    "text": "Continue if you have next steps"}},
+        {"type": "text", "sessionID": "s", "part": {"type": "text", "text": "ACTION3"}},
+    ])
+    assert session.final_text() == "ACTION3"
 
 
 # ---------------------------------------------------------------- antigravity

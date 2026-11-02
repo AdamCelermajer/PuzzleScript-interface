@@ -69,9 +69,10 @@ class BareSession(CliSession):
 
     def prepare(self) -> None:
         assert self.log is not None
-        self.chat = self.chat_factory(self.native_model, self.effort, self.analysis_dir / "model_requests",
-                                      context_chars=CONTEXT_CHARS, provider=self.pin_provider,
-                                      model_provider=self.provider)
+        self.chat = self.chat_factory(self.native_model, self.effort, context_chars=CONTEXT_CHARS,
+                                      provider=self.pin_provider, model_provider=self.provider)
+        if hasattr(self.chat, "api_url"):
+            self.chat.api_url = self.record_calls(self.chat.api_url)
         self.messages: list[dict[str, Any]] = [{"role": "system", "content": self.system_prompt + TOOLS_PROTOCOL}]
         self.session_id = f"bare-{self.private.name}"
         self.shell_env = {key: value for key, value in os.environ.items()
@@ -93,6 +94,7 @@ class BareSession(CliSession):
 
         content: Any = instruction
         image_paths = [Path(image).resolve() for image in images]
+        self.save_input(number, instruction, image_paths)
         if image_paths:
             content = [{"type": "text", "text": instruction}, *[image_part(path) for path in image_paths]]
             for path in image_paths:

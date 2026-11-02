@@ -2,20 +2,23 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useState } from 'react'
 import { api, q } from '../api/client'
 import { usePinActions, usePins } from '../api/hooks'
-import type { RunRecord, Transition } from '../api/types'
+import type { NotesHistoryTurn, NotesTurn, RunRecord, Transition } from '../api/types'
+import { DiffView } from '../components/Diff'
 import { GridCanvas, PixelImage } from '../components/Frame'
 import { Markdown } from '../components/Markdown'
 import { PinList } from '../components/Pins'
 import { Timeline } from '../components/Timeline'
-import { Button, Card, Empty, ErrorBox, KeyValues, Loading, Pre, Tabs } from '../components/ui'
-import { fromAgentEvent, fromLegacyTranscript, pinKey, pinText, type TimelineItem } from '../lib/events'
+import { Button, Card, Empty, ErrorBox, KeyValues, Loading, Pre, Select, Tabs } from '../components/ui'
+import { fromAgentEvent, fromLegacyTranscript, pinKey, pinText, withPrompts, type TimelineItem } from '../lib/events'
+import { FileViewer } from '../components/FileViewer'
+import { Calls } from './Calls'
 
 const fileUrl = (run: string, file: string) => `/api/workbench/record/file${q({ run, file })}`
 const frameFile = (index: number) => `frames/${String(index).padStart(3, '0')}.png`
 
-type Tab = 'events' | 'pinned' | 'notes' | 'result' | 'files'
+type Tab = 'events' | 'calls' | 'pinned' | 'notes' | 'result' | 'files'
 
-/** Baseline and baseline+ runs: replay of recorded transitions, agent events, notes, artifacts. */
+/** Baseline runs: replay of recorded transitions, agent events, notes, artifacts. */
 export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId: string; live?: boolean; notes?: boolean }) {
   const [eventsLimit, setEventsLimit] = useState(500)
   const record = useQuery({
@@ -25,6 +28,8 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
     placeholderData: keepPreviousData,
   })
   const [tab, setTab] = useState<Tab>('events')
+  // The replay's action index; null = follow the latest transition. The Notes tab follows it too.
+  const [step, setStep] = useState<number | null>(null)
   const pins = usePins(runId)
 
   if (record.isLoading) return <Loading label="Reading run record…" />
@@ -33,13 +38,14 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
   const notes = data.files.filter((f) => f.startsWith('workspace/') && f.endsWith('.md'))
   return (
     <div className="flex flex-col gap-4">
-      <Replay runId={runId} record={data} live={live} />
+      <Replay runId={runId} record={data} live={live} index={step} setIndex={setStep} />
       <div className="flex flex-col gap-3">
         <Tabs<Tab>
           value={tab}
           onChange={setTab}
           tabs={[
             { id: 'events', label: 'Agent timeline' },
+            { id: 'calls', label: 'Model calls (exact)', hidden: !data.has_calls },
             { id: 'pinned', label: `Pinned${pins.data?.length ? ` (${pins.data.length})` : ''}` },
             { id: 'notes', label: `Notes${notes.length ? ` (${notes.length})` : ''}`, hidden: !withNotes && !notes.length },
             { id: 'result', label: 'Result & spec' },
@@ -47,8 +53,9 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
           ]}
         />
         {tab === 'events' && <Events runId={runId} record={data} onMore={() => setEventsLimit(5000)} />}
+        {tab === 'calls' && <Calls runId={runId} live={live} />}
         {tab === 'pinned' && (pins.error ? <ErrorBox error={pins.error} /> : <PinList pins={pins.data ?? []} />)}
-        {tab === 'notes' && <Notes runId={runId} files={notes} />}
+        {tab === 'notes' && <Notes runId={runId} files={notes} live={live} step={step} />}
         {tab === 'result' && (
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
             <Card title="Result"><Pre>{JSON.stringify(Object.keys(data.result).length ? data.result : 'No final result yet', null, 2)}</Pre></Card>
@@ -56,15 +63,7 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
             {Object.keys(data.error).length > 0 && <Card title="Error"><Pre>{JSON.stringify(data.error, null, 2)}</Pre></Card>}
           </div>
         )}
-        {tab === 'files' && (
-          <Card>
-            {data.files.length ? (
-              <ul className="flex flex-col gap-1 font-mono text-[12px]">
-                {data.files.map((f) => <li key={f}><a href={fileUrl(runId, f)} target="_blank" rel="noreferrer">{f}</a></li>)}
-              </ul>
-            ) : <Empty title="No artifacts saved" />}
-          </Card>
-        )}
+        {tab === 'files' && (data.files.length ? <FileViewer files={data.files} url={(f) => fileUrl(runId, f)} /> : <Card><Empty title="No artifacts saved" /></Card>)}
       </div>
     </div>
   )
@@ -89,11 +88,9 @@ function FramePicture({ src, caption }: { src: string; caption: string }) {
   )
 }
 
-function Replay({ runId, record, live }: { runId: string; record: RunRecord; live?: boolean }) {
+function Replay({ runId, record, live, index, setIndex }: { runId: string; record: RunRecord; live?: boolean; index: number | null; setIndex: (index: number | null) => void }) {
   const total = record.latest_transition?.action_index ?? 0
   const recordedActions = Number(record.result.action_count ?? 0)
-  // null = follow the latest transition.
-  const [index, setIndex] = useState<number | null>(null)
   const position = index ?? total
   const transition = useQuery({
     queryKey: ['timeline', runId, index],
@@ -113,7 +110,7 @@ function Replay({ runId, record, live }: { runId: string; record: RunRecord; liv
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [position, total])
+  }, [position, total, setIndex])
 
   if (!total) {
     return (
@@ -184,10 +181,10 @@ function Events({ runId, record, onMore }: { runId: string; record: RunRecord; o
       // keeps its React key (and expanded state) when newer events arrive on the next poll.
       const { events, total } = record.agent_events
       const first = total - events.length
-      return events.map((event, i) => fromAgentEvent(event, first + i))
+      return withPrompts(events.map((event, i) => fromAgentEvent(event, first + i)), record.prompts)
     }
     return legacy.data ? fromLegacyTranscript(legacy.data) : []
-  }, [record.agent_events, legacy.data])
+  }, [record.agent_events, record.prompts, legacy.data])
   if (legacyFile && legacy.isLoading) return <Loading label="Reading transcript…" />
   if (legacy.error) return <ErrorBox error={legacy.error} />
   const events = record.agent_events
@@ -202,6 +199,9 @@ function Events({ runId, record, onMore }: { runId: string; record: RunRecord; o
   return (
     <div className="flex flex-col gap-2">
       {!events && legacyFile && <div className="text-[12px] text-muted">Older run without agent_events.jsonl: showing the saved transcript (prompt / response per decision).</div>}
+      {events && record.prompts && !record.prompts.turns_recorded && (
+        <div className="text-[12px] text-muted">This session's per-turn messages are not recorded; the timeline shows its system prompt only.</div>
+      )}
       {actions.add.error ? <ErrorBox error={actions.add.error} /> : null}
       <Timeline
         items={items}
@@ -218,14 +218,87 @@ function Events({ runId, record, onMore }: { runId: string; record: RunRecord; o
   )
 }
 
-function Notes({ runId, files }: { runId: string; files: string[] }) {
+/** With notes_history/ (notes saved after every harness turn) the tab steps through turns; otherwise the latest notes. */
+function Notes({ runId, files, live, step }: { runId: string; files: string[]; live?: boolean; step: number | null }) {
+  const history = useQuery({
+    queryKey: ['notes-history', runId],
+    queryFn: ({ signal }) => api.get<{ turns: NotesHistoryTurn[] }>(`/record/notes_history${q({ run: runId })}`, signal),
+    refetchInterval: live ? 5000 : false,
+  })
+  if (history.isLoading) return <Loading label="Reading notes history…" />
+  const turns = history.data?.turns ?? []
+  return turns.length ? <NotesHistory runId={runId} turns={turns} step={step} /> : <LatestNotes runId={runId} files={files} />
+}
+
+/** The turn that played replay step `step`, or the last turn with a move before it; null = the latest turn. */
+function turnForStep(turns: NotesHistoryTurn[], step: number | null): number {
+  if (step === null) return turns[turns.length - 1].turn
+  const played = turns.filter((t) => t.action_index !== null && t.action_index <= step)
+  return (played[played.length - 1] ?? turns[0]).turn
+}
+
+function turnLabel(t: NotesHistoryTurn): string {
+  return `Turn ${t.turn} · ${t.action_index ? `move ${t.action_index}` : t.kind === 'final_world_model' ? 'final world model' : 'no move'}`
+}
+
+function NotesHistory({ runId, turns, step }: { runId: string; turns: NotesHistoryTurn[]; step: number | null }) {
+  // null = follow the replay.
+  const [picked, setPicked] = useState<number | null>(null)
+  const [changes, setChanges] = useState(false)
+  const [file, setFile] = useState('')
+  const turn = picked ?? turnForStep(turns, step)
+  const position = turns.findIndex((t) => t.turn === turn)
+  const content = useQuery({
+    queryKey: ['notes-turn', runId, turn],
+    queryFn: ({ signal }) => api.get<NotesTurn>(`/record/notes_history/turn${q({ run: runId, turn })}`, signal),
+    placeholderData: keepPreviousData,
+    staleTime: Infinity,
+  })
+  const data = content.data
+  const names = data ? [...new Set([...Object.keys(data.files), ...(changes ? Object.keys(data.diffs) : [])])].sort() : []
+  const shown = names.includes(file) ? file : names[0] ?? ''
+  const text = data?.files[shown]
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Button size="sm" onClick={() => setPicked(turns[position - 1].turn)} disabled={position <= 0}>← Prev turn</Button>
+        <Select value={turn} onChange={(e) => setPicked(Number(e.target.value))} className="h-6 text-[12px]">
+          {turns.map((t) => <option key={t.turn} value={t.turn}>{turnLabel(t)}</option>)}
+        </Select>
+        <Button size="sm" onClick={() => setPicked(turns[position + 1].turn)} disabled={position < 0 || position >= turns.length - 1}>Next turn →</Button>
+        <Button size="sm" variant={picked === null ? 'primary' : 'default'} onClick={() => setPicked(null)}>Follow the replay</Button>
+        <Button size="sm" variant={changes ? 'primary' : 'default'} onClick={() => setChanges(!changes)}>Changes vs previous turn</Button>
+        <span className="text-[11.5px] text-faint">notes/ saved after turn {turn}{turns[position]?.timestamp ? ` · ${turns[position].timestamp}` : ''}</span>
+      </div>
+      {content.error ? <ErrorBox error={content.error} /> : !data ? <Loading /> : (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-[220px_minmax(0,1fr)]">
+          <div className="flex flex-col gap-0.5">
+            {names.map((f) => (
+              <button key={f} type="button" onClick={() => setFile(f)} className={`truncate rounded px-2 py-1 text-left font-mono text-[12px] ${f === shown ? 'bg-accent-soft text-accent' : 'text-muted hover:bg-sunken'}`}>
+                {f}{data.diffs[f] ? ' •' : ''}
+              </button>
+            ))}
+            <div className="mt-1 px-2 text-[11px] text-faint">• changed since {data.previous ? `turn ${data.previous}` : 'the start'}</div>
+          </div>
+          <Card>
+            {!shown ? <Empty title="No notes files in this turn" /> : changes ? (
+              data.diffs[shown] ? <DiffView diff={data.diffs[shown]} note={data.previous ? `vs turn ${data.previous}` : 'first saved turn'} /> : <div className="text-[12.5px] text-muted">Unchanged since turn {data.previous}.</div>
+            ) : text === undefined ? <div className="text-[12.5px] text-muted">Deleted in this turn.</div> : shown.endsWith('.md') ? <Markdown>{text}</Markdown> : <Pre>{text}</Pre>}
+          </Card>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function LatestNotes({ runId, files }: { runId: string; files: string[] }) {
   const [file, setFile] = useState(files[0] ?? '')
   const content = useQuery({
     queryKey: ['note', runId, file],
     enabled: Boolean(file),
     queryFn: ({ signal }) => api.text(fileUrl(runId, file), signal),
   })
-  if (!files.length) return <Empty title="No notes saved">Baseline+ runs keep markdown notes in workspace/notes/.</Empty>
+  if (!files.length) return <Empty title="No notes saved">Baseline runs keep markdown notes in workspace/notes/.</Empty>
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-[220px_minmax(0,1fr)]">
       <div className="flex flex-col gap-0.5">

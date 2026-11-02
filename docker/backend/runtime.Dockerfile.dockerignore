@@ -1,0 +1,6 @@
+**
+!package.json
+!package-lock.json
+!puzzlescript_interface/
+!puzzlescript_interface/runtime/
+!puzzlescript_interface/runtime/*.js

@@ -61,6 +61,7 @@ class AntigravitySession(CliSession):
 
     def prepare(self) -> None:
         self.binary = shutil.which("agy") or "agy"
+        self.unrecorded = "agy calls Google's service itself and has no API base-URL setting"
         install_web_deny_hook()
         self._tools_seen: dict[str, str] = {}
 

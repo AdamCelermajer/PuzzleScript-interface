@@ -21,6 +21,7 @@ class FakePuzzleScriptClient:
     def __init__(self) -> None:
         self.started_games: list[str] = []
         self.started_levels: list[int | None] = []
+        self.started_playable_levels: list[int | None] = []
         self.actions: list[tuple[str, str]] = []
         self.fail_next_start: tuple[int, str] | None = None
 
@@ -29,6 +30,7 @@ class FakePuzzleScriptClient:
         source_name: str,
         *,
         level_index: int | None = None,
+        level: int | None = None,
     ) -> dict:
         if self.fail_next_start is not None:
             status_code, detail = self.fail_next_start
@@ -36,6 +38,7 @@ class FakePuzzleScriptClient:
             raise HTTPException(status_code=status_code, detail=detail)
         self.started_games.append(source_name)
         self.started_levels.append(level_index)
+        self.started_playable_levels.append(level)
         return {
             "sessionId": "ps-session-1",
             "frame": [[[0, 1], [1, 0]]],
@@ -266,6 +269,19 @@ class ArcServiceTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.fake_client.started_levels[-1], 2)
+
+    def test_reset_command_can_start_at_a_playable_level(self) -> None:
+        card_id = self.client.post("/api/scorecard/open", json={}).json()["card_id"]
+        body = {"card_id": card_id, "game_id": "ps_sokoban_basic-v1", "level": 3}
+
+        self.assertEqual(self.client.post("/api/cmd/RESET", json=body).status_code, 200)
+        self.assertEqual(self.fake_client.started_playable_levels[-1], 3)
+        self.assertEqual(self.client.post("/api/cmd/RESET", json={**body, "level_index": 1}).status_code, 400)
+        self.assertEqual(self.client.post("/api/cmd/RESET", json={**body, "level": 0}).status_code, 422)
+        self.fake_client.fail_next_start = (400, "level must be between 1 and 2, not 3.")
+        response = self.client.post("/api/cmd/RESET", json=body)
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("between 1 and 2", response.json()["detail"])
 
     def test_extended_visible_texture_ids_and_dictionary_survive_public_api(self) -> None:
         from unittest.mock import patch

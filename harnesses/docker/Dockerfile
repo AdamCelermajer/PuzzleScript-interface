@@ -21,15 +21,21 @@ RUN python -m venv /opt/venv \
 # Harness² method only; player and improver use the installed OpenCode binary below.
 RUN /opt/venv/bin/pip install --no-cache-dir "harness2 @ git+https://github.com/google-research/harness2.git@1cfe254e8d25b15f37048c3730134686abe60335"
 
-# CLI harnesses, pinned to the versions verified on 2026-10-15.
+# CLI harnesses, pinned to the versions verified on 2026-10-15 (OpenCode 1.19.5 since 2026-11-02:
+# 1.14.19 bundled an OpenRouter provider that ran some tool calls twice).
 ARG CODEX_VERSION=0.162.1
 ARG CLAUDE_VERSION=2.1.299
-ARG OPENCODE_VERSION=1.14.19
+ARG OPENCODE_VERSION=1.19.5
 RUN npm install -g --no-fund --no-audit \
       @openai/codex@${CODEX_VERSION} \
       @anthropic-ai/claude-code@${CLAUDE_VERSION} \
       opencode-ai@${OPENCODE_VERSION} \
  && npm cache clean --force
+# OpenCode custom tools (frameworks/baseline/prompt.py) import @opencode-ai/plugin; OpenCode would
+# download it into every session's config. Installed once here, in the shape OpenCode writes.
+RUN mkdir -p /opt/opencode-plugin && cd /opt/opencode-plugin \
+ && echo "{\"dependencies\":{\"@opencode-ai/plugin\":\"${OPENCODE_VERSION}\"}}" > package.json \
+ && npm install --no-fund --no-audit && npm cache clean --force
 # Antigravity CLI (official bootstrapper; flat native binary).
 RUN curl -fsSL https://antigravity.google/cli/install.sh | bash -s -- --dir /usr/local/bin \
  && /usr/local/bin/agy --version

@@ -1,0 +1,60 @@
+// Baseline, agent driver (frameworks/baseline/agent.py).
+// The agent plays the whole game itself through `python game.py` in a persistent folder.
+// One CLI harness session (OpenCode, Codex, Claude Code, bare); a session-ending error opens a new one in the same folder.
+// Mark 1: game.py replies. Mark 2: harness compaction. Mark 3: end-of-run deliverables. Mark 4: tools.
+BaselineAgent[@T.I]: {
+  S: {
+    HARNESS_SYSTEM_PROMPT(env.harness) // the harness's own prompt
+    SYSTEM_PROMPT // agent.py:73 "You are playing an unknown puzzle game. Your working folder persists ..."
+    Mark 4 {
+    NATIVE_TOOLS(env.harness) // the harness's shell and file tools, web tools off; bare: shell, read_file, write_file, view_image
+    TOOL_GAME_LOOK // python game.py look: the current grid and status; saves the picture as frame.png
+    TOOL_GAME_DO(action) // python game.py do ACTION: one game action; prints what changed and the new grid
+    TOOL_GAME_RESET // python game.py reset: restarts the current level; costs one action
+    }
+    KEEP_WORLD_MODEL // world_model.py:18, keep world_model.md current
+  }
+  Mark 2 {
+  Name C := sys.last_compaction_or_restart_time[@T]
+  If @$C > 1 {
+    U: WHAT_DID_WE_DO
+    A: sys.conversation_summary[@$C]
+  }
+  }
+  ForEach(@t: range(@$C, @T+1)) {
+    U: {
+      Switch sys.turn_kind[@t] {
+        Case "first": { PLAY_NOW(env.max_steps, env.start_level) } // start with python game.py look
+        Case "continue": { NOT_FINISHED(env.levels[@t], sys.actions_left[@t]) }
+        Case "failed": { FAILED_PROMPT(env.levels[@t], sys.actions_left[@t]) }
+        Case "restart": { RESTART_PROMPT(env.levels[@t], sys.actions_left[@t]) } // new session, same folder
+        Case "report": { Mark 3 { REPORT_PROMPT(sys.end_reason, env.levels[@t]) } } // write world_model.md, no more game.py
+        Case "solver": { Mark 3 { SOLVER_PROMPT(env.start_level) } } // write solver.py: next_action(grid, levels_completed)
+      }
+    }
+    PromptEndsHere when (@T == @t && @T.0)
+    ForEach(step: @t.substeps) {
+      A: {
+        resp.reasoning[@t.step]
+        ForEach(tool: sys.tool_requests[step]) {
+          tool.id_name_and_args // python game.py ..., notes, own scripts, open frame.png
+        }
+      }
+      ForEach(tool: sys.tool_requests[step]) {
+        T: {
+          If tool.is_game_command {
+            Mark 1 {
+            GAME_REPLY(tool.action, tool.what_changed) // changed cells, nothing changed, or LEVEL COMPLETED
+            STATUS(env.state, env.levels, sys.actions_used, env.available_actions)
+            env.grid // one number per visible tile; picture: frame.png
+            }
+          } Else {
+            tool.id_and_response
+          }
+        }
+      }
+      PromptEndsHere when (@T == @t && @T.I)
+    }
+    A: sys.response[@t]
+  }
+}

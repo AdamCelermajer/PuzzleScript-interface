@@ -10,7 +10,7 @@ import { OutcomeCell, ProcessPill } from '../components/status'
 import { Button, Card, Empty, ErrorBox, Input, Loading, Notice, PageHeader, Pill, Select, cx } from '../components/ui'
 import { bestSoFar, firstSuccess, levelCurve } from '../lib/compare'
 import { dateTime, duration, gameName, shortId } from '../lib/format'
-import { distinct, jobLabel, runHref, unitLabel, type RunView } from '../lib/runs'
+import { distinct, jobLabel, levelScoreText, levelText, runHref, unitLabel, type RunView } from '../lib/runs'
 
 const shortLabel = (r: RunView) => `${r.model.split('/').at(-1)} · ${r.effort}`
 const seriesLabel = (r: RunView) => `${r.variant} · ${r.harness} · ${r.model.split('/').at(-1)} · ${r.effort}${r.worldModel && r.worldModel !== 'not-recorded' ? ` · ${r.worldModel}` : ''}`
@@ -71,10 +71,12 @@ function SelectionBar({ runs, onRemove, onEdit }: { runs: RunView[]; onRemove: (
 function Picker({ runs, selected, onChange }: { runs: RunView[]; selected: string[]; onChange: (ids: string[]) => void }) {
   const [game, setGame] = useState(runs.find((r) => selected.includes(r.id))?.game ?? '')
   const [variant, setVariant] = useState('')
+  // '' any, 'game' whole-game runs, '3' one-level tasks on level 3: lines up the same level across frameworks.
+  const [level, setLevel] = useState('')
   const [search, setSearch] = useState('')
   const set = new Set(selected)
   const needle = search.toLowerCase()
-  const shown = runs.filter((r) => (!game || r.game === game) && (!variant || r.variant === variant) && (!needle || `${r.id} ${r.model} ${r.harness}`.toLowerCase().includes(needle)) && r.raw.has_result !== undefined)
+  const shown = runs.filter((r) => (!game || r.game === game) && (!variant || r.variant === variant) && (!level || (level === 'game' ? !r.level : r.level === Number(level))) && (!needle || `${r.id} ${r.model} ${r.harness}`.toLowerCase().includes(needle)) && r.raw.has_result !== undefined)
   return (
     <Card title={`Pick at least two runs (${selected.length} selected)`} actions={selected.length >= 2 && <Button variant="primary" size="sm" onClick={() => onChange(selected)}>Compare {selected.length}</Button>}>
       <div className="mb-2 flex flex-wrap gap-2">
@@ -85,6 +87,11 @@ function Picker({ runs, selected, onChange }: { runs: RunView[]; selected: strin
         <Select value={variant} onChange={(e) => setVariant(e.target.value)}>
           <option value="">Any framework</option>
           {distinct(runs, (r) => r.variant).map((v) => <option key={v} value={v}>{v}</option>)}
+        </Select>
+        <Select value={level} onChange={(e) => setLevel(e.target.value)}>
+          <option value="">Any level</option>
+          <option value="game">Whole game</option>
+          {[...new Set(runs.flatMap((r) => (r.level ? [r.level] : [])))].sort((a, b) => a - b).map((n) => <option key={n} value={String(n)}>Level {n} only</option>)}
         </Select>
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Filter by id, model, harness…" className="w-64" />
       </div>
@@ -100,7 +107,7 @@ function Picker({ runs, selected, onChange }: { runs: RunView[]; selected: strin
                   <td>{r.variant}</td>
                   <td><HarnessChip harness={r.harness} legacy={r.legacy} /></td>
                   <td className="max-w-64 truncate">{r.model} <span className="text-faint">· {r.effort}</span></td>
-                  <td>{gameName(r.game)}</td>
+                  <td>{gameName(r.game)}{levelText(r)}</td>
                   <td className="text-[12px] text-muted">{dateTime(r.started)}</td>
                   <td className="font-mono text-[11.5px]">{shortId(r.id, 2)}</td>
                 </tr>
@@ -135,9 +142,11 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
   const campaignSeries: Series[] = campaigns.map((r) => ({ id: r.id, label: seriesLabel(r), points: bestSoFar(r.raw.result_inputs?.evaluations ?? []), target: r.outcome.total, color: index.get(r.id), short: shortLabel(r) }))
   const baselineSeries: Series[] = baselines.map((r, i) => ({ id: r.id, label: seriesLabel(r), points: transitions[i]?.data?.points ?? [], target: transitions[i]?.data?.total ?? r.outcome.total, color: index.get(r.id), short: shortLabel(r) }))
   const mixedGames = new Set(runs.map((r) => r.game)).size > 1
+  const mixedLevels = !mixedGames && new Set(runs.map((r) => r.level ?? 0)).size > 1
   return (
     <div className="flex flex-col gap-4">
       {mixedGames && <Notice tone="warn">These runs cover different games; levels are not directly comparable across games.</Notice>}
+      {mixedLevels && <Notice tone="warn">These runs are not all the same level task; pick one level under "Any level" to line them up.</Notice>}
       <Card title="Summary" bodyClass="p-0">
         <div className="overflow-auto">
           <table className="data-table">
@@ -153,11 +162,11 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
                 return (
                   <tr key={r.id}>
                     <td>{i < MAX_SERIES && <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: seriesColor(i) }} />}</td>
-                    <td><div className="flex items-center gap-2.5"><GameThumb gameId={r.game} size={28} /><div className="min-w-0"><Link to={runHref(r.id)} className="block text-[13px] font-semibold">{gameName(r.game)}</Link><RunId id={r.id} className="w-44" /></div></div></td>
+                    <td><div className="flex items-center gap-2.5"><GameThumb gameId={r.game} size={28} /><div className="min-w-0"><Link to={runHref(r.id)} className="block text-[13px] font-semibold">{gameName(r.game)}{levelText(r)}</Link><RunId id={r.id} className="w-44" /></div></div></td>
                     <td>{r.variant}{r.worldModel && r.worldModel !== 'not-recorded' && <div className="text-[11px] text-faint">{r.worldModel}</div>}</td>
                     <td><HarnessChip harness={r.harness} legacy={r.legacy} /></td>
                     <td className="max-w-64 truncate">{r.model} <span className="text-faint">· {r.effort}</span></td>
-                    <td><OutcomeCell outcome={r.outcome} campaign={r.kind === 'avo'} /></td>
+                    <td><OutcomeCell outcome={r.outcome} campaign={r.kind === 'avo'} />{r.raw.level_score && <div className="text-[11px] text-faint">{levelScoreText(r.raw.level_score)}</div>}</td>
                     <td><ProcessPill status={r.process} /></td>
                     <td className="whitespace-nowrap text-[12.5px] tabular-nums text-muted">{r.progress.used ?? '—'}{r.progress.budget ? ` / ${r.progress.budget}` : ''} {unitLabel(r.progress.unit, true)}</td>
                     <td className="text-[12px]">{r.kind === 'avo' ? (first ? `eval ${first}` : '—') : r.outcome.tone === 'solved' ? `${r.progress.used ?? '—'} act` : '—'}</td>
@@ -170,7 +179,7 @@ function Comparison({ runs, job }: { runs: RunView[]; job: string }) {
         </div>
       </Card>
       {campaigns.length > 0 && (
-        <Card title="AVO · best fresh-solver fitness by completed evaluation">
+        <Card title="AVO · best fitness by completed evaluation (solver or research levels, per variant)">
           <LineChart series={campaignSeries} xDomain={Math.max(0, ...campaigns.map((r) => r.progress.budget ?? 0))} xLabel="Evaluation" yLabel="Levels (fitness)" />
         </Card>
       )}

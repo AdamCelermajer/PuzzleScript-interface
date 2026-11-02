@@ -6,6 +6,7 @@ runs: []
 commits: []
 docs: [docs/research/qwen-harness-direction.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Oct 4: wrote `qwen-harness-direction.md` from Adam's notes: three candidate explanations (harness, size, pretraining) and a five-step plan.

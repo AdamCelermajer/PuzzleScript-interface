@@ -8,7 +8,7 @@ import sys
 import time
 from pathlib import Path
 
-from workbench.catalog import ROOT, read_json
+from workbench.catalog import ROOT, job_run_name, read_json, stopped_runs
 from workbench.experiments import write_json
 
 
@@ -42,15 +42,21 @@ def check_launchable(row: dict, config: dict) -> None:
         raise ValueError("Saved job uses a retired agent backend; create a new Codex experiment")
 
 
+def owned_container(row: dict) -> str:
+    """The Docker container this exact run owns (named in its launcher record), or ''."""
+    launch = read_json(Path(row["output"]) / "launcher.json")
+    container = str(launch.get("container", ""))
+    owned = (row.get("kind") == "avo" and container.startswith("avo-isolated-")) or (
+        row.get("launcher") == "harnesses" and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", container))
+    return container if owned else ""
+
+
 def stop_child(process, row):
     if process.poll() is not None:
         return
     # Removing this exact container lets its launcher execute credential cleanup.
-    launch = read_json(Path(row["output"]) / "launcher.json")
-    container = str(launch.get("container", ""))
-    owned = (row["kind"] == "avo" and container.startswith("avo-isolated-")) or (
-        row.get("launcher") == "harnesses" and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", container))
-    if owned:
+    container = owned_container(row)
+    if container:
         subprocess.run(["docker", "rm", "-f", container], capture_output=True, timeout=20)
         try:
             process.wait(timeout=20)
@@ -104,17 +110,25 @@ def run_job(directory: Path):
             if (directory / "stop.request").exists() or (deadline is not None and time.time() >= deadline):
                 cancelled = True
                 break
+            # Runs the user stopped one by one (POST /experiments/stop-run); the rest of the batch goes on.
+            stopped = stopped_runs(directory)
             for entry in active[:]:
                 row, proc, log = entry
+                if proc.poll() is None and job_run_name(row) in stopped:
+                    stop_child(proc, row)
                 if proc.poll() is None and overdue(row, time.time()):
                     # The harness enforces its own wall budget; this only backstops a hung child.
                     stop_child(proc, row)
                     row["error"] = "Exceeded its wall budget plus grace; stopped by the batch worker"
                 code = proc.poll()
                 if code is not None:
-                    row.update(status="completed" if code == 0 else "failed", returncode=code)
+                    row.update(status="completed" if code == 0 else "cancelled" if job_run_name(row) in stopped else "failed",
+                               returncode=code)
                     log.close()
                     active.remove(entry)
+            for row in job["runs"]:
+                if row["status"] == "queued" and job_run_name(row) in stopped:
+                    row["status"] = "cancelled"
             for row in next_rows(job["runs"], config["parallel"]-len(active), config.get("comparison", False)):
                 check_launchable(row, config)
                 # The CLI owns creation of a fresh run directory (especially continuation).
@@ -156,7 +170,10 @@ def run_job(directory: Path):
         for row in job["runs"]:
             if row["status"] == "queued":
                 row["status"] = "paused" if paused else "cancelled" if cancelled else "failed"
-        job.update(status="failed" if job.get("error") or any(r["status"] == "failed" for r in job["runs"]) else "paused" if paused else "cancelled" if cancelled else "completed", heartbeat=time.time())
+        # A run stopped on its own makes the batch "cancelled" (stopped, resumable as a batch), never "failed".
+        job.update(status="failed" if job.get("error") or any(r["status"] == "failed" for r in job["runs"]) else "paused" if paused
+                   else "cancelled" if cancelled or any(r["status"] == "cancelled" for r in job["runs"]) else "completed",
+                   heartbeat=time.time())
         write_json(manifest_path, job)
 
 

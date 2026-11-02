@@ -45,6 +45,7 @@ THREAD = re.compile(r"^[a-z0-9][a-z0-9-]{0,47}$")
 FORBIDDEN = re.compile(r"[\[\]\"#\r\n]")
 MAX_BODY = 40_000
 DOC_SUFFIXES = {".md", ".txt", ".tex", ".json", ".bib"}
+IMAGE_TYPES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp"}
 
 router = APIRouter(prefix="/api/workbench")
 _write_lock = threading.Lock()
@@ -233,12 +234,14 @@ def list_cards() -> dict:
 
 @router.get("/board/file")
 def board_file(path: str = Query(..., min_length=1, max_length=400)):
-    """Read-only view of a docs/ file linked from a card (markdown, tex, json, pdf)."""
+    """Read-only view of a docs/ file linked from a card or a diary entry (markdown, tex, json, pdf, images)."""
     target = resolve_repo_file(path)
     if not target.is_file():
         raise HTTPException(404, "File not found")
     if target.suffix.lower() == ".pdf":
         return FileResponse(target, media_type="application/pdf")
+    if target.suffix.lower() in IMAGE_TYPES:
+        return FileResponse(target, media_type=IMAGE_TYPES[target.suffix.lower()])
     if target.suffix.lower() not in DOC_SUFFIXES:
         raise HTTPException(415, "This file type is not shown here")
     return Response(target.read_text(encoding="utf-8", errors="replace"), media_type="text/plain; charset=utf-8",

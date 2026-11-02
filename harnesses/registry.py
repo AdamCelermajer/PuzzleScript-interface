@@ -49,7 +49,7 @@ HARNESSES: dict[str, dict[str, Any]] = {
     "claude-code": {"id": "claude-code", "label": "Claude Code", "providers": ["anthropic"],
                     "cli": "claude -p --output-format stream-json --verbose",
                     "models": [{"id": m, "label": m} for m in CLAUDE_MODELS]},
-    "opencode": {"id": "opencode", "label": "OpenCode", "providers": ["openrouter", "nanogpt"],
+    "opencode": {"id": "opencode", "label": "OpenCode", "providers": ["openrouter", "nanogpt", "vast"],
                  "cli": "opencode run --format json", "models": []},
     "antigravity": {"id": "antigravity", "label": "Antigravity (agy)", "providers": ["google"],
                     "cli": "agy -p --output-format stream-json",
@@ -86,6 +86,8 @@ def resolve_model_for(harness: str, model: str) -> tuple[str, str]:
         if provider != "openai" or model.startswith("claude-") or "/" in model:
             raise HarnessError("codex runs OpenAI model ids such as gpt-5.6-sol (ChatGPT login)")
         return "openai", native
+    if provider == "vast" and harness != "opencode":
+        raise HarnessError("vast/<served-model-name> (self-hosted vLLM) runs on the opencode harness")
     if provider not in API_PROVIDERS:
         raise HarnessError(f"{harness} runs openrouter/<vendor>/<model> or nanogpt/<model> ids")
     return provider, native
@@ -167,11 +169,12 @@ def missing_credentials(harness: str, *, env: dict[str, str] | None = None, prov
     if harness == "claude-code" and not values.get("CLAUDE_CODE_OAUTH_TOKEN"):
         missing.append("CLAUDE_CODE_OAUTH_TOKEN in .env (create with `claude setup-token`)")
     if harness in {"opencode", "bare"}:
-        wanted = providers or HARNESSES[harness]["providers"]
-        keys = [API_PROVIDERS[provider]["env_key"] for provider in wanted]
-        present = [key for key in keys if values.get(key)]
+        wanted = [API_PROVIDERS[provider] for provider in providers or HARNESSES[harness]["providers"]]
+        keys = [details["env_key"] for details in wanted]
+        # A provider with a default (the vast.ai endpoint) needs nothing in .env.
+        present = [details["env_key"] for details in wanted if values.get(details["env_key"]) or details.get("default")]
         if (providers and len(present) != len(keys)) or not present:
-            missing.append(" and ".join(f"{key} in .env" for key in keys if not values.get(key)))
+            missing.append(" and ".join(f"{key} in .env" for key in keys if key not in present))
     if harness == "antigravity" and agy_volume is False:
         missing.append(f"docker volume {AGY_VOLUME} (run `uv run python -m harnesses.launch login antigravity`)")
     return missing

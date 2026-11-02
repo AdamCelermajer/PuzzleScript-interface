@@ -174,6 +174,31 @@ a:hover { text-decoration: underline; text-decoration-color: var(--line-strong);
 
 .prose-md.inline, .prose-md.inline p { display: inline; margin: 0; }
 
+/* Diary present mode decks: warm cream, and a warm dark variant (data-deck on the present root). */
+[data-deck="cream"] {
+  --bg: #f6f1e7; --panel: #fcf9f2; --raised: #fffdf8; --sunken: #efe8da; --hover: #ebe3d2;
+  --line: #e2d9c6; --line-strong: #d0c4ac; --fg: #2b2722; --muted: #5f574b; --faint: #8c8373;
+  --accent: #2b2722; --accent-soft: #e9e0cd; --accent-fg: #fcf9f2; --link: #2a63b8;
+  --run: #2a6fc4; --run-soft: #e3ebf5; --neutral-soft: #e9e0cd; --shadow: 0 1px 2px rgba(60, 45, 20, 0.06);
+  color-scheme: light;
+}
+[data-deck="dark"] {
+  --bg: #1c1a17; --panel: #24211d; --raised: #2a2722; --sunken: #191714; --hover: #2f2b25;
+  --line: #37322b; --line-strong: #4a4339; --fg: #ece5d8; --muted: #bdb4a5; --faint: #8a8274;
+  --accent: #ece5d8; --accent-soft: #332e27; --accent-fg: #1c1a17; --link: #8fb6f0;
+  --run: #7fa9e8; --run-soft: #24303f; --neutral-soft: #2f2b25; --shadow: none;
+  color-scheme: dark;
+}
+/* Tailwind's --color-* resolve at :root, so the deck re-points them at its own values. */
+[data-deck] {
+  --color-bg: var(--bg); --color-panel: var(--panel); --color-raised: var(--raised); --color-sunken: var(--sunken);
+  --color-hover: var(--hover); --color-line: var(--line); --color-line-strong: var(--line-strong); --color-fg: var(--fg);
+  --color-muted: var(--muted); --color-faint: var(--faint); --color-accent: var(--accent); --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg); --color-link: var(--link); --color-run: var(--run); --color-run-soft: var(--run-soft);
+  --color-neutral-soft: var(--neutral-soft);
+}
+.deck-serif { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; }
+
 /* Board present mode: the print container holds every slide; one A4 landscape page each. */
 .present-print { display: none; }
 @media print {

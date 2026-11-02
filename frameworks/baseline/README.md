@@ -27,15 +27,36 @@ directory outside the results tree.
 
 ## Options
 
-`--max-steps` (default 200) and `--notes` (default off).
+`--max-steps` (default 200) and `--stop-after-levels` (default 0, play on).
 
-- Baseline (notes off): conversation only. The workspace holds the current `frame.png`; after
-  every turn the controller deletes every other workspace file, so only the
-  conversation persists. The agent still has its harness's normal tools.
-- Baseline+ (`--notes`): the same, plus a `notes/` directory that is kept between turns
-  and described in the system prompt (write `notes/strategy.md` before the first
-  action, re-read and update it as evidence arrives). After every turn `notes/` is
-  mirrored to the run's `workspace/notes/`.
+- Both drivers get the same prompt, word for word (`prompt.py`, since 2 Nov 2026): the same system
+  prompt, the same observation text (status, available actions with `RESET` among them, grid), the
+  same first message and the same final world-model report. Only one line differs: how a move is
+  sent, `act` once per turn for the controller, `look` and `do` for the agent. OpenCode gets these
+  as real tools (custom tools in its private config) that run the same scripts (`act.py`,
+  `game.py`); the other harnesses run the scripts through their shell. Before 2 Nov the two
+  prompts differed (reset, image path, notes, scripts, world model, solver).
+- The controller keeps one conversation per game and deletes nothing between turns; after every
+  turn `notes/` is mirrored to the run's `workspace/notes/`.
+- `world_model.md`, when the agent writes one, is copied to `world_model_snapshots/` every 100
+  game actions, after each completed level (`a0100.md`, …, `level-<k>-a<NNNN>.md`) and at the end
+  (`final.md`). Nobody asks for it during play; at the end the agent writes it as a report, also
+  saved as the run's `world_model.md`.
+
+With `--driver agent` (`agent.py`) two more options apply:
+
+- `--start FOLDER`: a repository folder (e.g. `studies/thursday/start/rules`) copied into the
+  run as `start/` before the container starts; the agent's folder begins with exactly those
+  files (an `AGENTS.md` there reaches OpenCode as instructions).
+- `--stop-after-levels N`: the game ends once N levels are completed. The move that completes
+  level N prints only `LEVEL COMPLETED (N/M). Level target reached; the game is over.`; the next
+  level is never printed or saved to `frame.png`, and that move's record (whose after-frame is
+  the next level) is written only after the session. Then the usual world-model and solver turns run.
+
+A provider failure of a turn is followed by another turn ("The last reply failed; continue …");
+an error that ends the conversation itself (NanoGPT's "Invalid request parameters" for a full
+context) continues in a fresh session in the same folder. Three failed turns in a row end the
+run with an error; `result.json` lists them under `failed_turns`.
 
 ## Artifacts
 

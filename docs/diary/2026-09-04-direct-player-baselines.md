@@ -4,8 +4,9 @@ title: Direct-player baseline vs baseline+ on Sokoban
 threads: [codex-direct-player]
 runs: [output/codex_agent/gpt55-xhigh-baseline-plus*, output/codex_agent/luna-medium-baseline*]
 commits: []
-docs: [studies/codex_agent/README.md]
+docs: [docs/research/diary-figures-20261029/avo-era/fig4_direct_player.png, studies/codex_agent/README.md, docs/research/diary-figures-20261029/avo-era/README.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Defined the direct-player conditions: `baseline` (one persistent session, one action per turn) and `baseline-plus` (same, plus `list_notes`/`read_note`/`write_note` and a required `strategy.md`).

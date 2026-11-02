@@ -5,6 +5,7 @@ import math
 import re
 from pathlib import Path
 
+from frameworks.avo.research_score import rank
 from workbench.catalog import ROOT, agent_identity, read_json, run_path
 
 EXCLUDED = {"__pycache__", "observations"}
@@ -18,8 +19,8 @@ def submission(run: str, root: Path = ROOT, candidate: str = "") -> dict:
     lineage = read_json(path / "lineage.json") or read_json(path / "population.json")
     evaluations = [e for e in lineage.get("evaluations", []) if isinstance(e, dict)
                    and isinstance(e.get("fitness"), (int, float)) and math.isfinite(e["fitness"])]
-    # Match EvolutionStore: highest fitness, earliest evaluated candidate on a tie.
-    best = max(evaluations, key=lambda e: e["fitness"], default=None)
+    # Match EvolutionStore: highest fitness, then fewer actions (research score), then earliest evaluated.
+    best = max(evaluations, key=rank, default=None)
     if candidate:
         best = next((e for e in evaluations if e.get("candidate_id") == candidate), None)
         if best is None:

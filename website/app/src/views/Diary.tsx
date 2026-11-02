@@ -30,6 +30,7 @@ export function DiaryView() {
         subtitle={info ? `${info.description || 'Unregistered thread'} · ${info.status} · ${info.entries} entries, ${info.first ?? '—'} to ${info.last ?? '—'}` : 'Dated research entries in docs/diary/ — Did / Found / Decided / Next'}
         actions={
           <>
+            <Link to={`/diary/present${q({ thread })}`} title="The whole log as slides, oldest first"><Button>Present</Button></Link>
             <a href={`/api/workbench/diary/export${q({ thread, format: 'html' })}`} target="_blank" rel="noreferrer" title="Entries since the last meeting entry; print from the new tab">
               <Button>Since last meeting · print</Button>
             </a>

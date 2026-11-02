@@ -71,7 +71,8 @@ def test_harness_listing_reports_readiness_without_secret_values(tmp_path, monke
     assert not any("CLAUDE_CODE_OAUTH_TOKEN" in m for m in entries["claude-code"]["missing"])
     assert any("auth.json" in m for m in entries["codex"]["missing"])
     assert any("puzzlescript-agy-home" in m for m in entries["antigravity"]["missing"])
-    assert any("OPENROUTER_API_KEY" in m for m in entries["opencode"]["missing"])
+    assert any("OPENROUTER_API_KEY" in m for m in entries["bare"]["missing"])
+    assert entries["opencode"]["ready_providers"] == ["vast"]  # the self-hosted endpoint needs no key
 
 
 def test_harness_listing_is_ready_with_registry_credentials_and_docker(tmp_path, monkeypatch):
@@ -95,11 +96,14 @@ def test_model_membership_follows_harness_provider():
     assert harness_catalog.model_error("claude-code", "claude-opus-5-5-high")
     assert harness_catalog.model_error("opencode", "gpt-5.6-sol")
     assert harness_catalog.model_error("opencode", "openrouter/no-vendor")
+    assert harness_catalog.model_error("opencode", "vast/q3.8-27b-fp8") is None
+    assert harness_catalog.model_error("bare", "vast/q3.8-27b-fp8")
+    assert harness_catalog.model_error("opencode", "vast/")
 
 
 # ---------------------------------------------------------------- preview / matrix
 
-MATRIX = {"frameworks": [{"id": "baseline"}, {"id": "baseline", "options": {"notes": True}},
+MATRIX = {"frameworks": [{"id": "baseline"}, {"id": "baseline", "options": {"driver": "agent"}},
                          {"id": "avo", "options": {"world_model_mode": "final-only"}},
                          {"id": "avo", "options": {"world_model_mode": "between-hypotheses"}}],
           "harnesses": ["codex", "claude-code"], "models": ["gpt-5.6-sol", "claude-sonnet-5-5"],
@@ -110,7 +114,7 @@ def test_frameworks_endpoint_lists_the_registry(tmp_path):
     with client(tmp_path) as api:
         listing = {f["id"]: f for f in api.get("/api/workbench/frameworks").json()["frameworks"]}
     assert set(listing) == {"baseline", "avo", "harness2"}
-    assert {o["name"] for o in listing["baseline"]["options"]} == {"max_steps", "notes", "driver"}
+    assert {o["name"] for o in listing["baseline"]["options"]} == {"max_steps", "driver", "memento", "start", "stop_after_levels", "start_level", "one_level"}
     assert listing["avo"]["optimizer"] is True and listing["baseline"]["optimizer"] is False
 
 
@@ -135,17 +139,18 @@ def test_preview_builds_matrix_with_contract_commands_and_never_starts(tmp_path,
             assert arg(command, "--world-model-mode") == run["options"]["world_model_mode"]
             assert "--max-steps" not in command and arg(command, "--max-evaluations") == "8"
         else:
-            assert arg(command, "--max-steps") == "200" and ("--notes" in command) == run["options"]["notes"]
+            assert arg(command, "--max-steps") == "200" and arg(command, "--driver") == run["options"]["driver"]
             assert "--max-evaluations" not in command and "--world-model-mode" not in command
         assert "--provider" not in command
-    # Matched rows share a match id across frameworks, so baseline vs baseline+ vs AVO compare in one launch.
+    # Matched rows share a match id across frameworks, so the two Baseline drivers and AVO compare in one launch.
     matched = [r for r in data["runs"] if r["harness"] == "codex" and r["effort"] == "low"]
-    assert {r["variant"] for r in matched} == {"Baseline", "Baseline+", "AVO"}
+    assert {r["variant"] for r in matched} == {"Baseline", "Baseline · agent", "AVO · solver score"}
     assert len({r["match_id"] for r in matched}) == 1
 
 
 def test_options_optimizer_and_provider_pin_reach_commands(tmp_path):
-    body = {"frameworks": [{"id": "avo", "options": {"max_evaluations": 3, "research_moves": 50, "solver_moves": 60}}],
+    body = {"frameworks": [{"id": "avo", "options": {"max_evaluations": 3, "research_moves": 50, "solver_moves": 60,
+                                                     "fitness": "research"}}],
             "harnesses": ["opencode"], "models": ["openrouter/qwen/qwen3.8-27b"],
             "optimizer_model": "openrouter/deepseek/deepseek-v4.1-flash", "optimizer_effort": "max",
             "efforts": ["high"], "games": ["ps_modality-v1"], "provider": "chutes",
@@ -158,6 +163,7 @@ def test_options_optimizer_and_provider_pin_reach_commands(tmp_path):
     assert arg(command, "--provider") == "chutes" and arg(command, "--backend-url") == "http://10.0.0.5:8000"
     assert [arg(command, f) for f in ("--max-wall-seconds", "--max-evaluations", "--research-moves", "--solver-moves")] == \
         ["3600", "3", "50", "60"]
+    assert arg(command, "--fitness") == "research" and run["variant"] == "AVO · research score"
 
 
 @pytest.mark.parametrize("change, status, message", [
@@ -166,7 +172,7 @@ def test_options_optimizer_and_provider_pin_reach_commands(tmp_path):
     ({"frameworks": [{"id": "baseline", "options": {"max_steps": 0}}]}, 400, "--max-steps"),
     ({"frameworks": [{"id": "avo", "options": {"world_model_mode": "never"}}]}, 400, "--world-model-mode"),
     ({"provider": "chutes"}, 400, "opencode and bare"),
-    ({"harnesses": ["bare"], "models": ["nanogpt/qwen/x"], "provider": "chutes"}, 400, "OpenRouter"),
+    ({"harnesses": ["bare"], "models": ["nanogpt/qwen/x"], "provider": "chutes"}, 400, "opencode harness only"),
     ({"harnesses": ["codex"], "models": ["claude-opus-5-5"]}, 400, "anthropic"),
     ({"harnesses": ["codex", "opencode"], "models": ["claude-opus-5-5"]}, 400, "No selected harness"),
     ({"games": [f"g{i}" for i in range(30)], "repeats": 5}, 400, "at most 120"),
@@ -225,7 +231,7 @@ def test_launch_writes_matrix_manifest_and_detaches_one_worker(tmp_path):
     # The catalog shows queued rows with normalized identity before artifacts exist.
     rows = {r["id"]: r for r in snapshot(tmp_path, {})["runs"]}
     assert rows[campaign["id"]]["framework"] == "avo" and rows[campaign["id"]]["harness"] == campaign["harness"]
-    assert rows[campaign["id"]]["variant"] == "AVO"
+    assert rows[campaign["id"]]["variant"] == "AVO · solver score"
 
 
 def test_post_runs_without_frameworks_still_serves_rule_agent_start(tmp_path):
@@ -293,7 +299,7 @@ def test_resume_baseline_continues_parent_into_new_directory_once(tmp_path):
     popen.assert_called_once()
     job = json.loads((tmp_path / response.json()["job_id"] / "job.json").read_text())
     command = job["runs"][0]["command"]
-    assert command[:5] == LAUNCH and arg(command, "--framework") == "baseline" and "--notes" in command
+    assert command[:5] == LAUNCH and arg(command, "--framework") == "baseline"
     assert arg(command, "--continue-from") == str(tmp_path / run)
     assert arg(command, "--output-dir") != str(tmp_path / run) and arg(command, "--max-steps") == "300"
     assert job["recovery_of"] == run
@@ -360,10 +366,10 @@ def test_catalog_normalizes_legacy_and_run_spec_runs(tmp_path):
                                                          "options": {"world_model_mode": "between-hypotheses"}})
     put(tmp_path, "output/new/run-0004/campaign/evolution_config.json", {"profile_settings": {"game_id": "g4"}})
     rows = {r["id"]: r for r in snapshot(tmp_path, {})["runs"]}
-    assert (rows["output/tools"]["variant"], rows["output/tools"]["harness"], rows["output/tools"]["effort"]) == ("Baseline+", "bare", "max")
+    assert (rows["output/tools"]["variant"], rows["output/tools"]["harness"], rows["output/tools"]["effort"]) == ("Baseline", "bare", "max")
     assert rows["output/raw"]["harness"] == "bare-raw (legacy)" and rows["output/raw"]["resumable"] is False
     assert (rows["output/codex"]["framework"], rows["output/codex"]["variant"], rows["output/codex"]["harness"]) == \
-        ("baseline", "Baseline", "codex")
+        ("baseline", "Baseline · no notes (old)", "codex")
     old = rows["output/old/campaign"]
     assert (old["framework"], old["harness"], old["spec_source"]) == ("avo", "opencode (legacy)", "legacy")
     new = rows["output/new/run-0001"]  # discovered from run_spec.json alone
@@ -375,7 +381,7 @@ def test_catalog_normalizes_legacy_and_run_spec_runs(tmp_path):
     assert "output/new/run-0002" not in rows
     v2 = rows["output/new/run-0003"]  # run-spec-v2 names the framework and its options
     assert (v2["framework"], v2["variant"], v2["options"], v2["max_wall_seconds"]) == \
-        ("baseline", "Baseline+", {"max_steps": 7, "notes": True}, 60)
+        ("baseline", "Baseline", {"max_steps": 7, "notes": True}, 60)
     assert (rows["output/new/run-0004/campaign"]["framework"], rows["output/new/run-0004/campaign"]["world_model_mode"]) == \
         ("avo", "between-hypotheses")
     assert "output/new/run-0004" not in rows
@@ -405,6 +411,99 @@ def test_record_exposes_agent_events_when_present_and_legacy_otherwise(tmp_path)
         full = api.get("/api/workbench/record", params={"run": "output/new"}).json()["agent_events"]["events"][0]
     assert "secret_extra" not in full and full["output"].endswith("[truncated]") and len(full["output"]) < 16100
 
+
+def test_notes_history_lists_turns_with_their_moves_and_diffs_one_turn(tmp_path):
+    run = put(tmp_path, "output/new/run_spec.json", spec(mode="baseline-plus", harness="codex", model="m", game_id="g"))
+    turns = [{"timestamp": "2026-11-01T10:00:00", "turn_kind": "game_action", "turn": 1},
+             {"timestamp": "2026-11-01T10:01:00", "turn_kind": "game_action", "turn": 2},  # a correction: no move
+             {"timestamp": "2026-11-01T10:02:00", "turn_kind": "game_action", "turn": 3},
+             {"timestamp": "2026-11-01T10:03:00", "turn_kind": "final_world_model", "turn": 4}]
+    (run / "turns.jsonl").write_text("\n".join(map(json.dumps, turns)) + "\n", encoding="utf-8")
+    moves = [{"timestamp": "2026-11-01T10:00:00", "decision": 1, "action_index": 1},
+             {"timestamp": "2026-11-01T10:02:01", "decision": 3, "action_index": 2}]
+    (run / "transitions.jsonl").write_text("\n".join(map(json.dumps, moves)) + "\n", encoding="utf-8")
+    for turn, text in ((1, "a\nb"), (2, "a\nb"), (3, "a\nc"), (4, "a\nc")):
+        put(tmp_path, f"output/new/notes_history/turn-{turn:04d}/state.md", text)
+    put(tmp_path, "output/new/notes_history/turn-0003/world_model.md", "rules")
+    put(tmp_path, "output/new/notes_history/turn-0003/.hidden", "x")
+    with client(tmp_path) as api:
+        listing = api.get("/api/workbench/record/notes_history", params={"run": "output/new"}).json()["turns"]
+        third = api.get("/api/workbench/record/notes_history/turn", params={"run": "output/new", "turn": 3}).json()
+        first = api.get("/api/workbench/record/notes_history/turn", params={"run": "output/new", "turn": 1}).json()
+        missing = api.get("/api/workbench/record/notes_history/turn", params={"run": "output/new", "turn": 9})
+        outside = api.get("/api/workbench/record/notes_history", params={"run": "output/../.."})
+    assert [(t["turn"], t["kind"], t["action_index"]) for t in listing] == [
+        (1, "game_action", 1), (2, "game_action", None), (3, "game_action", 2), (4, "final_world_model", None)]
+    assert listing[2]["files"] == ["state.md", "world_model.md"]
+    assert third["previous"] == 2 and third["files"] == {"state.md": "a\nc", "world_model.md": "rules"}
+    assert "-b" in third["diffs"]["state.md"] and "+c" in third["diffs"]["state.md"]
+    assert "+rules" in third["diffs"]["world_model.md"]
+    assert first["previous"] is None and first["diffs"]["state.md"].startswith("--- /dev/null")
+    assert missing.status_code == 404 and outside.status_code == 400
+
+
+def test_calls_list_and_one_call_say_what_the_previous_call_already_sent(tmp_path):
+    put(tmp_path, "output/new/run_spec.json", spec(mode="baseline-plus", harness="opencode", model="m", game_id="g"))
+    system, first = {"role": "system", "content": "S"}, {"role": "user", "content": "turn 1"}
+    calls = [[system, first], [system, first, {"role": "assistant", "content": "A"}], [system, {"role": "user", "content": "summary"}]]
+    for folder in ("calls", "improver/sessions/coach-1/calls"):
+        for number, messages in enumerate(calls, 1):
+            put(tmp_path, f"output/new/{folder}/{number:04d}.json",
+                {"call": number, "turn": 1, "method": "POST", "status": 200,
+                 "request": {"messages": messages, "temperature": 1}, "images": [],
+                 "response": {"content": "ACTION1", "tool_calls": [{"name": "bash"}], "usage": {"prompt_tokens": 9}},
+                 "response_raw": f"{number:04d}.response.txt"})
+    put(tmp_path, "output/new/calls/0001.response.txt", "data: {}")
+    put(tmp_path, "output/new/workspace/calls/0001.json", {})  # the agent's own files are not sessions
+    with client(tmp_path) as api:
+        folders = api.get("/api/workbench/record/calls/folders", params={"run": "output/new"}).json()["folders"]
+        rows = api.get("/api/workbench/record/calls", params={"run": "output/new"}).json()["calls"]
+        coach = api.get("/api/workbench/record/calls", params={"run": "output/new", "folder": "improver/sessions/coach-1/calls"})
+        second = api.get("/api/workbench/record/calls/one", params={"run": "output/new", "call": 2}).json()
+        third = api.get("/api/workbench/record/calls/one", params={"run": "output/new", "call": 3}).json()
+        raw = api.get("/api/workbench/record/calls/file", params={"run": "output/new", "name": "0001.response.txt"})
+        bad = api.get("/api/workbench/record/calls/file", params={"run": "output/new", "name": "../run_spec.json"})
+        outside = api.get("/api/workbench/record/calls", params={"run": "output/new", "folder": "../other/calls"})
+        record = api.get("/api/workbench/record", params={"run": "output/new"}).json()
+    assert [f["folder"] for f in folders] == ["calls", "improver/sessions/coach-1/calls"]
+    assert [(r["call"], r["messages"], r["tool_calls"]) for r in rows] == [(1, 1, ["bash"]), (2, 2, ["bash"]), (3, 1, ["bash"])]
+    assert coach.status_code == 200 and len(coach.json()["calls"]) == 3
+    assert second["view"]["system"] == ["S"] and (second["previous_messages"], second["unchanged_messages"]) == (1, 1)
+    assert (third["previous_messages"], third["unchanged_messages"]) == (2, 0)  # the context was rewritten
+    assert raw.text == "data: {}" and bad.status_code == 422 and outside.status_code == 400 and record["has_calls"] is True
+
+
+def test_prompt_build_is_the_conversation_once_with_ours_split_from_the_harness(tmp_path):
+    put(tmp_path, "output/new/run_spec.json", spec(mode="baseline-plus", harness="opencode", model="m", game_id="g"))
+    put(tmp_path, "output/new/session.json", {"harness": "opencode", "model": "m", "role": "player"})
+    put(tmp_path, "output/new/system_prompt.txt", "Play the game.\n")
+    put(tmp_path, "output/new/sent.jsonl", json.dumps({"turn": 1, "instruction": "Turn 1: choose a move."}) + "\n")
+    system = {"role": "system", "content": "You are opencode.\nInstructions from: SYSTEM_PROMPT.md\nPlay the game.\n"}
+    first = {"role": "user", "content": [{"type": "text", "text": "Turn 1: choose a move."},
+                                         {"type": "text", "text": "<system-reminder>harness note</system-reminder>"}]}
+    tools = [{"type": "function", "function": {"name": "bash", "description": "Run a command.\nMore.", "parameters": {}}}]
+    replies = [{"content": "", "reasoning": "look first", "tool_calls": [{"id": "c1", "name": "bash", "arguments": "{\"command\": \"ls\"}"}]},
+               {"content": "ACTION1"}]
+    requests = [[system, first], [system, first, {"role": "assistant", "content": "", "tool_calls": [
+        {"id": "c1", "type": "function", "function": {"name": "bash", "arguments": "{}"}}]},
+        {"role": "tool", "tool_call_id": "c1", "content": "frame.png"}]]
+    for number, (messages, reply) in enumerate(zip(requests, replies), 1):
+        put(tmp_path, f"output/new/calls/{number:04d}.json", {"call": number, "turn": 1, "method": "POST", "status": 200,
+            "request": {"messages": messages, "tools": tools, "temperature": 1}, "images": [], "response": reply})
+    with client(tmp_path) as api:
+        runs = api.get("/api/workbench/prompt-builds").json()["runs"]
+        build = api.get("/api/workbench/prompt-builds/one", params={"run": "output/new"}).json()
+    assert [(r["id"], [s["folder"] for s in r["sessions"]], r["sessions"][0]["role"]) for r in runs] == [
+        ("output/new", ["calls"], "player")]
+    assert [(p["source"], p["text"]) for p in build["system"]] == [
+        ("harness", "You are opencode.\nInstructions from: SYSTEM_PROMPT.md\n"), ("ours", "Play the game.\n")]
+    assert build["tools"][0]["name"] == "bash"
+    us, harness_note, model, result, answer = build["entries"]  # each message once; the reply's assistant copy skipped
+    assert [(p["source"], p["text"]) for p in us["pieces"] + harness_note["pieces"]] == [
+        ("ours", "Turn 1: choose a move."), ("harness", "<system-reminder>harness note</system-reminder>")]
+    assert (model["who"], model["thinking"], model["tool_calls"]) == ("model", "look first", ['bash({"command": "ls"})'])
+    assert (result["who"], result["of"], result["text"]) == ("result", 'bash({"command": "ls"})', "frame.png")
+    assert (answer["who"], answer["text"]) == ("model", "ACTION1")
 
 # ---------------------------------------------------------------- ported Vite routes
 
@@ -451,6 +550,7 @@ def test_avo_snapshot_runs_logs_and_artifacts(tmp_path):
         missing = api.get("/api/workbench/avo/run", params={"run": "nope"})
     assert [r["run_id"] for r in runs] == [run]
     assert snap["phase"] == "research" and snap["current"] == "x_0001" and snap["win_levels"] == 3
+    assert snap["score"] == "solver"  # recorded before the fitness option
     assert snap["research"]["actions"] == 1 and snap["frame_sessions"][0]["phase"] == "research"
     assert snap["candidates"][0]["research"]["fallback_frame"] == [[[1]]]
     titles = {e["title"] for e in logs["entries"]}
@@ -462,6 +562,16 @@ def test_avo_snapshot_runs_logs_and_artifacts(tmp_path):
     assert bad == [403, 403, 403, 403]
     assert invalid.status_code == 400 and "error" in invalid.json()
     assert missing.status_code == 400
+
+
+def test_avo_snapshot_of_a_research_score_campaign_has_no_fresh_evaluation_phase(tmp_path):
+    run = campaign_fixture(tmp_path)
+    config = json.loads((tmp_path / run / "evolution_config.json").read_text(encoding="utf-8"))
+    put(tmp_path, run + "/evolution_config.json", {**config, "fitness": "research"})
+    put(tmp_path, run + "/x_0001/solver/solver.py", "print('scratch')")  # a solver campaign would start its fresh run
+    with client(tmp_path) as api:
+        snap = api.get("/api/workbench/avo/run", params={"run": run}).json()
+    assert snap["score"] == "research" and snap["phase"] == "research"
 
 
 def test_avo_frame_replays_stored_grid_and_png_without_live_game(tmp_path):

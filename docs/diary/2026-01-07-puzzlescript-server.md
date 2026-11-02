@@ -6,6 +6,7 @@ runs: []
 commits: [44bee81, 164e0a8, 633de98, f38f622, 304c8c6, 46c3c3c, 585a0ec]
 docs: [README.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Wrapped the `puzzlescript` npm engine in a Node.js Express server with game init, action and observe endpoints.

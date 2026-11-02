@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qwen 3.8 27B on PuzzleScript · 22 October 2026</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb; --text: #0b0b0b; --text-2: #52514e; --rule: #dcdad5; --accent: #2a78d6; --soft: #f1f0ec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark; --surface: #1a1a19; --text: #f0efec; --text-2: #c3c2b7; --rule: #3a3936; --accent: #3987e5; --soft: #232322;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark; --surface: #1a1a19; --text: #f0efec; --text-2: #c3c2b7; --rule: #3a3936; --accent: #3987e5; --soft: #232322;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface); color: var(--text);
+         font: 14.5px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 24px 56px; }
+  h1 { font-size: 22px; line-height: 1.2; margin: 0 0 4px; font-weight: 600; }
+  .byline { color: var(--text-2); font-size: 12.5px; margin: 0; }
+  h2 { font-size: 16.5px; line-height: 1.3; margin: 26px 0 8px; padding-top: 12px; border-top: 1px solid var(--rule); font-weight: 600; }
+  h3 { font-size: 14.5px; margin: 14px 0 4px; font-weight: 600; }
+  p { margin: 5px 0; }
+  ul, ol { padding-left: 20px; margin: 4px 0; } li { margin: 2px 0; }
+  .summary { margin: 14px 0 0; padding: 10px 14px; background: var(--soft); border-left: 3px solid var(--accent); }
+  .summary p { margin: 0 0 4px; } .summary p:last-child { margin: 0; }
+  .qa { display: grid; grid-template-columns: 96px 1fr; gap: 4px 14px; margin: 4px 0; }
+  .qa dt { font-size: 11px; line-height: 1.9; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+  .qa dd { margin: 0; }
+  .qa dd.answer { border-left: 3px solid var(--accent); padding-left: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; line-height: 1.35; margin: 8px 0 4px; }
+  th, td { padding: 4px 7px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--text-2); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .mono { font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; }
+  td.ok { color: #1f7a3a; } td.bad { color: #b4392f; } td.mid { color: #9a6b00; }
+  @media (prefers-color-scheme: dark) { td.ok { color: #6fcf8a; } td.bad { color: #ef7f74; } td.mid { color: #e2b84a; } }
+  .note { color: var(--text-2); font-size: 12px; margin: 3px 0; }
+  details { margin: 6px 0; } summary { cursor: pointer; color: var(--text-2); font-size: 12.5px; }
+  pre.prompt { white-space: pre-wrap; font: 11.5px/1.4 ui-monospace, Consolas, monospace; background: var(--soft); padding: 8px 10px; margin: 4px 0 8px; border-radius: 4px; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .9em; }
+  footer { margin-top: 26px; padding-top: 10px; border-top: 1px solid var(--rule); color: var(--text-2); font-size: 11.5px; }
+  footer p { margin: 3px 0; }
+  @media (max-width: 640px) { .qa { grid-template-columns: 1fr; gap: 1px; } }
+  @media print { main { padding: 0; max-width: none; } table, .summary { break-inside: avoid; } h2 { break-after: avoid; } body { font-size: 11.5px; } table { font-size: 10.5px; } }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Qwen 3.8 27B on PuzzleScript</h1>
+<p class="byline">Adam Celermajer · 22 October 2026 · status after the 21 October experiment</p>
+
+<div class="summary">
+  <p><b>Question.</b> The 27B kept failing the games: harness, size, or pretraining? First: were the failures real?</p>
+  <p><b>Done.</b> Fixed the infrastructure behind the earlier failures, then ran the same self-hosted 27B in 3 frameworks on 3 games.</p>
+  <p><b>Result.</b> The premise changed. Driving the game itself with tools, the 27B solved Knightoban (6/6) and IceCrates (6/6) in its first attempt and reached 3/4 in Modality. It learns every visible mechanic and plays its own search plans at or near the shortest length; it never finds Modality's hidden floor-colour rule.</p>
+</div>
+
+<h2>1. Is OpenCode better than Codex for the 27B?</h2>
+<dl class="qa">
+  <dt>Premise</dt>
+  <dd>On Modality the 27B went further under OpenCode (3 levels) than under Codex (level 1, then nothing).</dd>
+  <dt>Answer</dt>
+  <dd class="answer">No: the Codex run was broken, not worse. It ran through NanoGPT to save cost, and NanoGPT silently drops the tool format a recent Codex uses for MCP tools, so many of its moves never reached the game.</dd>
+  <dt>Found by</dt>
+  <dd>Codex's tool calls came back as plain text in the recorded requests; the same requests worked on OpenRouter; direct calls to NanoGPT: plain format 48/48, Codex's format 0/24.</dd>
+</dl>
+
+<h2>2. Does quantization change cost, performance or capability?</h2>
+<dl class="qa">
+  <dt>Premise</dt>
+  <dd>OpenRouter and NanoGPT route each request to any host, at 16, 8 or 4 bits, unless one host is pinned: the same model name can be a different model per request.</dd>
+  <dt>Experiment</dt>
+  <dd>Modality, agent-driven, each group pinned to one host: 16-bit (DeepInfra), 8-bit (Chutes), 4-bit (ModelRun); 3 games each, stopped at 35 minutes. Performance = rules stated correctly (of 7), graded against the game's source.</dd>
+  <dt>Result</dt>
+  <dd class="answer">Precision matters. 16-bit learned most (17 of 21 rules) with the fewest wrong ones; 8-bit was cheapest but held the most wrong rules; 4-bit was worst: 4–11× the cost per game, and its reasoning collapsed into one repeated word in all 3 games. Host and precision can't be separated here, so the main experiment uses one self-hosted model.</dd>
+</dl>
+<table>
+  <thead><tr><th></th><th class="num">16-bit</th><th class="num">8-bit</th><th class="num">4-bit</th></tr></thead>
+  <tbody>
+    <tr><td>Rules found correctly (of 7), per game</td><td class="num">6 · 5 · 6</td><td class="num">2 · 5 · 4</td><td class="num">6 · 4 · 2</td></tr>
+    <tr><td>Wrong rules still held</td><td class="num">0 · 2 · 0</td><td class="num">3 · 1 · 1</td><td class="num">0 · 2 · 1</td></tr>
+    <tr><td>Actions before the stop</td><td class="num">171 · 100 · 113</td><td class="num">117 · 143 · 59</td><td class="num">235 · 234 · 209</td></tr>
+    <tr><td>Highest level (of 4)</td><td class="num">2 · 2 · 2</td><td class="num">1 · 2 · 1</td><td class="num">2 · 1 · 1</td></tr>
+    <tr><td>Cost per game</td><td class="num">$0.34</td><td class="num">$0.14</td><td class="num">$1.51</td></tr>
+    <tr><td>Reasoning collapsed ("story" "story" "story"…)</td><td class="num">0 of 3</td><td class="num">0 of 3</td><td class="num">3 of 3</td></tr>
+  </tbody>
+</table>
+
+<h2>3. What changed: from failing to solving</h2>
+<p><b>Main cause: context bloat.</b> Most earlier failures came from what the 27B had to read and think over, not from what it can do. Every fix that unlocked play cut that context.</p>
+
+<h3>Frameworks, simplified</h3>
+<p>Baseline and Baseline+ are merged: both get a notes folder and a workspace; the only difference left is who drives the game. <b>Turn-based:</b> the controller sends one frame per turn, the player answers one action. <b>Agent-driven:</b> the player gets a goal and one tool that plays an action, and decides itself when to act, think, read notes or run a script.</p>
+
+<table>
+  <thead><tr><th>Player</th><th>Before the fixes</th><th>After (21 Oct)</th></tr></thead>
+  <tbody>
+    <tr><td><b>Turn-based</b></td><td class="bad">At most level 1 (30 Sep – 1 Oct); v2 played 0 moves on Modality, v3 2 moves on Knightoban in 30 min (21 Oct)</td><td class="ok">Modality 3/4, IceCrates 3/6, Knightoban 0/6</td></tr>
+    <tr><td><b>Agent-driven</b></td><td class="bad">8 Oct: every run stopped at 30 actions; 15 Oct (Codex): level 1 then nothing; 20 Oct: stopped at Modality level 3 by the budget</td><td class="ok">Knightoban 6/6, IceCrates 6/6, Modality 3/4</td></tr>
+  </tbody>
+</table>
+
+<h3>The fixes</h3>
+<ul>
+  <li><b>One current board as a small grid.</b> The game tool returned every intermediate tick of a move: up to 7 boards, ~40k characters of JSON, the old board first. Now one plain grid; older boards on request.</li>
+  <li><b>Search out of the reasoning, into scripts.</b> The agent-driven player writes its search in Python over its own rules and plays only the plan, so its context holds rules and plan, not the search. The turn-based player had the same tools but never wrote a script: it searched in its head before every move (3–5k tokens; once 63k tokens and 15 minutes).</li>
+  <li><b>Actions and tool calls conflicted.</b> An action and a tool call in the same reply made the game miss actions and bloated the context. Now the action is its own tool call, <code>act.py</code>, which ends the turn.</li>
+  <li><b>No picture kept per turn.</b> The turn-based player got the full image each turn and every past image stayed in the session (on 8 Oct it hit DeepInfra's 30-image limit). Now each turn gives only the path to <code>frame.png</code>; the player opens it with its read tool when needed.</li>
+  <li><b>Automatic compaction at ~200k tokens.</b> OpenCode knows the 262k limit and reserves 64k for the answer, so it compacts at ~198k. Edge case left: thinking isn't counted, so one very long thinking step can still overflow (1 run killed, 6 recovered with lost context).</li>
+  <li><b>Working tools and one known model.</b> OpenCode instead of Codex (plain tool format), and one self-hosted model instead of a host chosen per request.</li>
+</ul>
+<p>Where context still grows, the 27B still degrades: it stops maintaining its notes and revising its rules after ~100 moves, and the Modality coaches hit the context limit with no edits.</p>
+
+<h2>4. Self-hosted setup</h2>
+<p>4 × RTX 5090 on vast.ai, vLLM, Qwen's official <code>Qwen3.8-27B-FP8</code>, 262k context, max thinking. ~84 tokens/s per call, 520–560 in total with 7–8 calls; 92% of input from the prefix cache. About $25 for the day.</p>
+
+<h2>5. The experiment: three frameworks, three games, one model</h2>
+<p>Modality (4 levels), IceCrates (6), Knightoban (6); anonymous tiles, no game names.</p>
+<ul>
+  <li><b>Agent-driven</b> (Harness² <i>base1</i>, empty harness): plays itself through <code>python game.py look / do / reset</code>, writes its own notes and scripts.</li>
+  <li><b>Harness² coached</b> (<i>inv1</i>, <i>dom1</i>): a fresh player starting with the harness a coach wrote from base1's run (section 7).</li>
+  <li><b>Turn-based</b> (v4): one frame per turn, one action per turn with <code>act.py</code>.</li>
+  <li><b>AVO</b> (v2): an optimizer writes a strategy; a research session plays up to 500 moves and must deliver a <code>solver.py</code>, scored alone on a fresh game.</li>
+</ul>
+
+<table>
+  <thead><tr><th>Game · shortest per level</th><th>Framework</th><th class="num">Levels</th><th class="num">Moves</th><th>Moves per level</th><th class="num">Time</th><th class="num">OpenRouter est.</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3"><b>Modality</b><br><span class="mono">6/33/66/158</span></td><td>Agent-driven</td><td class="num">3 / 4</td><td class="num">1000</td><td class="mono">78 / 96 / 230 / 596 unsolved</td><td class="num">2 h 27</td><td class="num">$1.66</td></tr>
+    <tr><td>Turn-based</td><td class="num">3 / 4</td><td class="num">226 ×</td><td class="mono">25 / 35 / 95 / 71 unsolved</td><td class="num">1 h 32</td><td class="num">$0.98</td></tr>
+    <tr><td>AVO</td><td class="num">2 / 4 ×</td><td class="num">93</td><td class="mono">no attempt scored</td><td class="num">2 h 05</td><td class="num">$0.87</td></tr>
+    <tr><td rowspan="5"><b>IceCrates</b><br><span class="mono">4/5/12/29/8/32</span></td><td>Agent-driven</td><td class="num"><b>6 / 6</b></td><td class="num">320</td><td class="mono">10 / 5 / 16 / 113 / 144 / 32</td><td class="num">2 h 05</td><td class="num">$1.31</td></tr>
+    <tr><td>Harness² inv1</td><td class="num"><b>6 / 6</b></td><td class="num"><b>90</b></td><td class="mono">4 / 5 / 12 / 29 / 8 / 32 · optimal</td><td class="num">8 min</td><td class="num">$0.09</td></tr>
+    <tr><td>Harness² dom1</td><td class="num">3 / 6 ×</td><td class="num">27</td><td class="mono">4 / 7 / 16</td><td class="num">12 min</td><td class="num">$0.06</td></tr>
+    <tr><td>Turn-based</td><td class="num">3 / 6</td><td class="num">271 ×</td><td class="mono">7 / 5 / 25 / 234 unsolved</td><td class="num">1 h 40</td><td class="num">$1.16</td></tr>
+    <tr><td>AVO</td><td class="num">5 / 6 ×</td><td class="num">101</td><td class="mono">no attempt scored</td><td class="num">2 h 05</td><td class="num">$0.96</td></tr>
+    <tr><td rowspan="5"><b>Knightoban</b><br><span class="mono">20/10/33/41/32/28</span></td><td>Agent-driven</td><td class="num"><b>6 / 6</b></td><td class="num">326</td><td class="mono">109 / 55 / 62 / 41 / 31 / 28</td><td class="num">1 h 03</td><td class="num">$0.76</td></tr>
+    <tr><td>Harness² dom1</td><td class="num"><b>6 / 6</b></td><td class="num"><b>163</b></td><td class="mono">20 / 10 / 33 / 41 / 31 / 28 · optimal</td><td class="num">2 min</td><td class="num">$0.05</td></tr>
+    <tr><td>Harness² inv1</td><td class="num"><b>6 / 6</b></td><td class="num">177</td><td class="mono">34 / 10 / 33 / 41 / 31 / 28</td><td class="num">7 min</td><td class="num">$0.09</td></tr>
+    <tr><td>Turn-based</td><td class="num">0 / 6</td><td class="num">451 ×</td><td class="mono">level 1 never completed</td><td class="num">1 h 47</td><td class="num">$1.49</td></tr>
+    <tr><td>AVO</td><td class="num">4 / 6 ×</td><td class="num">415</td><td class="mono">solver self-check: 500 × ACTION5</td><td class="num">2 h 05</td><td class="num">$1.03</td></tr>
+  </tbody>
+</table>
+<p class="note">× = stopped by hand at 18:14. One run per cell. OpenRouter est. = each run's recorded tokens at OpenRouter's 21 Oct price for <code>qwen/qwen3.8-27b</code>; coaching adds $0.48 / $0.32 / $0.83; the whole experiment ≈ $12 on OpenRouter vs $25 of GPU time.</p>
+
+<h3>What the numbers say</h3>
+<p><b>Agent-driven solves by inference plus its own search.</b> Where its rules were right it played at or near the shortest (Knightoban levels 4–6: 41 / 31 / 28 vs 41 / 32 / 28); the extra moves are early learning and wrong beliefs (IceCrates water: 113 and 144 vs 29 and 8).</p>
+<p><b>Turn-based is slower and can't run a plan.</b> It thinks before every action. Still, on Modality levels 1–3 it used fewer moves (155 vs 404, one run each); on Knightoban it never finished level 1.</p>
+<p><b>AVO never built a working solver, so it scored nothing.</b> Its research sessions played well (IceCrates 5 levels in 101 moves), but an attempt counts only when its <code>solver.py</code> wins alone; Knightoban's sent ACTION5 500 times. Writing a general solver from scratch seems beyond the 27B; researching and playing are not.</p>
+
+<h3>How the agent-driven player plays</h3>
+<p>Unprompted, the same loop in every game (19 scripts in Knightoban, 12 in IceCrates, 7 in Modality):</p>
+<ol>
+  <li><b>Probe</b> single moves on the first level.</li>
+  <li><b>Write the rules as a simulator</b>, e.g. Knightoban's <code>bfs.py</code>: "Ring tile R is a portal. Moving in direction D into R requires center C = R + 2*D to be in-field."</li>
+  <li><b>Search offline</b> with BFS over that model; the scripts never call the game.</li>
+  <li><b>Execute and check</b>: play the plan, compare each real board with the predicted one, stop at the first mismatch (Knightoban level 4: "ALL 41 ACTIONS MATCHED").</li>
+  <li><b>On a mismatch, fix the model and search again</b> (IceCrates level 4: three versions, the last one searching under competing hypotheses).</li>
+</ol>
+<p>70–83% of real moves were played in scripted bursts of 5+ (Knightoban 243/326, IceCrates 225/320, Modality 830/1000). In Modality the model is wrong (edge walls instead of the floor rule), so the loop becomes search on the real game: plan, bump, add a wall, re-plan; 596 moves on level 4 vs 158.</p>
+
+<h2>6. What the model learned, rule by rule</h2>
+<p class="note">Reasoning and notes graded against each game's verified rules ("believed" kept apart from "considered"); reports in <code>output/thursday/vast/watch/</code>.</p>
+
+<h3>Agent-driven (Harness² base1)</h3>
+<table>
+  <thead><tr><th>Game</th><th>Held correctly</th><th>Wrong at the end</th><th>Never found</th><th>Cost</th></tr></thead>
+  <tbody>
+    <tr><td><b>Modality</b> (7)</td><td class="ok">4: moves, undo, pushing, win</td><td class="bad">2: white–dark rule as per-edge "hidden walls"; refused pushes as walls</td><td class="bad">grey connects white and dark</td><td>L4: 596 moves, 108 bumps, 5 resets; no path through 49 believed walls</td></tr>
+    <tr><td><b>IceCrates</b> (9)</td><td class="ok">6: controls, sliding, pushing, crate lines, sinking, stop-on-goal</td><td class="bad">2: water crossable vertically; water animation as a gate</td><td class="mid">undo after a push (untested)</td><td>30 bumps into water (L4); 61 moves in an unwinnable state (L5)</td></tr>
+    <tr><td><b>Knightoban</b> (7)</td><td class="ok">all mechanics, last by move 109</td><td class="bad">1: "undo cannot revert a jump" (misread move 119)</td><td class="ok">none</td><td>L1: 109 moves to learn the jump; L2–6 from its solver</td></tr>
+  </tbody>
+</table>
+
+<h3>Turn-based (v4)</h3>
+<table>
+  <thead><tr><th>Game</th><th>Held correctly</th><th>Wrong at the end</th><th>Cost</th></tr></thead>
+  <tbody>
+    <tr><td><b>Modality</b> (7)</td><td class="ok">3: moves, pushing, win; grey only as "the door"; "keep the pusher on the box's colour" (move 113), the closest any run came to rule 6</td><td class="bad">3: undo read as a door launcher; white–dark boundaries as walls (19/19 blocked); mismatched pushes as walls</td><td>L4: 71 moves, 14 edges probed, all blocked</td></tr>
+    <tr><td><b>IceCrates</b> (9)</td><td class="ok">4: controls, sliding, stop-on-goal, single-crate push</td><td class="bad">3: undo as "reverse slide"; crates in contact can't move (never tested, written as observed); water as gate states</td><td>L4: one LEFT from a 22-move win at move 57; then 199 of 225 moves waiting for the water</td></tr>
+    <tr><td><b>Knightoban</b> (7)</td><td class="ok">3: moves, undo, walls</td><td class="bad">4: one landing per jump (second square never used); ACTION5 a "tick"; off-board blocked; win unknown</td><td>0 levels in 451 moves; target unreachable under its own rules</td></tr>
+  </tbody>
+</table>
+
+<h3>Across all runs</h3>
+<ul>
+  <li>Visible mechanics are learned within tens of moves; a rule with no visible trace (Modality's floor colours) is never found: every refusal becomes a local wall.</li>
+  <li>A wrong belief survives as long as no plan depends on it (Knightoban's undo, from one misread move, later copied by the coach as verified).</li>
+  <li>What corrects a belief is a plan that fails: the agent-driven player's scripted plans forced retests; the turn-based player never failed sharply and stopped revising after ~100 moves.</li>
+  <li>Notes aren't kept even when asked: <code>world_model.md</code> barely changed in the agent-driven runs, and froze after ~100 moves in the turn-based ones.</li>
+</ul>
+
+<h2>7. Coaching: Harness² on the same game</h2>
+<p>After the first attempt, two coaches (the same 27B) edit the player's harness: INV ("how the agent works") and DOM ("what an expert knows"); a fresh player then plays from level 1. Same-model coaching is what the Harness² paper tests in <a href="https://arxiv.org/html/2610.14224#S4">§4</a> (Xu et al., 2026), where all five models improved.</p>
+<table>
+  <thead><tr><th>Game</th><th>Attempt</th><th class="num">Levels</th><th class="num">Moves</th><th>Moves per level</th><th class="num">Time</th></tr></thead>
+  <tbody>
+    <tr><td rowspan="3"><b>Knightoban</b><br><span class="mono">shortest 164</span></td><td>base1</td><td class="num">6 / 6</td><td class="num">326</td><td class="mono">109 / 55 / 62 / 41 / 31 / 28</td><td class="num">1 h 03</td></tr>
+    <tr><td>dom1</td><td class="num">6 / 6</td><td class="num"><b>163</b></td><td class="mono">20 / 10 / 33 / 41 / 31 / 28 · optimal</td><td class="num">2 min</td></tr>
+    <tr><td>inv1</td><td class="num">6 / 6</td><td class="num">177</td><td class="mono">34 / 10 / 33 / 41 / 31 / 28</td><td class="num">7 min</td></tr>
+    <tr><td rowspan="3"><b>IceCrates</b><br><span class="mono">shortest 90</span></td><td>base1</td><td class="num">6 / 6</td><td class="num">320</td><td class="mono">10 / 5 / 16 / 113 / 144 / 32</td><td class="num">2 h 05</td></tr>
+    <tr><td>inv1</td><td class="num">6 / 6</td><td class="num"><b>90</b></td><td class="mono">4 / 5 / 12 / 29 / 8 / 32 · optimal</td><td class="num">8 min</td></tr>
+    <tr><td>dom1</td><td class="num">3 / 6 ×</td><td class="num">27</td><td class="mono">4 / 7 / 16</td><td class="num">12 min</td></tr>
+    <tr><td><b>Modality</b></td><td>coaching</td><td class="num">—</td><td class="num">—</td><td colspan="2">Cut at 18:14: INV hit the reply cap then the context limit; DOM wrote one skill, <code>hidden-wall-sokoban</code>. No coached harness played.</td></tr>
+  </tbody>
+</table>
+
+<details>
+  <summary>The two coach prompts (dimension sections, verbatim)</summary>
+  <p class="note">Each mission is ~14k characters, mostly shared; one shared line matters: "VERIFIED FACTS ABOUT THIS WORKSPACE ARE THE MOST VALUABLE THING YOU CAN ENCODE … WRITE THE FACT ITSELF".</p>
+  <p><b>INV: how the agent works</b></p>
+<pre class="prompt">You own procedure, tool use and completion -- not subject matter. Trace the workflow, fix its
+earliest observed divergence, and match each failure to the cheapest effective component:
+- TOOL ERROR: distinguish bad input from timeout, missing capability, permission, or unread output.
+  Give one bounded fallback and stop condition; never prescribe blind repetition.
+- MECHANICAL REPETITION: use `scripts/&lt;name&gt;.py` for repeated deterministic extraction,
+  conversion or checking, with clear inputs, outputs and failure behavior.
+- TRIGGERED WORKFLOW: use an on-demand skill for a narrow multi-step procedure, name its trigger
+  in always-on text, and carry any helper it requires.
+- IGNORED INVARIANT: only repeated evidence that clear prose is skipped can justify a defensive
+  `plugin/&lt;name&gt;.ts` hook […] It must not block valid completion.
+- ORDINARY SEQUENCING: prefer concise always-on guidance. Do not add code for a one-off mistake
+  or automate professional judgment.
+Define "enough evidence," reserve room for every artifact, and reopen or mechanically check the
+environment model; a successful write call does not establish usability.
+Improve observation, hypothesis tracking, notes, helper scripts that call `python game.py`,
+planning, and recovery from dead ends.
+Do not add professional rules, required domain sections or matter facts. A parallel candidate
+owns them; stay focused on how the agent works.</pre>
+  <p><b>DOM: what a practitioner knows</b></p>
+<pre class="prompt">You own the practitioner model the agent lacks: the environment model, audience and decision,
+controlling sources, required structure, consistency relationships, and expert omissions.
+Turn it into checkable rules:
+- ANALYTIC MOVE: name the operation -- compare, reconcile, calculate, classify, trace, draft or
+  explain -- its inputs and required result.
+- ARTIFACT CONTRACT: name required parts, their dependencies, and domain checks for consistency
+  and practical use.
+- DECISION RULE: state the trigger, supporting evidence, conflicts to resolve, and uncertainty
+  that must remain explicit.
+- ENCODING: […] A skill is the default home for domain knowledge that has a recognisable
+  trigger […] Never store this matter's facts as durable memory: they are wrong anchors for
+  the next task.
+Use the observed transitions to learn this game's objects, controls, and goals.
+Two hard rules:
+- Never invent an authority, identifier, standard or citation. […]
+- State knowledge the agent can APPLY and CHECK, not background reading.
+Matter facts are in the supplied material. Say where to retrieve and reconcile them; never put
+presumed facts into the harness.
+Do not diagnose commands, retries, reading order, output paths, budgeting, scripts or hooks. A
+parallel candidate owns procedure; stay on practitioner knowledge.</pre>
+</details>
+
+<h3>What the coaches built</h3>
+<p>On both solved games, both coaches turned base1's finished run into a ready-made solver: base1's rules marked as verified, a planning method, and a script that computes the plan from the current grid (<code>solver.py</code>, <code>slide_sim.py</code>, <code>puzzle.py</code>). No fixed move list: the path is recomputed from the board. INV added game knowledge too, although its prompt forbids it. Both also copied base1's wrong rules as verified (Knightoban's undo; Modality's edge walls).</p>
+<dl class="qa">
+  <dt>Reading</dt>
+  <dd class="answer">Same-game coaching hands over the answer already found: optimal play in minutes. It doesn't make the player learn better, and when the found model is wrong it writes the error down as verified.</dd>
+</dl>
+
+<h2>8. The premise, before and after</h2>
+<dl class="qa">
+  <dt>Before</dt>
+  <dd>"Qwen 3.8 27B fails at learning these games: harness, size or pretraining?"</dd>
+  <dt>After</dt>
+  <dd class="answer">With working tools, enough budget and the freedom to write its own search, it learns every visible mechanic and solves 2 of 3 games first try. It fails on a rule with no visible trace and keeps beliefs its play never contradicts. New question: <b>under which conditions does it learn a game, and how can a hidden rule be revised?</b></dd>
+</dl>
+<p class="note">Memorisation: all three games are public (Knightoban's levels 2–6 are Microban layouts), but prompts carry no title, tiles are anonymous, and the reasoning never names a game, author or "knight" ("Sokoban" only as an analogy). No sign of recall; exposure can't be excluded (H3).</p>
+
+<h2>9. Hypotheses for the next stage</h2>
+<table>
+  <thead><tr><th></th><th>Hypothesis</th><th>Test</th><th>If true</th><th>Cost</th></tr></thead>
+  <tbody>
+    <tr><td><b>H1</b></td><td>The solving is search, not understanding</td><td>Agent-driven with Python blocked, 300 moves per game</td><td>Progress collapses</td><td>3 runs</td></tr>
+    <tr><td><b>H2</b></td><td>The hidden rule is the bottleneck</td><td>Modality with one true floor-colour note at the start</td><td>Level 4 falls near its 158-move shortest</td><td>1–3 runs</td></tr>
+    <tr><td><b>H3</b></td><td>Results reflect memorised layouts</td><td>Mirrored / new Knightoban layouts; ask the model directly about the games</td><td>Moves per level rise, or it recalls the games</td><td>3 runs + recall check</td></tr>
+    <tr><td><b>H4</b></td><td>Model size sets which rules are found</td><td>Qwen 3.8 Flash and Max, same setup, Modality</td><td>A bigger model finds the floor rule</td><td>3–6 runs</td></tr>
+    <tr><td><b>H5</b></td><td>Self-coaching helps only across tasks</td><td>Harness² per level, escalating budget per level, library between levels</td><td>Later levels need fewer rounds and moves</td><td>~3 days of work</td></tr>
+    <tr><td><b>H6</b></td><td>Precision is not the variable</td><td>16-bit vs 8-bit, agent-driven, one game</td><td>Same levels and rules found</td><td>2 runs</td></tr>
+  </tbody>
+</table>
+
+<h2>10. Open issues</h2>
+<ul>
+  <li><b>AVO never scored</b>: every attempt must deliver a working solver. The levels-scored variant is built, not launched.</li>
+  <li><b>Compaction edge case</b>: a very long thinking step can still overflow the context.</li>
+  <li><b>Modality coaching</b> produced no harness, and what it started encoded the wrong model.</li>
+  <li><b>Turn-based Knightoban 0/6</b>: an untested "off-board means blocked" belief made the target unreachable in its own model.</li>
+  <li><b>Single runs</b>, three public games: the directions are clear, the sizes not yet.</li>
+</ul>
+
+<h2>11. Next week</h2>
+<ol>
+  <li>Per-level infrastructure: start at level <i>k</i>, end at that level's win, budget and score per level.</li>
+  <li>Harness² per level with the escalating budget and the library (H5).</li>
+  <li>H2 then H1 on Modality.</li>
+  <li>H3: transformed Knightoban layouts and the recall check.</li>
+  <li>Repeat the agent-driven runs (3 per game).</li>
+  <li>Launch the levels-scored AVO; keep the turn-based Baseline as reference.</li>
+</ol>
+
+<footer>
+  <p><b>Runs.</b> Harness² <code>output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2</code>; turn-based v4 <code>…/20261021T162323-vast-fp8-baseline-v4-6767db38</code>; AVO v2 <code>…/20261021T160936-vast-fp8-avo-v2-b994ed09</code>; quantization <code>…/20261021T130008-thu-quant-*</code>.</p>
+  <p><b>Reproduce.</b> Q1: <code>studies/thursday/codex_leaks.py</code>, <code>probe_tool_calls.py</code>. Q2: <code>studies/thursday/metrics.py</code>, <code>rules_timeline.py</code>, <code>output/thursday/quant/*/grading.json</code>. Rules and shortest solutions: <code>studies/thursday/rules/</code>, <code>modality.py</code>. Moves per level: <code>premise_moves.py</code>. Gradings: <code>output/thursday/vast/watch/</code>. Premise review: <code>docs/research/premise-review-20261021.md</code>.</p>
+</footer>
+
+</main>
+</body>
+</html>

@@ -6,6 +6,7 @@ runs: []
 commits: []
 docs: [docs/research/qwen27b-modality-failure-analysis.md, docs/research/qwen-harness-direction.md, docs/proposal/README.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Compared 27B traces with GPT-5.5 on Modality from existing logs (no new model calls).

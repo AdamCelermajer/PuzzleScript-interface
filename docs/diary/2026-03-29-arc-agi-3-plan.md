@@ -6,6 +6,7 @@ runs: []
 commits: [b5a0a29, 522d264]
 docs: [docs/research/context.acdl, docs/research/main_loop.acdl]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Rewrote the agent as an LLM rule-learning framework (`learning_mode.py`, `prompts.py`, `env_adapter.py`).

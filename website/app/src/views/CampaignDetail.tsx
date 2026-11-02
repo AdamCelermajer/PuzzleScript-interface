@@ -33,23 +33,36 @@ export function CampaignDetail({ runId, live }: { runId: string; live?: boolean 
   if (snapshot.isLoading) return <Loading label="Reading campaign…" />
   if (snapshot.error) return <ErrorBox error={snapshot.error} retry={() => snapshot.refetch()} />
   if (!data) return null
-  const best = data.candidates.filter((c) => c.fitness !== null).sort((a, b) => (b.fitness ?? 0) - (a.fitness ?? 0))[0]
+  // Research score: no solver, so no fresh evaluation; fewer actions breaks a fitness tie.
+  const research = data.score === 'research'
+  const best = data.candidates.filter((c) => c.fitness !== null)
+    .sort((a, b) => (b.fitness ?? 0) - (a.fitness ?? 0) || (a.actions_to_best ?? 0) - (b.actions_to_best ?? 0))[0]
   return (
     <div className="flex flex-col gap-4">
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+      <div className={cx('grid grid-cols-2 gap-3', research ? 'md:grid-cols-4' : 'md:grid-cols-5')}>
         <Stat label="Phase" value={data.phase.replaceAll('_', ' ')} sub={data.finalized ? 'campaign finalized' : data.active ? 'process running' : 'not running'} />
         <Stat label="Hypotheses evaluated" value={`${data.hypotheses_evaluated} / ${data.max_hypotheses ?? '—'}`} sub={`${data.hypotheses_registered} registered`} />
-        <Stat label="Best fresh fitness" value={best ? `${best.fitness} / ${best.win_levels ?? data.win_levels ?? '—'}` : '—'} sub={best ? `${best.candidate_id}${best.success ? ' · solved' : ''}` : 'no evaluation yet'} />
+        <Stat label={research ? 'Best research fitness' : 'Best fresh fitness'} value={best ? `${best.fitness} / ${best.win_levels ?? data.win_levels ?? '—'}` : '—'} sub={best ? `${best.candidate_id}${best.success ? ' · solved' : ''}${research && best.actions_to_best ? ` · at action ${best.actions_to_best}` : ''}` : 'no evaluation yet'} />
         <Stat label="Research actions (current)" value={`${data.research.actions} / ${data.research.budget ?? '—'}`} sub={`level ${data.research.levels}`} />
-        <Stat label="Fresh evaluation (current)" value={`${data.fresh_evaluation.actions} / ${data.fresh_evaluation.budget ?? '—'}`} sub={`level ${data.fresh_evaluation.levels}`} />
+        {!research && <Stat label="Fresh evaluation (current)" value={`${data.fresh_evaluation.actions} / ${data.fresh_evaluation.budget ?? '—'}`} sub={`level ${data.fresh_evaluation.levels}`} />}
       </div>
+      {(data.research_schedule?.length || data.final_solver) ? (
+        <div className="flex flex-wrap gap-x-6 gap-y-1 text-[12px] text-muted">
+          {data.research_schedule?.length ? <span>Research moves per attempt: {data.research_schedule.join(' → ')}</span> : null}
+          {data.final_solver ? (
+            <span>Final solver (information, not the score): {data.final_solver.status === 'completed'
+              ? `${data.final_solver.levels_completed ?? 0} / ${data.final_solver.win_levels ?? '—'} levels in ${data.final_solver.environment_steps ?? '—'} moves${data.final_solver.solver_present === false ? ' · no solver.py written' : ''} · from ${data.final_solver.source_candidate ?? '—'}`
+              : `failed: ${data.final_solver.error ?? 'unknown error'}`}</span>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
         <Card title="Lineage" bodyClass="p-0" actions={<span className="text-[11.5px] text-muted">last activity {dateTime(data.last_activity)}</span>}>
           {data.candidates.length ? (
             <div className="max-h-[420px] overflow-auto">
               <table className="data-table">
-                <thead><tr><th>Hypothesis</th><th>Parents</th><th>Fresh fitness</th><th>Research</th><th>Evaluation</th></tr></thead>
+                <thead><tr><th>Hypothesis</th><th>Parents</th><th>{research ? 'Research fitness' : 'Fresh fitness'}</th><th>Research</th>{!research && <th>Evaluation</th>}</tr></thead>
                 <tbody>
                   {data.candidates.map((c) => (
                     <tr key={c.candidate_id} className={cx(c.candidate_id === selected && 'selected')} style={{ cursor: 'pointer' }} onClick={() => setCandidate(c.candidate_id)}>
@@ -60,8 +73,8 @@ export function CampaignDetail({ runId, live }: { runId: string; live?: boolean 
                           <span className="inline-flex items-center gap-1.5"><LevelPips levels={c.fitness} total={c.win_levels} solved={Boolean(c.success)} size="sm" /></span>
                         ) : <span className="text-[12px] text-faint">not evaluated</span>}
                       </td>
-                      <td className="text-[12px] tabular-nums text-muted">{c.research.actions} actions · level {c.research.levels}</td>
-                      <td className="text-[12px] tabular-nums text-muted">{c.evaluation.actions} actions · level {c.evaluation.levels}</td>
+                      <td className="text-[12px] tabular-nums text-muted">{c.research.actions}{c.research_budget ? ` / ${c.research_budget}` : ''} actions · level {c.research.levels}</td>
+                      {!research && <td className="text-[12px] tabular-nums text-muted">{c.evaluation.actions} actions · level {c.evaluation.levels}</td>}
                     </tr>
                   ))}
                 </tbody>
@@ -72,10 +85,10 @@ export function CampaignDetail({ runId, live }: { runId: string; live?: boolean 
         {selected ? <FrameReplay runId={runId} snapshot={data} candidate={selected} live={live} /> : <Card title="Replay"><Empty title="Nothing to replay yet" /></Card>}
       </div>
 
-      <Tabs<Tab> value={tab} onChange={setTab} tabs={[{ id: 'trace', label: 'Agent timeline' }, { id: 'pinned', label: `Pinned${pins.data?.length ? ` (${pins.data.length})` : ''}` }, { id: 'solver', label: 'Solver & world model' }, { id: 'artifacts', label: 'Artifacts' }]} />
+      <Tabs<Tab> value={tab} onChange={setTab} tabs={[{ id: 'trace', label: 'Agent timeline' }, { id: 'pinned', label: `Pinned${pins.data?.length ? ` (${pins.data.length})` : ''}` }, { id: 'solver', label: research ? 'Workspace & world model' : 'Solver & world model' }, { id: 'artifacts', label: 'Artifacts' }]} />
       {tab === 'trace' && <Trace runId={runId} candidates={data.candidates.map((c) => c.candidate_id)} defaultScope="outer" live={live} />}
       {tab === 'pinned' && (pins.error ? <ErrorBox error={pins.error} /> : <PinList pins={pins.data ?? []} />)}
-      {tab === 'solver' && <SolverPanel runId={runId} />}
+      {tab === 'solver' && <SolverPanel runId={runId} research={research} />}
       {tab === 'artifacts' && <Artifacts runId={runId} />}
     </div>
   )
@@ -93,7 +106,7 @@ function Stat({ label, value, sub }: { label: string; value: string; sub?: strin
 
 function FrameReplay({ runId, snapshot, candidate, live }: { runId: string; snapshot: AvoSnapshot; candidate: string; live?: boolean }) {
   const entry = snapshot.candidates.find((c) => c.candidate_id === candidate)
-  const [phase, setPhase] = useState<Phase>('evaluation')
+  const [phase, setPhase] = useState<Phase>(snapshot.score === 'research' ? 'research' : 'evaluation')
   const [step, setStep] = useState<number | null>(null)
   useEffect(() => { setStep(null); setPhase(entry && entry.evaluation.actions ? 'evaluation' : 'research') }, [candidate]) // eslint-disable-line react-hooks/exhaustive-deps
   const total = entry ? entry[phase].actions : 0
@@ -114,7 +127,7 @@ function FrameReplay({ runId, snapshot, candidate, live }: { runId: string; snap
       actions={
         <div className="flex items-center gap-1.5">
           <Select value={phase} onChange={(e) => { setPhase(e.target.value as Phase); setStep(null) }} className="h-6 text-[12px]">
-            <option value="evaluation" disabled={!entry?.evaluation.actions}>Fresh evaluation ({entry?.evaluation.actions ?? 0})</option>
+            {snapshot.score !== 'research' && <option value="evaluation" disabled={!entry?.evaluation.actions}>Fresh evaluation ({entry?.evaluation.actions ?? 0})</option>}
             <option value="research" disabled={!entry?.research.actions}>Research ({entry?.research.actions ?? 0})</option>
           </Select>
         </div>
@@ -217,7 +230,8 @@ function Trace({ runId, candidates, defaultScope, live }: { runId: string; candi
   )
 }
 
-function SolverPanel({ runId }: { runId: string }) {
+/** The evaluated candidate's final workspace: its solver, or under the research score its notes and world model. */
+function SolverPanel({ runId, research }: { runId: string; research: boolean }) {
   const [candidate, setCandidate] = useState('')
   const record = useQuery({
     queryKey: ['submission', runId, candidate],
@@ -226,7 +240,8 @@ function SolverPanel({ runId }: { runId: string }) {
   const [file, setFile] = useState<string | null>(null)
   const data = record.data
   const solver = data?.files.find((f) => f.name === 'solver.py')
-  const shown = file ?? solver?.path ?? null
+  const main = research ? data?.files.find((f) => f.name === 'world_model.md') : solver
+  const shown = file ?? main?.path ?? null
   useEffect(() => setFile(null), [candidate])
   const content = useQuery({
     queryKey: ['submission-file', runId, shown],
@@ -245,12 +260,13 @@ function SolverPanel({ runId }: { runId: string }) {
   return (
     <div className="flex flex-col gap-3">
       <Card
-        title={data.selection === 'candidate' ? `Evaluated solver · ${data.best?.candidate_id}` : 'Best evaluated solver'}
+        title={research ? `${data.selection === 'candidate' ? 'Final workspace' : 'Best candidate'} · ${data.best?.candidate_id ?? '—'}`
+          : data.selection === 'candidate' ? `Evaluated solver · ${data.best?.candidate_id}` : 'Best evaluated solver'}
         actions={solver && <a href={`/api/workbench/submission/download${q({ run: runId, candidate: data.best?.candidate_id ?? '' })}`}><Button size="sm">Download submission .zip</Button></a>}
       >
         <div className="mb-2 text-[12px] text-muted">
           {data.best
-            ? `${data.best.candidate_id} · fresh fitness ${data.best.fitness} · ${data.best.success ? 'solved' : 'not solved'} · ${data.best.environment_steps ?? '—'} evaluation actions · ${data.best.finish_reason ?? ''}`
+            ? `${data.best.candidate_id} · ${research ? 'research' : 'fresh'} fitness ${data.best.fitness} · ${data.best.success ? 'solved' : 'not solved'} · ${data.best.environment_steps ?? '—'} ${research ? 'research' : 'evaluation'} actions · ${data.best.finish_reason ?? ''}`
             : 'No completed evaluation yet.'}
           {data.evaluations_to_success ? ` · first solved at evaluation ${data.evaluations_to_success}${data.seconds_to_success == null ? '' : ` after ${duration(data.seconds_to_success)} of search`}` : ''}
         </div>
@@ -283,7 +299,7 @@ function SolverPanel({ runId }: { runId: string }) {
             </div>
             {content.isLoading ? <Loading /> : content.error ? <ErrorBox error={content.error} /> : <Pre className="max-h-[560px]">{content.data}</Pre>}
           </div>
-        ) : <Empty title="No evaluated solver files saved" />}
+        ) : <Empty title={research ? 'No final workspace files saved' : 'No evaluated solver files saved'} />}
       </Card>
       <Card title="World model (final outer report)" actions={<span className="text-[11.5px] text-muted">condition: {data.mode === 'not-recorded' ? 'not recorded (older campaign)' : data.mode}</span>}>
         {reconstructed && <div className="mb-2"><Notice tone="warn">Reconstructed after the run from saved outer history; not a measurement of the original session's final beliefs.</Notice></div>}

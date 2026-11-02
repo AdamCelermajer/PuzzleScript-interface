@@ -1,0 +1,5733 @@
+{
+ "rows": [
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_2d_whale_world-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_always_magnets-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fused_copy-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_baba_is_you-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_enqueue-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_explod-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_barrier_trail-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_castlemouse-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_count_mover-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fish_friend-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_alternatey-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_extra_step-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bruised-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_coin_counter-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_copy_pellets-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_fire_in_winter-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_icecrates-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_life_is_hard-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_knightoban-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_multi_word_dictionary_game-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_liquid_war_alpha-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_moving_target-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_jam3_game-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_hue_change-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_mc_escher_s_equestrian_armageddon-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "human-5",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "human-6",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_paralands-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_push-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_pretender_to_the_crown-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "human-5",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "human-6",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_midas-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_singleton_traffic-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_roll_those_sixes-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sok7-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairways-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_skipping_stones-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokoban_basic-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sliding_ground-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stairs-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "human-5",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "human-6",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_sokofun_clone-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_stand_off-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_teleporters-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_test_gist_script-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "human-5",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_tidy_the_cafe-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_walls_you_leave_behind-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_sleepy_players-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_the_big_dig-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_unclean_residues-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "human-3",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "no_answer"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "human-4",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_using_pushers-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_vines-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_bomb_n_ice-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "human-1",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "human-2",
+   "source": "human",
+   "condition": "first-frame screenshot",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "claude-opus-4.8|one_frame|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "claude-opus-4.8|one_frame|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_only",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "claude-opus-4.8|three_random_actions|text_plus_first_image",
+   "source": "claude-opus-4.8",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "deepseek-v4-pro|one_frame|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "deepseek-v4-pro|three_random_actions|text_only",
+   "source": "deepseek-v4-pro",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "kimi-k2.6|one_frame|text_only",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "kimi-k2.6|one_frame|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "kimi-k2.6|three_random_actions|text_only",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "kimi-k2.6|three_random_actions|text_plus_first_image",
+   "source": "kimi-k2.6",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "gpt-5.5|one_frame|text_only",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_only",
+   "verdict": "partial"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "gpt-5.5|one_frame|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "one_frame, text_plus_first_image",
+   "verdict": "correct"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "gpt-5.5|three_random_actions|text_only",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_only",
+   "verdict": "wrong"
+  },
+  {
+   "game": "ps_train_braining-v1",
+   "id": "gpt-5.5|three_random_actions|text_plus_first_image",
+   "source": "gpt-5.5",
+   "condition": "three_random_actions, text_plus_first_image",
+   "verdict": "partial"
+  }
+ ],
+ "goals": {
+  "ps_2d_whale_world-v1": "Get every whale (brown block) off the level by moving it onto the orange void outside the walls, which removes it. Whales move when the player crosses their yellow beam lines, and the level is won when no whale remains.",
+  "ps_always_magnets-v1": "Move the player (magnet) into the green target tile; stepping onto the target triggers the win rule and completes the level.",
+  "ps_fused_copy-v1": "Remove every pink block and every blue block from the level by pushing blocks of different colours into each other so that they destroy each other.",
+  "ps_baba_is_you-v1": "Get an object that IS YOU onto an object that IS WIN, or make one object both YOU and WIN. In level 1 the rules are BABA IS YOU and FLAG IS WIN, so Baba must reach the flag.",
+  "ps_enqueue-v1": "Remove every pad by moving a block of the same colour onto each coloured plus-shaped pad, sending the blocks through the queue in the order the pads need.",
+  "ps_explod-v1": "Get the living player (pink figure) onto the Goal tile (the black/dark-blue door), usually by lighting and pushing bombs to blow up the walls in the way.",
+  "ps_barrier_trail-v1": "Touch the white target squares to activate them (which turns the orange plus tiles into barrier crates), then push a barrier crate onto every activated target.",
+  "ps_castlemouse-v1": "Slide every mouse into a hole so that no mouse is left on the board. In level 1 the player is the single mouse M and must slide into the black hole H.",
+  "ps_count_mover-v1": "Push every brown crate onto a red/yellow goal tile. Ending4 follows automatically once all goals are covered, and efficiency only changes the closing message.",
+  "ps_fish_friend-v1": "Get both the human (Hugh) and the fish (Fitch) to the far right edge of the level, each directly left of the black right border. Text levels are won by pressing action once all the text is shown.",
+  "ps_alternatey-v1": "Get the white player squares and the orange goal dots to match exactly, so every player is on a goal and every goal has a player on it. Each move flips which empty cells hold players.",
+  "ps_extra_step-v1": "Collect (eat) every blue pellet, which turns the target square into a burner, then finish with the player standing on that target and no extra-step move still in progress.",
+  "ps_bruised-v1": "Push the yellow/orange cube crates so that every target square has a crate on it (Sokoban-style).",
+  "ps_coin_counter-v1": "Collect every coin (yellow ring) and fiver so none remain, then have the player stand on the invisible ending tile at the end of the corridor.",
+  "ps_copy_pellets-v1": "Eat every yellow pellet (eating one clones the green crates) and leave a green crate on every green X target (and an orange crate on every orange target).",
+  "ps_fire_in_winter-v1": "Push every crate into the fire (furnace), which burns it to ash; the level is won when no crate is left.",
+  "ps_icecrates-v1": "Slide the player (red sliding figure) so it comes to rest on the green goal flag.",
+  "ps_life_is_hard-v1": "Kill every yellow cell in this Game-of-Life-style board, so that no cell is left.",
+  "ps_knightoban-v1": "Cover every target (dark blue square) with a crate (red square); here crates move by knight-style jumps rather than plain pushes.",
+  "ps_multi_word_dictionary_game-v1": "Push or pull the letter blocks so they sit side by side in a row, reading left to right as CAT or ACT. That marks them Won and wins the level.",
+  "ps_liquid_war_alpha-v1": "There is no goal: the game has no win condition and no win rule, so the level can never be finished. It is a real-time sandbox where red slime follows the green player, blue slime follows the red enemy, and the two slimes convert each other.",
+  "ps_moving_target-v1": "Move so that every target (the white diamond marker, which shifts along with the player's moves) ends up on top of a crate (the yellow block).",
+  "ps_jam3_game-v1": "Make a single match that pops same-coloured gems on every cyan target cell at once, so the whole highlighted strip clears in one go with one colour.",
+  "ps_hue_change-v1": "Formally the player must stand on a Target, but level 1 has no Target, so it can never be won. The game's own stated goal is to keep stepping onto the black-dot spawner squares where the blue and yellow blocks sit, pushing each block off first, to raise the score as high as possible.",
+  "ps_mc_escher_s_equestrian_armageddon-v1": "Kill every horse: stand next to each horse and press action to turn it into blood, until no horse is left.",
+  "ps_paralands-v1": "Get the player (orange figure) onto the gray/lightgray goal tile ('!'), which in level 1 sits in the centre behind four omni doors.",
+  "ps_push-v1": "Reach and grab the golden idol by moving the player into it (you can push only one rock), so no idol is left.",
+  "ps_pretender_to_the_crown-v1": "Free every prisoner by pushing the guard (enemy) beside it, which removes the prisoner, then move the crowned player onto the red exit arrow.",
+  "ps_midas-v1": "Bring the player next to the black lady figure (Target) so love appears, after washing off the gold crown in water so she is not turned to gold.",
+  "ps_singleton_traffic-v1": "Move the player tiles (all of which move together) until they are locked in place so that no tile can move at all; the level is won when nothing can move.",
+  "ps_roll_those_sixes-v1": "Push dice into each other so they merge (pips add up) until no dice showing 1 to 5 remain, so every die is a six.",
+  "ps_sok7-v1": "Clear every disc (the numbered 1-7 tiles and any garbage discs) off the board. You do this by pushing them so that a disc numbered N sits in an unbroken line of exactly N discs, which makes it disappear.",
+  "ps_stairways-v1": "Move the player onto the stairs, which start hidden under a block, by pushing boxes, which move together in rows or columns, out of the way.",
+  "ps_skipping_stones-v1": "Get off the islands by boarding a seaworthy ship: repair your damaged ship with wood from a palm tree, or find the strange unguarded ship, then sail away. Collecting treasure is optional.",
+  "ps_sokoban_basic-v1": "Push the orange crates so that every dark-blue target square has a crate on it.",
+  "ps_sliding_ground-v1": "Get the purple crate onto every target (white diamond marker) by pushing it and sliding the movable floor tiles over the pits; every target must have a crate on it.",
+  "ps_stairs-v1": "Move the light-blue player onto the white cross Goal tile (in the centre, sitting on a stair) to finish the level.",
+  "ps_sokofun_clone-v1": "Push the coloured blocks so that all blocks of the same colour form one connected touching group. Levels with crates also need every target covered by a crate, and the player must not end up in a laser ray.",
+  "ps_stand_off-v1": "Get the player (brown cowboy) to the exit gap (X) in the border wall without being shot by the red bad guys.",
+  "ps_teleporters-v1": "Push teleport blocks (purple or green teleblocks) so that every pale-yellow X target has a block on it; in level 1 that is one block on the single central target.",
+  "ps_test_gist_script-v1": "Push the orange crate onto the dark blue target so that every target has a crate on it.",
+  "ps_tidy_the_cafe-v1": "Push every chair so it is tucked in against a table, facing it, and make every table fully surrounded on all four sides by tucked-in chairs or obstacles.",
+  "ps_the_walls_you_leave_behind-v1": "Push the purple crates so that every target (yellow cross tile) has a crate on it.",
+  "ps_sleepy_players-v1": "Use the three brown players, which move together, to push the single teal/brown crate (legend '@', text id 4) onto the blue/green bed target ('t', id 3).",
+  "ps_the_big_dig-v1": "Dig into the brown dig-walls to turn them into gold crates, then push gold crates so every yellow-outlined target has a crate on it.",
+  "ps_unclean_residues-v1": "Push crates (orange stones, including the green-marked contaminated ones) so that every pink target marker is covered by a crate.",
+  "ps_using_pushers-v1": "Get the orange crate onto every target tile (the cream patterned tile). The player cannot push the crate directly and has to move it with the blue pusher blocks.",
+  "ps_vines-v1": "Get the player out of the factory by climbing (ladders and light-grown vines) to the invisible target cells just above the factory roof at the top of the level.",
+  "ps_bomb_n_ice-v1": "Push the light-blue sliding ice blocks so that every X-shaped target tile has an ice block on it.",
+  "ps_train_braining-v1": "Lay rail track from the starting track end, around the forest obstacles, to the exit rail at the top edge, so the train and its cart drive off the map. In later levels, every passenger must also be dropped at a station of their colour."
+ }
+}

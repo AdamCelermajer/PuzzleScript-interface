@@ -225,9 +225,15 @@ def avo_snapshot(root: Path, run_id, catalog_runs: Callable[[], list[dict]]) -> 
     solver_evaluation = read_json_safe(current / "evaluation/solver_evaluation.json")
     solver_archived = bool(file_modified_ms(current / "solver/solver.py"))
     latest = evaluations[-1] if evaluations and isinstance(evaluations[-1], dict) else {}
-    phase = ("evaluated" if summary else "finishing_evaluation" if solver_evaluation
-             else "fresh_evaluation" if fresh["events"] else "starting_fresh_evaluation" if solver_archived
-             else "research" if research["events"] else "pending" if current_id else "initializing")
+    # Research score (frameworks/avo/research_score.py): no solver, so no fresh evaluation phase.
+    score = "research" if config.get("fitness") == "research" else "solver"
+    if score == "research":
+        phase = ("evaluated" if summary else "research" if research["events"]
+                 else "pending" if current_id else "initializing")
+    else:
+        phase = ("evaluated" if summary else "finishing_evaluation" if solver_evaluation
+                 else "fresh_evaluation" if fresh["events"] else "starting_fresh_evaluation" if solver_archived
+                 else "research" if research["events"] else "pending" if current_id else "initializing")
     activity = max([0] + [file_modified_ms(p) for p in (
         path / "evolution_config.json", path / "lineage.json", path / "optimizer_analysis/conversation.jsonl",
         current / "summary.json", current / "research/evidence.jsonl", current / "research/analysis/conversation.jsonl",
@@ -253,6 +259,8 @@ def avo_snapshot(root: Path, run_id, catalog_runs: Callable[[], list[dict]]) -> 
             "candidate_id": candidate_id, "parent_ids": entry.get("parent_ids") or entry.get("parents") or [],
             "evaluated": bool(candidate_summary or evaluation),
             "fitness": first(evaluation.get("fitness"), candidate_summary.get("fitness")),
+            "actions_to_best": dig(evaluation, "score", "actions_to_best"),  # research score's tie-break
+            "research_budget": dig(evaluation, "score", "research_moves_budget"),  # AVO3: moves this attempt had
             "success": first(evaluation.get("success"), candidate_summary.get("success")),
             "win_levels": first(evaluation_levels(evaluation),
                                 dig(candidate_evaluation["last_transition"], "payload", "after", "progress", "win_levels")),
@@ -275,10 +283,14 @@ def avo_snapshot(root: Path, run_id, catalog_runs: Callable[[], list[dict]]) -> 
     canonical = path.relative_to(os.path.abspath(root)).as_posix()
     record = next((r for r in catalog_runs() if r.get("id") == canonical), None) or {}
     final_summary = read_json_safe(path / "evolution_summary.json")
+    # AVO3: research moves per attempt; the current attempt's budget is the next rung.
+    schedule = [v for v in (config.get("research_moves_schedule") or []) if isinstance(v, int)]
+    research_budget = (schedule[min(len(evaluations), len(schedule) - 1)] if schedule
+                       else dig(config, "player", "max_environment_steps"))
     return {
         "run_id": run_id, "game_id": dig(config, "profile_settings", "game_id") or "",
         "agent_backend": "opencode" if config.get("agent_backend") == "opencode" else "codex",
-        "harness": record.get("harness"), "variant": record.get("variant"),
+        "harness": record.get("harness"), "variant": record.get("variant"), "score": score,
         "player_model": dig(config, "player", "model") or "", "optimizer_model": config.get("optimizer_model") or "",
         "current": current_id or None, "phase": phase, "active": record.get("status") == "running",
         "process_status": record.get("status") or "unconfirmed", "can_resume": bool(record.get("can_resume")),
@@ -289,7 +301,9 @@ def avo_snapshot(root: Path, run_id, catalog_runs: Callable[[], list[dict]]) -> 
         "win_levels": first(evaluation_levels(latest), dig(last_transition, "payload", "after", "progress", "win_levels"),
                             dig(config, "initial_observation", "progress", "win_levels")),
         "research": {**{k: research[k] for k in ("actions", "levels", "events", "last_event", "last_transition")},
-                     "budget": dig(config, "player", "max_environment_steps")},
+                     "budget": research_budget},
+        "research_schedule": schedule,
+        "final_solver": read_json_safe(path / "final_solver" / "summary.json") or None,
         "fresh_evaluation": {**{k: fresh[k] for k in ("actions", "levels", "events", "last_event", "last_transition")},
                              "budget": config.get("fresh_solver_max_environment_steps")},
         "last_transition": ({"sequence": last_transition.get("sequence"), "action": dig(last_transition, "payload", "action"),

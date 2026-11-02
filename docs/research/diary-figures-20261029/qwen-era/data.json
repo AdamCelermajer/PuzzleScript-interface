@@ -1,0 +1,2409 @@
+{
+ "quant": [
+  {
+   "arm": "16-bit",
+   "host": "DeepInfra",
+   "runs": [
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0001",
+     "actions": 171,
+     "levels": 3,
+     "levels_in_transitions": 2,
+     "level_at": [
+      33,
+      102
+     ],
+     "rules_correct": 6,
+     "rules_partial": 1,
+     "rules_wrong": 0,
+     "rules_not_found": 0,
+     "degenerate_text": false,
+     "tokens": {
+      "fresh": 1313085,
+      "cached": 1358672,
+      "generated": 78661,
+      "reasoning": 0,
+      "requests": 55
+     },
+     "processed": 2671757,
+     "cost_host_usd": 0.395,
+     "cost_nanogpt_usd": 0.306
+    },
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0002",
+     "actions": 100,
+     "levels": 2,
+     "levels_in_transitions": 2,
+     "level_at": [
+      47,
+      88
+     ],
+     "rules_correct": 5,
+     "rules_partial": 0,
+     "rules_wrong": 2,
+     "rules_not_found": 0,
+     "degenerate_text": false,
+     "tokens": {
+      "fresh": 831418,
+      "cached": 1070944,
+      "generated": 68571,
+      "reasoning": 0,
+      "requests": 47
+     },
+     "processed": 1902362,
+     "cost_host_usd": 0.293,
+     "cost_nanogpt_usd": 0.216
+    },
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0003",
+     "actions": 113,
+     "levels": 2,
+     "levels_in_transitions": 2,
+     "level_at": [
+      60,
+      105
+     ],
+     "rules_correct": 6,
+     "rules_partial": 0,
+     "rules_wrong": 0,
+     "rules_not_found": 1,
+     "degenerate_text": false,
+     "tokens": {
+      "fresh": 749824,
+      "cached": 2105040,
+      "generated": 77079,
+      "reasoning": 0,
+      "requests": 57
+     },
+     "processed": 2854864,
+     "cost_host_usd": 0.335,
+     "cost_nanogpt_usd": 0.251
+    }
+   ],
+   "rules": {
+    "correct": 17,
+    "partial": 1,
+    "wrong": 2,
+    "not_found": 1
+   },
+   "mean_processed": 2476327.6666666665,
+   "mean_generated": 74770.33333333333,
+   "mean_actions": 128.0,
+   "cost_host_per_game": 0.341,
+   "cost_host_source": "computed from tokens x host list price",
+   "cost_nanogpt_per_game": 0.258,
+   "degenerate_runs": 0
+  },
+  {
+   "arm": "8-bit",
+   "host": "Chutes",
+   "runs": [
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0001",
+     "actions": 117,
+     "levels": 1,
+     "levels_in_transitions": 1,
+     "level_at": [
+      27
+     ],
+     "rules_correct": 2,
+     "rules_partial": 0,
+     "rules_wrong": 3,
+     "rules_not_found": 2,
+     "degenerate_text": false,
+     "tokens": {
+      "fresh": 2162512,
+      "cached": 1088800,
+      "generated": 53490,
+      "reasoning": 0,
+      "requests": 81
+     },
+     "processed": 3251312,
+     "cost_host_usd": 0.156,
+     "cost_nanogpt_usd": 0.405
+    },
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0002",
+     "actions": 143,
+     "levels": 2,
+     "levels_in_transitions": 2,
+     "level_at": [
+      17,
+      134
+     ],
+     "rules_correct": 5,
+     "rules_partial": 1,
+     "rules_wrong": 1,
+     "rules_not_found": 0,
+     "degenerate_text": false,
+     "tokens": {
+      "fresh": 1467839,
+      "cached": 385600,
+      "generated": 50011,
+      "reasoning": 0,
+      "requests": 54
+     },
+     "processed": 1853439,
+     "cost_host_usd": 0.121,
+     "cost_nanogpt_usd": 0.271
+    },
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0003",
+     "actions": 59,
+     "levels": 1,
+     "levels_in_transitions": 1,
+     "level_at": [
+      59
+     ],
+     "rules_correct": 4,
+     "rules_partial": 0,
+     "rules_wrong": 1,
+     "rules_not_found": 2,
+     "degenerate_text": false,
+     "tokens": {
+      "fresh": 1566279,
+      "cached": 593600,
+      "generated": 57999,
+      "reasoning": 0,
+      "requests": 55
+     },
+     "processed": 2159879,
+     "cost_host_usd": 0.136,
+     "cost_nanogpt_usd": 0.299
+    }
+   ],
+   "rules": {
+    "correct": 11,
+    "partial": 1,
+    "wrong": 5,
+    "not_found": 4
+   },
+   "mean_processed": 2421543.3333333335,
+   "mean_generated": 53833.333333333336,
+   "mean_actions": 106.33333333333333,
+   "cost_host_per_game": 0.138,
+   "cost_host_source": "computed from tokens x host list price",
+   "cost_nanogpt_per_game": 0.325,
+   "degenerate_runs": 0
+  },
+  {
+   "arm": "4-bit",
+   "host": "ModelRun",
+   "runs": [
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0001",
+     "actions": 235,
+     "levels": 2,
+     "levels_in_transitions": 2,
+     "level_at": [
+      112,
+      164
+     ],
+     "rules_correct": 6,
+     "rules_partial": 1,
+     "rules_wrong": 0,
+     "rules_not_found": 0,
+     "degenerate_text": true,
+     "tokens": {
+      "fresh": 190739,
+      "cached": 8497152,
+      "generated": 213563,
+      "reasoning": 205202,
+      "requests": 81
+     },
+     "processed": 8687891,
+     "cost_host_usd": null,
+     "cost_nanogpt_usd": 0.518
+    },
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0002",
+     "actions": 234,
+     "levels": 1,
+     "levels_in_transitions": 1,
+     "level_at": [
+      13
+     ],
+     "rules_correct": 4,
+     "rules_partial": 0,
+     "rules_wrong": 2,
+     "rules_not_found": 1,
+     "degenerate_text": true,
+     "tokens": {
+      "fresh": 276948,
+      "cached": 12157184,
+      "generated": 234110,
+      "reasoning": 225298,
+      "requests": 100
+     },
+     "processed": 12434132,
+     "cost_host_usd": null,
+     "cost_nanogpt_usd": 0.692
+    },
+    {
+     "run": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0003",
+     "actions": 209,
+     "levels": 1,
+     "levels_in_transitions": 1,
+     "level_at": [
+      209
+     ],
+     "rules_correct": 2,
+     "rules_partial": 1,
+     "rules_wrong": 1,
+     "rules_not_found": 3,
+     "degenerate_text": true,
+     "tokens": {
+      "fresh": 371517,
+      "cached": 9075200,
+      "generated": 227825,
+      "reasoning": 223270,
+      "requests": 74
+     },
+     "processed": 9446717,
+     "cost_host_usd": null,
+     "cost_nanogpt_usd": 0.578
+    }
+   ],
+   "rules": {
+    "correct": 12,
+    "partial": 2,
+    "wrong": 3,
+    "not_found": 4
+   },
+   "mean_processed": 10189580.0,
+   "mean_generated": 225166.0,
+   "mean_actions": 226.0,
+   "cost_host_per_game": 1.51,
+   "cost_host_source": "Thursday page (ModelRun price not in repo)",
+   "cost_nanogpt_per_game": 0.596,
+   "degenerate_runs": 3
+  }
+ ],
+ "family": {
+  "baseline_plus": [
+   {
+    "model": "27B",
+    "provider": "OpenRouter · Alibaba",
+    "run": "output/workbench/20261008T112945-f705fa9a/run-0001",
+    "date": "2026-10-08",
+    "actions": 100,
+    "levels": 0,
+    "level_at": [],
+    "tokens": {
+     "fresh": 934892,
+     "cached": 10952960,
+     "generated": 284697,
+     "reasoning": 251122,
+     "requests": 0
+    },
+    "processed": 11887852
+   },
+   {
+    "model": "Flash",
+    "provider": "OpenRouter · Alibaba",
+    "run": "output/workbench/20261013T150241-d07d5558/run-0001",
+    "date": "2026-10-13",
+    "actions": 100,
+    "levels": 1,
+    "level_at": [
+     22
+    ],
+    "tokens": {
+     "fresh": 253082,
+     "cached": 16388096,
+     "generated": 168783,
+     "reasoning": 141320,
+     "requests": 0
+    },
+    "processed": 16641178
+   },
+   {
+    "model": "Max",
+    "provider": "OpenRouter · Alibaba",
+    "run": "output/workbench/20261013T150245-989f6c8b/run-0001",
+    "date": "2026-10-13",
+    "actions": 100,
+    "levels": 1,
+    "level_at": [
+     16
+    ],
+    "tokens": {
+     "fresh": 159755,
+     "cached": 7458176,
+     "generated": 56256,
+     "reasoning": 40529,
+     "requests": 0
+    },
+    "processed": 7617931
+   },
+   {
+    "model": "27B",
+    "provider": "NanoGPT",
+    "run": "output/workbench/20261015T012502-nano-modality-baseline-plus-fixed-714e64/run-0001",
+    "date": "2026-10-15",
+    "actions": 386,
+    "levels": 1,
+    "level_at": [
+     29
+    ],
+    "tokens": {
+     "fresh": 1850146,
+     "cached": 41497376,
+     "generated": 274837,
+     "reasoning": 245661,
+     "requests": 0
+    },
+    "processed": 43347522
+   },
+   {
+    "model": "Flash",
+    "provider": "NanoGPT",
+    "run": "output/workbench/20261015T012502-nano-modality-baseline-plus-fixed-714e64/run-0002",
+    "date": "2026-10-15",
+    "actions": 296,
+    "levels": 2,
+    "level_at": [
+     26,
+     91
+    ],
+    "tokens": {
+     "fresh": 1757795,
+     "cached": 27566592,
+     "generated": 1246257,
+     "reasoning": 1104637,
+     "requests": 0
+    },
+    "processed": 29324387
+   }
+  ],
+  "avo": [
+   {
+    "model": "27B",
+    "provider": "OpenRouter · Alibaba",
+    "run": "output/workbench/20261013T165330-avo-27b-modality/run-0001/campaign",
+    "date": "2026-10-13",
+    "solver_levels": 2,
+    "solver_actions": 1500,
+    "research_levels": 1,
+    "research_actions": 234,
+    "tokens": {
+     "fresh": 2911787,
+     "cached": 30891904,
+     "generated": 530245,
+     "reasoning": 417439,
+     "requests": 0
+    },
+    "processed": 33803691
+   },
+   {
+    "model": "Flash",
+    "provider": "OpenRouter · Alibaba",
+    "run": "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001/campaign",
+    "date": "2026-10-13",
+    "solver_levels": 1,
+    "solver_actions": 1500,
+    "research_levels": 3,
+    "research_actions": 160,
+    "tokens": {
+     "fresh": 1813894,
+     "cached": 20385792,
+     "generated": 683263,
+     "reasoning": 533064,
+     "requests": 0
+    },
+    "processed": 22199686
+   },
+   {
+    "model": "Max",
+    "provider": "OpenRouter · Alibaba",
+    "run": "output/workbench/20261013T152559-avo-max-92c30e52/run-0001/campaign",
+    "date": "2026-10-13",
+    "solver_levels": 4,
+    "solver_actions": 265,
+    "research_levels": 3,
+    "research_actions": 123,
+    "tokens": {
+     "fresh": 277480,
+     "cached": 7055872,
+     "generated": 137593,
+     "reasoning": 96433,
+     "requests": 0
+    },
+    "processed": 7333352
+   },
+   {
+    "model": "27B",
+    "provider": "NanoGPT",
+    "run": "output/workbench/20261015T011847-nano-modality-avo-27b-thinking-e8ea89/run-0001/campaign",
+    "date": "2026-10-15",
+    "solver_levels": 0,
+    "solver_actions": 0,
+    "research_levels": 0,
+    "research_actions": 11,
+    "tokens": {
+     "fresh": 1372175,
+     "cached": 24637472,
+     "generated": 302051,
+     "reasoning": 210456,
+     "requests": 0
+    },
+    "processed": 26009647
+   }
+  ]
+ },
+ "vast": {
+  "modality": {
+   "name": "Modality",
+   "win_levels": 4,
+   "shortest": [
+    6,
+    33,
+    66,
+    158
+   ],
+   "frameworks": {
+    "harness2_base1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0001/rollouts/base1",
+     "actions": 1000,
+     "levels": 3,
+     "level_at": [
+      78,
+      174,
+      404
+     ],
+     "tokens": {
+      "fresh": 2415178,
+      "cached": 27910400,
+      "generated": 784304,
+      "reasoning": 699244,
+      "requests": 327
+     },
+     "processed": 30325578,
+     "cost_openrouter_usd": 1.66
+    },
+    "baseline_v4": {
+     "run": "output/workbench/20261021T162323-vast-fp8-baseline-v4-6767db38/run-0001",
+     "actions": 226,
+     "levels": 3,
+     "level_at": [
+      25,
+      60,
+      155
+     ],
+     "tokens": {
+      "fresh": 1612395,
+      "cached": 23350400,
+      "generated": 364614,
+      "reasoning": 311484,
+      "requests": 264
+     },
+     "processed": 24962795,
+     "cost_openrouter_usd": 0.98
+    },
+    "avo_v2_research": {
+     "run": "output/workbench/20261021T160936-vast-fp8-avo-v2-b994ed09/run-0001",
+     "actions": 93,
+     "levels": 2,
+     "level_at": [
+      29,
+      77
+     ],
+     "tokens": {
+      "fresh": 1543383,
+      "cached": 13280000,
+      "generated": 424577,
+      "reasoning": 345151,
+      "requests": 163
+     },
+     "processed": 14823383,
+     "solver_scored": false,
+     "cost_openrouter_usd": 0.87
+    }
+   },
+   "rollouts": {
+    "base1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0001/rollouts/base1",
+     "actions": 1000,
+     "levels": 3,
+     "level_at": [
+      78,
+      174,
+      404
+     ],
+     "tokens": {
+      "fresh": 2415178,
+      "cached": 27910400,
+      "generated": 784304,
+      "reasoning": 699244,
+      "requests": 327
+     },
+     "processed": 30325578,
+     "cost_openrouter_usd": 1.66
+    }
+   },
+   "coach_tokens": {
+    "fresh": 1183029,
+    "cached": 5814400,
+    "generated": 246161,
+    "reasoning": 221616,
+    "requests": 76
+   },
+   "coach_processed": 6997429
+  },
+  "icecrates": {
+   "name": "IceCrates",
+   "win_levels": 6,
+   "shortest": [
+    4,
+    5,
+    12,
+    29,
+    8,
+    32
+   ],
+   "frameworks": {
+    "harness2_base1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0002/rollouts/base1",
+     "actions": 320,
+     "levels": 6,
+     "level_at": [
+      10,
+      15,
+      31,
+      144,
+      288,
+      320
+     ],
+     "tokens": {
+      "fresh": 2187993,
+      "cached": 17393600,
+      "generated": 672905,
+      "reasoning": 606756,
+      "requests": 197
+     },
+     "processed": 19581593,
+     "cost_openrouter_usd": 1.31
+    },
+    "baseline_v4": {
+     "run": "output/workbench/20261021T162323-vast-fp8-baseline-v4-6767db38/run-0002",
+     "actions": 271,
+     "levels": 3,
+     "level_at": [
+      7,
+      12,
+      37
+     ],
+     "tokens": {
+      "fresh": 1738099,
+      "cached": 35531200,
+      "generated": 337205,
+      "reasoning": 255515,
+      "requests": 335
+     },
+     "processed": 37269299,
+     "cost_openrouter_usd": 1.16
+    },
+    "avo_v2_research": {
+     "run": "output/workbench/20261021T160936-vast-fp8-avo-v2-b994ed09/run-0002",
+     "actions": 101,
+     "levels": 5,
+     "level_at": [
+      9,
+      15,
+      44,
+      82,
+      98
+     ],
+     "tokens": {
+      "fresh": 1719082,
+      "cached": 16668800,
+      "generated": 440544,
+      "reasoning": 365643,
+      "requests": 193
+     },
+     "processed": 18387882,
+     "solver_scored": false,
+     "cost_openrouter_usd": 0.96
+    }
+   },
+   "rollouts": {
+    "base1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0002/rollouts/base1",
+     "actions": 320,
+     "levels": 6,
+     "level_at": [
+      10,
+      15,
+      31,
+      144,
+      288,
+      320
+     ],
+     "tokens": {
+      "fresh": 2187993,
+      "cached": 17393600,
+      "generated": 672905,
+      "reasoning": 606756,
+      "requests": 197
+     },
+     "processed": 19581593,
+     "cost_openrouter_usd": 1.31
+    },
+    "inv1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0002/rollouts/inv1",
+     "actions": 90,
+     "levels": 6,
+     "level_at": [
+      4,
+      9,
+      21,
+      50,
+      58,
+      90
+     ],
+     "tokens": {
+      "fresh": 201572,
+      "cached": 1168000,
+      "generated": 42907,
+      "reasoning": 33244,
+      "requests": 36
+     },
+     "processed": 1369572
+    },
+    "dom1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0002/rollouts/dom1",
+     "actions": 27,
+     "levels": 3,
+     "level_at": [
+      4,
+      11,
+      27
+     ],
+     "tokens": {
+      "fresh": 106185,
+      "cached": 102400,
+      "generated": 43230,
+      "reasoning": 41335,
+      "requests": 9
+     },
+     "processed": 208585
+    }
+   },
+   "coach_tokens": {
+    "fresh": 768834,
+    "cached": 6824000,
+    "generated": 126872,
+    "reasoning": 98506,
+    "requests": 68
+   },
+   "coach_processed": 7592834
+  },
+  "knightoban": {
+   "name": "Knightoban",
+   "win_levels": 6,
+   "shortest": [
+    20,
+    10,
+    33,
+    41,
+    32,
+    28
+   ],
+   "frameworks": {
+    "harness2_base1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0003/rollouts/base1",
+     "actions": 326,
+     "levels": 6,
+     "level_at": [
+      109,
+      164,
+      226,
+      267,
+      298,
+      326
+     ],
+     "tokens": {
+      "fresh": 996493,
+      "cached": 17939200,
+      "generated": 291944,
+      "reasoning": 235463,
+      "requests": 196
+     },
+     "processed": 18935693,
+     "cost_openrouter_usd": 0.76
+    },
+    "baseline_v4": {
+     "run": "output/workbench/20261021T162323-vast-fp8-baseline-v4-6767db38/run-0003",
+     "actions": 451,
+     "levels": 0,
+     "level_at": [],
+     "tokens": {
+      "fresh": 2105509,
+      "cached": 54489600,
+      "generated": 318429,
+      "reasoning": 234261,
+      "requests": 501
+     },
+     "processed": 56595109,
+     "cost_openrouter_usd": 1.49
+    },
+    "avo_v2_research": {
+     "run": "output/workbench/20261021T160936-vast-fp8-avo-v2-b994ed09/run-0003",
+     "actions": 415,
+     "levels": 4,
+     "level_at": [
+      210,
+      269,
+      318,
+      386
+     ],
+     "tokens": {
+      "fresh": 1929087,
+      "cached": 22803200,
+      "generated": 398341,
+      "reasoning": 322903,
+      "requests": 253
+     },
+     "processed": 24732287,
+     "solver_scored": false,
+     "cost_openrouter_usd": 1.03
+    }
+   },
+   "rollouts": {
+    "base1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0003/rollouts/base1",
+     "actions": 326,
+     "levels": 6,
+     "level_at": [
+      109,
+      164,
+      226,
+      267,
+      298,
+      326
+     ],
+     "tokens": {
+      "fresh": 996493,
+      "cached": 17939200,
+      "generated": 291944,
+      "reasoning": 235463,
+      "requests": 196
+     },
+     "processed": 18935693,
+     "cost_openrouter_usd": 0.76
+    },
+    "inv1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0003/rollouts/inv1",
+     "actions": 177,
+     "levels": 6,
+     "level_at": [
+      34,
+      44,
+      77,
+      118,
+      149,
+      177
+     ],
+     "tokens": {
+      "fresh": 209210,
+      "cached": 1544000,
+      "generated": 40837,
+      "reasoning": 27521,
+      "requests": 40
+     },
+     "processed": 1753210
+    },
+    "dom1": {
+     "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0003/rollouts/dom1",
+     "actions": 163,
+     "levels": 6,
+     "level_at": [
+      20,
+      30,
+      63,
+      104,
+      135,
+      163
+     ],
+     "tokens": {
+      "fresh": 105945,
+      "cached": 641600,
+      "generated": 26785,
+      "reasoning": 12182,
+      "requests": 23
+     },
+     "processed": 747545
+    }
+   },
+   "coach_tokens": {
+    "fresh": 2213968,
+    "cached": 16643200,
+    "generated": 330430,
+    "reasoning": 244714,
+    "requests": 177
+   },
+   "coach_processed": 18857168
+  }
+ },
+ "probe": {
+  "rows": [
+   {
+    "label": "27B · Chat · plain tool",
+    "conditions": [
+     "chat · short",
+     "chat · long"
+    ],
+    "n": 16,
+    "outcomes": {
+     "tool call": 16
+    },
+    "tokens": 22906
+   },
+   {
+    "label": "27B · Responses · plain tool",
+    "conditions": [
+     "responses · short",
+     "responses · long"
+    ],
+    "n": 16,
+    "outcomes": {
+     "tool call": 16
+    },
+    "tokens": 26069
+   },
+   {
+    "label": "27B · Responses · flat tool",
+    "conditions": [
+     "responses-flat · short",
+     "responses-flat · long"
+    ],
+    "n": 16,
+    "outcomes": {
+     "tool call": 16
+    },
+    "tokens": 29396
+   },
+   {
+    "label": "Flash · Responses · plain tool",
+    "conditions": [
+     "responses · short · qwen/qwen3.8-flash",
+     "responses · long · qwen/qwen3.8-flash"
+    ],
+    "n": 8,
+    "outcomes": {
+     "tool call": 8
+    },
+    "tokens": 8509
+   },
+   {
+    "label": "27B · Responses · namespaced tool",
+    "conditions": [
+     "responses-namespace · short",
+     "responses-namespace · long"
+    ],
+    "n": 16,
+    "outcomes": {
+     "text leak": 4,
+     "no call": 12
+    },
+    "tokens": 23971
+   },
+   {
+    "label": "Flash · Responses · namespaced tool",
+    "conditions": [
+     "responses-namespace · short · qwen/qwen3.8-flash",
+     "responses-namespace · long · qwen/qwen3.8-flash"
+    ],
+    "n": 8,
+    "outcomes": {
+     "text leak": 5,
+     "no call": 3
+    },
+    "tokens": 7083
+   },
+   {
+    "label": "Codex's 15 Oct request · Responses",
+    "conditions": [
+     "replay · responses (as Codex sent it)"
+    ],
+    "n": 8,
+    "outcomes": {
+     "error": 7,
+     "no call": 1
+    },
+    "tokens": 188752
+   },
+   {
+    "label": "same conversation · Chat",
+    "conditions": [
+     "replay · chat (same conversation)"
+    ],
+    "n": 8,
+    "outcomes": {
+     "tool call": 6,
+     "no call": 2
+    },
+    "tokens": 235153
+   }
+  ],
+  "probes": 96,
+  "total_tokens": 541839,
+  "total_cost_usd": 0.106
+ },
+ "period": {
+  "modality_27b": [
+   {
+    "label": "30 Sep · Codex · OpenRouter",
+    "date": "2026-09-30",
+    "driver": "turn",
+    "provider": "OpenRouter",
+    "harness": "codex",
+    "run": "output/workbench/20260930T224156-3572b5fe/run-0001",
+    "actions": 124,
+    "levels": 1,
+    "level_at": [
+     27
+    ],
+    "tokens": {
+     "fresh": 1781183,
+     "cached": 8639680,
+     "generated": 109377,
+     "reasoning": 102221,
+     "requests": 0
+    },
+    "processed": 10420863
+   },
+   {
+    "label": "8 Oct · Codex · Alibaba",
+    "date": "2026-10-08",
+    "driver": "turn",
+    "provider": "OpenRouter",
+    "harness": "codex",
+    "run": "output/workbench/20261008T112945-f705fa9a/run-0001",
+    "actions": 100,
+    "levels": 0,
+    "level_at": [],
+    "tokens": {
+     "fresh": 934892,
+     "cached": 10952960,
+     "generated": 284697,
+     "reasoning": 251122,
+     "requests": 0
+    },
+    "processed": 11887852
+   },
+   {
+    "label": "15 Oct · Codex · NanoGPT",
+    "date": "2026-10-15",
+    "driver": "turn",
+    "provider": "NanoGPT",
+    "harness": "codex",
+    "run": "output/workbench/20261015T012502-nano-modality-baseline-plus-fixed-714e64/run-0001",
+    "actions": 386,
+    "levels": 1,
+    "level_at": [
+     29
+    ],
+    "tokens": {
+     "fresh": 1850146,
+     "cached": 41497376,
+     "generated": 274837,
+     "reasoning": 245661,
+     "requests": 0
+    },
+    "processed": 43347522
+   },
+   {
+    "label": "20 Oct · OpenCode turn-by-turn · NanoGPT",
+    "date": "2026-10-20",
+    "driver": "turn",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261020T123325-modality-harness2-27b-thinking-image-245dcdb8/run-0001/rollouts/base1",
+    "actions": 97,
+    "levels": 1,
+    "level_at": [
+     54
+    ],
+    "tokens": {
+     "fresh": 52484,
+     "cached": 8115136,
+     "generated": 103054,
+     "reasoning": 98160,
+     "requests": 102
+    },
+    "processed": 8167620
+   },
+   {
+    "label": "20 Oct · OpenCode agent-driven · NanoGPT",
+    "date": "2026-10-20",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261020T142237-modality-harness2-27b-agent-d099cb74/run-0001/rollouts/base1",
+    "actions": 200,
+    "levels": 3,
+    "level_at": [
+     16,
+     62,
+     182
+    ],
+    "tokens": {
+     "fresh": 578163,
+     "cached": 5067232,
+     "generated": 163511,
+     "reasoning": 155732,
+     "requests": 65
+    },
+    "processed": 5645395
+   },
+   {
+    "label": "21 Oct · OpenCode turn-based v4 · self-hosted",
+    "date": "2026-10-21",
+    "driver": "turn",
+    "provider": "vast",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T162323-vast-fp8-baseline-v4-6767db38/run-0001",
+    "actions": 226,
+    "levels": 3,
+    "level_at": [
+     25,
+     60,
+     155
+    ],
+    "tokens": {
+     "fresh": 1612395,
+     "cached": 23350400,
+     "generated": 364614,
+     "reasoning": 311484,
+     "requests": 264
+    },
+    "processed": 24962795
+   },
+   {
+    "label": "21 Oct · OpenCode agent-driven · self-hosted",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "vast",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0001/rollouts/base1",
+    "actions": 1000,
+    "levels": 3,
+    "level_at": [
+     78,
+     174,
+     404
+    ],
+    "tokens": {
+     "fresh": 2415178,
+     "cached": 27910400,
+     "generated": 784304,
+     "reasoning": 699244,
+     "requests": 327
+    },
+    "processed": 30325578
+   },
+   {
+    "label": "21 Oct · quant 16-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0001",
+    "actions": 171,
+    "levels": 2,
+    "level_at": [
+     33,
+     102
+    ],
+    "tokens": {
+     "fresh": 1313085,
+     "cached": 1358672,
+     "generated": 78661,
+     "reasoning": 0,
+     "requests": 55
+    },
+    "processed": 2671757
+   },
+   {
+    "label": "21 Oct · quant 16-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0002",
+    "actions": 100,
+    "levels": 2,
+    "level_at": [
+     47,
+     88
+    ],
+    "tokens": {
+     "fresh": 831418,
+     "cached": 1070944,
+     "generated": 68571,
+     "reasoning": 0,
+     "requests": 47
+    },
+    "processed": 1902362
+   },
+   {
+    "label": "21 Oct · quant 16-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0003",
+    "actions": 113,
+    "levels": 2,
+    "level_at": [
+     60,
+     105
+    ],
+    "tokens": {
+     "fresh": 749824,
+     "cached": 2105040,
+     "generated": 77079,
+     "reasoning": 0,
+     "requests": 57
+    },
+    "processed": 2854864
+   },
+   {
+    "label": "21 Oct · quant 8-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0001",
+    "actions": 117,
+    "levels": 1,
+    "level_at": [
+     27
+    ],
+    "tokens": {
+     "fresh": 2162512,
+     "cached": 1088800,
+     "generated": 53490,
+     "reasoning": 0,
+     "requests": 81
+    },
+    "processed": 3251312
+   },
+   {
+    "label": "21 Oct · quant 8-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0002",
+    "actions": 143,
+    "levels": 2,
+    "level_at": [
+     17,
+     134
+    ],
+    "tokens": {
+     "fresh": 1467839,
+     "cached": 385600,
+     "generated": 50011,
+     "reasoning": 0,
+     "requests": 54
+    },
+    "processed": 1853439
+   },
+   {
+    "label": "21 Oct · quant 8-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0003",
+    "actions": 59,
+    "levels": 1,
+    "level_at": [
+     59
+    ],
+    "tokens": {
+     "fresh": 1566279,
+     "cached": 593600,
+     "generated": 57999,
+     "reasoning": 0,
+     "requests": 55
+    },
+    "processed": 2159879
+   },
+   {
+    "label": "21 Oct · quant 4-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0001",
+    "actions": 235,
+    "levels": 2,
+    "level_at": [
+     112,
+     164
+    ],
+    "tokens": {
+     "fresh": 190739,
+     "cached": 8497152,
+     "generated": 213563,
+     "reasoning": 205202,
+     "requests": 81
+    },
+    "processed": 8687891
+   },
+   {
+    "label": "21 Oct · quant 4-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0002",
+    "actions": 234,
+    "levels": 1,
+    "level_at": [
+     13
+    ],
+    "tokens": {
+     "fresh": 276948,
+     "cached": 12157184,
+     "generated": 234110,
+     "reasoning": 225298,
+     "requests": 100
+    },
+    "processed": 12434132
+   },
+   {
+    "label": "21 Oct · quant 4-bit · NanoGPT pinned",
+    "date": "2026-10-21",
+    "driver": "agent",
+    "provider": "NanoGPT",
+    "harness": "opencode",
+    "run": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0003",
+    "actions": 209,
+    "levels": 1,
+    "level_at": [
+     209
+    ],
+    "tokens": {
+     "fresh": 371517,
+     "cached": 9075200,
+     "generated": 227825,
+     "reasoning": 223270,
+     "requests": 74
+    },
+    "processed": 9446717
+   }
+  ],
+  "runs": [
+   {
+    "id": "output/workbench/20260930T224156-3572b5fe/run-0001",
+    "date": "2026-09-30",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1781183,
+     "cached": 8639680,
+     "generated": 109377,
+     "reasoning": 102221,
+     "requests": 0
+    },
+    "processed": 10420863
+   },
+   {
+    "id": "output/workbench/20260930T235825-d0dcefa8/run-0001",
+    "date": "2026-09-30",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 58992,
+     "cached": 1568,
+     "generated": 7494,
+     "reasoning": 5758,
+     "requests": 0
+    },
+    "processed": 60560
+   },
+   {
+    "id": "output/workbench/20261001T000258-18c731e5/run-0001",
+    "date": "2026-10-01",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 887927,
+     "cached": 9198784,
+     "generated": 99390,
+     "reasoning": 62831,
+     "requests": 0
+    },
+    "processed": 10086711
+   },
+   {
+    "id": "output/workbench/20261001T000258-18c731e5/run-0002",
+    "date": "2026-10-01",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 73120,
+     "cached": 26656,
+     "generated": 6889,
+     "reasoning": 2867,
+     "requests": 0
+    },
+    "processed": 99776
+   },
+   {
+    "id": "output/workbench/20261001T084700-f1d4ebb7/run-0001",
+    "date": "2026-10-01",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 791099,
+     "cached": 5729472,
+     "generated": 66986,
+     "reasoning": 50279,
+     "requests": 0
+    },
+    "processed": 6520571
+   },
+   {
+    "id": "output/workbench/20261008T105709-39676ef0/run-0001",
+    "date": "2026-10-08",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 114502,
+     "cached": 578592,
+     "generated": 18113,
+     "reasoning": 11509,
+     "requests": 0
+    },
+    "processed": 693094
+   },
+   {
+    "id": "output/workbench/20261008T112945-f705fa9a/run-0001",
+    "date": "2026-10-08",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 934892,
+     "cached": 10952960,
+     "generated": 284697,
+     "reasoning": 251122,
+     "requests": 0
+    },
+    "processed": 11887852
+   },
+   {
+    "id": "output/workbench/20261008T113734-5cfc3536/run-0001",
+    "date": "2026-10-08",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 1919703,
+     "cached": 43313920,
+     "generated": 530494,
+     "reasoning": 469119,
+     "requests": 0
+    },
+    "processed": 45233623
+   },
+   {
+    "id": "output/workbench/20261008T113734-5cfc3536/run-0002",
+    "date": "2026-10-08",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 507128,
+     "cached": 11578752,
+     "generated": 89298,
+     "reasoning": 63113,
+     "requests": 0
+    },
+    "processed": 12085880
+   },
+   {
+    "id": "output/workbench/20261013T150241-d07d5558/run-0001",
+    "date": "2026-10-13",
+    "provider": "OpenRouter",
+    "model": "Flash",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 253082,
+     "cached": 16388096,
+     "generated": 168783,
+     "reasoning": 141320,
+     "requests": 0
+    },
+    "processed": 16641178
+   },
+   {
+    "id": "output/workbench/20261013T150245-989f6c8b/run-0001",
+    "date": "2026-10-13",
+    "provider": "OpenRouter",
+    "model": "Max",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 159755,
+     "cached": 7458176,
+     "generated": 56256,
+     "reasoning": 40529,
+     "requests": 0
+    },
+    "processed": 7617931
+   },
+   {
+    "id": "output/workbench/20261013T152559-avo-flash-efcb5dc3/run-0001",
+    "date": "2026-10-13",
+    "provider": "OpenRouter",
+    "model": "Flash",
+    "harness": "codex",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1200642,
+     "cached": 7527680,
+     "generated": 285023,
+     "reasoning": 240969,
+     "requests": 0
+    },
+    "processed": 8728322
+   },
+   {
+    "id": "output/workbench/20261013T152559-avo-max-92c30e52/run-0001",
+    "date": "2026-10-13",
+    "provider": "OpenRouter",
+    "model": "Max",
+    "harness": "codex",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 277480,
+     "cached": 7055872,
+     "generated": 137593,
+     "reasoning": 96433,
+     "requests": 0
+    },
+    "processed": 7333352
+   },
+   {
+    "id": "output/workbench/20261013T165330-avo-27b-modality/run-0001",
+    "date": "2026-10-13",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 2911787,
+     "cached": 30891904,
+     "generated": 530245,
+     "reasoning": 417439,
+     "requests": 0
+    },
+    "processed": 33803691
+   },
+   {
+    "id": "output/workbench/20261013T165330-avo-flash-knightoban/run-0001",
+    "date": "2026-10-13",
+    "provider": "OpenRouter",
+    "model": "Flash",
+    "harness": "codex",
+    "framework": "AVO",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 2050441,
+     "cached": 51503872,
+     "generated": 751389,
+     "reasoning": 548483,
+     "requests": 0
+    },
+    "processed": 53554313
+   },
+   {
+    "id": "output/workbench/20261013T173422-avo-flash-modality-recovery/run-0001",
+    "date": "2026-10-13",
+    "provider": "OpenRouter",
+    "model": "Flash",
+    "harness": "codex",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1813894,
+     "cached": 20385792,
+     "generated": 683263,
+     "reasoning": 533064,
+     "requests": 0
+    },
+    "processed": 22199686
+   },
+   {
+    "id": "output/workbench/20261015T011847-nano-modality-avo-27b-thinking-e8ea89/run-0001",
+    "date": "2026-10-15",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1372175,
+     "cached": 24637472,
+     "generated": 302051,
+     "reasoning": 210456,
+     "requests": 0
+    },
+    "processed": 26009647
+   },
+   {
+    "id": "output/workbench/20261015T011847-nano-modality-avo-flash-91ad77/run-0001",
+    "date": "2026-10-15",
+    "provider": "NanoGPT",
+    "model": "Flash",
+    "harness": "codex",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 634943,
+     "cached": 23671552,
+     "generated": 1675945,
+     "reasoning": 1533761,
+     "requests": 0
+    },
+    "processed": 24306495
+   },
+   {
+    "id": "output/workbench/20261015T011847-nano-modality-baseline-plus-9da287/run-0001",
+    "date": "2026-10-15",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 13444,
+     "cached": 165120,
+     "generated": 9826,
+     "reasoning": 8454,
+     "requests": 0
+    },
+    "processed": 178564
+   },
+   {
+    "id": "output/workbench/20261015T011847-nano-modality-baseline-plus-9da287/run-0002",
+    "date": "2026-10-15",
+    "provider": "NanoGPT",
+    "model": "Flash",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 12108,
+     "cached": 48640,
+     "generated": 6275,
+     "reasoning": 4653,
+     "requests": 0
+    },
+    "processed": 60748
+   },
+   {
+    "id": "output/workbench/20261015T012502-nano-modality-baseline-plus-fixed-714e64/run-0001",
+    "date": "2026-10-15",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1850146,
+     "cached": 41497376,
+     "generated": 274837,
+     "reasoning": 245661,
+     "requests": 0
+    },
+    "processed": 43347522
+   },
+   {
+    "id": "output/workbench/20261015T012502-nano-modality-baseline-plus-fixed-714e64/run-0002",
+    "date": "2026-10-15",
+    "provider": "NanoGPT",
+    "model": "Flash",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1757795,
+     "cached": 27566592,
+     "generated": 1246257,
+     "reasoning": 1104637,
+     "requests": 0
+    },
+    "processed": 29324387
+   },
+   {
+    "id": "output/workbench/20261020T104612-0bf1b65d/run-0001",
+    "date": "2026-10-20",
+    "provider": "NanoGPT",
+    "model": "Flash",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "modality",
+    "tokens": {
+     "fresh": 102480,
+     "cached": 3804160,
+     "generated": 317026,
+     "reasoning": 306241,
+     "requests": 133
+    },
+    "processed": 3906640
+   },
+   {
+    "id": "output/workbench/20261020T122910-modality-harness2-27b-image-0d5815ae/run-0001",
+    "date": "2026-10-20",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "modality",
+    "tokens": {
+     "fresh": 11385,
+     "cached": 1118336,
+     "generated": 2905,
+     "reasoning": 0,
+     "requests": 80
+    },
+    "processed": 1129721
+   },
+   {
+    "id": "output/workbench/20261020T123325-modality-harness2-27b-thinking-image-245dcdb8/run-0001",
+    "date": "2026-10-20",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "modality",
+    "tokens": {
+     "fresh": 52484,
+     "cached": 8115136,
+     "generated": 103054,
+     "reasoning": 98160,
+     "requests": 102
+    },
+    "processed": 8167620
+   },
+   {
+    "id": "output/workbench/20261020T142237-modality-harness2-27b-agent-d099cb74/run-0001",
+    "date": "2026-10-20",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "modality",
+    "tokens": {
+     "fresh": 4317523,
+     "cached": 35153824,
+     "generated": 1326220,
+     "reasoning": 1217430,
+     "requests": 423
+    },
+    "processed": 39471347
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0001",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1313085,
+     "cached": 1358672,
+     "generated": 78661,
+     "reasoning": 0,
+     "requests": 55
+    },
+    "processed": 2671757
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0002",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 831418,
+     "cached": 1070944,
+     "generated": 68571,
+     "reasoning": 0,
+     "requests": 47
+    },
+    "processed": 1902362
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-bf16-deepinfra-77cb4e7e/run-0003",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 749824,
+     "cached": 2105040,
+     "generated": 77079,
+     "reasoning": 0,
+     "requests": 57
+    },
+    "processed": 2854864
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0001",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 190739,
+     "cached": 8497152,
+     "generated": 213563,
+     "reasoning": 205202,
+     "requests": 81
+    },
+    "processed": 8687891
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0002",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 276948,
+     "cached": 12157184,
+     "generated": 234110,
+     "reasoning": 225298,
+     "requests": 100
+    },
+    "processed": 12434132
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-fp4-modelrun-6bdb73f4/run-0003",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 371517,
+     "cached": 9075200,
+     "generated": 227825,
+     "reasoning": 223270,
+     "requests": 74
+    },
+    "processed": 9446717
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0001",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 2162512,
+     "cached": 1088800,
+     "generated": 53490,
+     "reasoning": 0,
+     "requests": 81
+    },
+    "processed": 3251312
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0002",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1467839,
+     "cached": 385600,
+     "generated": 50011,
+     "reasoning": 0,
+     "requests": 54
+    },
+    "processed": 1853439
+   },
+   {
+    "id": "output/workbench/20261021T130008-thu-quant-fp8-chutes-03610dbf/run-0003",
+    "date": "2026-10-21",
+    "provider": "NanoGPT",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1566279,
+     "cached": 593600,
+     "generated": 57999,
+     "reasoning": 0,
+     "requests": 55
+    },
+    "processed": 2159879
+   },
+   {
+    "id": "output/workbench/20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 387829,
+     "cached": 6894400,
+     "generated": 101044,
+     "reasoning": 87099,
+     "requests": 115
+    },
+    "processed": 7282229
+   },
+   {
+    "id": "output/workbench/20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0002",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 519475,
+     "cached": 5790400,
+     "generated": 168765,
+     "reasoning": 145471,
+     "requests": 99
+    },
+    "processed": 6309875
+   },
+   {
+    "id": "output/workbench/20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0003",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 361961,
+     "cached": 8267200,
+     "generated": 105198,
+     "reasoning": 88609,
+     "requests": 96
+    },
+    "processed": 8629161
+   },
+   {
+    "id": "output/workbench/20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0004",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 781268,
+     "cached": 8644800,
+     "generated": 165763,
+     "reasoning": 133978,
+     "requests": 100
+    },
+    "processed": 9426068
+   },
+   {
+    "id": "output/workbench/20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0005",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 265973,
+     "cached": 3744000,
+     "generated": 105584,
+     "reasoning": 93807,
+     "requests": 62
+    },
+    "processed": 4009973
+   },
+   {
+    "id": "output/workbench/20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0006",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 615772,
+     "cached": 5112000,
+     "generated": 138972,
+     "reasoning": 105751,
+     "requests": 80
+    },
+    "processed": 5727772
+   },
+   {
+    "id": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "modality",
+    "tokens": {
+     "fresh": 3598207,
+     "cached": 33724800,
+     "generated": 1030465,
+     "reasoning": 920860,
+     "requests": 403
+    },
+    "processed": 37323007
+   },
+   {
+    "id": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0002",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 3264584,
+     "cached": 25488000,
+     "generated": 885914,
+     "reasoning": 779841,
+     "requests": 310
+    },
+    "processed": 28752584
+   },
+   {
+    "id": "output/workbench/20261021T144508-vast-fp8-harness2-153a4dc2/run-0003",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 3525616,
+     "cached": 36768000,
+     "generated": 689996,
+     "reasoning": 519880,
+     "requests": 436
+    },
+    "processed": 40293616
+   },
+   {
+    "id": "output/workbench/20261021T151117-vast-fp8-baseline-v2-b3675889/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 271216,
+     "cached": 3780800,
+     "generated": 57017,
+     "reasoning": 17306,
+     "requests": 90
+    },
+    "processed": 4052016
+   },
+   {
+    "id": "output/workbench/20261021T151117-vast-fp8-baseline-v2-b3675889/run-0002",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 256388,
+     "cached": 2406400,
+     "generated": 52862,
+     "reasoning": 44796,
+     "requests": 56
+    },
+    "processed": 2662788
+   },
+   {
+    "id": "output/workbench/20261021T151117-vast-fp8-baseline-v2-b3675889/run-0003",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 149429,
+     "cached": 1345600,
+     "generated": 51362,
+     "reasoning": 43710,
+     "requests": 38
+    },
+    "processed": 1495029
+   },
+   {
+    "id": "output/workbench/20261021T155237-vast-fp8-baseline-v3-b425ddaf/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 560396,
+     "cached": 11835200,
+     "generated": 92588,
+     "reasoning": 73851,
+     "requests": 184
+    },
+    "processed": 12395596
+   },
+   {
+    "id": "output/workbench/20261021T155237-vast-fp8-baseline-v3-b425ddaf/run-0002",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 390884,
+     "cached": 8120000,
+     "generated": 133005,
+     "reasoning": 104065,
+     "requests": 102
+    },
+    "processed": 8510884
+   },
+   {
+    "id": "output/workbench/20261021T155237-vast-fp8-baseline-v3-b425ddaf/run-0003",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 446513,
+     "cached": 10504000,
+     "generated": 149289,
+     "reasoning": 118222,
+     "requests": 124
+    },
+    "processed": 10950513
+   },
+   {
+    "id": "output/workbench/20261021T160543-resume-afe34baf/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 98250,
+     "cached": 448000,
+     "generated": 13035,
+     "reasoning": 9742,
+     "requests": 26
+    },
+    "processed": 546250
+   },
+   {
+    "id": "output/workbench/20261021T160544-resume-4e0950e9/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 84519,
+     "cached": 264000,
+     "generated": 9933,
+     "reasoning": 6619,
+     "requests": 17
+    },
+    "processed": 348519
+   },
+   {
+    "id": "output/workbench/20261021T160544-resume-7b6965ba/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 111530,
+     "cached": 545600,
+     "generated": 11169,
+     "reasoning": 7005,
+     "requests": 31
+    },
+    "processed": 657130
+   },
+   {
+    "id": "output/workbench/20261021T160936-vast-fp8-avo-v2-b994ed09/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1543383,
+     "cached": 13280000,
+     "generated": 424577,
+     "reasoning": 345151,
+     "requests": 163
+    },
+    "processed": 14823383
+   },
+   {
+    "id": "output/workbench/20261021T160936-vast-fp8-avo-v2-b994ed09/run-0002",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 1719082,
+     "cached": 16668800,
+     "generated": 440544,
+     "reasoning": 365643,
+     "requests": 193
+    },
+    "processed": 18387882
+   },
+   {
+    "id": "output/workbench/20261021T160936-vast-fp8-avo-v2-b994ed09/run-0003",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 1929087,
+     "cached": 22803200,
+     "generated": 398341,
+     "reasoning": 322903,
+     "requests": 253
+    },
+    "processed": 24732287
+   },
+   {
+    "id": "output/workbench/20261021T162323-vast-fp8-baseline-v4-6767db38/run-0001",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "modality",
+    "tokens": {
+     "fresh": 1612395,
+     "cached": 23350400,
+     "generated": 364614,
+     "reasoning": 311484,
+     "requests": 264
+    },
+    "processed": 24962795
+   },
+   {
+    "id": "output/workbench/20261021T162323-vast-fp8-baseline-v4-6767db38/run-0002",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 1738099,
+     "cached": 35531200,
+     "generated": 337205,
+     "reasoning": 255515,
+     "requests": 335
+    },
+    "processed": 37269299
+   },
+   {
+    "id": "output/workbench/20261021T162323-vast-fp8-baseline-v4-6767db38/run-0003",
+    "date": "2026-10-21",
+    "provider": "vast",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Baseline",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 2105509,
+     "cached": 54489600,
+     "generated": 318429,
+     "reasoning": 234261,
+     "requests": 501
+    },
+    "processed": 56595109
+   },
+   {
+    "id": "output/workbench/20261021T233637-openrouter-avo3-17330a28/run-0001",
+    "date": "2026-10-21",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "modality",
+    "tokens": {
+     "fresh": 629999,
+     "cached": 11067648,
+     "generated": 255025,
+     "reasoning": 193941,
+     "requests": 186
+    },
+    "processed": 11697647
+   },
+   {
+    "id": "output/workbench/20261021T233637-openrouter-avo3-17330a28/run-0002",
+    "date": "2026-10-21",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 622599,
+     "cached": 11005936,
+     "generated": 336205,
+     "reasoning": 282991,
+     "requests": 196
+    },
+    "processed": 11628535
+   },
+   {
+    "id": "output/workbench/20261021T233637-openrouter-avo3-17330a28/run-0003",
+    "date": "2026-10-21",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "AVO",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 692112,
+     "cached": 29459328,
+     "generated": 308871,
+     "reasoning": 204025,
+     "requests": 397
+    },
+    "processed": 30151440
+   },
+   {
+    "id": "output/workbench/20261021T235821-harness2-per-level-modality-b20130e2/run-0001",
+    "date": "2026-10-21",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "opencode",
+    "framework": "Harness²",
+    "game": "modality",
+    "tokens": {
+     "fresh": 457449,
+     "cached": 7009968,
+     "generated": 329578,
+     "reasoning": 285452,
+     "requests": 126
+    },
+    "processed": 7467417
+   },
+   {
+    "id": "output/codex_agent/qwen27b-deepinfra-icecrates-bp150-20261008",
+    "date": "2026-10-08",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "icecrates",
+    "tokens": {
+     "fresh": 275808,
+     "cached": 5088944,
+     "generated": 124637,
+     "reasoning": 111714,
+     "requests": 0
+    },
+    "processed": 5364752
+   },
+   {
+    "id": "output/codex_agent/qwen27b-deepinfra-knightoban-bp150-20261008",
+    "date": "2026-10-08",
+    "provider": "OpenRouter",
+    "model": "27B",
+    "harness": "codex",
+    "framework": "Baseline",
+    "game": "knightoban",
+    "tokens": {
+     "fresh": 131706,
+     "cached": 507248,
+     "generated": 17464,
+     "reasoning": 12304,
+     "requests": 0
+    },
+    "processed": 638954
+   }
+  ]
+ }
+}

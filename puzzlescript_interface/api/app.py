@@ -70,7 +70,9 @@ class ResetRequest(BaseModel):
     game_id: str
     card_id: str
     guid: str | None = None
+    # Raw index into the game's level list (message screens count); `level` is 1-based over playable levels.
     level_index: int | None = Field(default=None, ge=0)
+    level: int | None = Field(default=None, ge=1)
 
 
 class ActionRequest(BaseModel):
@@ -203,7 +205,13 @@ def create_app(
             )
             return _frame_response(payload, binding, "RESET")
 
-        if request.level_index is None:
+        if request.level is not None:
+            if request.level_index is not None:
+                raise HTTPException(
+                    status_code=400, detail="Give level or level_index, not both"
+                )
+            payload = client.start_game(entry.source_name, level=request.level)
+        elif request.level_index is None:
             payload = client.start_game(entry.source_name)
         else:
             payload = client.start_game(

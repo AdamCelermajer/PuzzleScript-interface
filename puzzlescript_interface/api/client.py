@@ -49,11 +49,17 @@ class PuzzleScriptClient:
         return data
 
     def start_game(
-        self, source_name: str, *, level_index: int | None = None
+        self,
+        source_name: str,
+        *,
+        level_index: int | None = None,
+        level: int | None = None,
     ) -> dict[str, Any]:
         payload: dict[str, Any] = {"gameName": source_name}
         if level_index is not None:
             payload["levelIndex"] = level_index
+        if level is not None:
+            payload["level"] = level
         return self._request("POST", "/init", payload)
 
     def reset_session(self, session_id: str) -> dict[str, Any]:

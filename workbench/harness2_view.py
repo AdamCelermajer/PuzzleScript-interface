@@ -69,3 +69,57 @@ def harness_edits(run: Path) -> dict[str, dict[str, str]]:
         if folder.name != "base" and folder.is_dir():
             edits[folder.name] = _files(folder)
     return dict(sorted(edits.items()))
+
+
+def harness_diffs(run: Path) -> dict[str, dict[str, str]]:
+    """For each written harness, a unified diff of every file that differs from the starting harness."""
+    import difflib
+    base = next((p for p in (run / "harnesses" / "base", run / "base") if p.is_dir()), None)
+    diffs = {}
+    for label, files in harness_edits(run).items():
+        changed = {}
+        for name, text in files.items():
+            old_path = base / name if base else None
+            old = old_path.read_text(encoding="utf-8", errors="replace")[:EDIT_LIMIT] if old_path and old_path.is_file() else ""
+            if old == text:
+                continue
+            changed[name] = "\n".join(difflib.unified_diff(old.splitlines(), text.splitlines(), f"base/{name}",
+                                                           f"{label}/{name}", lineterm="", n=3))
+        diffs[label] = changed
+    return diffs
+
+
+def _json(path: Path) -> dict:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def levels(run: Path) -> list[dict]:
+    """A per-level run (levels/L<k>/rounds/R<n>/): each level's outcome and kept harness, and each
+    round's budget, rollouts (a reused rollout names the one it repeats) and coach views."""
+    from workbench.catalog import last_record
+    rows = []
+    for level in sorted((run / "levels").glob("L*"), key=lambda p: int(p.name[1:]) if p.name[1:].isdigit() else 0):
+        rounds = []
+        for folder in sorted((level / "rounds").glob("R*"), key=lambda p: int(p.name[1:]) if p.name[1:].isdigit() else 0):
+            rollouts = []
+            for rollout in sorted((p for p in (folder / "rollouts").glob("*") if p.is_dir()), key=lambda p: p.stat().st_mtime):
+                reused = _json(rollout / "reused.json").get("same_as")
+                source = folder.parent / reused.split("/")[0] / "rollouts" / reused.split("/")[1] if reused else rollout
+                if not reused and not (rollout / "run_config.json").is_file():
+                    continue
+                rollouts.append({"label": rollout.name, "reused": reused, "result": _json(source / "result.json") or None,
+                                 "latest_transition": last_record(source / "transitions.jsonl")})
+            # While a round plays, its budget is on each rollout's harness mark; round.json comes at its end.
+            budget = next((_json(mark).get("budget") for mark in sorted(folder.glob("rollouts/*/harness.json"))), None)
+            rounds.append({"round": folder.name, "budget": budget,
+                           **_json(folder / "round.json"), "rollouts": rollouts,
+                           "coach_sessions": coach_sessions(folder), "harness_edits": harness_edits(folder),
+                           "harness_diffs": harness_diffs(folder)})
+        kept = level / "kept"
+        rows.append({"level": int(level.name[1:]), **_json(level / "result.json"), "rounds": rounds,
+                     "kept_files": _files(kept) if kept.is_dir() else {}})
+    return rows

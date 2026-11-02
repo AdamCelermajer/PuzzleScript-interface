@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useGameTitle } from '../api/hooks'
 import type { CatalogJob } from '../api/types'
 import { relativeTime, shortTime } from '../lib/format'
-import { modelParts, runHref, unitLabel, type Launch, type RunView } from '../lib/runs'
+import { levelText, modelParts, runHref, unitLabel, type Launch, type RunView } from '../lib/runs'
 import { processStatus } from '../lib/status'
 import { GameThumb, HarnessChip, LevelPips, RunId, StatusDot } from './identity'
 import { Button, cx } from './ui'
@@ -23,15 +23,19 @@ export interface RunListProps {
   onSelect?: (id: string, on: boolean) => void
   onResume?: (runId: string) => void
   onJob?: (verb: JobVerb, job: CatalogJob) => void
+  /** Stop one run of a batch (game title for the confirm). */
+  onStopRun?: (run: RunView, game: string) => void
   busy?: boolean
   /** Launch ids whose group starts expanded (e.g. a focused or live launch). */
   expanded?: (launch: Launch) => boolean
   header?: boolean
   empty?: ReactNode
+  /** Take a launch off this list (e.g. Results' Paused); files are kept. */
+  onRemove?: (launch: Launch) => void
 }
 
 /** Flat run list, newest first. A launch with two or more runs collapses into one group row. */
-export function RunList({ launches, selectable, selected, onSelect, onResume, onJob, busy, expanded, header = true, empty }: RunListProps) {
+export function RunList({ launches, selectable, selected, onSelect, onResume, onJob, onStopRun, busy, expanded, header = true, empty, onRemove }: RunListProps) {
   if (!launches.length) return <>{empty ?? null}</>
   return (
     <div className="rounded-xl border border-line bg-panel shadow-[var(--shadow)]">
@@ -51,9 +55,9 @@ export function RunList({ launches, selectable, selected, onSelect, onResume, on
       <div className="divide-y divide-line">
         {launches.map((launch) =>
           launch.runs.length >= 2 ? (
-            <GroupRow key={`${launch.id}|${launch.archive}`} launch={launch} {...{ selectable, selected, onSelect, onResume, onJob, busy }} defaultOpen={expanded?.(launch) ?? false} />
+            <GroupRow key={`${launch.id}|${launch.archive}`} launch={launch} {...{ selectable, selected, onSelect, onResume, onJob, onStopRun, busy }} defaultOpen={expanded?.(launch) ?? false} onRemove={onRemove && (() => onRemove(launch))} />
           ) : (
-            <RunRow key={launch.runs[0].id} run={launch.runs[0]} job={launch.job} {...{ selectable, selected, onSelect, onResume, onJob, busy }} />
+            <RunRow key={launch.runs[0].id} run={launch.runs[0]} job={launch.job} {...{ selectable, selected, onSelect, onResume, onJob, busy }} onRemove={onRemove && (() => onRemove(launch))} />
           ),
         )}
       </div>
@@ -73,11 +77,17 @@ function JobActions({ job, busy, onJob }: { job?: CatalogJob; busy?: boolean; on
   )
 }
 
-function RunRow({ run, job, indent, selectable, selected, onSelect, onResume, onJob, busy }: {
+function RemoveButton({ busy, onRemove }: { busy?: boolean; onRemove?: () => void }) {
+  if (!onRemove) return null
+  return <Button size="sm" variant="ghost" disabled={busy} onClick={(e) => { e.stopPropagation(); onRemove() }} title="Remove from this list; files are kept">Remove</Button>
+}
+
+function RunRow({ run, job, indent, selectable, selected, onSelect, onResume, onJob, onStopRun, busy, onRemove }: {
   run: RunView
   job?: CatalogJob
   indent?: boolean
-} & Omit<RunListProps, 'launches' | 'expanded' | 'header' | 'empty'>) {
+  onRemove?: () => void
+} & Omit<RunListProps, 'launches' | 'expanded' | 'header' | 'empty' | 'onRemove'>) {
   const raw = run.raw
   const title = useGameTitle()
   const { name, provider } = modelParts(run.model)
@@ -90,7 +100,7 @@ function RunRow({ run, job, indent, selectable, selected, onSelect, onResume, on
       <Link to={runHref(run.id)} className={cx('flex min-w-0 items-center gap-3 text-fg hover:no-underline', indent && 'pl-5')}>
         <GameThumb gameId={run.game} size={indent ? 26 : 32} />
         <span className="min-w-0">
-          <span className="block truncate text-[13.5px] font-semibold">{title(run.game)}</span>
+          <span className="block truncate text-[13.5px] font-semibold">{title(run.game)}{levelText(run)}</span>
           <span className="block truncate text-[11.5px] text-faint">{run.variant}{run.worldModel && run.worldModel !== 'not-recorded' ? ` · ${run.worldModel}` : ''} · {shortTime(run.started)}</span>
         </span>
       </Link>
@@ -110,16 +120,19 @@ function RunRow({ run, job, indent, selectable, selected, onSelect, onResume, on
         <span className="block truncate text-[11px] text-faint" title={raw.failure_reason ?? undefined}>{raw.failure_reason ? 'needs attention' : relativeTime(run.activity)}</span>
       </span>
       <RunId id={run.id} className="max-w-full" />
-      <span className="flex justify-end">
+      <span className="flex flex-col items-end gap-0.5">
         {raw.resumable && !raw.resumed_as && onResume ? <Button size="sm" onClick={() => onResume(run.id)}>{run.kind === 'avo' ? 'Resume' : 'Continue'}</Button>
           : raw.resumed_as ? <Link to={runHref(raw.resumed_as)} className="text-[12px] text-muted">continued →</Link>
-            : !indent ? <JobActions job={job} busy={busy} onJob={onJob} /> : null}
+            : !indent ? <JobActions job={job} busy={busy} onJob={onJob} />
+              // A run inside a batch group stops on its own; the group row keeps Stop/Pause for the whole batch.
+              : raw.can_stop && onStopRun ? <Button size="sm" variant="danger" disabled={busy} onClick={() => onStopRun(run, title(run.game))} title="Stop this run only">Stop</Button> : null}
+        <RemoveButton busy={busy} onRemove={onRemove} />
       </span>
     </div>
   )
 }
 
-function GroupRow({ launch, defaultOpen, selectable, selected, onSelect, onResume, onJob, busy }: { launch: Launch; defaultOpen: boolean } & Omit<RunListProps, 'launches' | 'expanded' | 'header' | 'empty'>) {
+function GroupRow({ launch, defaultOpen, selectable, selected, onSelect, onResume, onJob, onStopRun, busy, onRemove }: { launch: Launch; defaultOpen: boolean; onRemove?: () => void } & Omit<RunListProps, 'launches' | 'expanded' | 'header' | 'empty' | 'onRemove'>) {
   const [open, setOpen] = useState(defaultOpen)
   const title = useGameTitle()
   const job = launch.job
@@ -157,11 +170,11 @@ function GroupRow({ launch, defaultOpen, selectable, selected, onSelect, onResum
           {running > 0 && <span className="block text-[11px] text-faint">{running} running</span>}
         </span>
         <span onClick={(e) => e.stopPropagation()} className="min-w-0"><RunId id={launch.id} className="max-w-full" /></span>
-        <span onClick={(e) => e.stopPropagation()}><JobActions job={job} busy={busy} onJob={onJob} /></span>
+        <span onClick={(e) => e.stopPropagation()} className="flex flex-col items-end gap-0.5"><JobActions job={job} busy={busy} onJob={onJob} /><RemoveButton busy={busy} onRemove={onRemove} /></span>
       </div>
       {open && (
         <div className="divide-y divide-line border-t border-line">
-          {launch.runs.map((run) => <RunRow key={run.id} run={run} indent {...{ selectable, selected, onSelect, onResume, busy }} />)}
+          {launch.runs.map((run) => <RunRow key={run.id} run={run} indent {...{ selectable, selected, onSelect, onResume, onStopRun, busy }} />)}
         </div>
       )}
     </div>

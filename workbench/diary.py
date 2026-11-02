@@ -19,6 +19,7 @@ from pathlib import Path
 from fastapi import APIRouter, Body, HTTPException, Query, Response
 
 from workbench.catalog import read_json, snapshot
+from workbench.run_tokens import run_tokens
 
 ROOT = Path(__file__).resolve().parents[1]
 # Both roots are module attributes so tests (and other checkouts) can point elsewhere.
@@ -26,7 +27,7 @@ DIARY_DIR = Path(os.environ.get("WORKBENCH_DIARY_DIR") or ROOT / "docs" / "diary
 RUN_ROOT = ROOT
 
 SECTIONS = ("Did", "Found", "Decided", "Next")
-FIELDS = ("date", "title", "threads", "runs", "commits", "docs", "reconstructed")
+FIELDS = ("date", "title", "threads", "runs", "commits", "docs", "reconstructed", "brief")
 LIST_FIELDS = ("threads", "runs", "commits", "docs")
 MEETING_THREAD = "meetings"
 SLUG = re.compile(r"^(\d{4}-\d{2}-\d{2})-[a-z0-9][a-z0-9-]{0,79}$")
@@ -197,6 +198,10 @@ def validate(slug: str, meta: dict, body: str) -> tuple[dict, dict, list[str]]:
     if not isinstance(reconstructed, bool):
         raise DiaryError("reconstructed must be true or false")
     normalized["reconstructed"] = reconstructed
+    brief = meta.get("brief", False)
+    if not isinstance(brief, bool):
+        raise DiaryError("brief must be true or false")
+    normalized["brief"] = brief
     if not isinstance(body, str) or len(body) > MAX_BODY:
         raise DiaryError(f"body must be text of at most {MAX_BODY} characters")
     sections = parse_sections(body.replace("\r\n", "\n"))
@@ -217,7 +222,8 @@ def _yaml_scalar(value: str) -> str:
 def serialize(meta: dict, sections: dict) -> str:
     lines = ["---", f"date: {meta['date']}", f"title: {_yaml_scalar(meta['title'])}"]
     lines += [f"{field}: [{', '.join(meta[field])}]" for field in LIST_FIELDS]
-    lines += [f"reconstructed: {'true' if meta['reconstructed'] else 'false'}", "---"]
+    lines += [f"reconstructed: {'true' if meta['reconstructed'] else 'false'}"]
+    lines += ["brief: true"] * bool(meta.get("brief")) + ["---"]
     for name in SECTIONS:
         lines += [f"## {name}", sections[name.lower()] or "- —", ""]
     return "\n".join(lines).rstrip("\n") + "\n"
@@ -317,7 +323,7 @@ def _run_date(row: dict, root: Path) -> str | None:
     return None
 
 
-def _run_summary(row: dict, root: Path) -> dict:
+def _run_summary(row: dict, root: Path, runs=()) -> dict:
     spec = read_json(root / row.get("id", "") / "run_spec.json")
     kind = row.get("kind")
     status = row.get("status") or "unknown"
@@ -339,27 +345,43 @@ def _run_summary(row: dict, root: Path) -> dict:
     return {"id": row.get("id"), "date": row.get("_date"), "variant": row.get("variant") or kind,
             "harness": spec.get("harness") or row.get("agent_backend") or row.get("harness"),
             "model": spec.get("model") or row.get("model"), "game": spec.get("game_id") or row.get("game_id"),
-            "status": status, "solved": bool(row.get("solved")), "outcome": outcome}
+            "status": status, "solved": bool(row.get("solved")), "outcome": outcome,
+            "tokens": run_tokens(root / row.get("id", ""), runs)}
 
 
 def run_index() -> list[dict]:
-    """Catalog rows with a start date, cached briefly; no Docker probe is needed here."""
+    """Catalog rows with a start date; no Docker probe is needed here. Building it reads every run's
+    token logs (seconds to tens of seconds), so once built a stale copy is served at once while a
+    background thread rebuilds it."""
     root = Path(RUN_ROOT)
+    cached = _run_cache.get(str(root))
+    if cached:
+        if time.monotonic() - cached[0] >= RUN_CACHE_SECONDS and _run_lock.acquire(blocking=False):
+            def refresh() -> None:
+                try:
+                    _build_run_index(root)
+                finally:
+                    _run_lock.release()
+            threading.Thread(target=refresh, daemon=True).start()
+        return cached[1]
     with _run_lock:
         cached = _run_cache.get(str(root))
-        if cached and time.monotonic() - cached[0] < RUN_CACHE_SECONDS:
-            return cached[1]
-        try:
-            rows = snapshot(root, {})["runs"]
-        except Exception:  # The diary stays usable when a run archive is unreadable.
-            rows = []
-        summaries = []
-        for row in rows:
-            row = {**row, "_date": _run_date(row, root)}
-            summaries.append(_run_summary(row, root))
-        summaries.sort(key=lambda r: (r["date"] or "", r["id"] or ""))
-        _run_cache[str(root)] = (time.monotonic(), summaries)
-        return summaries
+        return cached[1] if cached else _build_run_index(root)
+
+
+def _build_run_index(root: Path) -> list[dict]:
+    try:
+        rows = snapshot(root, {})["runs"]
+    except Exception:  # The diary stays usable when a run archive is unreadable.
+        rows = []
+    summaries = []
+    runs = [root / row.get("id", "") for row in rows]  # a continued run's copied sessions count in its source
+    for row in rows:
+        row = {**row, "_date": _run_date(row, root)}
+        summaries.append(_run_summary(row, root, runs))
+    summaries.sort(key=lambda r: (r["date"] or "", r["id"] or ""))
+    _run_cache[str(root)] = (time.monotonic(), summaries)
+    return summaries
 
 
 def linked_runs(entry: dict, index: list[dict]) -> list[dict]:
@@ -402,7 +424,7 @@ def select(entries: list[dict], thread: str | None, start: str | None, end: str 
 
 
 def public(entry: dict, index: list[dict], body: bool = False) -> dict:
-    keys = ("slug", "date", "title", "threads", "reconstructed", "commits", "docs", "sections", "warnings")
+    keys = ("slug", "date", "title", "threads", "reconstructed", "brief", "commits", "docs", "sections", "warnings")
     value = {k: entry[k] for k in keys}
     value["explicit_runs"] = entry["runs"]
     value["runs"] = linked_runs(entry, index)

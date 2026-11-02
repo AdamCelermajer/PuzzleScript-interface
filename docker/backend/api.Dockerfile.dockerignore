@@ -1,0 +1,5 @@
+**
+!puzzlescript_interface/
+!puzzlescript_interface/__init__.py
+!puzzlescript_interface/api/
+!puzzlescript_interface/api/*.py

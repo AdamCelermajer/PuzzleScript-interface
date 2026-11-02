@@ -58,8 +58,9 @@ Frameworks (`frameworks/registry.py`; interface `Framework`/`Option` in `framewo
 "Baseline+") and `avo` (AVO optimizer + player + solver evaluation). The former modes map as
 `baseline` → `baseline`, `baseline-plus` → `baseline` with `notes: true`, `campaign` → `avo`.
 
-Baseline enforcement: after each baseline turn the controller deletes every workspace file
-that is not a provided frame, so only the conversation persists. With `notes` it keeps `notes/`.
+Baseline workspace: one conversation per game, and nothing is deleted between turns; the CLI keeps
+its own tools. `notes` adds a `notes/` directory and asks the agent to keep its working memory
+there (21 Oct 2026; before that, every file except the frame and `notes/` was deleted after each turn).
 
 Every run output directory gets `run_spec.json`:
 

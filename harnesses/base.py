@@ -4,7 +4,9 @@ One ``CliSession`` is one agent conversation. ``start`` fixes the workspace, sys
 prompt, model and effort; every ``turn`` runs one autonomous agent turn (a CLI
 process, or one in-process tool loop for ``bare``) and resumes the same session id.
 Each turn writes its raw stdout to ``<analysis>/raw/turn-<n>.jsonl`` and normalized
-events (contract section 1) to ``<analysis>/agent_events.jsonl``.
+events (contract section 1) to ``<analysis>/agent_events.jsonl``. Every model call of the
+session goes through one ``CallRecorder`` and is saved in ``<analysis>/calls/`` exactly as
+sent and received (harnesses/recorder.py); ``prepare`` points the CLI at it.
 """
 from __future__ import annotations
 
@@ -18,7 +20,10 @@ import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Callable, Iterable, Sequence
+from urllib.parse import urlsplit
+
+from harnesses.recorder import CallRecorder
 
 SCHEMA = "agent-event-v1"
 EFFORTS = ("low", "medium", "high", "xhigh", "max")
@@ -125,11 +130,14 @@ def kill_tree(process: subprocess.Popen) -> None:
 
 
 def run_streaming(command: Sequence[str], *, cwd: Path, env: dict[str, str], timeout: float | None,
-                  raw_path: Path, on_line, stdin_data: str | None = None) -> tuple[int | None, bool, str]:
+                  raw_path: Path, on_line, stdin_data: str | None = None,
+                  should_stop=None) -> tuple[int | None, bool, str]:
     """Run one CLI turn; stream stdout lines to ``raw_path`` and ``on_line``.
 
     stdin is closed (or receives ``stdin_data`` then EOF). On timeout the whole
-    process tree is killed. Returns (exit_code, timed_out, stderr_tail).
+    process tree is killed. ``should_stop(line)``, when given, is asked after each
+    line; True ends the turn there (process tree killed, exit code 0).
+    Returns (exit_code, timed_out, stderr_tail).
     """
     raw_path.parent.mkdir(parents=True, exist_ok=True)
     stderr_path = raw_path.with_name(raw_path.stem + ".stderr.txt")
@@ -143,6 +151,7 @@ def run_streaming(command: Sequence[str], *, cwd: Path, env: dict[str, str], tim
                                    stdin=subprocess.PIPE if stdin_data is not None else subprocess.DEVNULL,
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
         failures: list[BaseException] = []
+        stopped = threading.Event()
 
         def read_stdout() -> None:
             assert process.stdout is not None
@@ -150,9 +159,12 @@ def run_streaming(command: Sequence[str], *, cwd: Path, env: dict[str, str], tim
                 line = chunk.decode("utf-8", errors="replace").rstrip("\r\n")
                 raw.write(line + "\n")
                 raw.flush()
-                if line.strip():
+                if line.strip() and not stopped.is_set():
                     try:
                         on_line(line)
+                        if should_stop is not None and should_stop(line):
+                            stopped.set()
+                            kill_tree(process)
                     except Exception as exc:  # normalization must never stall the CLI pipe
                         failures.append(exc)
 
@@ -185,7 +197,7 @@ def run_streaming(command: Sequence[str], *, cwd: Path, env: dict[str, str], tim
     if failures:
         raise HarnessError(f"Event normalization failed: {type(failures[0]).__name__}: {failures[0]}") from failures[0]
     tail = stderr_path.read_text(encoding="utf-8", errors="replace")[-4000:] if stderr_path.exists() else ""
-    return process.returncode, timed_out, tail
+    return (0 if stopped.is_set() else process.returncode), timed_out, tail
 
 
 def in_container() -> bool:
@@ -210,6 +222,8 @@ class CliSession:
     """Base class. Subclasses implement ``command`` and ``normalize``."""
 
     harness_id = ""
+    # Whether ``game_tools`` become real tools of this harness; otherwise the caller names its scripts.
+    native_tools = False
     # The registry fills these from the model id.
     provider = ""
     native_model = ""
@@ -232,6 +246,17 @@ class CliSession:
         self._final_text = ""
         self._usage: dict[str, Any] = {}
         self._turn_errors: list[str] = []
+        # Optional: a caller-owned check that ends a turn once its goal is met (the turn-based
+        # Baseline's submitted action). The run is cut at the next ``step_finished`` event.
+        self.stop_check: Callable[[], bool] | None = None
+        self.recorder: CallRecorder | None = None
+        self.recorder_url = ""
+        # Why a harness cannot send its calls through the recorder (set in ``prepare``).
+        self.unrecorded = ""
+        # Tools a caller adds next to the harness's own, set before ``start``: each
+        # {name, description, command, argument?, argument_description?} runs ``command`` (plus the
+        # argument) in the workspace and returns its output (frameworks/baseline/prompt.py).
+        self.game_tools: list[dict[str, Any]] = []
 
     # -- lifecycle -----------------------------------------------------------------
     def start(self, workspace: str | Path, system_prompt: str, model: str, effort: str, role: str,
@@ -242,8 +267,8 @@ class CliSession:
         if effort not in EFFORTS:
             raise HarnessError(f"Unsupported effort {effort!r}; use one of {', '.join(EFFORTS)}")
         self.provider, self.native_model = resolve_model_for(self.harness_id, model)
-        if provider and self.provider != "openrouter":
-            raise HarnessError("Provider pinning is only supported for OpenRouter models")
+        if provider and not (self.provider == "openrouter" or (self.provider == "nanogpt" and self.harness_id == "opencode")):
+            raise HarnessError("Provider pinning is supported for OpenRouter models and for NanoGPT models on opencode")
         self.workspace = Path(workspace).resolve()
         self.workspace.mkdir(parents=True, exist_ok=True)
         self.system_prompt, self.model, self.effort, self.role = system_prompt, model, effort, role
@@ -252,13 +277,22 @@ class CliSession:
         self.log = EventLog(self.analysis_dir, harness=self.harness_id, model=model, role=role)
         self.private = Path(tempfile.mkdtemp(prefix=f"{self.harness_id}-", dir=private_root()))
         self.env = self.base_env()
+        self.recorder = CallRecorder(self.analysis_dir / "calls", turn=lambda: self.turn_number,
+                                     session=lambda: self.session_id)
+        self.recorder_url = self.recorder.start()
         self.prepare()
+        if not self.recorder.upstream:
+            self.recorder.stop()
+            self.recorder = None
         manifest = {
             "schema": "agent-session-v1", "harness": self.harness_id, "model": model, "provider": self.provider,
             "native_model": self.native_model, "openrouter_provider": provider or None, "effort": effort,
             "role": role, "workspace": str(self.workspace), "started_at": utc_now(),
             "system_prompt_sha256": hashlib.sha256(system_prompt.encode("utf-8")).hexdigest(),
             "web_tools": "disabled", "permission_prompts": "disabled (Docker container is the sandbox)",
+            "calls": (f"calls/: every request to {self.recorder.upstream} and its reply, as sent" if self.recorder
+                      else f"not recorded: {self.unrecorded or 'the harness did not route its calls'}"),
+            "game_tools": [tool["name"] for tool in self.game_tools] if self.native_tools else [],
             **getattr(self, "manifest_extra", {}),
         }
         (self.analysis_dir / "session.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
@@ -267,7 +301,24 @@ class CliSession:
         return self
 
     def close(self) -> None:
+        if self.recorder is not None:
+            self.recorder.stop()
         self.started = False
+
+    def save_input(self, turn: int, instruction: str, images: Sequence[Path]) -> None:
+        """sent.jsonl: our message of each turn, as passed to the harness (system_prompt.txt is the rest)."""
+        line = json.dumps({"turn": turn, "t": utc_now(), "instruction": instruction,
+                           "images": [str(path) for path in images]}, ensure_ascii=False)
+        with (self.analysis_dir / "sent.jsonl").open("a", encoding="utf-8") as stream:
+            stream.write(line + "\n")
+
+    def record_calls(self, api_url: str) -> str:
+        """Send the calls meant for ``api_url`` through the recorder: returns the URL to use instead,
+        same path. Called by ``prepare``."""
+        assert self.recorder is not None
+        parts = urlsplit(api_url)
+        self.recorder.upstream = f"{parts.scheme}://{parts.netloc}"
+        return self.recorder_url + parts.path
 
     def __enter__(self) -> "CliSession":
         return self
@@ -292,6 +343,10 @@ class CliSession:
         """Map one raw CLI event to normalized events; may set session id / text / usage."""
         raise NotImplementedError
 
+    def step_finished(self, event: dict[str, Any]) -> bool:
+        """True when a raw CLI event closes a model step, so a turn can be cut there cleanly."""
+        return True
+
     def final_text(self) -> str:
         return self._final_text or "\n".join(part for part in self._text_parts if part).strip()
 
@@ -305,6 +360,7 @@ class CliSession:
         self._text_parts, self._final_text, self._usage, self._turn_errors = [], "", {}, []
         events: list[dict[str, Any]] = []
         log = self.log
+        self.save_input(number, instruction, image_paths)
 
         def on_line(line: str) -> None:
             try:
@@ -317,10 +373,18 @@ class CliSession:
                 kind = event.pop("type")
                 events.append(log.write(turn=number, type=kind, session=self.session_id, **event))
 
+        def should_stop(line: str) -> bool:
+            try:
+                payload = json.loads(line)
+            except json.JSONDecodeError:
+                return False
+            return isinstance(payload, dict) and self.step_finished(payload) and bool(self.stop_check())
+
         command = self.command(instruction, image_paths)
         exit_code, timed_out, stderr = run_streaming(
             command, cwd=self.workspace, env=self.env, timeout=timeout, raw_path=log.raw_path(number),
-            on_line=on_line, stdin_data=self.stdin_payload(instruction, image_paths))
+            on_line=on_line, stdin_data=self.stdin_payload(instruction, image_paths),
+            should_stop=should_stop if self.stop_check is not None else None)
         return self._finish_turn(number, events, exit_code, timed_out, stderr, timeout)
 
     def _finish_turn(self, number: int, events: list[dict[str, Any]], exit_code: int | None, timed_out: bool,

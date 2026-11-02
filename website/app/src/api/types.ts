@@ -66,8 +66,12 @@ export interface CatalogRun {
   /** Moved to the archive by the user (output/workbench/archived.json). */
   archived?: boolean
   /** Harness²: finished and planned rollouts, and the one playing now. */
-  rollouts?: { done: number; total: number; current: string | null; current_actions: number | null } | null
+  rollouts?: { done: number; total: number | null; current: string | null; current_actions: number | null } | null
   log_href?: string | null
+  /** The run's folder in its batch (`run-0001`), the key of `POST /experiments/stop-run`. */
+  job_run?: string | null
+  /** An active run of a live batch that can be stopped on its own. */
+  can_stop?: boolean
   game_id?: string | null
   condition?: string | null
   world_model_mode?: string | null
@@ -94,6 +98,10 @@ export interface CatalogRun {
   pair_id?: string | null
   match_id?: string | null
   recorded_win_levels?: number | null
+  /** Direct play: the level the game opened at, the level of a one-level task, and that level's score. */
+  start_level?: number | null
+  level?: number | null
+  level_score?: { solved: boolean | null; moves: number | null; shortest: number | null; ratio: number | null } | null
   config?: Record<string, unknown>
   result_inputs?: { config: Record<string, unknown>; evaluations: EvaluationInput[]; finalized: boolean }
 }
@@ -219,6 +227,17 @@ export interface AgentEvent {
   usage?: { input?: number; output?: number; reasoning?: number; cached?: number } | null
   harness?: string | null
   model?: string | null
+  /** File edits: a unified diff derived from the harness's raw turn record, and why it is partial. */
+  diff?: string | null
+  diff_note?: string | null
+}
+
+/** What our program sent a session: its system prompt, a mission file, each turn's message when recorded. */
+export interface SessionPrompts {
+  system: string | null
+  mission: string | null
+  turns: Record<string, string>
+  turns_recorded: boolean
 }
 
 export interface GridFrame {
@@ -241,8 +260,27 @@ export interface Transition {
   note?: string
 }
 
+/** notes/ after one harness turn (notes_history/turn-NNNN/); action_index is the move that turn played. */
+export interface NotesHistoryTurn {
+  turn: number
+  kind: string | null
+  timestamp: string | null
+  action_index: number | null
+  files: string[]
+}
+
+/** One turn's notes, and a unified diff of each file changed since the previous saved turn. */
+export interface NotesTurn {
+  turn: number
+  previous: number | null
+  files: Record<string, string>
+  diffs: Record<string, string>
+}
+
 export interface RunRecord {
   id: string
+  /** calls/ holds every model request and response (harnesses/recorder.py). */
+  has_calls?: boolean
   config: Record<string, unknown>
   run_spec: Record<string, unknown> | null
   normalized: {
@@ -264,6 +302,7 @@ export interface RunRecord {
   error: Record<string, unknown>
   latest_transition: Transition
   agent_events: { total: number; invalid_lines: number; truncated: boolean; events: AgentEvent[] } | null
+  prompts?: SessionPrompts | null
   files: string[]
   /** Harness²: one direct-player run per rollout, in start order. */
   rollouts?: { label: string; result: Record<string, unknown> | null; latest_transition: Transition }[]
@@ -271,6 +310,44 @@ export interface RunRecord {
   /** Harness²: the coach's sessions (INV, DOM, compose…) and the harness files each stage wrote. */
   coach_sessions?: CoachSession[]
   harness_edits?: Record<string, Record<string, string>>
+  /** Per stage, a unified diff of each harness file that differs from the starting harness. */
+  harness_diffs?: Record<string, Record<string, string>>
+  /** Harness² per level: each level's rounds at a growing budget, and the harness it kept. */
+  levels?: Harness2Level[]
+}
+
+export interface Harness2Rollout {
+  label: string
+  /** "R2/inv1": the same harness was already played at this budget; its result is shown. */
+  reused?: string | null
+  result: Record<string, unknown> | null
+  latest_transition: Transition
+}
+
+export interface Harness2Round {
+  round: string
+  budget: number | null
+  kept?: string
+  solved?: boolean
+  action_count?: number
+  fell_back?: string[]
+  rollouts: Harness2Rollout[]
+  coach_sessions: CoachSession[]
+  harness_edits: Record<string, Record<string, string>>
+  harness_diffs: Record<string, Record<string, string>>
+}
+
+export interface Harness2Level {
+  level: number
+  status?: 'completed' | 'error'
+  solved?: boolean
+  kept?: string | null
+  budget?: number | null
+  action_count?: number | null
+  error?: string
+  rounds: Harness2Round[]
+  /** The harness this level kept; the next level starts from it. */
+  kept_files: Record<string, string>
 }
 
 // ---- AVO console (/avo/*)
@@ -288,6 +365,10 @@ export interface AvoCandidate {
   parent_ids: string[]
   evaluated: boolean
   fitness: number | null
+  /** Research score only: the action that first reached the candidate's levels (fewer wins a tie). */
+  actions_to_best?: number | null
+  /** AVO3: the research moves this attempt had (budget schedule). */
+  research_budget?: number | null
   success: boolean | null
   win_levels: number | null
   research: AvoSide
@@ -299,6 +380,8 @@ export interface AvoSnapshot {
   game_id: string
   harness: string | null
   variant: string | null
+  /** What scores a candidate: its solver's fresh run, or its own research session (no solver). */
+  score: 'solver' | 'research'
   player_model: string
   optimizer_model: string
   current: string | null
@@ -315,6 +398,11 @@ export interface AvoSnapshot {
   win_levels: number | null
   research: { actions: number; levels: number; events: number; budget: number | null }
   fresh_evaluation: { actions: number; levels: number; events: number; budget: number | null }
+  /** AVO3: research moves per attempt, in order (empty without a schedule). */
+  research_schedule?: number[]
+  /** AVO3: the solver written after the last attempt, played once for information (not the score). */
+  final_solver?: { status?: string; source_candidate?: string; solver_present?: boolean; levels_completed?: number | null;
+    win_levels?: number | null; environment_steps?: number; max_steps?: number; error?: string } | null
   latest_fitness: number | null
   latest_success: boolean | null
   last_activity: string | null
@@ -486,6 +574,8 @@ export interface DiaryRunLink {
   status?: string
   solved?: boolean
   outcome?: string
+  // Summed over the run's sessions; input includes cached, output includes reasoning, total = input + output.
+  tokens?: { input: number; output: number; reasoning: number; cached: number; total: number } | null
 }
 
 export interface DiaryEntry {
@@ -494,6 +584,8 @@ export interface DiaryEntry {
   title: string
   threads: string[]
   reconstructed: boolean
+  /** Minor entry: present mode folds it into the month's "also done" slide. */
+  brief: boolean
   commits: string[]
   docs: string[]
   sections: { did: string; found: string; decided: string; next: string }

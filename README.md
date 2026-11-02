@@ -11,10 +11,13 @@ uv sync
 npm run workbench
 ```
 
-Open [Runs](http://127.0.0.1:5173/). The launcher starts the Node runtime (3543),
-ARC service (8000), Workbench API (8010), and Vite website (5173). It reuses
-recognized services already on those ports; it does not stop them. Closing its
-terminal stops only the processes that launcher created. Experiment workers and
+Start Docker Desktop before launching. Open [Runs](http://127.0.0.1:5173/).
+The launcher starts/reuses the `puzzlescript-backend` Compose stack: Node runtime
+(3543) and ARC service (8000). Workbench API (8010) and Vite website (5173) stay
+local. Closing its terminal stops only the local processes that launcher created;
+the shared backend stays running until `scripts/backend.ps1 stop`. See
+[backend management and local debugging](docs/architecture/docker-backend.md).
+Experiment workers and
 Docker campaigns have their own lifetime; stop a workbench-owned batch from Runs.
 
 The website alone (`npm run website:dev` or `scripts/start-website-monitor.ps1`)
@@ -73,7 +76,7 @@ artifacts remain tracked; no archive is deleted or silently migrated.
 ## Other entry points
 
 ```powershell
-npm run local                         # Node + ARC service, no workbench
+npm run local                         # Docker Node + ARC service, no workbench
 npm run benchmark:local               # benchmark stack
 uv run python -m client.play_arc_client --game-id ps_sokoban_basic-v1
 uv run python -m harnesses.launch --framework baseline --notes --harness codex --model gpt-5.6-sol `

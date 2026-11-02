@@ -5,7 +5,7 @@
   "main": "puzzlescript_interface/runtime/server.js",
   "scripts": {
     "start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1",
-    "local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1 -WithArcService",
+    "local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/backend.ps1 up",
     "benchmark:server": "uv run python -m benchmark.server",
     "benchmark:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start-owned-processes.ps1 -WithBenchmark",
     "benchmark:artifacts": "node scripts/build_benchmark_artifacts.js",

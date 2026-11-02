@@ -1,6 +1,7 @@
 """Workbench launch plans and artifact APIs for maintained experiment runners."""
 from __future__ import annotations
 
+import bisect
 import json
 import re
 import shutil
@@ -18,8 +19,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 
-from workbench.catalog import (ROOT, last_record, legacy_enqueue_backend, normalized_spec, read_json, read_run_spec,
-                               run_path, snapshot)
+from workbench.catalog import (ROOT, STOPPED_RUNS, job_run_name, last_record, legacy_enqueue_backend, normalized_spec,
+                               read_json, read_run_spec, run_path, snapshot)
+from workbench.session_view import attach_diffs, session_prompts
 
 
 def resolve_model(model: str) -> tuple[str, str]:
@@ -257,7 +259,8 @@ def write_json(path: Path, value: dict) -> None:
 
 RECORD_FILES = ("run_spec.json", "run_config.json", "result.json", "error.json", "restoration.json", "transitions.jsonl",
                 "transcript.jsonl", "codex_session.jsonl", "model_session.jsonl", "isolation_manifest.json",
-                "agent_events.jsonl", "analysis/agent_events.jsonl")
+                "agent_events.jsonl", "analysis/agent_events.jsonl", "system_prompt.txt", "turns.jsonl", "session.json",
+                "world_model.md", "solver.py", "player.log", "launcher.json", "adoption.json", "harness2_config.json")
 AGENT_EVENT_FIELDS = ("schema", "t", "session", "role", "turn", "type", "text", "output", "exit_code", "tool",
                       "usage", "harness", "model")
 
@@ -270,6 +273,7 @@ def read_agent_events(path: Path, limit: int) -> dict:
     """Tail of a normalized `agent-event-v1` log; malformed lines are counted, not fatal."""
     from collections import deque
     events, total, invalid = deque(maxlen=limit or None), 0, 0
+    file_edits: dict = {}  # turn -> file edits seen so far, to find each one in the raw turn record
     with path.open(encoding="utf-8", errors="replace") as stream:
         for line in stream:
             if not line.strip():
@@ -283,14 +287,30 @@ def read_agent_events(path: Path, limit: int) -> dict:
                 invalid += 1
                 continue
             total += 1
+            index = None
+            if item.get("type") == "file_change":
+                index = file_edits.get(item.get("turn"), 0)
+                file_edits[item.get("turn")] = index + 1
             if limit:
                 event = {key: item.get(key) for key in AGENT_EVENT_FIELDS}
                 event["schema"] = event["schema"] or "agent-event-v1"
                 for key in ("text", "output"):
                     if isinstance(event[key], str) and len(event[key]) > 16000:
                         event[key] = event[key][:16000] + "\n[truncated]"
+                if index is not None:
+                    event["_turn"], event["_file_index"] = item.get("turn"), index
                 events.append(event)
-    return {"total": total, "invalid_lines": invalid, "truncated": total > len(events), "events": list(events)}
+    events = list(events)
+    try:
+        attach_diffs(path.parent, events)
+    except (OSError, ValueError) as exc:  # a diff is a convenience; the timeline must still load
+        for event in events:
+            if event.get("type") == "file_change":
+                event["diff_note"] = f"diff unavailable: {exc}"
+    for event in events:
+        event.pop("_turn", None)
+        event.pop("_file_index", None)
+    return {"total": total, "invalid_lines": invalid, "truncated": total > len(events), "events": events}
 
 
 def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
@@ -298,6 +318,7 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
     router = APIRouter(prefix="/api/workbench")
     cache: dict = {}
     resume_run_lock = threading.Lock()
+    stop_run_lock = threading.Lock()
 
     @router.get("/model-catalog")
     def models(provider: Literal["openrouter", "nanogpt"] = "openrouter"):
@@ -501,6 +522,37 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         (path / "stop.request").touch()
         return {"stop_requested": True}
 
+    @router.post("/experiments/stop-run", status_code=202)
+    def stop_run(job: str = Query(...), run: str = Query(...)):
+        """Stop one run of a batch; the others go on. The run is recorded as stopped (cancelled), not failed."""
+        from workbench.experiment_job import owned_container
+
+        with stop_run_lock:
+            try:
+                path = run_path(job, root)
+                if path.parent != root / "output/workbench" or not (path / "job.json").is_file():
+                    raise ValueError("Only runs of workbench-owned batches can be stopped here")
+                if not re.fullmatch(r"run-\d{4}", run):
+                    raise ValueError("Invalid run")
+                row = next((r for r in read_json(path / "job.json").get("runs", []) if job_run_name(r) == run), None)
+                if row is None:
+                    raise ValueError("This run is not part of the batch")
+                if row.get("status") not in {"queued", "starting", "running"}:
+                    raise ValueError("Only an active run can be stopped")
+            except ValueError as exc:
+                raise HTTPException(400, str(exc)) from exc
+            saved = read_json(path / STOPPED_RUNS).get("runs")
+            runs = saved if isinstance(saved, list) else []
+            if run not in {r.get("run") for r in runs if isinstance(r, dict)}:
+                write_json(path / STOPPED_RUNS, {"runs": [*runs, {"run": run, "at": datetime.now(timezone.utc).isoformat()}]})
+        # Same exact ownership as the batch stop: removing this run's own container ends its launcher.
+        # The batch worker stops a child without one and never starts a stopped queued run.
+        container = owned_container(row) if row.get("status") == "running" else ""
+        if container:
+            subprocess.run(["docker", "rm", "-f", container], capture_output=True, timeout=20)
+        cache.clear()
+        return {"stop_requested": True, "container_removed": bool(container)}
+
     @router.post("/experiments/pause", status_code=202)
     def pause(job: str = Query(...)):
         try:
@@ -628,6 +680,9 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
         for note in (path / "workspace/notes").glob("*.md"):
             if not note.is_symlink():
                 notes.append(note.relative_to(path).as_posix())
+        for note in sorted((path / "world_model_snapshots").glob("*.md")):
+            if not note.is_symlink():
+                notes.append(note.relative_to(path).as_posix())
         events = agent_events_path(path)
         # Harness² keeps one direct-player run per rollout (base1, inv1, dom1, agg1, final).
         rollouts = sorted((p for p in (path / "rollouts").glob("*") if (p / "run_config.json").is_file()),
@@ -637,17 +692,23 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
                 "error": read_json(path / "error.json"), "latest_transition": last_record(path / "transitions.jsonl"),
                 # Normalized harness events when present; otherwise the legacy session files above.
                 "agent_events": read_agent_events(events, events_limit) if events else None,
+                "prompts": session_prompts(events.parent) if events else None,
                 "files": [name for name in names + notes if (path / name).is_file()],
                 "rollouts": [{"label": p.name, "result": read_json(p / "result.json") or None,
                               "latest_transition": last_record(p / "transitions.jsonl")} for p in rollouts],
                 "adoption": read_json(path / "adoption.json") or None,
+                "has_calls": any(path.rglob("calls/0001.json")),
                 **harness2_views(path)}
 
     def harness2_views(path: Path) -> dict:
+        if (path / "levels").is_dir() and (path / "harness2_config.json").is_file():
+            from workbench.harness2_view import levels
+            return {"levels": levels(path)}
         if not (path / "improver").is_dir() and not (path / "harnesses").is_dir():
             return {}
-        from workbench.harness2_view import coach_sessions, harness_edits
-        return {"coach_sessions": coach_sessions(path), "harness_edits": harness_edits(path)}
+        from workbench.harness2_view import coach_sessions, harness_diffs, harness_edits
+        return {"coach_sessions": coach_sessions(path), "harness_edits": harness_edits(path),
+                "harness_diffs": harness_diffs(path)}
 
     @router.get("/harness2/session")
     def harness2_session(run: str = Query(...), session: str = Query(..., pattern=r"^[\w.-]+$"),
@@ -658,7 +719,7 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
             raise HTTPException(400, str(exc)) from exc
         if not events.is_file():
             raise HTTPException(404, "No such coach session")
-        return {"agent_events": read_agent_events(events, events_limit)}
+        return {"agent_events": read_agent_events(events, events_limit), "prompts": session_prompts(events.parent)}
 
     @router.get("/experiments/log")
     def job_log(job: str = Query(...), run: str = Query(...)):
@@ -699,6 +760,203 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
             pass
         raise HTTPException(404, "Transition not found")
 
+    def history_files(folder: Path) -> dict[str, str]:
+        files = {}
+        for item in sorted(folder.rglob("*")):
+            name = item.relative_to(folder).as_posix()
+            if (item.is_file() and not item.is_symlink() and item.resolve().is_relative_to(folder.resolve())
+                    and not any(p.startswith(".") for p in Path(name).parts)):
+                files[name] = item.read_text(encoding="utf-8", errors="replace")[:200_000]
+        return files
+
+    @router.get("/record/notes_history")
+    def notes_history(run: str = Query(...)):
+        """The notes/ folder after every harness turn, with the move each turn produced."""
+        try:
+            path = run_path(run, root)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        folders = {int(p.name[5:]): p for p in (path / "notes_history").glob("turn-*")
+                   if re.fullmatch(r"turn-[0-9]{4,6}", p.name) and p.is_dir() and not p.is_symlink()}
+        rows = {}
+        for name in ("turns.jsonl", "transitions.jsonl"):
+            try:
+                lines = (path / name).read_text(encoding="utf-8").splitlines()
+            except OSError:
+                lines = []
+            rows[name] = []
+            for line in lines:
+                try:
+                    item = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(item, dict) and isinstance(item.get("timestamp"), str):
+                    rows[name].append(item)
+        turns = {row.get("turn"): row for row in rows["turns.jsonl"]}
+        # A move comes from the last game-action turn that ended before it was played: a decision's
+        # retried turns and correction turns all come earlier, and the transition is written right after.
+        game_turns = [row for row in rows["turns.jsonl"] if row.get("turn_kind") == "game_action"]
+        stamps = [row["timestamp"] for row in game_turns]
+        moves = {}
+        for transition in rows["transitions.jsonl"]:
+            produced = bisect.bisect_right(stamps, transition["timestamp"])
+            if produced:
+                moves.setdefault(game_turns[produced - 1].get("turn"), transition.get("action_index"))
+        return {"turns": [{"turn": number, "kind": turns.get(number, {}).get("turn_kind"),
+                           "timestamp": turns.get(number, {}).get("timestamp"), "action_index": moves.get(number),
+                           "files": list(history_files(folders[number]))} for number in sorted(folders)]}
+
+    @router.get("/record/notes_history/turn")
+    def notes_history_turn(run: str = Query(...), turn: int = Query(..., ge=1, le=999999)):
+        """One turn's notes, and a unified diff of each file that changed since the turn before."""
+        import difflib
+        try:
+            folder = run_path(run, root) / "notes_history"
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        current = folder / f"turn-{turn:04d}"
+        if not current.is_dir() or current.is_symlink():
+            raise HTTPException(404, "No notes saved for this turn")
+        earlier = sorted(int(p.name[5:]) for p in folder.glob("turn-*")
+                         if re.fullmatch(r"turn-[0-9]{4,6}", p.name) and p.is_dir() and not p.is_symlink()
+                         and int(p.name[5:]) < turn)
+        previous = earlier[-1] if earlier else None
+        files = history_files(current)
+        old_files = history_files(folder / f"turn-{previous:04d}") if previous else {}
+        diffs = {}
+        for name in sorted({*files, *old_files}):
+            old, new = old_files.get(name, ""), files.get(name, "")
+            if old != new:
+                before = f"turn-{previous}/{name}" if previous else "/dev/null"
+                diffs[name] = "\n".join(difflib.unified_diff(old.splitlines(), new.splitlines(), before,
+                                                             f"turn-{turn}/{name}", lineterm="", n=3))
+        return {"turn": turn, "previous": previous, "files": files, "diffs": diffs}
+
+    call_rows: dict[tuple[str, int], dict] = {}  # (path, mtime) -> list row; call files never change once written
+
+    def calls_folder(run: str, folder: str) -> Path:
+        """A calls/ folder of the run: the player's (calls) or another session's (e.g. improver/sessions/x/calls)."""
+        try:
+            path = run_path(run, root)
+            target = run_path(run + "/" + folder, root)
+            if Path(folder).name != "calls" or not target.is_relative_to(path) or any(
+                    p.startswith(".") or p == "workspace" for p in Path(folder).parts):
+                raise ValueError("Not a calls folder")
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        return target
+
+    def read_call(item: Path) -> dict:
+        try:
+            record = json.loads(item.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return {}
+        return record if isinstance(record, dict) else {}
+
+    @router.get("/record/calls/folders")
+    def call_folders(run: str = Query(...)):
+        """Every session of the run that recorded its model calls (harnesses/recorder.py)."""
+        try:
+            path = run_path(run, root)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        folders = []
+        for item in sorted(path.rglob("calls")):
+            relative = item.relative_to(path)
+            if (item.is_dir() and not item.is_symlink() and (item / "0001.json").is_file()
+                    and not any(p.startswith(".") or p == "workspace" for p in relative.parts)):
+                folders.append({"folder": relative.as_posix(), "calls": len(list(item.glob("[0-9][0-9][0-9][0-9].json")))})
+        return {"folders": folders}
+
+    @router.get("/record/calls")
+    def calls(run: str = Query(...), folder: str = "calls"):
+        """Every model call of one session, one row each."""
+        from harnesses.recorder import view
+        rows = []
+        for item in sorted(calls_folder(run, folder).glob("[0-9][0-9][0-9][0-9].json")):
+            key = (str(item), item.stat().st_mtime_ns)
+            if key not in call_rows:
+                record = read_call(item)
+                response = record.get("response") or {}
+                call_rows[key] = {
+                    "call": record.get("call"), "turn": record.get("turn"), "started": record.get("started"),
+                    "seconds": record.get("seconds"), "method": record.get("method"), "url": record.get("url"),
+                    "status": record.get("status"), "error": record.get("error"),
+                    "messages": len(view(record.get("request"))["messages"]), "images": len(record.get("images") or []),
+                    "bytes": item.stat().st_size, "usage": response.get("usage") or None,
+                    "tool_calls": [c.get("name") for c in response.get("tool_calls") or []],
+                    "replied": bool(response.get("content"))}
+            rows.append(call_rows[key])
+        return {"calls": rows}
+
+    @router.get("/record/calls/one")
+    def one_call(run: str = Query(...), call: int = Query(..., ge=1, le=9999), folder: str = "calls"):
+        """One call as saved, in one shape whatever the API, and how much of its context the previous
+        call of the same session already sent unchanged."""
+        from harnesses.recorder import view
+        directory = calls_folder(run, folder)
+        record = read_call(directory / f"{call:04d}.json")
+        if not record:
+            raise HTTPException(404, "No such call")
+        shown = view(record.get("request"))
+        previous = None
+        for number in range(call - 1, 0, -1):  # the last model request before it (skips model lists)
+            earlier = read_call(directory / f"{number:04d}.json")
+            if earlier.get("method") == "POST":
+                previous = view(earlier.get("request"))
+                break
+        same = 0
+        if previous is not None:
+            old, new = previous["messages"], shown["messages"]
+            while same < min(len(old), len(new)) and old[same] == new[same]:
+                same += 1
+        return {**record, "view": shown, "previous_messages": len(previous["messages"]) if previous else None,
+                "unchanged_messages": same, "system_changed": bool(previous) and previous["system"] != shown["system"]}
+
+    build_folders: dict[str, tuple[float, list[Path]]] = {}  # run id -> (modified, its calls/ folders)
+    MODES = {("baseline", "agent"): (0, "Baseline agentic"), ("baseline", "controller"): (1, "Baseline turn-based"),
+             ("avo", None): (2, "AVO"), ("harness2", None): (3, "Harness²")}
+
+    @router.get("/prompt-builds")
+    def prompt_builds():
+        """Runs with recorded model calls, newest first, each with its recorded sessions."""
+        from workbench.prompt_build import call_folders, read_json as read_session
+        rows = []
+        for run in catalog_runs():
+            modified = run.get("modified") or 0
+            if run["id"] not in build_folders or build_folders[run["id"]][0] != modified:
+                try:
+                    build_folders[run["id"]] = (modified, call_folders(run_path(run["id"], root)))
+                except ValueError:
+                    continue
+            folders = build_folders[run["id"]][1]
+            if not folders:
+                continue
+            path = run_path(run["id"], root)
+            mode = MODES.get((run.get("framework"), (run.get("options") or {}).get("driver", "controller")),
+                             MODES.get((run.get("framework"), None), (9, run.get("framework") or "run")))
+            rows.append({key: run.get(key) for key in ("id", "harness", "model", "game_id", "modified")} | {
+                "mode": mode[1], "order": mode[0],
+                "sessions": [{"folder": f.relative_to(path).as_posix(),
+                              "role": read_session(f.parent / "session.json").get("role"),
+                              "calls": len(list(f.glob("[0-9][0-9][0-9][0-9].json")))} for f in folders]})
+        # Framework and mode first (the comparison that matters), newest run first within each.
+        return {"runs": sorted(rows, key=lambda r: (r["order"], -(r["modified"] or 0)))}
+
+    @router.get("/prompt-builds/one")
+    def prompt_build(run: str = Query(...), folder: str = "calls"):
+        """One recorded session as a conversation: system prompt, tools, then every message once, in order."""
+        from workbench.prompt_build import transcript
+        return transcript(calls_folder(run, folder).parent)
+
+    @router.get("/record/calls/file")
+    def call_file(run: str = Query(...), folder: str = "calls",
+                  name: str = Query(..., pattern=r"^[0-9]{4}(-image-[0-9]+\.(png|jpeg|jpg|webp|gif)|\.response\.txt)$")):
+        target = calls_folder(run, folder) / name
+        if not target.is_file() or target.is_symlink():
+            raise HTTPException(404, "No such file")
+        return FileResponse(target, media_type="text/plain" if name.endswith(".txt") else None)
+
     @router.get("/record/file")
     def record_file(run: str = Query(...), file: str = Query(...)):
         try:
@@ -707,7 +965,8 @@ def create_router(root: Path = ROOT, legacy_start=None) -> APIRouter:
             allowed = set(RECORD_FILES)
             parts = Path(file).parts
             note = target.suffix == ".md" and (
-                (len(parts) == 2 and parts[0] == "workspace") or (len(parts) == 3 and parts[:2] == ("workspace", "notes")))
+                (len(parts) == 2 and parts[0] in {"workspace", "world_model_snapshots"})
+                or (len(parts) == 3 and parts[:2] == ("workspace", "notes")))
             frame = re.fullmatch(r"frames/[0-9]{3,}\.png", file) is not None
             raw_turn = re.fullmatch(r"(?:analysis/)?raw/turn-[0-9]{1,6}\.jsonl", file) is not None
             if not target.is_relative_to(path) or not (file in allowed or note or frame or raw_turn):

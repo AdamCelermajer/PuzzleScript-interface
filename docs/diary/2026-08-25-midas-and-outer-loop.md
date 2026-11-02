@@ -6,6 +6,7 @@ runs: []
 commits: [0270988, 893e0c6, 7d7b8be]
 docs: [docs/research/avo-framework.md, avo/evolution/README.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Checkpointed a month of uncommitted work (`0270988`): AVO core, a `benchmark/` package v0.4 (per-level verified solutions, rule probes, closeness), random and simulated-partial reference agents, and early paper and BIU proposal drafts under `paper/`.

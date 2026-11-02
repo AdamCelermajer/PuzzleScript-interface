@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real-time tasks for a slow reasoner · 22 October 2026</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface: #fcfcfb; --text: #0b0b0b; --text-2: #52514e; --rule: #dcdad5; --accent: #2a78d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark; --surface: #1a1a19; --text: #f0efec; --text-2: #c3c2b7; --rule: #3a3936; --accent: #3987e5;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark; --surface: #1a1a19; --text: #f0efec; --text-2: #c3c2b7; --rule: #3a3936; --accent: #3987e5;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--surface); color: var(--text);
+         font: 17px/1.6 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 56px 28px 96px; }
+  table, .byline, .note, footer { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; font-weight: 600; }
+  .byline { color: var(--text-2); font-size: 14px; margin: 0; }
+  h2 { font-size: 22px; line-height: 1.3; margin: 48px 0 16px; padding-top: 22px; border-top: 1px solid var(--rule); font-weight: 600; }
+  .qa { display: grid; grid-template-columns: 120px 1fr; gap: 10px 20px; margin: 0; }
+  .qa dt { font: 600 12px/1.9 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--text-2); }
+  .qa dd { margin: 0; }
+  .qa dd.answer { border-left: 3px solid var(--accent); padding-left: 14px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.4; margin: 18px 0 6px; }
+  th, td { padding: 7px 10px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  th { font-weight: 600; color: var(--text-2); }
+  td.grp { font-weight: 600; color: var(--text-2); padding-top: 16px; letter-spacing: .02em; }
+  table.dense { font-size: 13px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tag { font: 600 10px/1 system-ui, -apple-system, "Segoe UI", sans-serif; letter-spacing: .06em; color: var(--text-2); border: 1px solid var(--rule); border-radius: 3px; padding: 2px 4px; white-space: nowrap; }
+  .note { color: var(--text-2); font-size: 13px; margin: 6px 0 0; }
+  ul { padding-left: 22px; } li { margin: 4px 0; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--text-2); font-size: 13px; line-height: 1.6; }
+  code { font-family: ui-monospace, Consolas, monospace; font-size: .88em; }
+  @media (max-width: 640px) { .qa { grid-template-columns: 1fr; gap: 2px; } .qa dd { margin-bottom: 10px; } }
+  @media print { main { padding: 0; max-width: none; } table { break-inside: avoid; } h2 { break-after: avoid; } }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Real-time tasks for a slow reasoner</h1>
+<p class="byline">Adam Celermajer · 22 October 2026 · reserve material for the discussion; not part of the proposal</p>
+
+<h2>1. The idea in three lines</h2>
+
+<dl class="qa">
+  <dt>Idea</dt>
+  <dd>The slow LLM coding agent does not play the game. It works out the rules and writes small fast artifacts: Python controllers for reflexes, and typed decision questions (Jev-style "System One" calls) for judgements. It goes back to thinking only when a monitor reports that the controllers are failing, and it repairs them while they keep running.</dd>
+  <dt>Why now</dt>
+  <dd>Typed-decision models arrived in the last five weeks: Jev (closed), OpenAI and Microsoft endpoints, and at least three open ones built on Qwen3.8-27B. They answer in 50–300 ms. By their own model cards they cannot drive motors or win games alone; code can, and coding agents already write such code offline.</dd>
+  <dt>In one line</dt>
+  <dd class="answer">Harness² taken to real time: the coach edits the player's controllers instead of its harness, while the clock keeps running.</dd>
+</dl>
+
+<h2>2. What exists (checked 21 October 2026)</h2>
+
+<p class="note">Tags: <span class="tag">V</span> primary page (arXiv abstract or full text, model card, repo) opened on 21 Oct 2026 by me or a research subagent · <span class="tag">S</span> secondary source or search listing only · <span class="tag">vendor</span> the company's own figure. The 82-entry map of 15 Oct, today's additions and the corrections are in <code>docs/research/realtime-llm-controllers-direction.md</code>, section 5.</p>
+
+<table class="dense">
+  <thead><tr><th>Work</th><th>When</th><th>What it does</th><th>How it differs from the idea</th></tr></thead>
+  <tbody>
+    <tr><td class="grp" colspan="4">A. Fast typed decision models ("System One") and what they can carry</td></tr>
+    <tr><td>Jev 1.13 → 1.14 (TypeSafe AI) <span class="tag">V</span></td><td>15 Sep; 1.14 on 14 Oct 2026</td><td>Hosted, closed. Typed questions over text or JSON (yes/no, choice up to 255, score) with calibrated probabilities; 70–500 ms end to end <span class="tag">vendor</span>. 1.14 adds experimental image input, a <code>box</code> type and long context behind opt-in flags, which TypeSafe says are not ready for production.</td><td>A judge, not a controller: no memory, no plan, no code. TypeSafe's own Doom demo used text state at about 10 queries per second, which their engineer costed at about $7 per hour.</td></tr>
+    <tr><td>JEV-9B, JEV-27B, JEV-27B-VL (AutoTrust) <span class="tag">V</span></td><td>28 Sep – 11 Oct 2026</td><td>Open weights (Apache-2.0). A 109M-parameter decision block on a frozen Qwen3.5-9B or Qwen3.8-27B, distilled from Jev 1.13's answers. The 27B-VL card reports about 150 ms per decision in Mario, 122 ms in Tetris, 300 ms in Snake; MuJoCo pick-and-place 75% of 20 scenes with high-level options, 0 of 10 scenes when asked to choose among 8 raw motor commands <span class="tag">vendor</span>.</td><td>Same backbone as our 27B thread. The card itself advises against System 1 for motor control. That is the split we propose: code moves, decisions judge.</td></tr>
+    <tr><td>Decision 2.0 Kai-0.6B … Vega-27B (vLLM Semantic Router) <span class="tag">V</span>; Clef, Clef-flash (Cloudflare) <span class="tag">S</span>; Microsoft-Decision-1 (Foundry) <span class="tag">S</span>; OpenAI Decisions API, <code>gpt-6-luna</code> <span class="tag">V</span>; Intern-Decision (InternLM) <span class="tag">V</span></td><td>1–15 Oct 2026</td><td>Vega-27B and Clef sit on Qwen3.8-27B (Apache-2.0; 71.4 ms median per question for Vega <span class="tag">vendor</span>). Microsoft's is a post-trained Qwen3.5-9B, text only, $0.042 per million tokens. OpenAI's <code>POST /v1/decisions</code> gives predicate, choice and score over text and images at $0.10 per million input tokens, public beta. Intern-Decision (0.8B/2B/4B on Qwen3.5, code and weights) answers in 33–44 ms on one RTX 4090 and shows demos on Snake, Mario and ViZDoom.</td><td>All judges. Five open-weight families now exist; three share the thesis model's backbone.</td></tr>
+    <tr><td>System1-Arena (Chen et al., arXiv 2610.21244) <span class="tag">V</span></td><td>15 Oct 2026</td><td>92k questions, 105 tasks and 138 closed-loop environments; a real-time mode (ALE, ViZDoom, highway-env, PyFlyt) charges each model its median latency per decision and plays a fixed fallback when the answer fails. Best closed-loop success: Gemma-4-31B 32.9%, best System-1 model (Decision-2.0-Vega-27B) 26.5%, Jev 17.4%. Code public.</td><td>Measures one model deciding alone. Nobody writes controllers; no escalation. The harness is reusable for us.</td></tr>
+    <tr><td>JevAgentHarness (Zhu et al., 2610.21412) <span class="tag">V</span></td><td>15 Oct 2026</td><td>A decision model answers an agent's multiple-choice steps when its confidence clears a per-choice threshold fitted on the agent's own trajectories. Without the threshold, success drops 19 points. A trained 4B decision model makes agents 81–89% cheaper at under 3 points loss in distribution.</td><td>The deferral rule we need, shown for tool choice in turn-based agents, not under a clock.</td></tr>
+    <tr><td>Two negative results: Good Judgment, Bad Advice (Vats, 2610.24649) and When Faster Decisions Do Not Make Better Agents (Ling et al., 2610.13092) <span class="tag">V</span></td><td>9 and 17 Oct 2026</td><td>Jev 1.13 as a stop / verify / change-approach controller inside a Claude Sonnet 5.5 terminal agent (Terminal-Bench 2.1, 315 trials): cost +19%, pass rate 73.0% in both arms; it ranked finish requests well (AUROC 0.78) but was badly calibrated (mean probability 0.50 on runs of which 87% passed). Jev in the decision role of five agents on ALFWorld and AndroidWorld: per-decision cost down, extra interactions absorb the savings, success flat or lower.</td><td>Warnings. A decision model bolted onto an agent loop can cost more and change nothing. Every question needs its own calibration check and a placebo control.</td></tr>
+    <tr><td>About 30 further arXiv papers on decision models, 14–20 Oct 2026 <span class="tag">V</span> (listing; the ones named were opened)</td><td>Oct 2026</td><td>Calibration under prevalence shift (2610.26325); option-name bias (Sun et al.); "What Can't Jev Decide?" (2610.24929): one-pass models follow stale state summaries undetected, so "checking the state such models rely on requires a model that reasons"; REFLEX with Jev (2609.26532): bounded decisions to Jev, escalate on low confidence, 95% success with 73% fewer strong-model calls but marginal over a cheap cascade; Think Short, Defer Smart (2607.26865): deferral with certified error rates, including a robot planning task; Can Jev be Your Q or Policy in RL? (2610.11692): frozen Jev guides RL on MiniGrid and Atari.</td><td>None is about writing or repairing controllers. They supply the calibration, wording and deferral tests a controller library needs, and one reason to keep a reasoning model as the monitor.</td></tr>
+
+    <tr><td class="grp" colspan="4">B. The LLM writes the fast thing: controllers as code</td></tr>
+    <tr><td>Code to Control (Ahmed, Tenenbaum, Bates, Gershman, 2609.38733) <span class="tag">V</span> (abstract, full text, repo)</td><td>30 Sep 2026; no venue yet; no citing work found</td><td>The LLM (Claude Haiku 4.5; Opus 4.8 for MuJoCo) writes a reactive <code>policy(state)</code> in Python from object-level state and the previous episode's transitions; it is given neither the dynamics nor a demonstration. One call per episode, at most 20 episodes; derivative-free search fits the numbers. Six Atari games, Flappy Bird, eight MuJoCo tasks. At decision time: 11.4 µs per action against 76.5 µs for PPO and 1.29 s for ReAct. After a dynamics change only the constants are refit, with no LLM; reversed gravity fails because it needs a structural edit, and nothing triggers one. MIT code; controllers replay exactly.</td><td>Nearest neighbour on the artifact. Offline: revision only between episodes; no monitor, no escalation, no typed decisions, no library.</td></tr>
+    <tr><td>Compiled Agency (Huang &amp; Xiao, 2609.18996 v2) <span class="tag">V</span> (full text)</td><td>26 Sep 2026 (v1 Jul)</td><td>Off-the-shelf coding agents (Claude Code with Haiku 4.5 to Fable 5; Codex with GPT-5.5 to GPT-6 Astra) start from a game description, a raw observation/action interface and an empty policy file, develop a player program in one session, and the frozen program then plays with zero model calls. 19 games including a private roguelike, StarCraft II (beats the top cheating built-in AI) and Freeciv; over 5,000 frozen versions scored; environment access adds 10–78 points over writing from the description alone.</td><td>The rules are learned by interacting and compiled into a fast player, which is half of our idea. But there is no clock during development and no repair after the freeze.</td></tr>
+    <tr><td>Memento 3 (Zhao et al., 2610.11794) <span class="tag">V</span></td><td>8 Oct 2026</td><td>A frozen LLM keeps a natural-language rulebook of dynamics hypotheses and compiles it to predictive code, accepted only when cell-exact replay reproduces the observed transitions; prediction errors drive revision of rulebook and code. A compiled feedback controller plays Pong 21:0 with no LLM calls; all 25 public ARC-AGI-3 games cleared.</td><td>The learn → compile → repair-on-mismatch loop we want, but turn-based with the world paused; the Pong controller is a one-off demo.</td></tr>
+    <tr><td>LLM-guided search over programmatic policies: LLM-GS (ICLR 2025); Kuang et al. (ICML 2025 workshop) and Nie et al. (2603.23994); PolicyEvolve; Hybrid Nested Harness (Gallego, Aug 2026); Gumin et al. (SIGGRAPH Asia 2026) <span class="tag">V</span></td><td>2024–26</td><td>Search or evolution over policy code with an LLM proposing edits. Gallego separates structure (LLM) from parameters (numerical optimiser) seven weeks before Code to Control. Gumin's "agentic sketching" has a coding agent propose the skeleton of a reactive character policy and an enumerator fill the slots, for 14 continuous games.</td><td>All offline, known rewards, no model at run time.</td></tr>
+    <tr><td>Coding agents write robot controllers: HarnessPAI (2609.29166), RACaP (2609.29394), URAI (2609.39018), Push-T revisited (2608.18227), RHO (2606.16458), ASPIRE (2607.00272) <span class="tag">V</span></td><td>Jun–Sep 2026</td><td>HarnessPAI runs a fixed program within a rollout and revises it across rollouts, "no online high-level LLM deliberation" during execution. RACaP calls frozen typed Policy APIs from a per-step ReAct loop. URAI's tools are revised between episodes. Push-T: Claude Code learns the push mechanics by experiment and writes a controller that beats a 200-demonstration diffusion policy.</td><td>Repair between rollouts, or the LLM inside the per-step loop; never both fast and repaired while running.</td></tr>
+    <tr><td>Co-pi-tree (Zhang et al., 2606.08596) <span class="tag">V</span></td><td>Jun 2026</td><td>LLM reasoning for Overcooked-AI distilled into executable policy-tree code: 97.1% less test-time latency, 77.7% fewer LLM queries; problematic branches refined from feedback between evaluation rounds.</td><td>Code as the fast artifact with branch repair, but between rounds and with known rules.</td></tr>
+    <tr><td>Behaviour-tree synthesis: BTGenBot-2 (Feb 2026), multimodal BT generation (Izzo et al., Sep 2026), contract-grounded BTs (Jul 2026), GPSFSM (IROS 2026), EmboTeam (Jan 2026) <span class="tag">V</span></td><td>2024–26</td><td>Small models write behaviour trees or state machines checked by a validator, a planner or a runtime gate before execution.</td><td>Structure fixed before execution; no live repair.</td></tr>
+    <tr><td>Executable world models: WorldCoder, PoE-World (NeurIPS 2025 spotlight), OneLife (ICLR 2026), Rodionov's ARC-AGI-3 agent (AGI-2026), Twin, Tycho, Kepler, Schema, NVIDIA AVO <span class="tag">V</span></td><td>2024–26</td><td>Agents learn rules as code and plan with them. Twin takes no action until its program reproduces every observed transition. Tycho frames "when to construct, repair, use or bypass the model" as the core decision. AVO reports 100% on the ARC-AGI-3 public set (NVIDIA blog, 21 Aug 2026). The ARC-AGI-3 report says the benchmark is "turn-based instead of real-time" by design.</td><td>Turn-based: the world waits for the repair. This is where the current thesis sits.</td></tr>
+
+    <tr><td class="grp" colspan="4">C. Slow planner, fast actor, live clock (games)</td></tr>
+    <tr><td>RealtimeBench and TORSI (Pan et al., PKU and Samsung Research, 2610.20665) <span class="tag">V</span> (full text)</td><td>14 Oct 2026</td><td>180 tasks in Mario, Snake, Tetris, Temple, River and Bird at wall-clock pacing (Mario 10 FPS, Snake 1.5 moves/s). The game keeps running; the previous control stays active while the agent thinks. GPT-6.1-sol: about 44 paused, 1.5 live. Jev: 13.5 live, 24.2 after a slow teacher (GPT-6.1-sol) writes text guidance offline between attempts, validation-gated, two rounds. The same guidance lifts three other small models. No code release found.</td><td>Closest to our loop in shape: slow teacher, fast student, real clock. But the artifact is prompt text, not code with tests and predictions; teaching happens offline between attempts; the games are famous; nothing wakes the teacher during play.</td></tr>
+    <tr><td>Real-Time Reasoning Gym and AgileThinker (Wen et al., ICLR 2026) <span class="tag">V</span></td><td>Nov 2025</td><td>Freeway, Snake, Overcooked; a budget in tokens or seconds; a default action when late; reactive and planning LLM threads run concurrently.</td><td>Both threads are LLMs; nothing is compiled; rules are given in text.</td></tr>
+    <tr><td>JEV-Star (Ma et al., 2609.27331) <span class="tag">V</span></td><td>23 Sep 2026</td><td>Jev typed calls (median 0.42 s, about $0.15 per game) do StarCraft II unit control while GPT-6 plans (about $3.56 per game); beats the built-in level-7 AI. The authors say planning's contribution is not isolated.</td><td>The fast layer is a hosted decision call, not code; nothing is learned about rules; no repair.</td></tr>
+    <tr><td>Other live-clock benchmarks: ROAR (NeurIPS 2026), OmniGameArena (Jun 2026), SpeedrunBench (Oct 2026), Tetris as served (Mar 2026, v2 Oct), Playing DOOM with 1.3M parameters (Apr 2026) <span class="tag">V</span></td><td>2026</td><td>ROAR: an asynchronous multi-agent gym where the world advances without waiting for the model. OmniGameArena: twelve UE5 games with measured latency injected, and a reflector that refines a skill prompt between rounds. Tetris as served: a self-hosted decision model at 27 s per move on CPU, and an agent's own long requests slowing its short decisions more than 10×. DOOM: a 1.3M-parameter specialist at 31 ms scores 178 frags against 13 for all tested LLMs combined.</td><td>Harnesses and specialists; none writes or repairs controllers. They give us baselines and a warning about shared serving.</td></tr>
+    <tr><td>Latent Bridge (Li &amp; Shi, 2606.24470) <span class="tag">V</span></td><td>Jun 2026</td><td>A frozen 8B thinking VLM (about 1.5 s per response) advises a frozen 9B reactive VLM at 15 Hz through a learned residual channel; seven Atari games and MetaDrive; +57% on MsPacman.</td><td>Neural, continuous advice; no code, no rule learning.</td></tr>
+    <tr><td>Paused-game benchmarks: VideoGameBench, Orak (ICLR 2026), lmgame-Bench (ICLR 2026); Atari-GPT <span class="tag">V</span></td><td>2024–25</td><td>Frontier models score near zero when the game cannot wait (VideoGameBench 0.48%); Atari-GPT needs 2–7 s per action.</td><td>Motivation, not a method.</td></tr>
+    <tr><td>Hand-written or learned fast layers: SwarmBrain, HLA (AAMAS 2024), DPT-Agent (ACL 2025), PEAM (May 2026), STRATA (Sep 2026), PUBG Ally (Sep 2026) <span class="tag">V</span></td><td>2024–26</td><td>An LLM sets strategy; a human-written state machine, a code-as-policy FSM, a LoRA skill module or an unspecified product control layer acts. STRATA distils cross-match lessons into natural-language cards.</td><td>The fast layer is written by people or trained as weights, and never repaired by the agent while it runs.</td></tr>
+    <tr><td>Sparse-thinking monolithic agents: Lumine, Game-TARS <span class="tag">V</span></td><td>2025</td><td>One trained model acts at 30 Hz and reasons only sometimes.</td><td>Trained policies, not a coding agent; no code artifacts; no rule learning.</td></tr>
+
+    <tr><td class="grp" colspan="4">D. Escalation, deferral and repair triggers</td></tr>
+    <tr><td>System Switch (Bailo, 2610.09683) <span class="tag">V</span></td><td>7 Oct 2026</td><td>Closed-loop Doom that keeps running while a reasoning VLM deliberates; the fast typed actor defers its least-confident 30% of decisions. Offline, deferral gains track the actor's AUROC (ρ = 0.87). In closed loop (33 games × 3 seeds) no variant reached the exit; committed plans opened doors but froze the actor.</td><td>The nearest test of confidence-gated escalation under a clock, and it fails. The reasoner returns plans, not repaired code; the trigger is confidence only, not mismatch, novelty or stall.</td></tr>
+    <tr><td>Self-Crystallizing Behavior Trees (Moradi, 2610.25455) <span class="tag">V</span></td><td>18 Oct 2026; single author, no code, AirSim only</td><td>When a behaviour-tree node fails (wind gust, battery), an LLM proposes a minimal subtree patch, CMA-ES tunes its parameters, a three-stage admission gate (static check, invariant-monitored replays, margin over the unpatched tree) admits it to a library, and a bandit decides reuse against a new LLM call; the tree is then "crystallised" into a deterministic BT. 97% against 12% unpatched, about 11 LLM calls over 20 episodes.</td><td>Closest to "a monitor wakes the LLM to patch a running controller library". The trigger is node failure, not prediction mismatch; the simulator runs in lockstep, not on a clock; unreviewed.</td></tr>
+    <tr><td>Mismatch-triggered wake-ups: PreAct (Jun 2026), MonTA (Nov 2024, v2 Jan 2026), Bayesian partner modelling (Aug 2026), Adaptive Code Generation for Controlling Robots (ISoLA 2026) <span class="tag">V</span></td><td>2024–26</td><td>PreAct compiles a successful GUI run into a screen-checking state machine replayed with no LLM calls (8.5–13× faster); a screen mismatch returns control to the agent. MonTA: a 7 Hz monitor wakes low-frequency LLM adapters in Overcooked. Goel et al. replan only when the partner's actions contradict the inferred skill. Flerlage et al. regenerate robot code on hand-set geometric and semantic thresholds.</td><td>Mismatch triggers exist, but the slow layer adapts a plan or instructions, or regenerates with the robot waiting; none rewrites a controller while it keeps acting under a clock.</td></tr>
+    <tr><td>CovNav (Wu et al., 2610.27677) <span class="tag">V</span></td><td>20 Oct 2026</td><td>Robot object-goal navigation with a fast yes/no mode; conformal prediction on its token probabilities sends ambiguous queries to slow chain-of-thought, 12.4% of queries; +0.8 to +1.7 success points; real TurtleBot 4.</td><td>The trigger is confidence alone, and the slow mode replans. It does not rewrite the fast layer.</td></tr>
+    <tr><td>SOMA (Qian et al., 2610.26793) <span class="tag">V</span></td><td>19 Oct 2026</td><td>Jev continuously judges a reasoning model's own output; it reminds, then takes over: reasoning tokens −36%, abstention on unanswerable questions 70.5% → 87.2%.</td><td>The direction is inverted (fast watches slow). The same mechanism could watch controllers.</td></tr>
+    <tr><td>Code-as-Monitor (CVPR 2025); Critic in the Loop (Mar 2026); Hierarchical Fast-Slow ReAct (Aug 2026) <span class="tag">V</span></td><td>2025–26</td><td>A VLM writes constraint-checking code that runs in real time; a light critic decides when a VLA should replan; a slow layer wakes on structural events the reactive layer computes and falls back to the reactive controller on failure.</td><td>Monitors trigger replanning, not controller repair. No 2026 paper was found in which an LLM writes the monitor that runs at control frequency.</td></tr>
+
+    <tr><td class="grp" colspan="4">E. Dual-system robotics, for completeness</td></tr>
+    <tr><td>Helix 2.5 (17 Sep 2026), GR00T N1.7 (GA), π0 / π0.5 / π0.7 with Real-Time Chunking (NeurIPS 2025), Pi API beta (13 Oct 2026), Hi Robot, Gemini Robotics 1.5 and 2 <span class="tag">V</span></td><td>2025–26</td><td>A slow VLM at 1–10 Hz, a fast learned policy at 50–200 Hz; action chunks hide latency. Nothing new from Gemini Robotics in Sep–Oct; GR00T N2 previewed, unreleased.</td><td>The fast layer is a trained neural policy, the slow layer sends language. Nothing is written as code, nothing is repaired.</td></tr>
+  </tbody>
+</table>
+
+<h2>3. The gap</h2>
+
+<p>On 15 October the gap looked wide. It is narrower now, and this is the honest statement. Every ingredient exists somewhere, most of it published in the last four weeks: a coding agent that learns a game's rules by interacting and ships a player that runs with zero model calls (Compiled Agency, 26 Sep; Code to Control, 30 Sep); a rulebook compiled to code and repaired on prediction error, with the world paused (Memento 3, 8 Oct); a slow reasoning model teaching a fast decision model that acts alone under a wall clock, by text and between attempts (TORSI, 14 Oct); confidence-gated escalation from a fast actor to a reasoning model while Doom keeps running, which did not reach the exit (System Switch, 7 Oct); and failure-triggered LLM patches of a running behaviour-tree library behind an admission gate, in a lockstep simulator (Self-Crystallizing BTs, 18 Oct, unreviewed). What nobody has done, as far as we found on 21 October, is the combination: in a game whose rules the agent does not know and whose clock does not stop, (a) learn the rules, (b) compile them into executable controllers plus typed questions, each with declared preconditions and predicted effects, (c) repair or replace those controllers <em>during</em> the episode, asynchronously, while the fast layer keeps acting, triggered by the agent's own world model being contradicted rather than by confidence alone, and (d) report the latency–quality–cost frontier against the paused-LLM upper bound. What remains ours beyond the combination: code as the artifact, with tests and predictions; repair while acting; unknown and uncontaminated rules; and the same games as the turn-based thesis. A reviewer will call it "Compiled Agency plus TORSI plus a monitor". The answer is the measurement: nobody has measured whether repair during play beats repair between attempts under a clock, and System Switch suggests the obvious trigger does not work.</p>
+
+<table>
+  <thead><tr><th>Closest work</th><th>What it does instead</th></tr></thead>
+  <tbody>
+    <tr><td>RealtimeBench / TORSI (14 Oct 2026)</td><td>The teacher writes <em>text guidance</em> for a Jev student, <em>offline between attempts</em>, in six well-known games. No code, no tests, no trigger during play, and the student cannot do anything the guidance did not anticipate.</td></tr>
+    <tr><td>Compiled Agency (26 Sep 2026); Code to Control (30 Sep 2026)</td><td>A coding agent <em>learns by interacting and compiles code</em>, then the program is frozen: no clock during development, no monitor, no repair after the freeze. Code to Control refits constants offline when dynamics change and cannot trigger a structural edit.</td></tr>
+    <tr><td>Self-Crystallizing BTs (18 Oct 2026); System Switch (7 Oct 2026)</td><td><em>Triggers</em>: a node failure wakes an LLM to patch a behaviour tree in a lockstep simulator; low confidence defers a Doom decision to a reasoning model under a real clock, and no closed-loop variant reached the exit. Neither repairs code while the world runs; neither uses prediction mismatch.</td></tr>
+  </tbody>
+</table>
+<p class="note">Also close, but turn-based: Memento 3 (rulebook → code, repaired on prediction error), Twin (no action until the program reproduces every observed transition), Tycho (decides when to construct, repair, use or bypass the model).</p>
+
+<h2>4. Environments and tasks</h2>
+
+<p class="note">Tick rates for the PuzzleScript games come from each game's <code>realtime_interval</code>. "Moves on the clock" is from reading the rule sections today, not from play: an audit by play is week-1 work.</p>
+
+<table class="dense">
+  <thead><tr><th>Environment</th><th>Real-time demand</th><th>What needs reasoning</th><th>Why it is interesting</th><th>Feasibility and cost</th><th>Publishable result</th></tr></thead>
+  <tbody>
+    <tr><td>1. PuzzleScript real-time, deterministic: Pushcat Jr (0.3 s), Boxes &amp; Balloons (0.1 s), A Sneeze A Day (0.067 s), Magik (0.5 s); Beam Islands (0.3 s) unchecked</td><td>Boulders fall, balloons rise, wind pushes crates and spells travel every tick whether or not the player acts; 2–15 ticks/s.</td><td>Rules are unknown and obscure: what falls, what wind does, how spells interact; levels need planning.</td><td>The only option that is real-time, unknown-rule and uncontaminated. Same games as the thesis, so "turn-based rule learning → real-time control" is one story.</td><td>Runtime needs a <code>TICK</code> no-op and a clock driver; the engine's <code>tick()</code> already honours <code>realtimeInterval</code>. One to two days. CPU. Agent cost as today: well under $1 per game-hour on the self-hosted 27B, $5–30 per game on a frontier harness.</td><td>Levels solved against slowdown (8× → 1×) for paused LLM, live LLM and the controller loop; escalation precision; five annotated repairs.</td></tr>
+    <tr><td>2. PuzzleScript real-time, stochastic: Aaaah! tentacle (0.6 s), Spikes 'n' Stuff (0.05 s), pretender to the crown (0.1 s), Spooky Pumpkin (0.15 s), water templs (0.22 s), Liquid War (0.1 s)</td><td>Random arrows, fire, enemies and waves.</td><td>Learn rules under noise; decide what to react to and what to plan around.</td><td>Randomness excluded these from the thesis benchmark; here it is the point. A reactive layer is mandatory, and a typed "is the player in danger?" question has a natural use.</td><td>Same runtime work. Two have no formal win condition (score instead).</td><td>Survival time or score against slowdown; share of ticks under code control; typed decision against code ablation.</td></tr>
+    <tr><td>3. Turn-based PuzzleScript under an imposed clock (control condition)</td><td>The driver plays a no-op when the agent is late. No hazards.</td><td>Same as the thesis.</td><td>Separates the cost of latency from the cost of hazards. The cheapest bridge.</td><td>Nothing beyond the driver.</td><td>Score against wall-clock and against calls per minute; the B1 baseline.</td></tr>
+    <tr><td>4. System1-Arena real-time mode: ALE, ViZDoom, highway-env, PyFlyt</td><td>The world is charged the model's median latency per decision; a fixed fallback when the answer fails.</td><td>Known genres.</td><td>A public harness with numbers for 30 models. The question becomes: does an agent-written controller beat the best System-1 model (26.5%) and the best LLM (32.9%)?</td><td>pip plus the repo; GPU only for self-hosted decision models. Contamination.</td><td>Closed-loop success against the leaderboard; a latency-advantage curve.</td></tr>
+    <tr><td>5. RealtimeBench games: Mario, Snake, Tetris, Temple, River, Bird</td><td>Wall-clock pacing from 1.5 moves/s to 60 FPS; the previous control stays active.</td><td>Known games.</td><td>Direct comparison with TORSI: code controllers with repair during play against offline text guidance to Jev (13.5 → 24.2).</td><td>No code release found on 21 Oct; needs the authors or clones of two or three games.</td><td>Beat 24.2 with a coding agent writing code, with the same student as control.</td></tr>
+    <tr><td>6. Real-Time Reasoning Gym: Freeway, Snake, Overcooked</td><td>A budget in tokens or seconds; a default action when late.</td><td>Rules are given in text.</td><td>A ready real-time LLM baseline (AgileThinker) to beat.</td><td>pip; CPU.</td><td>Score against budget against AgileThinker.</td></tr>
+    <tr><td>7. ALE, the six Code-to-Control games: Pong, Space Invaders, Asterix, Breakout, Fishing Derby, Freeway</td><td>About 15 decisions/s with frameskip 4; sticky actions.</td><td>Known.</td><td>Their released controllers replay without API calls, an exact baseline. The test is repair during play after a mid-episode dynamics change (they show reversed gravity needs a structural edit nothing triggers) against their offline refit.</td><td>pip; CPU. Contamination; "why not PPO".</td><td>Score after a dynamics change: frozen controller against repaired controller; time to repair.</td></tr>
+    <tr><td>8. ViZDoom, async mode, custom WADs</td><td>35 tics/s; perception.</td><td>Custom WADs make the rules unknown.</td><td>Doom is Jev's launch demo, a System1-Arena environment and System Switch's testbed, where confidence-gated escalation failed.</td><td>pip; CPU; needs a perception layer; a shooter.</td><td>Mismatch-triggered repair against System Switch's confidence trigger on the same scenarios.</td></tr>
+    <tr><td>9. MuJoCo pick-and-place, as on the JEV-27B-VL card</td><td>20–50 Hz control.</td><td>Object properties unknown.</td><td>The card's own split (75% with high-level options, 0 of 10 with raw motor commands) is exactly "decisions choose, code moves". A clean small study.</td><td>MuJoCo on CPU; JEV-27B-VL on the vast 4×5090 box (same backbone, FP8 fits; untested). Robotics reviewers expect VLAs.</td><td>Success against decision level, with agent-written motor-level controllers.</td></tr>
+    <tr><td>10. RoboCup Soccer Simulation 2D: rcssserver, Pyrus2D</td><td>Hard 100 ms cycles; 11 players; partial observation.</td><td>Opponent unknown; team tactics.</td><td>No LLM work found on 15 Oct (not re-searched today). Gal's teamwork and monitoring line: an online "coach" writes and repairs set plays.</td><td>Linux or Docker build; start with 3v3; weeks of engineering.</td><td>A coach that repairs beats a frozen team; teamwork-monitoring trigger against confidence trigger.</td></tr>
+    <tr><td>11. ROAR asynchronous multiplayer shooter gym (NeurIPS 2026) or OmniGameArena (UE5)</td><td>Threads: the world advances without waiting for the model.</td><td>Known genres; teammates.</td><td>Multi-agent and asynchronous by construction; a venue-accepted harness.</td><td>Code availability not checked; UE5 is heavy.</td><td>Controller loop against LMM agents on the same levels.</td></tr>
+    <tr><td>12. ARC-AGI-3 remote API</td><td>None. "Turn-based instead of real-time" by design (technical report §3.4); nothing ticks without an action.</td><td>Unknown rules.</td><td>Answers the obvious question. A client-side clock would only measure actions per minute.</td><td>Not suitable for real-time work.</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h2>5. Shortlist and first experiment</h2>
+
+<dl class="qa">
+  <dt>Shortlist</dt>
+  <dd class="answer">(1) PuzzleScript real-time, deterministic subset first, stochastic second: continuity and unknown rules. (2) The six Code-to-Control Atari games, run through System1-Arena's real-time harness: exact baselines on both sides, for the ML audience. (3) RoboCup 2D only if Gal supervises; otherwise the MuJoCo pick-and-place study as the robotics-flavoured side piece.</dd>
+  <dt>Week 1</dt>
+  <dd>Audit the candidate games by play (today's reading: Pushcat Jr, Boxes &amp; Balloons, Sneeze and Magik move things on the clock; Oskar's Maze and Some Lines look like animation only; Beam Islands unchecked). Add <code>TICK</code> and the clock driver. Write the minimal arbiter: controllers with <code>precondition / act / predict</code>, hot reload on version bump, deadline with fallback, escalation through a file queue the harness reads. Write the tick log.</dd>
+  <dt>Week 2</dt>
+  <dd>Four games × slowdown {8, 4, 1} × 2 seeds, one frontier harness. Conditions: B0 paused LLM every tick (upper bound); B1 live LLM every tick with a no-op when late; B2 controllers written once and frozen (Compiled Agency / Code to Control shape); B7 TORSI-style, a teacher writes text guidance for a decision model between attempts; C1 code controllers with repair during play; C2 = C1 plus one typed question ("which controller?" or "is the player in danger?") answered by a self-hosted 27B decision model. Trigger ablation inside C1: confidence only (System Switch shape) against prediction mismatch and stall.</dd>
+  <dt>Deliverable</dt>
+  <dd>One figure: levels solved against slowdown per condition. One table: p95 latency, deadline misses, calls per minute, escalation precision. Five annotated escalation-and-repair episodes.</dd>
+  <dt>Cost</dt>
+  <dd>CPU for the games. About $6 per hour for the vast box, shared by all games and by the decision model. Or $5–30 per game on a frontier harness.</dd>
+</dl>
+
+<h2>6. How it connects to the current thesis</h2>
+
+<dl class="qa">
+  <dt>Same model</dt>
+  <dd>JEV-27B-VL, Decision-2.0-Vega-27B and Clef are all adapters or fine-tunes on Qwen3.8-27B, the thesis model. The FP8 server already running on the vast box uses vLLM; the JEV card ships a vLLM <code>serve_decide.py</code>. Serving one of them next to the chat model is plausible and untested.</dd>
+  <dt>Same stack</dt>
+  <dd>The same games, runtime, harness container and <code>agent_events.jsonl</code>. The tool gateway's <code>checkpoint / restore</code> becomes the controller test bench. The rule-learning output of the thesis becomes each controller's <code>predict()</code>, which is what the monitor checks.</dd>
+  <dt>Same loop</dt>
+  <dd class="answer">Harness² is "an improver edits the player's harness files from contrasts between scored runs". Here the improver edits controller files from contrasts between ticks, while the game runs. AVO's evaluator becomes the per-controller score. TORSI is Harness² with a decision model as the player; we add code and a trigger during play.</dd>
+  <dt>What changes</dt>
+  <dd>Latency becomes a first-class metric. The proposal does not change: the committee review of 19 Oct recommends keeping this out of the document and holding one reserve slide.</dd>
+</dl>
+
+<h2>7. Open questions</h2>
+
+<ul>
+  <li>Is repair <em>while the clock runs</em> worth more than repair between attempts? TORSI's validation gate rejects bad updates between attempts; repair during play needs shadow testing to be as safe.</li>
+  <li>System Switch: confidence-gated escalation under a live Doom clock reached the exit in no run. Why would a mismatch trigger with code repair do better? That is the first thing to test, not to assume.</li>
+  <li>Compiled Agency shows frontier coding agents already compile strong zero-call players from bare interaction. Repair during play only matters where the environment changes or cannot be explored offline. Choose games where that is true.</li>
+  <li>How much of any gain is the controller, and how much the fallback? "Good Judgment, Bad Advice" used a placebo controller; we need the same.</li>
+  <li>Which decisions in a small grid game belong to a typed model at all? In System1-Arena, small System-1 models rarely succeed in closed loops.</li>
+  <li>Contamination: PuzzleScript games are obscure, Atari is not. A reviewer will ask for both.</li>
+  <li>Supervisor: Gal (RoboCup, teamwork monitoring) or Yoav (language agents) changes the third environment.</li>
+  <li>Timing: a second-year extension after the proposal, or a separate project?</li>
+</ul>
+
+<footer>
+  <p><b>Sources.</b> Every entry above is linked and tagged in <code>docs/research/realtime-llm-controllers-direction.md</code>, section 5 "Update 21 Oct 2026", together with the items that could not be verified. Vendor figures (latencies, model-card results) were not reproduced here.</p>
+</footer>
+
+</main>
+</body>
+</html>

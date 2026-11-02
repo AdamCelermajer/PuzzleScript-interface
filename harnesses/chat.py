@@ -6,7 +6,6 @@ tool-calling loop lives in ``harnesses/bare.py``.
 from __future__ import annotations
 
 import base64
-import hashlib
 import json
 import os
 import time
@@ -56,7 +55,7 @@ def image_part(path: str | Path) -> dict[str, Any]:
 
 
 class OpenRouterChat:
-    def __init__(self, model: str, effort: str, request_dir: str | Path, *,
+    def __init__(self, model: str, effort: str, *,
                  context_chars: int = DEFAULT_CONTEXT_CHARS, max_attempts: int = 8, provider: str = "",
                  request_timeout: float = 900.0, model_provider: str = "openrouter") -> None:
         details = API_PROVIDERS[model_provider]
@@ -71,8 +70,6 @@ class OpenRouterChat:
         self.effort = effort
         self.effort_sent = EFFORT_SENT[effort] if model_provider == "openrouter" else effort
         self.provider = provider
-        self.request_dir = Path(request_dir)
-        self.request_dir.mkdir(parents=True, exist_ok=True)
         self.context_chars = context_chars
         self.max_attempts = max_attempts
         self.request_timeout = request_timeout
@@ -206,10 +203,6 @@ class OpenRouterChat:
             "retries": attempts, "elided_messages": self.elided_messages,
             "usage": (response or {}).get("usage"), "provider": (response or {}).get("provider"),
         }
-        stored = {**body, "messages": [_without_image_data(message) for message in body["messages"]]}
-        path = self.request_dir / f"request-{time.time_ns()}-{self._sequence:06d}.json"
-        path.write_text(json.dumps({**record, "request": stored, "response": response}, indent=1),
-                        encoding="utf-8")
         return record
 
 
@@ -227,17 +220,3 @@ def _chars(message: dict[str, Any]) -> int:
     return (total + len(json.dumps(message.get("tool_calls") or ""))
             + len(json.dumps(message.get("reasoning_details") or "")))
 
-
-def _without_image_data(message: dict[str, Any]) -> dict[str, Any]:
-    content = message.get("content")
-    if not isinstance(content, list):
-        return message
-    parts = []
-    for part in content:
-        if part.get("type") == "image_url":
-            url = part["image_url"]["url"]
-            parts.append({"type": "image_url", "image_url": {
-                "url": "[png sha256=" + hashlib.sha256(url.encode("ascii")).hexdigest()[:16] + "]"}})
-        else:
-            parts.append(part)
-    return {**message, "content": parts}

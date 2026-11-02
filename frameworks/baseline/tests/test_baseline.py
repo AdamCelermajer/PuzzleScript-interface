@@ -4,9 +4,13 @@ import tempfile
 import unittest
 from dataclasses import dataclass, field
 from pathlib import Path
+from unittest.mock import patch
 
 from client.arc.types import ActionInput, FrameData, GameAction, GameState, RenderedFrame
+from frameworks import world_model
 from frameworks.baseline.runner import CodexAgentRunner
+from frameworks.baseline import prompt as baseline_prompt
+from frameworks.baseline.session import CliGameSession, GameSessionConfig, game_instructions
 
 
 def _frame(
@@ -82,20 +86,29 @@ class CodexAgentTests(unittest.TestCase):
             self.assertIn("The game has not advanced", session.calls[1]["prompt"])
             self.assertEqual(Path(session.calls[0]["image_path"]).read_bytes(), Path(session.calls[1]["image_path"]).read_bytes())
 
+    def test_reset_is_an_available_action_that_costs_one(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env = FakeEnv(_frame([[2, 0]]), [_frame([[0, 2]], state=GameState.WIN, levels_completed=1)])
+            session = FakeSession([{"action": "RESET"}, {"action": "ACTION4"}])
+            result = CodexAgentRunner(env, session, tmpdir, max_steps=5).run()
+            self.assertIn("available_actions=ACTION1, ACTION2, ACTION3, ACTION4, RESET", session.calls[0]["prompt"])
+            self.assertTrue(session.calls[1]["prompt"].startswith("Last action: RESET: nothing changed"))
+            self.assertEqual(result.actions, [GameAction.RESET, GameAction.ACTION4])
+            self.assertEqual(env.step_actions, [GameAction.ACTION4])  # RESET went to env.reset()
+
     def test_grid_encoding_instructions_are_only_given_for_hex_projection(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             frame = _frame([[0, 0], [1, 2]])
             runner = CodexAgentRunner(FakeEnv(frame, []), FakeSession([]), tmpdir, max_steps=1)
-            self.assertNotIn("2x2", runner._turn_prompt(frame, "", initial=True))
-            frame.projection = {"mode": "visible-cell-v1"}
-            prompt = runner._turn_prompt(frame, "", initial=True)
-            self.assertIn("identical rendered textures", prompt)
-            self.assertIn("Hidden object differences are not encoded", prompt)
-            self.assertNotIn("4096", prompt)
+            self.assertNotIn("2x2", runner._turn_prompt(frame, "", "", initial=True))
+            frame.projection = {"mode": "visible-cell-v1"}  # the default: the system prompt explains it
+            prompt = runner._turn_prompt(frame, "", "", initial=True)
+            self.assertNotIn("Grid encoding", prompt)
+            self.assertNotIn("Hidden object differences", prompt)
             frame.projection = {"mode": "visible-cell-hex-v2"}
-            self.assertIn("4096*a+256*b+16*c+d", runner._turn_prompt(frame, "", initial=True))
+            self.assertIn("4096*a+256*b+16*c+d", runner._turn_prompt(frame, "", "", initial=True))
             frame.projection = {"mode": "object-cell-v1"}
-            prompt = runner._turn_prompt(frame, "", initial=True)
+            prompt = runner._turn_prompt(frame, "", "", initial=True)
             self.assertIn("one cell per visible game tile", prompt)
             self.assertNotIn("4096", prompt)
 
@@ -134,13 +147,13 @@ class CodexAgentTests(unittest.TestCase):
                 [GameAction.ACTION4, GameAction.ACTION4],
             )
             self.assertEqual(len(session.calls), 2)
-            self.assertIn("Solve this unknown puzzle game", session.calls[0]["prompt"])
-            self.assertNotIn("Solve this unknown puzzle game", session.calls[1]["prompt"])
+            self.assertTrue(session.calls[0]["prompt"].startswith("Play the game now. You have 5 actions."))
+            self.assertNotIn("Play the game now", session.calls[1]["prompt"])
             for call in session.calls:
                 self.assertNotIn("codex-test-world", call["prompt"])
                 self.assertNotIn("game_id=", call["prompt"])
                 self.assertNotIn("ACTION1=Up", call["prompt"])
-            self.assertIn("Previous action ACTION4", session.calls[1]["prompt"])
+            self.assertTrue(session.calls[1]["prompt"].startswith("Last action: ACTION4: changed (0,0) 2->0"))
             self.assertTrue(Path(session.calls[0]["image_path"]).exists())
             self.assertTrue(Path(session.calls[1]["image_path"]).exists())
 
@@ -167,6 +180,99 @@ class CodexAgentTests(unittest.TestCase):
                     {"row": 0, "col": 1, "before": 0, "after": 2},
                 ],
             )
+
+    def test_player_keeps_notes_world_model_which_is_copied_and_reported(self) -> None:
+        class ModelKeepingSession(FakeSession):
+            def __init__(self, responses, workspace: Path) -> None:
+                super().__init__(responses)
+                self.world_model_path = workspace / "notes" / "world_model.md"
+                self.world_model_path.parent.mkdir(parents=True)
+
+            def next_action(self, prompt: str, image_path=None) -> dict[str, str]:
+                self.world_model_path.write_text(f"belief {len(self.calls) + 1}", encoding="utf-8")
+                return super().next_action(prompt, image_path)
+
+            def final_world_model(self, **game_end) -> Path:
+                self.game_end = game_end
+                self.world_model_path.write_text("final report", encoding="utf-8")
+                return self.world_model_path
+
+        with tempfile.TemporaryDirectory() as tmpdir, patch.object(world_model, "EVERY", 1):
+            root = Path(tmpdir)
+            env = FakeEnv(
+                reset_frame=_frame([[2, 0, 0]]),
+                step_frames=[
+                    _frame([[0, 2, 0]], action=GameAction.ACTION4),
+                    _frame([[0, 0, 2]], state=GameState.WIN, levels_completed=1, action=GameAction.ACTION4),
+                ],
+            )
+            session = ModelKeepingSession([{"action": "ACTION4", "note": ""}] * 2, root / "ws")
+            result = CodexAgentRunner(env=env, session=session, output_dir=root / "out", max_steps=5).run()
+
+            copies = root / "out" / "world_model_snapshots"
+            self.assertEqual(sorted(p.name for p in copies.iterdir()),
+                             ["a0001.md", "a0002.md", "final.md", "level-1-a0002.md"])
+            # Copied after the turn that follows each snapshot point; nobody asks for it during play.
+            self.assertFalse(any("World model" in call["prompt"] for call in session.calls))
+            self.assertEqual(session.game_end, {"reason": "task_goal_reached", "levels": 1, "total": 1})
+            self.assertEqual((copies / "a0001.md").read_text(encoding="utf-8"), "belief 2")
+            # No turn followed the winning action: the final report is that update.
+            self.assertEqual((copies / "level-1-a0002.md").read_text(encoding="utf-8"), "final report")
+            self.assertEqual(result.world_model_path, root / "out" / "world_model.md")
+            self.assertEqual(result.world_model_path.read_text(encoding="utf-8"), "final report")
+            self.assertEqual((copies / "final.md").read_text(encoding="utf-8"), "final report")
+
+    def test_turn_based_prompt_is_the_agentic_one_but_for_the_line_on_moves(self) -> None:
+        self.assertEqual(game_instructions(True), baseline_prompt.SYSTEM_PROMPT
+                         + "Each turn you get one observation. Submit one action with: python act.py ACTION")
+        self.assertTrue(game_instructions(True, tools=True).endswith("Submit one action with the act tool."))
+        shared = baseline_prompt.SYSTEM_PROMPT
+        self.assertEqual(baseline_prompt.system_prompt("agent", True), shared + "Play with the look and do tools.")
+
+    def test_memento_opens_a_fresh_session_every_turn_and_says_so(self) -> None:
+        self.assertTrue(game_instructions(True, memento=True).startswith(game_instructions(True)))
+        self.assertIn("you will remember nothing from earlier turns", game_instructions(True, memento=True))
+
+        class Harness:
+            session_id, turn_number, seen = "", 0, []
+
+            def turn(self, prompt, images=(), timeout=None):
+                self.seen.append(self.session_id)
+                self.turn_number += 1
+                self.session_id = f"s{self.turn_number}"
+                return type("R", (), {"text": "ACTION1", "error": "", "session_id": self.session_id,
+                                      "usage": {}, "events": [], "timed_out": False})()
+
+        for memento, expected in ((True, ["", ""]), (False, ["", "s1"])):
+            with tempfile.TemporaryDirectory() as tmpdir:
+                game = CliGameSession(GameSessionConfig(workspace_enabled=True, memento=memento), tmpdir)
+                game.session = Harness()
+                game.session.seen = []
+                game._turn("one", [], "game_action")
+                game._turn("two", [], "game_action")
+                self.assertEqual(game.session.seen, expected)
+
+    def test_notes_are_kept_after_every_turn_outside_the_mirror(self) -> None:
+        class Harness:
+            session_id, turn_number = "", 0
+
+            def turn(self, prompt, images=(), timeout=None):
+                self.turn_number += 1
+                (work / "notes" / "strategy.md").write_text(f"version {self.turn_number}", encoding="utf-8")
+                return type("R", (), {"text": "ACTION1", "error": "", "session_id": "s", "usage": {},
+                                      "events": [], "timed_out": False})()
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            work, out = root / "work", root / "out"
+            game = CliGameSession(GameSessionConfig(workspace_enabled=True), work, out, mirror_directory=out / "workspace")
+            (work / "notes").mkdir(parents=True)
+            game.session = Harness()
+            game._turn("one", [], "game_action")
+            game._turn("two", [], "game_action")
+            self.assertEqual((out / "workspace" / "notes" / "strategy.md").read_text(encoding="utf-8"), "version 2")
+            self.assertEqual([(out / "notes_history" / f"turn-000{n}" / "strategy.md").read_text(encoding="utf-8")
+                              for n in (1, 2)], ["version 1", "version 2"])
 
     def test_finish_is_rejected_until_environment_reports_win(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:

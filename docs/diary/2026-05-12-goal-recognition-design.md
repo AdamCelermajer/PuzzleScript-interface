@@ -6,6 +6,7 @@ runs: []
 commits: [c89e7ff, 9d7d41a, aee918f, bdcf163, 10cfab3, d41593f, 9d94c42, 963bc86, c3dc905, d648111, 7cf7df8, 3daecf3, 972efe7, cba9545, d3147d4]
 docs: [studies/goal_recognition/docs/2026-05-12-goal-recognition-evaluation-design.md, studies/goal_recognition/docs/2026-05-12-goal-recognition-evaluation.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Designed and planned an evaluation of whether a model can state a game's goal from its frames.

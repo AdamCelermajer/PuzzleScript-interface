@@ -4,8 +4,9 @@ title: First AVO runs on Sokoban
 threads: [avo-campaigns]
 runs: []
 commits: []
-docs: [docs/research/avo-framework.md]
+docs: [docs/research/avo-framework.md, docs/architecture/avo-framework-acdl.png]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Aug 23: first AVO agent runs on `ps_sokoban_basic-v1`: three with `gpt-5.6-sol` (high) and five with `anthropic/claude-opus-5-fast` via OpenRouter (`avo/output/20260823T*`).

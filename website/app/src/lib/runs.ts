@@ -1,5 +1,5 @@
 import type { Catalog, CatalogJob, CatalogRun, FrameworkOptions } from '../api/types'
-import { outcome, processStatus, type Outcome, type ProcessStatus } from './status'
+import { isActive, outcome, processStatus, type Outcome, type ProcessStatus } from './status'
 
 /** A catalog row with one normalized identity, regardless of run_spec.json vs legacy config. */
 export interface RunView {
@@ -8,13 +8,16 @@ export interface RunView {
   kind: 'avo' | 'codex'
   /** Registry id (frameworks/registry.py), e.g. `baseline`, `avo`. */
   framework: string
-  /** Framework plus options as shown to people, e.g. `Baseline+`. */
+  /** Framework plus options as shown to people, e.g. `Baseline · agent`. */
   variant: string
   harness: string
   model: string
   optimizerModel: string | null
   effort: string
   game: string
+  /** The level of a one-level task (null: the run plays on from its start level). */
+  level: number | null
+  startLevel: number
   batch: string
   /** Launch time (ms) when known, else last activity. */
   started: number
@@ -40,9 +43,14 @@ export function batchTime(batch: string | undefined): number | null {
 /** The catalog names every run's framework; rows from before the frameworks package fall back to kind/condition. */
 export function runIdentity(row: Pick<CatalogRun, 'framework' | 'variant' | 'kind' | 'condition'>): { framework: string; variant: string } {
   if (row.framework) return { framework: row.framework, variant: row.variant || row.framework }
-  if (row.kind === 'avo') return { framework: 'avo', variant: 'AVO' }
-  return { framework: 'baseline', variant: String(row.condition ?? '').startsWith('baseline-plus') ? 'Baseline+' : 'Baseline' }
+  if (row.kind === 'avo') return { framework: 'avo', variant: 'AVO · solver score' }
+  // Baseline+ became the only turn-based Baseline on 21 Oct 2026; older runs without notes keep a separate label.
+  return { framework: 'baseline', variant: String(row.condition ?? '').startsWith('baseline-plus') ? 'Baseline' : 'Baseline · no notes (old)' }
 }
+
+/** What scores an AVO campaign's candidates; campaigns from before the fitness option were scored by their solver. */
+export const campaignScore = (options: FrameworkOptions | null | undefined) =>
+  options?.fitness === 'research' ? 'research levels' : 'solver levels'
 
 /** `max steps 200 · notes · 4h wall` from a framework's options. */
 export function optionsText(options: FrameworkOptions | null | undefined, maxWallSeconds?: number | null): string {
@@ -75,6 +83,8 @@ export function normalizeRun(row: CatalogRun): RunView {
     optimizerModel: row.optimizer_model ?? null,
     effort: row.effort || (row.config as { reasoning_effort?: string } | undefined)?.reasoning_effort || '—',
     game: row.game_id || '—',
+    level: row.level ?? null,
+    startLevel: row.start_level ?? 1,
     batch: row.batch || '',
     started,
     activity: row.modified || 0,
@@ -92,6 +102,17 @@ export function normalizeRun(row: CatalogRun): RunView {
   }
 }
 
+/** ` · level 3` for a one-level task, ` · from level 3` for a run that opened there and played on, else ''. */
+export const levelText = (run: Pick<RunView, 'level' | 'startLevel'>) =>
+  run.level ? ` · level ${run.level}` : run.startLevel > 1 ? ` · from level ${run.startLevel}` : ''
+
+/** `solved in 9 / 6 moves` or `not solved · 40 moves`: a one-level task's score. */
+export function levelScoreText(score: CatalogRun['level_score']): string {
+  if (!score || score.solved === null) return ''
+  const shortest = score.shortest ? ` / ${score.shortest}` : ''
+  return score.solved ? `solved in ${score.moves}${shortest} moves` : `not solved · ${score.moves} moves`
+}
+
 const numberOption = (options: FrameworkOptions | null | undefined, name: string) =>
   typeof options?.[name] === 'number' ? (options[name] as number) : null
 
@@ -107,14 +128,14 @@ export interface RunFilters {
 
 export const EMPTY_FILTERS: RunFilters = { variant: '', harness: '', model: '', game: '', status: '', job: '', q: '' }
 
-/** Status filter buckets: live = confirmed active process; others match the process tone. */
+/** Status filter buckets: `any` keeps every run; live = confirmed active process; others match the process tone. */
 export function matchesFilters(run: RunView, f: RunFilters): boolean {
   if (f.variant && run.variant !== f.variant) return false
   if (f.harness && run.harness !== f.harness) return false
   if (f.model && run.model !== f.model) return false
   if (f.game && run.game !== f.game) return false
   if (f.job && run.batch !== f.job) return false
-  if (f.status) {
+  if (f.status && f.status !== 'any') {
     if (f.status === 'active') {
       if (!['running', 'queued'].includes(run.process.tone)) return false
     } else if (f.status === 'solved') {
@@ -135,6 +156,19 @@ export function catalogViews(catalog: Catalog | undefined): RunView[] {
     const live = Number(b.process.tone === 'running') - Number(a.process.tone === 'running')
     return live || b.started - a.started || b.activity - a.activity
   })
+}
+
+/**
+ * Results "Running now": the runs of live batches (and confirmed running runs outside one), split into
+ * the active ones and the failed or stopped ones. Finished runs of a live batch are in neither.
+ */
+export function runningNow(runs: RunView[], jobs: CatalogJob[]): { active: RunView[]; ended: RunView[] } {
+  const live = new Set(jobs.filter((j) => ['starting', 'running', 'stopping'].includes(j.status)).map((j) => j.id))
+  const current = runs.filter((r) => live.has(r.batch) || (r.process.tone === 'running' && r.process.live))
+  return {
+    active: current.filter((r) => isActive(r.raw)),
+    ended: current.filter((r) => ['failed', 'cancelled', 'stopped'].includes(r.raw.status)),
+  }
 }
 
 export function distinct(runs: RunView[], key: (r: RunView) => string): string[] {

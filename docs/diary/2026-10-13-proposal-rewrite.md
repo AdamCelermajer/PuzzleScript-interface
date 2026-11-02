@@ -6,6 +6,7 @@ runs: []
 commits: []
 docs: [docs/proposal/README.md, docs/proposal/main.tex, docs/proposal/refs.bib]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Rewrote `docs/proposal/main.tex` around rule learning from multimodal interaction (images, integer grids, transitions) with a small model.

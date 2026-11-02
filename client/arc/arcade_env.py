@@ -68,11 +68,13 @@ class LocalArcEnvironmentWrapper:
         base_url: str,
         api_key: str,
         http_session=None,
+        start_level: int = 1,
     ) -> None:
         self.game_id = game_id
         self.base_url = base_url.rstrip("/")
         self.headers = {"X-API-Key": api_key, "Accept": "application/json"}
         self._session = http_session or requests.Session()
+        self.start_level = start_level
         self.scorecard_id = self._open_scorecard()
         self.guid: str | None = None
 
@@ -84,6 +86,12 @@ class LocalArcEnvironmentWrapper:
             headers=self.headers,
             timeout=45,
         )
+        if response.status_code == 400:  # e.g. a start level beyond the game's last level
+            try:
+                detail = response.json().get("detail")
+            except (ValueError, AttributeError):
+                detail = None
+            raise ValueError(f"{self.game_id}: {detail or response.text}")
         response.raise_for_status()
         return response.json()
 
@@ -93,9 +101,19 @@ class LocalArcEnvironmentWrapper:
 
     def reset(self):
         payload = {"card_id": self.scorecard_id, "game_id": self.game_id}
+        first = not self.guid
         if self.guid:
             payload["guid"] = self.guid
+        elif self.start_level > 1:  # later resets stay on the start level
+            payload["level"] = self.start_level
         frame = self._request("POST", "/api/cmd/RESET", payload)
+        if first and self.start_level > 1 and frame.get("levels_completed") != self.start_level - 1:
+            # A game service started before start levels existed ignores the field and opens level 1.
+            raise RuntimeError(
+                f"{self.game_id}: asked for level {self.start_level} but the game service opened the board "
+                f"after {frame.get('levels_completed')} completed levels; this game service predates start levels "
+                "(use one started from the current code, see docs/research/per-level-interface.md)"
+            )
         self.guid = str(frame.get("guid") or self.guid or "")
         return _to_namespace(frame)
 
@@ -145,7 +163,10 @@ class ArcadeEnv(BaseEnv):
         renderer=None,
         arcade_factory=Arcade,
         http_session=None,
+        start_level: int = 1,
     ) -> None:
+        """``start_level`` (1-based, local PuzzleScript only) opens the game at that playable level;
+        resets return to it, and ``levels_completed`` counts the earlier levels as completed."""
         self.game_id = game_id
         self.backend_url = backend_url
         self.api_key = api_key if api_key is not None else os.getenv("ARC_API_KEY", "")
@@ -159,7 +180,10 @@ class ArcadeEnv(BaseEnv):
                 self.backend_url,
                 self.api_key,
                 http_session=http_session,
+                start_level=start_level,
             )
+        elif start_level != 1:
+            raise ValueError("A start level is supported only for local PuzzleScript games")
         else:
             self.arcade = arcade_factory(
                 operation_mode=OperationMode.ONLINE,

@@ -6,6 +6,7 @@ runs: []
 commits: [e2cc5e0, d9ae75c, de73777, 7a85777, cc5a974, 65e1174, 550f412]
 docs: []
 reconstructed: true
+brief: true
 ---
 ## Did
 - Apr 6: replaced scattered docs with a single project guide; unified action handling in `server.js`; added an ARC-AGI-3 compatible FastAPI proxy.

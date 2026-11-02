@@ -84,8 +84,9 @@ class FakeArcade:
 
 
 class FakeHttpResponse:
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: dict, status_code: int = 200) -> None:
         self.payload = payload
+        self.status_code = status_code
 
     def raise_for_status(self) -> None:
         return None
@@ -95,8 +96,9 @@ class FakeHttpResponse:
 
 
 class FakeHttpSession:
-    def __init__(self) -> None:
+    def __init__(self, levels_completed: int = 0) -> None:
         self.requests: list[tuple[str, str, dict]] = []
+        self.levels_completed = levels_completed
 
     def request(self, method: str, url: str, **kwargs):
         self.requests.append((method, url, kwargs))
@@ -109,7 +111,7 @@ class FakeHttpSession:
                     "guid": "guid-1",
                     "frame": [[[0, 1], [1, 0]]],
                     "state": "NOT_FINISHED",
-                    "levels_completed": 0,
+                    "levels_completed": self.levels_completed,
                     "win_levels": 2,
                     "action_input": {"id": 0, "data": {}},
                     "available_actions": [1, 2, 7],
@@ -273,6 +275,40 @@ class ArcadeEnvTests(unittest.TestCase):
         self.assertTrue(
             any(url.endswith("/api/cmd/RESET") for _method, url, _kwargs in session.requests)
         )
+
+    def test_start_level_is_sent_on_the_first_reset_only(self) -> None:
+        session = FakeHttpSession(levels_completed=1)
+        env = ArcadeEnv(game_id="ps_sokoban_basic-v1", backend_url="http://127.0.0.1:8601", api_key="local-dev",
+                        http_session=session, start_level=2)
+
+        self.assertEqual(env.reset().levels_completed, 1)
+        env.reset()
+
+        resets = [kwargs["json"] for _method, url, kwargs in session.requests if url.endswith("/api/cmd/RESET")]
+        self.assertEqual(resets[0], {"card_id": "card-1", "game_id": "ps_sokoban_basic-v1", "level": 2})
+        self.assertEqual(resets[1], {"card_id": "card-1", "game_id": "ps_sokoban_basic-v1", "guid": "guid-1"})
+
+    def test_a_service_that_ignores_the_start_level_is_an_error(self) -> None:
+        env = ArcadeEnv(game_id="ps_sokoban_basic-v1", backend_url="http://127.0.0.1:8601", api_key="local-dev",
+                        http_session=FakeHttpSession(levels_completed=0), start_level=2)
+
+        with self.assertRaisesRegex(RuntimeError, "predates start levels"):
+            env.reset()
+
+    def test_an_out_of_range_start_level_is_a_clean_error(self) -> None:
+        session = FakeHttpSession()
+        session.request = lambda method, url, **kwargs: (
+            FakeHttpResponse({"card_id": "card-1"}) if url.endswith("/open")
+            else FakeHttpResponse({"detail": "level must be between 1 and 2, not 9."}, status_code=400))
+        env = ArcadeEnv(game_id="ps_sokoban_basic-v1", backend_url="http://127.0.0.1:8601", api_key="local-dev",
+                        http_session=session, start_level=9)
+
+        with self.assertRaisesRegex(ValueError, "level must be between 1 and 2, not 9"):
+            env.reset()
+
+    def test_official_arc_has_no_start_level(self) -> None:
+        with self.assertRaisesRegex(ValueError, "only for local PuzzleScript"):
+            ArcadeEnv(game_id="ls20", arcade_factory=FakeArcade, start_level=2)
 
 
 if __name__ == "__main__":

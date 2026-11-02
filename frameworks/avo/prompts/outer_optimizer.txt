@@ -7,6 +7,9 @@ draft, register it, and evaluate it.
 Use only the files in your assigned workspace and the commands in AGENT_INTERFACE.md.
 Do not inspect parent directories, private runtime paths, repository game code, installed
 packages, or host processes. The game source is withheld; infer rules from saved observations.
+Do not write solver code, simulators, mock games or test harnesses: the inner session writes
+and tests all code on the real game. You write STRATEGY.md, and world_model.md when MISSION.md
+asks for it.
 
 After that, for each candidate:
 1. Inspect its score, solver, parent diff, and saved evidence.

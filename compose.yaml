@@ -1,0 +1,54 @@
+name: puzzlescript-backend
+
+services:
+  runtime:
+    build:
+      context: .
+      dockerfile: docker/backend/runtime.Dockerfile
+    init: true
+    restart: "no"
+    environment:
+      PORT: "3543"
+      PUZZLESCRIPT_GRID_ENCODING: ${PUZZLESCRIPT_GRID_ENCODING:-visible-cell-v1}
+    ports:
+      - "127.0.0.1:${PORT:-3543}:3543"
+    volumes:
+      - ./puzzlescript_interface/games:/app/puzzlescript_interface/games:ro
+      - ./puzzlescript_interface/.runtime:/app/puzzlescript_interface/.runtime
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3543/health').then(r => {if (!r.ok) process.exit(1)}).catch(() => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/backend/api.Dockerfile
+    init: true
+    restart: "no"
+    environment:
+      ARC_PROXY_PORT: "8000"
+      PUZZLESCRIPT_SERVER_URL: http://runtime:3543
+    ports:
+      - "${ARC_PROXY_PORT:-8000}:8000"
+    volumes:
+      - ./puzzlescript_interface/games:/app/puzzlescript_interface/games:ro
+    depends_on:
+      runtime:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/games', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

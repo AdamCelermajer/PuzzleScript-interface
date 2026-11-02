@@ -10,6 +10,7 @@ const NAV: { to: string; label: string; icon: ReactNode; end?: boolean }[] = [
   { to: '/', label: 'Results', icon: <Icon d="M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z" />, end: true },
   { to: '/board', label: 'Board', icon: <Icon d="M2.5 3h3v10h-3zM6.5 3h3v6h-3zM10.5 3h3v8h-3z" /> },
   { to: '/runs', label: 'Runs', icon: <Icon d="M3 4h10M3 8h10M3 12h6" /> },
+  { to: '/prompt-build', label: 'Prompt build', icon: <Icon d="M3 3.5h10v3H3zM3 8.5h6v4H3zM11 8.5h2v4h-2z" /> },
   { to: '/launch', label: 'Launch', icon: <Icon d="M8 3v10M3 8h10" /> },
   { to: '/pinned', label: 'Pinned', icon: <Icon d="M8 2.5l1.7 3.4 3.8.6-2.7 2.6.6 3.8L8 11.1l-3.4 1.8.6-3.8-2.7-2.6 3.8-.6z" /> },
   { to: '/compare', label: 'Compare', icon: <Icon d="M3 13V8M8 13V3M13 13V6" /> },

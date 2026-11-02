@@ -4,7 +4,7 @@ title: Fresh-game solver evaluation for AVO on Midas
 threads: [avo-campaigns]
 runs: [avo/output/evolution/midas-solver*, avo/output/evolution/midas-outer-sol-high*]
 commits: [dda47d8, 82148b7, 358d86c, 621d757, 4a7ba31, 82a1afa, cf8ffbb]
-docs: [avo/evolution/README.md]
+docs: [docs/research/diary-figures-20261029/avo-era/fig1_midas_levels_vs_tokens.png, avo/evolution/README.md, docs/research/diary-figures-20261029/avo-era/README.md]
 reconstructed: true
 ---
 ## Did

@@ -3,7 +3,7 @@ import { optionsText, type RunView } from './runs'
 
 /**
  * One framework in the form. Choice and bool options hold a list: picking several values
- * launches one matched run per value (notes off + on = Baseline and Baseline+).
+ * launches one matched run per value (driver controller + agent = Baseline and Baseline · agent).
  */
 export type OptionField = number | string | (string | boolean)[]
 export interface FrameworkForm {
@@ -153,6 +153,7 @@ export function estimateRuns(f: LaunchForm, harnesses: Harness[], frameworks: Fr
 export function modelProvider(model: string): string {
   if (model.startsWith('openrouter/')) return 'openrouter'
   if (model.startsWith('nanogpt/')) return 'nanogpt'
+  if (model.startsWith('vast/')) return 'vast'
   if (/^claude-[a-z]+-\d+(?:-\d+)*$/.test(model)) return 'anthropic'
   if (/^(?:gemini|claude|gpt-oss)-[a-z0-9.-]+-(?:low|medium|high)$/.test(model)) return 'google'
   return 'openai'

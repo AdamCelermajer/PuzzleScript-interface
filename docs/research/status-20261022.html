@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qwen 3.8 27B: where we stand · 22 October 2026</title>
+<style>
+  :root { color-scheme: light; --surface: #fcfcfb; --text: #0b0b0b; --text-2: #52514e; --rule: #dcdad5; --accent: #2a78d6; }
+  @media (prefers-color-scheme: dark) {
+    :root { color-scheme: dark; --surface: #1a1a19; --text: #f0efec; --text-2: #c3c2b7; --rule: #3a3936; --accent: #3987e5; }
+  }
+  body { margin: 0; background: var(--surface); color: var(--text); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 24px 64px; }
+  h1 { font-size: 26px; margin: 0 0 4px; font-weight: 600; }
+  .byline { color: var(--text-2); font-size: 14px; margin: 0 0 24px; }
+  h2 { font-size: 19px; margin: 36px 0 10px; font-weight: 600; }
+  .point { border-left: 3px solid var(--accent); padding-left: 16px; }
+  .point p { margin: 0 0 6px; }
+  ul { padding-left: 22px; margin: 8px 0; } li { margin: 3px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; margin: 8px 0; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--rule); text-align: left; }
+  th { font-weight: 600; color: var(--text-2); }
+  .note { color: var(--text-2); font-size: 14px; margin: 4px 0 0; }
+  footer { margin-top: 36px; color: var(--text-2); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>Qwen 3.8 27B: where we stand</h1>
+<p class="byline">Adam Celermajer · 22 October 2026</p>
+
+<div class="point">
+  <p><strong>The 27B can learn these games.</strong> On its first attempt, with no help, it solved Knightoban and IceCrates and got 3 of 4 levels in Modality.</p>
+  <p>It needed harness work that bigger models didn't. The biggest change was letting it drive the game itself.</p>
+  <p>It still can't find a rule that leaves no visible trace: Modality's floor colours.</p>
+</div>
+
+<h2>Now</h2>
+<table>
+  <thead><tr><th>game</th><th>agent drives the game</th><th>turn by turn (still running)</th><th>shortest</th></tr></thead>
+  <tbody>
+    <tr><td>Knightoban</td><td><strong>6/6</strong> in 326</td><td>0/6 after 380</td><td>163</td></tr>
+    <tr><td>IceCrates</td><td><strong>6/6</strong> in 320</td><td>3/6, looping up/down</td><td>90</td></tr>
+    <tr><td>Modality</td><td>3/4, level 3 at move 404</td><td>3/4, level 3 at move 155</td><td>263</td></tr>
+  </tbody>
+</table>
+<p class="note">How it wins: it writes its own search over the rules it has found. Once those rules are right, it plays close to the shortest.</p>
+
+<h2>How we got here</h2>
+<ul>
+  <li>Bigger models solved these games in the old setup: DeepSeek Flash solved all three, Qwen Max solved Modality.</li>
+  <li>For the 27B we had to fix:
+    <ul>
+      <li>runs ending on one bad reply;</li>
+      <li>a 30-image limit (DeepInfra);</li>
+      <li>NanoGPT dropping Codex's tools;</li>
+      <li>OpenCode never sending the picture;</li>
+      <li>context overflow (now compacted at about 198k tokens);</li>
+      <li>AVO filling its context with every past board;</li>
+      <li>a 200-move budget, when Modality needs at least 263.</li>
+    </ul>
+  </li>
+  <li><strong>Biggest change, letting the agent drive the game (20 Oct):</strong> level 1 at move 16 instead of 54, and level 2 at move 62 instead of never.</li>
+</ul>
+
+<h2>What's left</h2>
+<ul>
+  <li><strong>Hidden rules:</strong> give one true note about Modality's floor colours. Does level 4 fall?</li>
+  <li><strong>Search or understanding:</strong> the same setup, with Python blocked.</li>
+  <li><strong>Size:</strong> Flash and Max in the same setup.</li>
+  <li><strong>Memorisation:</strong> mirrored or new layouts.</li>
+  <li><strong>Transfer:</strong> each level as its own task (being built).</li>
+</ul>
+
+<footer>One attempt per game. All three games are public.</footer>
+
+</main>
+</body>
+</html>

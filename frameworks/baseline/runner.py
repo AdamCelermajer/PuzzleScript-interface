@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
+import shutil
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -11,6 +12,9 @@ from typing import Callable, Protocol
 
 from client.arc.types import FrameData, GameAction, GameState
 from client.engine.utils import last_grid
+from frameworks import levels
+from frameworks.baseline import prompt as baseline_prompt
+from frameworks.world_model import Snapshots
 
 
 class CodexEnv(Protocol):
@@ -57,6 +61,9 @@ class CodexAgentRunner:
     workspace_enabled: bool = False
     continuation_from: str | Path | None = None
     max_wall_seconds: float = 0  # 0 = unlimited
+    stop_after_levels: int = 0  # end once this many levels are done, before the next one is shown
+    start_level: int = 1  # the level env opens at; stop_after_levels counts from it
+    memento: bool = False  # every turn is a fresh session, so the first message must not promise "this same session"
 
     def __post_init__(self) -> None:
         self.output_dir = Path(self.output_dir)
@@ -87,10 +94,16 @@ class CodexAgentRunner:
             }, indent=2), encoding="utf-8")
         solved = self._is_solved(frame)
         decisions = 0
-        feedback = "This is the initial frame. Solve the game."
+        feedback = ""  # why the last reply moved nothing; empty after a played action
+        last = ""  # what the last played action did (the observation's "Last action" line)
         stopped = False
         wall_deadline = time.monotonic() + self.max_wall_seconds if self.max_wall_seconds else None
         wall_exhausted = False
+        target_reached = False
+        source = getattr(self.session, "world_model_path", None)  # the file the player keeps, if any
+        snapshots = Snapshots(source, self.output_dir) if source is not None else None
+        # Each snapshot point (every 100 actions, each level) copies the world model after the next turn.
+        pending: tuple[int, int, int] | None = None
 
         while (
             not solved
@@ -104,23 +117,32 @@ class CodexAgentRunner:
                 wall_exhausted = True
                 break
             image_path = self._save_frame_image(frame, decisions)
-            prompt = self._turn_prompt(frame, feedback, initial=(decisions == 0))
+            prompt = self._turn_prompt(frame, feedback, last, initial=(decisions == 0))
             if prior_history and decisions == 0:
                 from frameworks.baseline.continuation import history_prompt
                 prompt = history_prompt(prior_history) + prompt
+            if hasattr(self.session, "available_actions"):  # act.py checks against these
+                self.session.available_actions = baseline_prompt.available(frame)
             try:
                 response = self.session.next_action(prompt, image_path=image_path)
             except ValueError as exc:
                 decisions += 1
+                hint = (getattr(self.session, "action_hint", "")
+                        or 'Return one available action name or JSON with an "action" field.')
                 feedback = (
                     f"Your last reply could not be used: {exc}. The game has not advanced. "
-                    'Return one available action name or JSON with an "action" field. '
+                    f"{hint} "
                     "Do not repeat note updates just to correct the reply format."
                 )
+                last = ""
                 self._emit(f"Decision {decisions}: reply correction; game unchanged.")
                 self._append_transcript(decision=decisions, frame=frame, prompt=prompt,
                     response={"error": str(exc)}, result={"accepted": False, "reason": feedback})
                 continue
+            finally:
+                if pending is not None and snapshots is not None:
+                    snapshots.after_action(*pending)
+                    pending = None
             decisions += 1
 
             operation = str(response.get("operation", "ACT")).upper()
@@ -143,6 +165,7 @@ class CodexAgentRunner:
             if self.stop_event.is_set():
                 stopped = True
                 break
+            last = ""
 
             if operation == "FINISH" or action_name == "FINISH":
                 feedback = (
@@ -171,25 +194,21 @@ class CodexAgentRunner:
 
             action = GameAction[action_name]
             available = list(getattr(frame, "available_actions", []) or [])
-            if available and action not in available:
+            if available and action not in available and action is not GameAction.RESET:
                 feedback = (
                     f"{action.name} is not available in this game. The game has not advanced. "
-                    f"Choose one of: {', '.join(item.name for item in available)}."
+                    f"Choose one of: {', '.join(baseline_prompt.available(frame))}."
                 )
                 self._append_transcript(decision=decisions, frame=frame, prompt=prompt,
                     response=response, result={"accepted": False, "reason": feedback})
                 continue
             before_grid = last_grid(frame.frame)
-            next_frame = self.env.step(action)
+            next_frame = self.env.reset() if action is GameAction.RESET else self.env.step(action)
             after_grid = last_grid(next_frame.frame)
             self.actions.append(action)
             solved = self._is_solved(next_frame)
-            feedback = self._action_feedback(
-                action,
-                before_grid,
-                after_grid,
-                next_frame,
-            )
+            feedback = ""
+            last = baseline_prompt.change(action.name, before_grid, after_grid, frame.levels_completed, next_frame)
             transition = {
                 "id": f"T{len(self.actions):06d}",
                 "timestamp": datetime.now().isoformat(timespec="seconds"),
@@ -233,7 +252,13 @@ class CodexAgentRunner:
             self._append_jsonl(self.transitions_path, transition)
             if self.transition_sink is not None:
                 self.transition_sink(transition)
+            if snapshots is not None:
+                pending = (len(self.actions), frame.levels_completed, next_frame.levels_completed)
             frame = next_frame
+            target = levels.stop_target(self.start_level, self.stop_after_levels)
+            if not solved and target and frame.levels_completed >= target:
+                target_reached = True  # the agent never gets a turn on the next level
+                break
 
         if stopped:
             status = "cancelled"
@@ -243,6 +268,10 @@ class CodexAgentRunner:
             status = "completed"
             reason = "task_goal_reached"
             self._emit("World completed successfully!")
+        elif target_reached:
+            status = "completed"
+            reason = "level_target_reached"
+            self._emit("Level target reached.")
         elif wall_exhausted:
             status = "completed"
             reason = "wall_budget_exhausted"
@@ -259,7 +288,11 @@ class CodexAgentRunner:
         note_tool_count = getattr(self.session, "note_tool_count", None)
         if callable(note_tool_count):
             self.workspace_operation_count = int(note_tool_count())
-        world_model_path = self._save_world_model()
+        world_model_path = self._save_world_model(reason, frame)
+        if snapshots is not None:
+            if pending is not None:  # play ended before the next turn: the final report is that update
+                snapshots.after_action(*pending)
+            snapshots.final()
         result = CodexRunResult(
             status=status,
             reason=reason,
@@ -276,60 +309,28 @@ class CodexAgentRunner:
         self._write_result(result)
         return result
 
-    def _turn_prompt(
-        self,
-        frame: FrameData,
-        feedback: str,
-        *,
-        initial: bool,
-    ) -> str:
-        introduction = ""
+    def _turn_prompt(self, frame: FrameData, feedback: str, last: str, *, initial: bool) -> str:
+        """The turn message: the observation (frameworks/baseline/prompt.py), after why the last reply
+        moved nothing when it did not; the first one opens the game."""
         if initial:
-            introduction = (
-                "Solve this unknown puzzle game. You will receive one current frame "
-                "per turn. Reply with exactly one action, observe the next frame, and "
-                "continue in this same session until the environment reports a win.\n"
-                "Use FINISH only after the environment reports WIN.\n\n"
-            )
-        grid = last_grid(frame.frame)
-        rows = "\n".join(" ".join(str(cell) for cell in row) for row in grid)
-        available = ", ".join(
-            action.name for action in getattr(frame, "available_actions", []) or []
-        )
-        encoding = ""
-        if (getattr(frame, "projection", None) or {}).get("mode") == "visible-cell-v1":
-            encoding = "Grid encoding: one cell per visible game tile; identical rendered textures share an anonymous ID. Hidden object differences are not encoded.\n"
-        if (getattr(frame, "projection", None) or {}).get("mode") == "object-cell-v1":
-            encoding = "Grid encoding: one cell per visible game tile; values are anonymous object-combination IDs.\n"
-        if (getattr(frame, "projection", None) or {}).get("mode") == "visible-cell-hex-v2":
-            encoding = (
-                "Grid encoding: each visible tile is a 2x2 block [[a,b],[c,d]]. "
-                "Its opaque pattern ID is 4096*a+256*b+16*c+d. "
-                "Group these blocks to recover the tile board; the PNG shows the same visible board.\n"
-            )
-        return (
-            f"{introduction}"
-            f"Transition feedback:\n{feedback}\n\n"
-            "Current frame:\n"
-            f"state={getattr(frame.state, 'value', str(frame.state))}\n"
-            f"levels_completed={frame.levels_completed}/{frame.win_levels}\n"
-            f"available_actions={available or 'unknown'}\n"
-            f"actions_used={len(self.actions)}/{self.max_steps}\n"
-            f"{encoding}"
-            f"grid:\n{rows}\n\n"
-            "Choose the single next action."
-        )
+            return baseline_prompt.first_message(self.max_steps, self.start_level, frame)
+        observation = baseline_prompt.observation(frame, len(self.actions), self.max_steps, last)
+        return f"{feedback}\n\n{observation}" if feedback else observation
 
-    def _save_world_model(self) -> Path | None:
+    def _save_world_model(self, reason: str, frame: FrameData) -> Path | None:
+        """Ask for the end-of-game world model and copy the file the player wrote to world_model.md."""
         method = getattr(self.session, "final_world_model", None)
         if method is None:
             return None
-        target = self.output_dir / "world_model.json"
         try:
-            payload = method()
+            source = method(reason=reason, levels=frame.levels_completed, total=frame.win_levels)
         except Exception as exc:
-            payload = {"error": f"{type(exc).__name__}: {exc}"}
-        target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            self._emit(f"Final world model failed: {type(exc).__name__}: {exc}")
+            return None
+        if source is None or not Path(source).is_file():
+            return None
+        target = self.output_dir / "world_model.md"
+        shutil.copyfile(source, target)
         return target
 
     def _write_result(self, result: CodexRunResult) -> None:
@@ -356,30 +357,12 @@ class CodexAgentRunner:
                 getattr(self.session, "session_log_path", "") or ""
             )
             or None,
+            **levels.result_fields(self.transitions_path, str(getattr(self.env, "game_id", "")),
+                                   self.start_level, self.stop_after_levels),
         }
         (self.output_dir / "result.json").write_text(
             json.dumps(payload, indent=2),
             encoding="utf-8",
-        )
-
-    def _action_feedback(
-        self,
-        action: GameAction,
-        before: list[list[int]],
-        after: list[list[int]],
-        frame: FrameData,
-    ) -> str:
-        changes = self._changed_cells(before, after)
-        diff = ", ".join(
-            f"({item['row']},{item['col']}):{item['before']}->{item['after']}"
-            for item in changes[:40]
-        ) or "none"
-        return (
-            f"Previous action {action.name}. "
-            f"Frame changed={before != after}. "
-            f"Changed cells={diff}. "
-            f"Environment state={getattr(frame.state, 'value', str(frame.state))}; "
-            f"levels={frame.levels_completed}/{frame.win_levels}."
         )
 
     def _save_frame_image(

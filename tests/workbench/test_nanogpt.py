@@ -42,8 +42,9 @@ def test_nanogpt_ids_and_unsupported_settings():
     for settings in ({"provider": "deepinfra"}, {"service_tier": "priority"}):
         with pytest.raises(ValueError):
             ExperimentRequest(kind="codex", game_ids=["a"], models=[MODEL], **settings)
+    assert GameSessionConfig(model=MODEL, provider="deepinfra").provider == "deepinfra"  # NanoGPT host pin
     with pytest.raises(ValueError, match="pinning"):
-        GameSessionConfig(model=MODEL, provider="deepinfra")
+        GameSessionConfig(model="claude-haiku-5-5", provider="deepinfra")
 
 
 def test_catalog_keeps_nanogpt_per_million_prices_and_filters_non_tools():
@@ -88,7 +89,7 @@ def test_nanogpt_chat_uses_own_key_endpoint_and_preserves_max(tmp_path, monkeypa
     reply = {"choices": [{"message": {"content": "ACTION1"}}], "usage": {"prompt_tokens": 12, "cost": 0.001}}
     with patch("dotenv.dotenv_values", return_value={}), patch("urllib.request.urlopen") as send:
         send.return_value.__enter__.return_value.read.return_value = json.dumps(reply).encode()
-        chat = OpenRouterChat("vendor/model", "max", tmp_path, model_provider="nanogpt")
+        chat = OpenRouterChat("vendor/model", "max", model_provider="nanogpt")
         message, record = chat.complete([{"role": "user", "content": "frame"}])
     request = send.call_args.args[0]
     assert request.full_url == "https://nano-gpt.com/api/v1/chat/completions"
@@ -97,12 +98,10 @@ def test_nanogpt_chat_uses_own_key_endpoint_and_preserves_max(tmp_path, monkeypa
     assert body["reasoning"]["effort"] == "max" and "usage" not in body and "provider" not in body
     assert message["content"] == "ACTION1" and record["model_provider"] == "nanogpt"
     assert chat.usage_totals["cost"] == 0.001
-    for artifact in tmp_path.glob("*.json"):
-        assert "test-secret" not in artifact.read_text()
     monkeypatch.delenv("NANOGPT_API_KEY")
     with patch("dotenv.dotenv_values", return_value={}):
         with pytest.raises(ProviderError, match="NANOGPT_API_KEY"):
-            OpenRouterChat("vendor/model", "low", tmp_path, model_provider="nanogpt")
+            OpenRouterChat("vendor/model", "low", model_provider="nanogpt")
 
 
 def test_nanogpt_credentials_stage_as_named_env_only(tmp_path):

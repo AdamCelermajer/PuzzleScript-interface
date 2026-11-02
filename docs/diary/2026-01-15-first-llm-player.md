@@ -6,6 +6,7 @@ runs: []
 commits: [b57d430, 6030496, 9fa06f0, 7327d27, def02d4]
 docs: []
 reconstructed: true
+brief: true
 ---
 ## Did
 - Jan 15: moved rendering to the server and added `llm_client.py`, an autonomous player on the OpenAI GPT-5 series (reasoning low) that sends the full game history.

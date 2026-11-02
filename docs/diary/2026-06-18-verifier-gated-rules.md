@@ -6,6 +6,7 @@ runs: []
 commits: [f569b47, 5ae2696, 4b87004, 61647e8, 93fae29, 4f3ab27, ba2dfba, 233afa1, 8c5ecd3]
 docs: [docs/notes/workbench-notes.md, docs/pseudocode/rule_learning.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Jun 17: refactored goal planning; removed stale compatibility shims; replaced `litellm` with a direct OpenRouter client on the `openai` SDK; simplified rule artifacts and added a rule inspector.

@@ -14,7 +14,7 @@ describe('launch grouping', () => {
 
   it('keeps new and archive runs of one folder in separate launches, newest first', () => {
     const views = [
-      run({ id: 'f/new', batch: 'f', spec_source: 'run_spec', framework: 'baseline', variant: 'Baseline+', harness: 'claude-code', model: 'claude-haiku-5-5', modified: 50 }),
+      run({ id: 'f/new', batch: 'f', spec_source: 'run_spec', framework: 'baseline', variant: 'Baseline', harness: 'claude-code', model: 'claude-haiku-5-5', modified: 50 }),
       run({ id: 'f/old', batch: 'f', spec_source: 'legacy', harness: 'codex', model: 'gpt-5.5', modified: 10 }),
       run({ id: 'output/workbench/20261015T012502-x-abcdef12/run-0001', batch: 'output/workbench/20261015T012502-x-abcdef12', spec_source: 'run_spec',
         kind: 'avo', framework: 'avo', variant: 'AVO', harness: 'opencode', model: 'openrouter/qwen/qwen3.8-27b', max_wall_seconds: 0,

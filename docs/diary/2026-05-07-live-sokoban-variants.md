@@ -6,6 +6,7 @@ runs: []
 commits: [7c96108, 5e3ab1a, 1253cb6]
 docs: [docs/pseudocode/manifest.json]
 reconstructed: true
+brief: true
 ---
 ## Did
 - May 6: added three LIVE Sokoban variants (`strict_`, `helped_`, `percept_live_sokoban`) with tests, plus pseudocode docs for the engine.

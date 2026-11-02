@@ -11,6 +11,7 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
+from frameworks.avo.core import player_view
 from frameworks.avo.core.framework import Action, AvoLaboratory, JsonValue, _jsonable
 from frameworks.avo.core.profile import LoadedProfile
 from frameworks.avo.core.model_view import ModelView
@@ -138,8 +139,9 @@ def _evaluate_solver(*, loaded_profile: LoadedProfile, workspace: str | Path,
                 process_status = "solver.py timed out"
                 break
             assert process.stdin is not None
+            # The solver reads what the player saw: the current board only; every board stays in the evidence.
             request = {
-                "observation": model_view.present(_jsonable(laboratory.current)),
+                "observation": model_view.present(player_view.current_only(_jsonable(laboratory.current))),
             }
             process.stdin.write(json.dumps(request) + "\n")
             process.stdin.flush()

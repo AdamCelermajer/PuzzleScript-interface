@@ -24,6 +24,14 @@ DISABLED_CONFIG = (
     "memories.use_memories=false",
     "memories.generate_memories=false",
 )
+# Transport only, so the recorder can read every call: the ChatGPT-login provider declared again with the
+# recorder as its base URL, over plain HTTP (no WebSocket) and with request bodies not zstd-compressed.
+RECORDABLE_CONFIG = ('model_provider="recorded"', 'model_providers.recorded.name="OpenAI (recorded)"',
+                     'model_providers.recorded.wire_api="responses"', "model_providers.recorded.requires_openai_auth=true",
+                     "model_providers.recorded.supports_websockets=false", "features.enable_request_compression=false")
+
+
+CHATGPT_CODEX_API = "https://chatgpt.com/backend-api/codex"
 
 
 def find_codex_bin(explicit: str = "") -> str | None:
@@ -65,14 +73,17 @@ class CodexSession(CliSession):
 
     def prepare(self) -> None:
         self.binary = find_codex_bin() or "codex"
+        # With a ChatGPT login Codex calls this endpoint (OPENAI_BASE_URL does not replace it).
+        self.api_base = self.record_calls(CHATGPT_CODEX_API)
 
     def command(self, instruction: str, images: Sequence[Path]) -> list[str]:
         command = [self.binary, "exec", "--json", "--skip-git-repo-check",
                    "--dangerously-bypass-approvals-and-sandbox", "-m", self.native_model,
                    "-c", f"model_reasoning_effort={json.dumps(self.effort)}",
                    # The same system prompt text, re-sent on every resumed process.
-                   "-c", f"developer_instructions={json.dumps(self.system_prompt)}"]
-        for item in DISABLED_CONFIG:
+                   "-c", f"developer_instructions={json.dumps(self.system_prompt)}",
+                   "-c", f"model_providers.recorded.base_url={json.dumps(self.api_base)}"]
+        for item in DISABLED_CONFIG + RECORDABLE_CONFIG:
             command += ["-c", item]
         if self.session_id:
             command.append("resume")
@@ -84,6 +95,9 @@ class CodexSession(CliSession):
             command.append(self.session_id)
         command.append(instruction)
         return command
+
+    def step_finished(self, event: dict[str, Any]) -> bool:
+        return event.get("type") == "item.completed" and (event.get("item") or {}).get("type") == "command_execution"
 
     def normalize(self, event: dict[str, Any]) -> list[dict[str, Any]]:
         kind = event.get("type")

@@ -1,13 +1,13 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { api, ApiError, q } from '../api/client'
 import { useCatalog } from '../api/hooks'
 import { GameThumb, LevelPips, SectionLabel, TierBadge, harnessColor, harnessLabel } from '../components/identity'
 import { RunList } from '../components/RunList'
-import { Button, Empty, ErrorBox, Loading, Notice, Toggle, cx } from '../components/ui'
+import { Button, Empty, ErrorBox, Loading, Notice, Tabs, Toggle, cx } from '../components/ui'
 import { relativeTime } from '../lib/format'
-import { distinct, gameHref, groupLaunches, runHref, type RunView } from '../lib/runs'
+import { distinct, gameHref, groupLaunches, runHref, runningNow, type Launch, type RunView } from '../lib/runs'
 import { useJobActions } from './Runs'
 
 export interface MatrixCell {
@@ -20,7 +20,8 @@ export interface MatrixCell {
 }
 
 export interface ResultsMatrix {
-  games: { game_id: string; title: string; tier: string | null; win_levels: number | null }[]
+  /** `key` is the row id (`game` or `game#L3` for a one-level task); older APIs send only game_id. */
+  games: { game_id: string; key?: string; level?: number | null; title: string; tier: string | null; win_levels: number | null }[]
   columns: { harness: string; model: string; label: string; runs: number }[]
   cells: Record<string, MatrixCell>
   archive: boolean
@@ -107,22 +108,40 @@ export function ResultsView() {
   )
 }
 
+type NowTab = 'active' | 'ended'
+
 function RunningNow({ catalog }: { catalog: ReturnType<typeof useCatalog> }) {
   const actions = useJobActions()
+  const [tab, setTab] = useState<NowTab>('active')
   const jobs = catalog.data?.jobs ?? []
   const jobById = useMemo(() => new Map(jobs.map((j) => [j.id, j])), [jobs])
-  const liveJobs = new Set(jobs.filter((j) => ['starting', 'running', 'stopping'].includes(j.status)).map((j) => j.id))
   const pausedJobs = new Set(jobs.filter((j) => j.status === 'paused' && !j.dismissed_from_runs_at).map((j) => j.id))
-  const live = groupLaunches(catalog.views.filter((r) => liveJobs.has(r.batch) || (r.process.tone === 'running' && r.process.live)), jobById)
-  const paused = groupLaunches(catalog.views.filter((r) => pausedJobs.has(r.batch)), jobById)
-  const props = { onJob: actions.onJob, onResume: actions.onResume, busy: actions.busy, expanded: () => true }
+  const now = runningNow(catalog.views, jobs)
+  const live = groupLaunches(now.active, jobById)
+  const ended = groupLaunches(now.ended, jobById)
+  const paused = groupLaunches(catalog.views.filter((r) => pausedJobs.has(r.batch) && !r.archived), jobById)
+  const props = { onJob: actions.onJob, onResume: actions.onResume, onStopRun: actions.onStopRun, busy: actions.busy, expanded: () => true }
+  const client = useQueryClient()
+  // Off Paused: a batch the API can dismiss is dismissed; any other launch has its runs archived. Files are kept.
+  const remove = useMutation({
+    mutationFn: (launch: Launch) => launch.job?.can_dismiss
+      ? api.post(`/experiments/dismiss${q({ job: launch.job.id })}`)
+      : api.post('/runs/archive', { runs: launch.runs.map((r) => r.id), archived: true }),
+    onSettled: () => client.invalidateQueries({ queryKey: ['catalog'] }),
+  })
+  const onRemove = (launch: Launch) => { if (window.confirm(`Remove ${launch.label} from Paused? Files are kept.`)) remove.mutate(launch) }
   return (
     <section className="flex flex-col gap-3">
-      <SectionLabel right={catalog.data && <span className="text-[11.5px] tracking-normal normal-case text-faint">updated {relativeTime(catalog.data.checked_at * 1000)}</span>}>
-        Running now {live.length > 0 && <span className="ml-1.5 rounded-full bg-run-soft px-1.5 py-px text-[10.5px] text-run">{live.reduce((n, l) => n + l.runs.length, 0)}</span>}
-      </SectionLabel>
+      <div className="flex items-end justify-between gap-3">
+        <Tabs<NowTab> value={tab} onChange={setTab} tabs={[
+          { id: 'active', label: <>Running now {now.active.length > 0 && <span className="ml-1 rounded-full bg-run-soft px-1.5 py-px text-[10.5px] text-run">{now.active.length}</span>}</> },
+          { id: 'ended', label: `Failed / stopped (${now.ended.length})` },
+        ]} />
+        {catalog.data && <span className="pb-2 text-[11.5px] text-faint">updated {relativeTime(catalog.data.checked_at * 1000)}</span>}
+      </div>
       {actions.error ? <ErrorBox error={actions.error} /> : null}
-      {catalog.isLoading ? <Loading /> : (
+      {remove.error ? <ErrorBox error={remove.error} /> : null}
+      {catalog.isLoading ? <Loading /> : tab === 'active' ? (
         <RunList
           launches={live}
           {...props}
@@ -133,11 +152,20 @@ function RunningNow({ catalog }: { catalog: ReturnType<typeof useCatalog> }) {
             </div>
           }
         />
+      ) : (
+        // Runs that already ended: no batch Stop/Pause here.
+        <RunList
+          launches={ended}
+          onResume={actions.onResume}
+          busy={actions.busy}
+          expanded={() => true}
+          empty={<div className="rounded-xl border border-dashed border-line-strong px-5 py-4 text-[13px] text-muted">No failed or stopped run in the running batches.</div>}
+        />
       )}
       {paused.length > 0 && (
         <>
           <span className="section-label mt-2">Paused</span>
-          <RunList launches={paused} {...props} expanded={() => false} />
+          <RunList launches={paused} {...props} busy={props.busy || remove.isPending} expanded={() => false} onRemove={onRemove} />
         </>
       )}
     </section>
@@ -176,21 +204,21 @@ function Matrix({ data, runs }: { data: ResultsMatrix; runs: RunView[] }) {
         </thead>
         <tbody>
           {data.games.map((game) => (
-            <tr key={game.game_id} className="group">
+            <tr key={game.key ?? game.game_id} className="group">
               <td className="sticky left-0 z-10 border-r border-b border-line bg-panel px-4 py-2 group-hover:bg-hover">
                 <Link to={gameHref(game.game_id)} className="flex items-center gap-3 text-fg hover:no-underline">
                   <GameThumb gameId={game.game_id} size={40} rounded="rounded-md" />
                   <span className="min-w-0">
-                    <span className="block truncate text-[13.5px] font-semibold">{game.title}</span>
+                    <span className="block truncate text-[13.5px] font-semibold">{game.title}{game.level ? ` · level ${game.level}` : ''}</span>
                     <span className="flex items-center gap-2 text-[11.5px] text-faint">
                       <TierBadge tier={game.tier} />
-                      {game.win_levels ? <span>{game.win_levels} levels</span> : null}
+                      {game.level ? <span>one level</span> : game.win_levels ? <span>{game.win_levels} levels</span> : null}
                     </span>
                   </span>
                 </Link>
               </td>
               {data.columns.map((c, i) => {
-                const key = `${game.game_id}|${c.harness}|${c.model}`
+                const key = `${game.key ?? game.game_id}|${c.harness}|${c.model}`
                 const cell = data.cells[key]
                 const first = i === 0 || data.columns[i - 1].harness !== c.harness
                 return (

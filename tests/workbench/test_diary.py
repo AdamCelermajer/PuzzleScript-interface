@@ -90,12 +90,13 @@ class DiaryApiTests(unittest.TestCase):
         self.assertEqual(entry["threads"], ["qwen-harness"])
         self.assertEqual(entry["docs"], ["docs/research/qwen-modality-yoav-brief-20261014.md"])
         self.assertIs(entry["reconstructed"], False)
+        self.assertIs(entry["brief"], False)
         self.assertIn("Replayed every saved action.", entry["sections"]["did"])
         self.assertEqual(entry["sections"]["next"], "- —")
         runs = {run["id"]: run for run in entry["runs"]}
         dated = runs["output/workbench/20261014T101500-abc/run-0001"]
         self.assertEqual((dated["linked"], dated["date"], dated["variant"], dated["game"]),
-                         ("date", "2026-10-14", "Baseline+", "ps_modality-v1"))
+                         ("date", "2026-10-14", "Baseline", "ps_modality-v1"))
         self.assertIn("1/4 levels", dated["outcome"])
         explicit = runs["output/workbench/explicit-run"]
         self.assertEqual((explicit["linked"], explicit["harness"], explicit["date"]),
@@ -138,6 +139,10 @@ class DiaryApiTests(unittest.TestCase):
         self.assertFalse(again.json()["created"])
         self.assertEqual((self.diary_dir / "2026-10-16-proposal-pass.md").read_text(encoding="utf-8"), text)
         self.assertEqual(again.json()["entry"]["sections"]["decided"], "- Submit Sunday.")
+        brief = self.client.put("/api/workbench/diary/2026-10-16-proposal-pass",
+                                json={"front_matter": {**payload["front_matter"], "brief": True}, "body": BODY})
+        self.assertIs(brief.json()["entry"]["brief"], True)
+        self.assertIn("brief: true\n---", (self.diary_dir / "2026-10-16-proposal-pass.md").read_text(encoding="utf-8"))
 
     def test_put_rejects_invalid_entries(self):
         base = {"date": "2026-10-16", "title": "t", "threads": ["proposal"], "reconstructed": False}
@@ -149,6 +154,7 @@ class DiaryApiTests(unittest.TestCase):
             ({**base, "docs": ["../../etc/passwd"]}, BODY),
             ({**base, "docs": ["C:/Windows"]}, BODY),
             ({**base, "reconstructed": "yes"}, BODY),
+            ({**base, "brief": "yes"}, BODY),
             ({**base, "extra": "x"}, BODY),
             (base, BODY.replace("## Found", "## Findings")),
             (base, "## Did\n- x\n## Next\n- y\n"),

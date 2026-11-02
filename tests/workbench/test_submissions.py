@@ -46,6 +46,24 @@ def test_best_submission_uses_evaluated_solver_and_preserves_helpers():
         assert client.get('/api/workbench/submission/file', params={"run":run,"file":"x_0004/solver/solver.py"}).status_code == 400
 
 
+def test_research_score_best_is_the_same_levels_in_fewer_actions():
+    with tempfile.TemporaryDirectory() as raw:
+        root = Path(raw)
+        run = "output/batch/campaign"
+        path = root / run
+        path.mkdir(parents=True)
+        (path / "evolution_config.json").write_text('{"fitness": "research"}')
+        (path / "lineage.json").write_text(json.dumps({"evaluations": [
+            {"candidate_id": "x_0001", "fitness": 2, "score": {"actions_to_best": 90}},
+            {"candidate_id": "x_0002", "fitness": 2, "score": {"actions_to_best": 40}}]}))
+        for candidate in ("x_0001", "x_0002"):
+            (path / candidate / "solver").mkdir(parents=True)
+            (path / candidate / "solver/world_model.md").write_text(candidate)
+        result = submission(run, root)
+        assert result["best"]["candidate_id"] == "x_0002" and not result["solver_present"]
+        assert [f["name"] for f in result["files"]] == ["world_model.md"]
+
+
 def test_legacy_layout_and_missing_solver_remain_truthful():
     with tempfile.TemporaryDirectory() as raw:
         root = Path(raw)

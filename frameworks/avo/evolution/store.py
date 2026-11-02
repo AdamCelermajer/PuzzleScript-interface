@@ -11,6 +11,7 @@ from typing import Any, Mapping
 from uuid import uuid4
 
 from frameworks.avo.core.framework import JsonValue, _jsonable
+from frameworks.avo.research_score import rank
 from frameworks.avo.evolution.candidate import (
     CandidateEvaluation,
     RunCandidate,
@@ -44,18 +45,14 @@ def _solver_details(path: Path) -> tuple[str | None, str | None]:
 
 
 def _trace_summary(run_dir: Path) -> dict[str, JsonValue] | None:
-    evidence_path = next(
-        (
-            path
-            for path in (
-                run_dir / "evaluation" / "evidence.jsonl",
-                run_dir / "solver_evaluation" / "evidence.jsonl",
-                run_dir / "evidence.jsonl",
-            )
-            if path.is_file()
-        ),
-        None,
-    )
+    paths = [
+        run_dir / "evaluation" / "evidence.jsonl",
+        run_dir / "solver_evaluation" / "evidence.jsonl",
+        run_dir / "evidence.jsonl",
+    ]
+    if not (run_dir / "evaluation").exists():  # research score: the research run is the scored one
+        paths.append(run_dir / "research" / "evidence.jsonl")
+    evidence_path = next((path for path in paths if path.is_file()), None)
     if evidence_path is None:
         return None
 
@@ -207,6 +204,14 @@ class EvolutionStore:
         missing_parents = [parent for parent in candidate.parent_ids if parent not in existing_ids]
         if missing_parents:
             raise ValueError(f"Unknown parent candidates: {', '.join(missing_parents)}")
+        if not candidate.parent_ids:
+            # The optimizer designs x_0001 before any game evidence; only the inner session writes code.
+            seed = draft / ("workspace" if self.legacy_layout else "seed")
+            code = sorted(path.relative_to(seed).as_posix() for path in seed.rglob("*")
+                          if path.is_file() and path.suffix.lower() != ".md")
+            if code:
+                raise ValueError("A first candidate's seed may hold only notes (.md files); the inner session "
+                                 f"writes and tests all code on the real game. Remove: {', '.join(code[:5])}")
 
         temporary = self.candidates_dir / f".{safe_id}-{uuid4().hex}.tmp"
         try:
@@ -505,7 +510,7 @@ class EvolutionStore:
     def population_summary(self) -> dict[str, JsonValue]:
         candidates = self.candidates()
         evaluations = self.evaluations()
-        best = max(evaluations, key=lambda item: float(item["fitness"]), default=None)
+        best = max(evaluations, key=rank, default=None)
         return {
             "candidates": [candidate.record() for candidate in candidates],
             "evaluations": _jsonable(evaluations),

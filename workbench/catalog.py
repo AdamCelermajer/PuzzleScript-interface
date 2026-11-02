@@ -283,14 +283,35 @@ def result_inputs(config: dict, evaluations: list[dict], finalized: bool) -> dic
             "finalized": finalized}
 
 
+def level_fields(config: dict, options: dict, result: dict) -> dict:
+    """Where a direct-play run started, the level it was a task on (one level only), and that level's score.
+
+    ``stop_after_levels`` counts from the start level (frameworks/levels.py), so stopping after one level is the
+    one-level task, also for runs recorded before start levels existed (level 1).
+    """
+    start = config.get("start_level") or options.get("start_level") or 1
+    one_level = options.get("one_level") is True or (config.get("stop_after_levels") or options.get("stop_after_levels")) == 1
+    score = {key: result.get(f"level_{key}") for key in ("solved", "moves", "shortest", "ratio")}
+    return {"start_level": start, "level": start if one_level else None,
+            "level_score": score if result.get("level_solved") is not None else None}
+
+
 def harness2_rollouts(path: Path, options: dict) -> dict:
-    """Harness² runs one direct player per rollout under rollouts/<label>: 4k selection rollouts + 1 fresh final run."""
-    started = sorted((p for p in (path / "rollouts").glob("*") if (p / "run_config.json").is_file()),
+    """Harness² runs one direct player per rollout under rollouts/<label>: 4k selection rollouts + 1 fresh final run.
+
+    A per-level run keeps them under levels/L<k>/rounds/R<n>/rollouts/<label>; its round count is
+    open, so it has no planned total."""
+    per_level = bool(options.get("levels"))
+    pattern = "levels/*/rounds/*/rollouts/*" if per_level else "rollouts/*"
+    started = sorted((p for p in path.glob(pattern) if (p / "run_config.json").is_file()),
                      key=lambda p: (p / "run_config.json").stat().st_mtime)
     done = [p for p in started if read_json(p / "result.json").get("status") == "completed"]
     current = next((p for p in reversed(started) if p not in done), None)
     k = options.get("k") if isinstance(options.get("k"), int) else 1
-    return {"done": len(done), "total": 4 * k + 1, "current": current.name if current else None,
+    # levels/L<k>/rounds/R<n>/rollouts/<label> -> "L<k> R<n> <label>"
+    name = (f"{current.parents[3].name} {current.parents[1].name} {current.name}" if per_level else current.name) \
+        if current else None
+    return {"done": len(done), "total": None if per_level else 4 * k + 1, "current": name,
             "current_actions": last_record(current / "transitions.jsonl").get("action_index") if current else None,
             "paths": [p / name for p in started for name in ("transitions.jsonl", "result.json")]}
 
@@ -317,6 +338,21 @@ def set_archived(run_ids: list[str], archived: bool, root: Path = ROOT) -> set[s
     return current
 
 
+STOPPED_RUNS = "stopped_runs.json"
+
+
+def stopped_runs(job_dir: Path) -> set[str]:
+    """Run folders (`run-0001`) of a batch the user stopped one by one; the batch worker and the
+    catalog record them as cancelled (shown "stopped"), not failed."""
+    runs = read_json(job_dir / STOPPED_RUNS).get("runs")
+    return {r["run"] for r in runs if isinstance(r, dict) and isinstance(r.get("run"), str)} if isinstance(runs, list) else set()
+
+
+def job_run_name(row: dict) -> str:
+    """A batch row's run folder name (`run-0001`), the key of the per-run stop."""
+    return Path(str(row.get("output") or "")).name
+
+
 def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
     paths, job_paths = discover(root)
     warnings = []
@@ -324,14 +360,19 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
         containers, warning = live_containers()
         if warning:
             warnings.append(warning)
-    jobs, owners = [], {}
+    jobs, owners, stopped_ids = [], {}, set()
     for path in job_paths:
         job = read_json(path / "job.json")
+        stopped = stopped_runs(path)
         heartbeat = job.get("heartbeat", 0)
         fresh = isinstance(heartbeat, (int, float)) and time.time() - heartbeat < 20
         status = job.get("status", "unknown")
         if status in {"starting", "running", "stopping"} and not fresh:
             status = "unconfirmed"
+        # A worker from before per-run stops records a stopped run as failed: the batch did not fail.
+        if status == "failed" and stopped and not job.get("error") and all(
+                job_run_name(row) in stopped for row in job.get("runs", []) if row.get("status") == "failed"):
+            status = "cancelled"
         job_id = path.relative_to(root).as_posix()
         kind = job.get("config", {}).get("kind")
         resumable = kind in {"avo", "matrix"} and status in {"paused", "cancelled", "failed"} and not job.get("resumed_as")
@@ -347,6 +388,8 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
                      "recovery_of": job.get("recovery_of"), "resumed_as": job.get("resumed_as")})
         for row in job.get("runs", []):
             owners[row.get("id")] = (job_id, row, fresh)
+            if job_run_name(row) in stopped:
+                stopped_ids.add(row.get("id"))
     rows = []
     terminal_children = {}
     for path in paths:
@@ -390,10 +433,14 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
             status, status_source = "failed", "Needs assistance: infrastructure failure" if needs_assistance else "Error artifact"
         if needs_assistance and status == "failed" and not container:
             status_source = "Needs assistance: inspect the failure before a new campaign"
+        if status == "failed" and run_id in stopped_ids and not container:
+            status, status_source = "cancelled", "Stopped by you (per-run stop)"
         if result:
             terminal_children[run_id] = status if status in {"completed", "failed"} else "completed"
         elif error:
             terminal_children[run_id] = "failed"
+        if run_id in terminal_children and run_id in stopped_ids and status == "cancelled":
+            terminal_children[run_id] = "cancelled"
         transition = last_record(path / "transitions.jsonl") if not is_avo else {}
         spec = normalized_spec(path, config, is_avo)
         rollouts = harness2_rollouts(path, spec["options"]) if spec["framework"] == "harness2" else None
@@ -420,6 +467,10 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
                      "continued_from": spec["continued_from"],
                      "resumable": (can_resume or can_continue) and spec["harness"] in HARNESS_IDS,
                      "log_href": f"/api/workbench/experiments/log?job={quote(owner[0], safe='')}&run={quote(Path(owner[1]['output']).name)}" if owner else None,
+                     # Per-run stop (`POST /experiments/stop-run?job=<batch>&run=<job_run>`).
+                     "job_run": (job_run_name(owner[1]) or None) if owner else None,
+                     "can_stop": bool(owner and owner[2] and owner[1].get("status") in {"queued", "starting", "running"}
+                                      and run_id not in stopped_ids),
                      "game_id": ((config.get("profile_settings") or {}).get("game_id") if is_avo else config.get("game_id")) or spec["game_id"],
                      "model": ((config.get("player") or {}).get("model") if is_avo else config.get("model")) or spec["model"],
                      "condition": config.get("condition") if not is_avo else None,
@@ -440,14 +491,20 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
                      "href": f"/experiments/avo-lab.html?run={quote(run_id, safe='')}" if is_avo else f"/runs/detail.html?run={quote(run_id, safe='')}",
                      "config": config if not is_avo else {"player": config.get("player"), "optimizer_model": config.get("optimizer_model")},
                      **({"result_inputs": result_inputs(config, evaluations, bool(result))} if is_avo else
-                        {"recorded_win_levels": next((v for v in (result.get("win_levels"), (transition.get("after") or {}).get("win_levels")) if v is not None), None)})})
+                        {"recorded_win_levels": next((v for v in (result.get("win_levels"), (transition.get("after") or {}).get("win_levels")) if v is not None), None),
+                         **level_fields(config, spec["options"], result)})})
     # Queued children have no artifacts yet, but still belong in their batch.
     present = {r["id"] for r in rows}
     for run_id, (job_id, row, fresh) in owners.items():
         if run_id not in present:
             public_row = {k: v for k, v in row.items() if k not in {"command", "output", "mode"}}
-            rows.append({**public_row, **normalized_row(row), "batch": job_id, "modified": 0, "status": row.get("status", "queued") if fresh or row.get("status") in {"paused", "cancelled", "failed", "completed"} else "unconfirmed", "status_source": "Batch worker", "solved": False,
-                         "log_href": f"/api/workbench/experiments/log?job={quote(job_id, safe='')}&run={quote(Path(row.get('output', '')).name)}"})
+            status, status_source = (row.get("status", "queued") if fresh or row.get("status") in {"paused", "cancelled", "failed", "completed"} else "unconfirmed"), "Batch worker"
+            if status == "failed" and run_id in stopped_ids:
+                status, status_source = "cancelled", "Stopped by you (per-run stop)"
+            rows.append({**public_row, **normalized_row(row), "batch": job_id, "modified": 0, "status": status, "status_source": status_source, "solved": False,
+                         "log_href": f"/api/workbench/experiments/log?job={quote(job_id, safe='')}&run={quote(Path(row.get('output', '')).name)}",
+                         "job_run": job_run_name(row) or None,
+                         "can_stop": bool(fresh and row.get("status") in {"queued", "starting", "running"} and run_id not in stopped_ids)})
     # A worker can disappear after its children have already written their final
     # artifacts, leaving the append-only job manifest with a stale "running"
     # status. Reconcile only the API snapshot: historical manifests stay intact,
@@ -458,7 +515,9 @@ def snapshot(root: Path = ROOT, containers: dict | None = None) -> dict:
         if job["needs_assistance"]:
             job["can_resume"] = False
         if job["status"] == "unconfirmed" and child_ids and all(child_id in terminal_children for child_id in child_ids):
-            job["status"] = "failed" if any(terminal_children[child_id] == "failed" for child_id in child_ids) else "completed"
+            job["status"] = ("failed" if any(terminal_children[child_id] == "failed" for child_id in child_ids)
+                             else "cancelled" if any(terminal_children[child_id] == "cancelled" for child_id in child_ids)
+                             else "completed")
             job["status_source"] = "Terminal child artifacts"
     archived = archived_runs(root)
     for row in rows:

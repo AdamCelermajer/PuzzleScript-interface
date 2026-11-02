@@ -6,6 +6,7 @@ runs: []
 commits: [9d9c505]
 docs: [docs/notes/workbench-notes.md, docs/pseudocode/manifest.json]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Added the agent workbench (FastAPI backend under `workbench/`, website pages) with live play, replay and editable pseudocode.

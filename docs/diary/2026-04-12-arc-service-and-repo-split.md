@@ -6,6 +6,7 @@ runs: []
 commits: [8cc5e38, 00e3855, e5f7334, a8cbc16, b4e8c98, 5012aa6, 1312ed5, 7c2db33, 9200d96, af53727, 73b5016, 2db05c5, 1d9e332, bc7e0ba, 192b428, de045b9]
 docs: []
 reconstructed: true
+brief: true
 ---
 ## Did
 - Apr 10: added the PuzzleScript ARC-compatible service; moved the engine onto the ARC toolkit path; added ARC-based play and integration clients; documented the ARC-first workflow.

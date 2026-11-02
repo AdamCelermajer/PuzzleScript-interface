@@ -1,0 +1,3166 @@
+{
+ "20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0001": {
+  "game": "ps_modality-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 24.85,
+   "gen_tokens": 101044,
+   "proc_tokens": 7282229,
+   "tool_calls": 79,
+   "actions": 36,
+   "levels": 1
+  },
+  "levelups": [
+   {
+    "minutes": 15.33,
+    "gen_tokens": 63989,
+    "proc_tokens": 4177891,
+    "tool_calls": 61,
+    "actions": 26,
+    "levels": 1,
+    "level": 1
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 0.19,
+    "gen_tokens": 773,
+    "proc_tokens": 10518,
+    "tool_calls": 2,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "absent",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "absent",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "absent"
+    }
+   },
+   {
+    "minutes": 0.22,
+    "gen_tokens": 1694,
+    "proc_tokens": 22004,
+    "tool_calls": 3,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 0.82,
+    "gen_tokens": 3697,
+    "proc_tokens": 88236,
+    "tool_calls": 9,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "absent",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "absent",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "absent"
+    }
+   },
+   {
+    "minutes": 1.29,
+    "gen_tokens": 4741,
+    "proc_tokens": 118668,
+    "tool_calls": 11,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 1.62,
+    "gen_tokens": 6766,
+    "proc_tokens": 152311,
+    "tool_calls": 13,
+    "actions": 1,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "partial",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "absent",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "partial"
+    }
+   },
+   {
+    "minutes": 2.2,
+    "gen_tokens": 7851,
+    "proc_tokens": 189568,
+    "tool_calls": 14,
+    "actions": 1,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 2.45,
+    "gen_tokens": 10253,
+    "proc_tokens": 209030,
+    "tool_calls": 15,
+    "actions": 1,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 2.67,
+    "gen_tokens": 11627,
+    "proc_tokens": 277184,
+    "tool_calls": 16,
+    "actions": 2,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "partial",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "absent",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "partial"
+    }
+   },
+   {
+    "minutes": 2.86,
+    "gen_tokens": 12248,
+    "proc_tokens": 349588,
+    "tool_calls": 18,
+    "actions": 3,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 3.2,
+    "gen_tokens": 12771,
+    "proc_tokens": 399562,
+    "tool_calls": 19,
+    "actions": 5,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "partial",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "partial"
+    }
+   },
+   {
+    "minutes": 3.39,
+    "gen_tokens": 14133,
+    "proc_tokens": 452041,
+    "tool_calls": 20,
+    "actions": 5,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 3.74,
+    "gen_tokens": 15225,
+    "proc_tokens": 507241,
+    "tool_calls": 21,
+    "actions": 7,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "partial",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "partial"
+    }
+   },
+   {
+    "minutes": 4.12,
+    "gen_tokens": 16224,
+    "proc_tokens": 565390,
+    "tool_calls": 22,
+    "actions": 7,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 4.26,
+    "gen_tokens": 17870,
+    "proc_tokens": 626503,
+    "tool_calls": 23,
+    "actions": 8,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "partial",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "partial"
+    }
+   },
+   {
+    "minutes": 5.88,
+    "gen_tokens": 18247,
+    "proc_tokens": 722532,
+    "tool_calls": 25,
+    "actions": 9,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 7.49,
+    "gen_tokens": 30913,
+    "proc_tokens": 1089775,
+    "tool_calls": 31,
+    "actions": 12,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "partial",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "partial"
+    }
+   },
+   {
+    "minutes": 8.57,
+    "gen_tokens": 31707,
+    "proc_tokens": 1136210,
+    "tool_calls": 32,
+    "actions": 12,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 10.3,
+    "gen_tokens": 43607,
+    "proc_tokens": 1665799,
+    "tool_calls": 40,
+    "actions": 14,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "wrong",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "absent"
+    }
+   },
+   {
+    "minutes": 12.72,
+    "gen_tokens": 51644,
+    "proc_tokens": 2654834,
+    "tool_calls": 50,
+    "actions": 19,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 14.26,
+    "gen_tokens": 53897,
+    "proc_tokens": 2869730,
+    "tool_calls": 52,
+    "actions": 20,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 14.93,
+    "gen_tokens": 61779,
+    "proc_tokens": 3263636,
+    "tool_calls": 56,
+    "actions": 21,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "partial"
+    }
+   },
+   {
+    "minutes": 16.46,
+    "gen_tokens": 63989,
+    "proc_tokens": 4177891,
+    "tool_calls": 62,
+    "actions": 26,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 21.46,
+    "gen_tokens": 83018,
+    "proc_tokens": 5011467,
+    "tool_calls": 69,
+    "actions": 28,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "absent",
+     "M4": "wrong",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 22.83,
+    "gen_tokens": 91038,
+    "proc_tokens": 5571739,
+    "tool_calls": 72,
+    "actions": 30,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 24.38,
+    "gen_tokens": 95860,
+    "proc_tokens": 6162287,
+    "tool_calls": 75,
+    "actions": 32,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "absent",
+     "M4": "wrong",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T144507-vast-fp8-baseline-avo-a08335e1/run-0003": {
+  "game": "ps_icecrates-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 24.2,
+   "gen_tokens": 105198,
+   "proc_tokens": 8629161,
+   "tool_calls": 50,
+   "actions": 46,
+   "levels": 3
+  },
+  "levelups": [
+   {
+    "minutes": 1.49,
+    "gen_tokens": 12031,
+    "proc_tokens": 288261,
+    "tool_calls": 9,
+    "actions": 6,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 5.1,
+    "gen_tokens": 28088,
+    "proc_tokens": 694143,
+    "tool_calls": 15,
+    "actions": 11,
+    "levels": 2,
+    "level": 2
+   },
+   {
+    "minutes": 24.19,
+    "gen_tokens": 105110,
+    "proc_tokens": 8488869,
+    "tool_calls": 50,
+    "actions": 46,
+    "levels": 3,
+    "level": 3
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 0.12,
+    "gen_tokens": 5676,
+    "proc_tokens": 10616,
+    "tool_calls": 2,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "partial",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 0.83,
+    "gen_tokens": 6405,
+    "proc_tokens": 43894,
+    "tool_calls": 3,
+    "actions": 1,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 0.99,
+    "gen_tokens": 9936,
+    "proc_tokens": 82193,
+    "tool_calls": 4,
+    "actions": 2,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 1.08,
+    "gen_tokens": 10237,
+    "proc_tokens": 103540,
+    "tool_calls": 5,
+    "actions": 2,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 1.2,
+    "gen_tokens": 10817,
+    "proc_tokens": 147374,
+    "tool_calls": 6,
+    "actions": 3,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 1.26,
+    "gen_tokens": 11160,
+    "proc_tokens": 170009,
+    "tool_calls": 7,
+    "actions": 4,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 1.37,
+    "gen_tokens": 11467,
+    "proc_tokens": 216245,
+    "tool_calls": 8,
+    "actions": 4,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 1.46,
+    "gen_tokens": 11773,
+    "proc_tokens": 263875,
+    "tool_calls": 9,
+    "actions": 5,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 3.72,
+    "gen_tokens": 12111,
+    "proc_tokens": 312924,
+    "tool_calls": 10,
+    "actions": 6,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 3.93,
+    "gen_tokens": 22846,
+    "proc_tokens": 338159,
+    "tool_calls": 11,
+    "actions": 6,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "partial",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 4.04,
+    "gen_tokens": 23992,
+    "proc_tokens": 411169,
+    "tool_calls": 12,
+    "actions": 7,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 4.73,
+    "gen_tokens": 24299,
+    "proc_tokens": 486717,
+    "tool_calls": 13,
+    "actions": 8,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 4.97,
+    "gen_tokens": 27287,
+    "proc_tokens": 566602,
+    "tool_calls": 14,
+    "actions": 10,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 5.07,
+    "gen_tokens": 27788,
+    "proc_tokens": 651087,
+    "tool_calls": 15,
+    "actions": 10,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 7.04,
+    "gen_tokens": 28174,
+    "proc_tokens": 737518,
+    "tool_calls": 16,
+    "actions": 11,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 7.2,
+    "gen_tokens": 38236,
+    "proc_tokens": 835448,
+    "tool_calls": 17,
+    "actions": 12,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 7.36,
+    "gen_tokens": 38597,
+    "proc_tokens": 944981,
+    "tool_calls": 18,
+    "actions": 13,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 11.28,
+    "gen_tokens": 39065,
+    "proc_tokens": 1056476,
+    "tool_calls": 19,
+    "actions": 14,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 11.51,
+    "gen_tokens": 57598,
+    "proc_tokens": 1188083,
+    "tool_calls": 20,
+    "actions": 15,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 11.65,
+    "gen_tokens": 57935,
+    "proc_tokens": 1339753,
+    "tool_calls": 21,
+    "actions": 16,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 13.01,
+    "gen_tokens": 58368,
+    "proc_tokens": 1493320,
+    "tool_calls": 22,
+    "actions": 17,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 13.15,
+    "gen_tokens": 64474,
+    "proc_tokens": 1654543,
+    "tool_calls": 23,
+    "actions": 19,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 15.69,
+    "gen_tokens": 64799,
+    "proc_tokens": 1823366,
+    "tool_calls": 24,
+    "actions": 19,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 17.38,
+    "gen_tokens": 75556,
+    "proc_tokens": 2004391,
+    "tool_calls": 25,
+    "actions": 20,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 20.28,
+    "gen_tokens": 82227,
+    "proc_tokens": 2203971,
+    "tool_calls": 26,
+    "actions": 21,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 20.47,
+    "gen_tokens": 96019,
+    "proc_tokens": 2425089,
+    "tool_calls": 27,
+    "actions": 22,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 20.63,
+    "gen_tokens": 96249,
+    "proc_tokens": 2661450,
+    "tool_calls": 28,
+    "actions": 23,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 20.74,
+    "gen_tokens": 96525,
+    "proc_tokens": 2899452,
+    "tool_calls": 29,
+    "actions": 24,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 20.85,
+    "gen_tokens": 96769,
+    "proc_tokens": 3139108,
+    "tool_calls": 30,
+    "actions": 25,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 21.04,
+    "gen_tokens": 97022,
+    "proc_tokens": 3380386,
+    "tool_calls": 31,
+    "actions": 26,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 21.37,
+    "gen_tokens": 97440,
+    "proc_tokens": 3623416,
+    "tool_calls": 32,
+    "actions": 27,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 21.5,
+    "gen_tokens": 98647,
+    "proc_tokens": 3869281,
+    "tool_calls": 33,
+    "actions": 28,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 21.65,
+    "gen_tokens": 98975,
+    "proc_tokens": 4117841,
+    "tool_calls": 34,
+    "actions": 29,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 21.79,
+    "gen_tokens": 99299,
+    "proc_tokens": 4368187,
+    "tool_calls": 35,
+    "actions": 30,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 21.93,
+    "gen_tokens": 99649,
+    "proc_tokens": 4620332,
+    "tool_calls": 36,
+    "actions": 31,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 22.07,
+    "gen_tokens": 99991,
+    "proc_tokens": 4874311,
+    "tool_calls": 37,
+    "actions": 32,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 22.2,
+    "gen_tokens": 100346,
+    "proc_tokens": 5130122,
+    "tool_calls": 38,
+    "actions": 33,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 22.31,
+    "gen_tokens": 100692,
+    "proc_tokens": 5387768,
+    "tool_calls": 39,
+    "actions": 34,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 22.45,
+    "gen_tokens": 101053,
+    "proc_tokens": 5647255,
+    "tool_calls": 40,
+    "actions": 35,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 22.66,
+    "gen_tokens": 101435,
+    "proc_tokens": 5908602,
+    "tool_calls": 41,
+    "actions": 36,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 22.81,
+    "gen_tokens": 102166,
+    "proc_tokens": 6172217,
+    "tool_calls": 42,
+    "actions": 37,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 23.09,
+    "gen_tokens": 102497,
+    "proc_tokens": 6438037,
+    "tool_calls": 43,
+    "actions": 38,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 23.27,
+    "gen_tokens": 102818,
+    "proc_tokens": 6705649,
+    "tool_calls": 44,
+    "actions": 39,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 23.43,
+    "gen_tokens": 103141,
+    "proc_tokens": 6975039,
+    "tool_calls": 45,
+    "actions": 40,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 23.59,
+    "gen_tokens": 103466,
+    "proc_tokens": 7246211,
+    "tool_calls": 46,
+    "actions": 41,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 23.73,
+    "gen_tokens": 103793,
+    "proc_tokens": 7519169,
+    "tool_calls": 47,
+    "actions": 42,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 23.92,
+    "gen_tokens": 104122,
+    "proc_tokens": 7793917,
+    "tool_calls": 48,
+    "actions": 43,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 24.04,
+    "gen_tokens": 104483,
+    "proc_tokens": 8070470,
+    "tool_calls": 49,
+    "actions": 44,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 24.16,
+    "gen_tokens": 104842,
+    "proc_tokens": 8348864,
+    "tool_calls": 50,
+    "actions": 45,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T151117-vast-fp8-baseline-v2-b3675889/run-0002": {
+  "game": "ps_icecrates-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 16.04,
+   "gen_tokens": 52862,
+   "proc_tokens": 2662788,
+   "tool_calls": 18,
+   "actions": 38,
+   "levels": 2
+  },
+  "levelups": [
+   {
+    "minutes": 2.95,
+    "gen_tokens": 13754,
+    "proc_tokens": 384609,
+    "tool_calls": 9,
+    "actions": 10,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 4.88,
+    "gen_tokens": 18920,
+    "proc_tokens": 724279,
+    "tool_calls": 13,
+    "actions": 15,
+    "levels": 2,
+    "level": 2
+   }
+  ],
+  "versions": [
+   {
+    "minutes": -0.0,
+    "gen_tokens": 0,
+    "proc_tokens": 0,
+    "tool_calls": 1,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "absent",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "absent"
+    }
+   },
+   {
+    "minutes": 0.44,
+    "gen_tokens": 3747,
+    "proc_tokens": 40168,
+    "tool_calls": 3,
+    "actions": 1,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "absent",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 0.52,
+    "gen_tokens": 5315,
+    "proc_tokens": 55943,
+    "tool_calls": 4,
+    "actions": 1,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 1.13,
+    "gen_tokens": 5651,
+    "proc_tokens": 90918,
+    "tool_calls": 5,
+    "actions": 2,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "partial",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 1.81,
+    "gen_tokens": 7979,
+    "proc_tokens": 129263,
+    "tool_calls": 6,
+    "actions": 3,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 2.56,
+    "gen_tokens": 11405,
+    "proc_tokens": 222350,
+    "tool_calls": 8,
+    "actions": 5,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 2.95,
+    "gen_tokens": 13754,
+    "proc_tokens": 384609,
+    "tool_calls": 9,
+    "actions": 10,
+    "levels": 1,
+    "source": "snapshot:level-1-a0010.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 3.71,
+    "gen_tokens": 13873,
+    "proc_tokens": 413476,
+    "tool_calls": 10,
+    "actions": 10,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 4.69,
+    "gen_tokens": 17110,
+    "proc_tokens": 542996,
+    "tool_calls": 12,
+    "actions": 12,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 4.75,
+    "gen_tokens": 18363,
+    "proc_tokens": 577716,
+    "tool_calls": 13,
+    "actions": 12,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 7.28,
+    "gen_tokens": 18920,
+    "proc_tokens": 724279,
+    "tool_calls": 14,
+    "actions": 15,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "partial",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 7.56,
+    "gen_tokens": 29490,
+    "proc_tokens": 811014,
+    "tool_calls": 15,
+    "actions": 16,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "partial",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 9.83,
+    "gen_tokens": 30934,
+    "proc_tokens": 1065174,
+    "tool_calls": 16,
+    "actions": 20,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 14.72,
+    "gen_tokens": 39249,
+    "proc_tokens": 1179291,
+    "tool_calls": 17,
+    "actions": 21,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 15.62,
+    "gen_tokens": 51913,
+    "proc_tokens": 1927379,
+    "tool_calls": 18,
+    "actions": 30,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T155237-vast-fp8-baseline-v3-b425ddaf/run-0001": {
+  "game": "ps_modality-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 24.46,
+   "gen_tokens": 92588,
+   "proc_tokens": 12395596,
+   "tool_calls": 88,
+   "actions": 95,
+   "levels": 1
+  },
+  "levelups": [
+   {
+    "minutes": 3.17,
+    "gen_tokens": 16861,
+    "proc_tokens": 690698,
+    "tool_calls": 18,
+    "actions": 15,
+    "levels": 1,
+    "level": 1
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 4.06,
+    "gen_tokens": 16940,
+    "proc_tokens": 722249,
+    "tool_calls": 19,
+    "actions": 15,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "partial",
+     "M3": "absent",
+     "M4": "wrong",
+     "M5": "partial",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "wrong"
+    }
+   }
+  ]
+ },
+ "20261021T155237-vast-fp8-baseline-v3-b425ddaf/run-0002": {
+  "game": "ps_icecrates-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 29.57,
+   "gen_tokens": 133005,
+   "proc_tokens": 8510884,
+   "tool_calls": 66,
+   "actions": 36,
+   "levels": 3
+  },
+  "levelups": [
+   {
+    "minutes": 3.18,
+    "gen_tokens": 23314,
+    "proc_tokens": 580508,
+    "tool_calls": 15,
+    "actions": 6,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 6.8,
+    "gen_tokens": 42565,
+    "proc_tokens": 1286188,
+    "tool_calls": 24,
+    "actions": 11,
+    "levels": 2,
+    "level": 2
+   },
+   {
+    "minutes": 13.77,
+    "gen_tokens": 75460,
+    "proc_tokens": 5159432,
+    "tool_calls": 47,
+    "actions": 29,
+    "levels": 3,
+    "level": 3
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 4.55,
+    "gen_tokens": 29349,
+    "proc_tokens": 743343,
+    "tool_calls": 19,
+    "actions": 6,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "partial",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "wrong",
+     "I6": "absent",
+     "I7": "wrong"
+    }
+   },
+   {
+    "minutes": 4.71,
+    "gen_tokens": 32451,
+    "proc_tokens": 838620,
+    "tool_calls": 20,
+    "actions": 8,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 6.5,
+    "gen_tokens": 37285,
+    "proc_tokens": 988780,
+    "tool_calls": 22,
+    "actions": 8,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 6.63,
+    "gen_tokens": 41908,
+    "proc_tokens": 1103842,
+    "tool_calls": 23,
+    "actions": 9,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "partial",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "partial",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 6.78,
+    "gen_tokens": 42253,
+    "proc_tokens": 1224910,
+    "tool_calls": 24,
+    "actions": 10,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 8.96,
+    "gen_tokens": 45400,
+    "proc_tokens": 1473889,
+    "tool_calls": 27,
+    "actions": 11,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "partial",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 9.11,
+    "gen_tokens": 56883,
+    "proc_tokens": 1616528,
+    "tool_calls": 28,
+    "actions": 12,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 9.24,
+    "gen_tokens": 57139,
+    "proc_tokens": 1772017,
+    "tool_calls": 29,
+    "actions": 13,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 11.32,
+    "gen_tokens": 67108,
+    "proc_tokens": 2094224,
+    "tool_calls": 32,
+    "actions": 14,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "wrong",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 11.65,
+    "gen_tokens": 70314,
+    "proc_tokens": 2366454,
+    "tool_calls": 34,
+    "actions": 15,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 11.74,
+    "gen_tokens": 70749,
+    "proc_tokens": 2553638,
+    "tool_calls": 35,
+    "actions": 16,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 11.87,
+    "gen_tokens": 70994,
+    "proc_tokens": 2742637,
+    "tool_calls": 36,
+    "actions": 17,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 12.01,
+    "gen_tokens": 71361,
+    "proc_tokens": 2933380,
+    "tool_calls": 37,
+    "actions": 18,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 12.22,
+    "gen_tokens": 71844,
+    "proc_tokens": 3126100,
+    "tool_calls": 38,
+    "actions": 19,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 12.5,
+    "gen_tokens": 72287,
+    "proc_tokens": 3320889,
+    "tool_calls": 39,
+    "actions": 20,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 12.68,
+    "gen_tokens": 72713,
+    "proc_tokens": 3517680,
+    "tool_calls": 40,
+    "actions": 21,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 12.81,
+    "gen_tokens": 73110,
+    "proc_tokens": 3716428,
+    "tool_calls": 41,
+    "actions": 22,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 13.01,
+    "gen_tokens": 73472,
+    "proc_tokens": 3917069,
+    "tool_calls": 42,
+    "actions": 23,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 13.19,
+    "gen_tokens": 73873,
+    "proc_tokens": 4119586,
+    "tool_calls": 43,
+    "actions": 24,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 13.33,
+    "gen_tokens": 74217,
+    "proc_tokens": 4324025,
+    "tool_calls": 44,
+    "actions": 25,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 13.47,
+    "gen_tokens": 74521,
+    "proc_tokens": 4530246,
+    "tool_calls": 45,
+    "actions": 26,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 13.61,
+    "gen_tokens": 74808,
+    "proc_tokens": 4738192,
+    "tool_calls": 46,
+    "actions": 27,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 13.73,
+    "gen_tokens": 75163,
+    "proc_tokens": 4947892,
+    "tool_calls": 47,
+    "actions": 28,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 15.37,
+    "gen_tokens": 80679,
+    "proc_tokens": 5376515,
+    "tool_calls": 50,
+    "actions": 29,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 15.7,
+    "gen_tokens": 83111,
+    "proc_tokens": 5603289,
+    "tool_calls": 51,
+    "actions": 30,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 16.97,
+    "gen_tokens": 85063,
+    "proc_tokens": 5951839,
+    "tool_calls": 53,
+    "actions": 31,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 18.12,
+    "gen_tokens": 86255,
+    "proc_tokens": 6189328,
+    "tool_calls": 54,
+    "actions": 32,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 18.28,
+    "gen_tokens": 89250,
+    "proc_tokens": 6432250,
+    "tool_calls": 55,
+    "actions": 33,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 19.5,
+    "gen_tokens": 89648,
+    "proc_tokens": 6679895,
+    "tool_calls": 56,
+    "actions": 34,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 21.4,
+    "gen_tokens": 95552,
+    "proc_tokens": 7060692,
+    "tool_calls": 58,
+    "actions": 35,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "correct",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0001": {
+  "game": "ps_modality-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 107.45,
+   "gen_tokens": 364614,
+   "proc_tokens": 24962795,
+   "tool_calls": 263,
+   "actions": 226,
+   "levels": 3
+  },
+  "levelups": [
+   {
+    "minutes": 8.96,
+    "gen_tokens": 37793,
+    "proc_tokens": 1245854,
+    "tool_calls": 40,
+    "actions": 25,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 15.24,
+    "gen_tokens": 55569,
+    "proc_tokens": 4045152,
+    "tool_calls": 77,
+    "actions": 60,
+    "levels": 2,
+    "level": 2
+   },
+   {
+    "minutes": 54.47,
+    "gen_tokens": 194495,
+    "proc_tokens": 14820665,
+    "tool_calls": 183,
+    "actions": 155,
+    "levels": 3,
+    "level": 3
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 12.52,
+    "gen_tokens": 37978,
+    "proc_tokens": 1301984,
+    "tool_calls": 42,
+    "actions": 25,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "correct",
+     "M5": "correct",
+     "M6": "absent",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 13.79,
+    "gen_tokens": 52379,
+    "proc_tokens": 2364282,
+    "tool_calls": 57,
+    "actions": 39,
+    "levels": 1,
+    "source": "edit"
+   },
+   {
+    "minutes": 18.98,
+    "gen_tokens": 55738,
+    "proc_tokens": 4129912,
+    "tool_calls": 79,
+    "actions": 60,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "absent",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 21.35,
+    "gen_tokens": 77513,
+    "proc_tokens": 5395627,
+    "tool_calls": 91,
+    "actions": 71,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "correct",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 31.23,
+    "gen_tokens": 82060,
+    "proc_tokens": 5968116,
+    "tool_calls": 96,
+    "actions": 75,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 34.23,
+    "gen_tokens": 123951,
+    "proc_tokens": 6555261,
+    "tool_calls": 100,
+    "actions": 78,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 36.93,
+    "gen_tokens": 132711,
+    "proc_tokens": 8064844,
+    "tool_calls": 109,
+    "actions": 86,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 38.85,
+    "gen_tokens": 144053,
+    "proc_tokens": 10803478,
+    "tool_calls": 124,
+    "actions": 100,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 43.88,
+    "gen_tokens": 146182,
+    "proc_tokens": 12125957,
+    "tool_calls": 131,
+    "actions": 106,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 48.9,
+    "gen_tokens": 165462,
+    "proc_tokens": 12567913,
+    "tool_calls": 137,
+    "actions": 109,
+    "levels": 2,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 50.88,
+    "gen_tokens": 178889,
+    "proc_tokens": 12676540,
+    "tool_calls": 141,
+    "actions": 112,
+    "levels": 2,
+    "source": "edit"
+   },
+   {
+    "minutes": 60.61,
+    "gen_tokens": 194719,
+    "proc_tokens": 14881725,
+    "tool_calls": 185,
+    "actions": 155,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 61.19,
+    "gen_tokens": 214067,
+    "proc_tokens": 14943648,
+    "tool_calls": 186,
+    "actions": 155,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 63.32,
+    "gen_tokens": 217778,
+    "proc_tokens": 15363775,
+    "tool_calls": 191,
+    "actions": 159,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 72.85,
+    "gen_tokens": 232012,
+    "proc_tokens": 16941465,
+    "tool_calls": 207,
+    "actions": 174,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 78.29,
+    "gen_tokens": 254007,
+    "proc_tokens": 20336298,
+    "tool_calls": 232,
+    "actions": 198,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 79.21,
+    "gen_tokens": 262568,
+    "proc_tokens": 20792128,
+    "tool_calls": 235,
+    "actions": 200,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 90.06,
+    "gen_tokens": 280704,
+    "proc_tokens": 24500140,
+    "tool_calls": 257,
+    "actions": 221,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "partial",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "correct",
+     "M6": "partial",
+     "M7": "correct",
+     "M8": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0002": {
+  "game": "ps_icecrates-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 107.16,
+   "gen_tokens": 337205,
+   "proc_tokens": 37269299,
+   "tool_calls": 327,
+   "actions": 271,
+   "levels": 3
+  },
+  "levelups": [
+   {
+    "minutes": 10.76,
+    "gen_tokens": 50659,
+    "proc_tokens": 859289,
+    "tool_calls": 21,
+    "actions": 7,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 14.02,
+    "gen_tokens": 63874,
+    "proc_tokens": 1567565,
+    "tool_calls": 30,
+    "actions": 12,
+    "levels": 2,
+    "level": 2
+   },
+   {
+    "minutes": 23.46,
+    "gen_tokens": 101860,
+    "proc_tokens": 5117687,
+    "tool_calls": 59,
+    "actions": 37,
+    "levels": 3,
+    "level": 3
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 12.42,
+    "gen_tokens": 52577,
+    "proc_tokens": 998656,
+    "tool_calls": 24,
+    "actions": 7,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "partial",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "wrong"
+    }
+   },
+   {
+    "minutes": 13.81,
+    "gen_tokens": 62886,
+    "proc_tokens": 1311015,
+    "tool_calls": 28,
+    "actions": 9,
+    "levels": 1,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 76.57,
+    "gen_tokens": 259715,
+    "proc_tokens": 14547764,
+    "tool_calls": 135,
+    "actions": 100,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 94.2,
+    "gen_tokens": 308406,
+    "proc_tokens": 24953027,
+    "tool_calls": 197,
+    "actions": 160,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 94.24,
+    "gen_tokens": 308913,
+    "proc_tokens": 24995147,
+    "tool_calls": 198,
+    "actions": 160,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 95.89,
+    "gen_tokens": 313151,
+    "proc_tokens": 26054768,
+    "tool_calls": 219,
+    "actions": 180,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 95.94,
+    "gen_tokens": 313586,
+    "proc_tokens": 26114531,
+    "tool_calls": 220,
+    "actions": 180,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 97.76,
+    "gen_tokens": 318025,
+    "proc_tokens": 27620565,
+    "tool_calls": 242,
+    "actions": 200,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 97.83,
+    "gen_tokens": 318349,
+    "proc_tokens": 27700938,
+    "tool_calls": 243,
+    "actions": 200,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 97.91,
+    "gen_tokens": 318623,
+    "proc_tokens": 27781654,
+    "tool_calls": 244,
+    "actions": 200,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 97.98,
+    "gen_tokens": 318786,
+    "proc_tokens": 27862663,
+    "tool_calls": 245,
+    "actions": 200,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 100.03,
+    "gen_tokens": 323189,
+    "proc_tokens": 29735208,
+    "tool_calls": 266,
+    "actions": 220,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 100.07,
+    "gen_tokens": 323631,
+    "proc_tokens": 29833681,
+    "tool_calls": 267,
+    "actions": 220,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 103.3,
+    "gen_tokens": 330250,
+    "proc_tokens": 32894203,
+    "tool_calls": 295,
+    "actions": 240,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 103.96,
+    "gen_tokens": 330750,
+    "proc_tokens": 33014187,
+    "tool_calls": 296,
+    "actions": 240,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "wrong",
+     "I5": "wrong",
+     "I6": "partial",
+     "I7": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0003": {
+  "game": "ps_knightoban-v1",
+  "driver": "controller",
+  "totals": {
+   "minutes": 108.11,
+   "gen_tokens": 318429,
+   "proc_tokens": 56595109,
+   "tool_calls": 499,
+   "actions": 451,
+   "levels": 0
+  },
+  "levelups": [],
+  "versions": [
+   {
+    "minutes": 61.89,
+    "gen_tokens": 230923,
+    "proc_tokens": 12523547,
+    "tool_calls": 134,
+    "actions": 100,
+    "levels": 0,
+    "source": "snapshot:a0100.md",
+    "grades": {
+     "K1": "partial",
+     "K2": "partial",
+     "K3": "partial",
+     "K4": "partial",
+     "K5": "partial",
+     "K6": "partial",
+     "K7": "absent"
+    }
+   },
+   {
+    "minutes": 74.8,
+    "gen_tokens": 251864,
+    "proc_tokens": 25880248,
+    "tool_calls": 235,
+    "actions": 200,
+    "levels": 0,
+    "source": "snapshot:a0200.md",
+    "grades": {
+     "K1": "partial",
+     "K2": "partial",
+     "K3": "partial",
+     "K4": "partial",
+     "K5": "partial",
+     "K6": "partial",
+     "K7": "absent"
+    }
+   },
+   {
+    "minutes": 90.89,
+    "gen_tokens": 284093,
+    "proc_tokens": 37591419,
+    "tool_calls": 344,
+    "actions": 300,
+    "levels": 0,
+    "source": "snapshot:a0300.md",
+    "grades": {
+     "K1": "partial",
+     "K2": "partial",
+     "K3": "partial",
+     "K4": "partial",
+     "K5": "wrong",
+     "K6": "partial",
+     "K7": "absent"
+    }
+   },
+   {
+    "minutes": 101.24,
+    "gen_tokens": 305802,
+    "proc_tokens": 48167594,
+    "tool_calls": 445,
+    "actions": 400,
+    "levels": 0,
+    "source": "snapshot:a0400.md",
+    "grades": {
+     "K1": "partial",
+     "K2": "partial",
+     "K3": "partial",
+     "K4": "partial",
+     "K5": "partial",
+     "K6": "partial",
+     "K7": "absent"
+    }
+   }
+  ]
+ },
+ "20261021T144508-vast-fp8-harness2-153a4dc2/run-0001/rollouts/base1": {
+  "game": "ps_modality-v1",
+  "driver": "agent",
+  "totals": {
+   "minutes": 162.9,
+   "gen_tokens": 784304,
+   "proc_tokens": 30325578,
+   "tool_calls": 334,
+   "actions": 1000,
+   "levels": 3
+  },
+  "levelups": [
+   {
+    "minutes": 6.48,
+    "gen_tokens": 26757,
+    "proc_tokens": 1326757,
+    "tool_calls": 53,
+    "actions": 78,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 10.26,
+    "gen_tokens": 44009,
+    "proc_tokens": 2713378,
+    "tool_calls": 77,
+    "actions": 174,
+    "levels": 2,
+    "level": 2
+   },
+   {
+    "minutes": 17.76,
+    "gen_tokens": 73987,
+    "proc_tokens": 6095289,
+    "tool_calls": 117,
+    "actions": 404,
+    "levels": 3,
+    "level": 3
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 0.26,
+    "gen_tokens": 578,
+    "proc_tokens": 21372,
+    "tool_calls": 5,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "absent",
+     "M2": "absent",
+     "M3": "absent",
+     "M4": "absent",
+     "M5": "absent",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "absent"
+    }
+   },
+   {
+    "minutes": 0.84,
+    "gen_tokens": 2552,
+    "proc_tokens": 98346,
+    "tool_calls": 11,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 4.66,
+    "gen_tokens": 18007,
+    "proc_tokens": 835732,
+    "tool_calls": 42,
+    "actions": 46,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "wrong",
+     "M3": "absent",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "absent",
+     "M7": "absent",
+     "M8": "absent"
+    }
+   },
+   {
+    "minutes": 6.36,
+    "gen_tokens": 22886,
+    "proc_tokens": 1236885,
+    "tool_calls": 52,
+    "actions": 71,
+    "levels": 0,
+    "source": "edit"
+   },
+   {
+    "minutes": 48.36,
+    "gen_tokens": 171285,
+    "proc_tokens": 14325294,
+    "tool_calls": 178,
+    "actions": 700,
+    "levels": 3,
+    "source": "snapshot:a0700.md",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "partial",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 51.14,
+    "gen_tokens": 227706,
+    "proc_tokens": 14698904,
+    "tool_calls": 185,
+    "actions": 731,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "partial",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 67.31,
+    "gen_tokens": 364671,
+    "proc_tokens": 17078946,
+    "tool_calls": 210,
+    "actions": 752,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 75.34,
+    "gen_tokens": 414309,
+    "proc_tokens": 19490093,
+    "tool_calls": 238,
+    "actions": 791,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "partial",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 98.96,
+    "gen_tokens": 527380,
+    "proc_tokens": 22091664,
+    "tool_calls": 260,
+    "actions": 831,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 99.04,
+    "gen_tokens": 527380,
+    "proc_tokens": 22091664,
+    "tool_calls": 261,
+    "actions": 831,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "partial",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 99.74,
+    "gen_tokens": 532098,
+    "proc_tokens": 22233880,
+    "tool_calls": 263,
+    "actions": 831,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 102.37,
+    "gen_tokens": 534733,
+    "proc_tokens": 22783564,
+    "tool_calls": 270,
+    "actions": 849,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "partial",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 104.45,
+    "gen_tokens": 558070,
+    "proc_tokens": 23592684,
+    "tool_calls": 277,
+    "actions": 903,
+    "levels": 3,
+    "source": "snapshot:a0900.md"
+   },
+   {
+    "minutes": 120.22,
+    "gen_tokens": 591693,
+    "proc_tokens": 24889887,
+    "tool_calls": 288,
+    "actions": 967,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "partial",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 147.3,
+    "gen_tokens": 732096,
+    "proc_tokens": 27030957,
+    "tool_calls": 314,
+    "actions": 1000,
+    "levels": 3,
+    "source": "snapshot:a1000.md"
+   },
+   {
+    "minutes": 147.3,
+    "gen_tokens": 732096,
+    "proc_tokens": 27030957,
+    "tool_calls": 314,
+    "actions": 1000,
+    "levels": 3,
+    "source": "snapshot:final.md",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 147.63,
+    "gen_tokens": 733343,
+    "proc_tokens": 27304534,
+    "tool_calls": 317,
+    "actions": 1000,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "partial",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 149.91,
+    "gen_tokens": 736040,
+    "proc_tokens": 28003643,
+    "tool_calls": 321,
+    "actions": 1000,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 150.11,
+    "gen_tokens": 743350,
+    "proc_tokens": 28294857,
+    "tool_calls": 323,
+    "actions": 1000,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   },
+   {
+    "minutes": 150.53,
+    "gen_tokens": 743853,
+    "proc_tokens": 28593967,
+    "tool_calls": 325,
+    "actions": 1000,
+    "levels": 3,
+    "source": "edit"
+   },
+   {
+    "minutes": 150.59,
+    "gen_tokens": 743853,
+    "proc_tokens": 28593967,
+    "tool_calls": 326,
+    "actions": 1000,
+    "levels": 3,
+    "source": "edit",
+    "grades": {
+     "M1": "correct",
+     "M2": "correct",
+     "M3": "correct",
+     "M4": "partial",
+     "M5": "absent",
+     "M6": "partial",
+     "M7": "partial",
+     "M8": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T144508-vast-fp8-harness2-153a4dc2/run-0002/rollouts/base1": {
+  "game": "ps_icecrates-v1",
+  "driver": "agent",
+  "totals": {
+   "minutes": 140.98,
+   "gen_tokens": 672905,
+   "proc_tokens": 19581593,
+   "tool_calls": 200,
+   "actions": 320,
+   "levels": 6
+  },
+  "levelups": [
+   {
+    "minutes": 4.75,
+    "gen_tokens": 19652,
+    "proc_tokens": 368696,
+    "tool_calls": 22,
+    "actions": 10,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 6.95,
+    "gen_tokens": 31869,
+    "proc_tokens": 714847,
+    "tool_calls": 30,
+    "actions": 15,
+    "levels": 2,
+    "level": 2
+   },
+   {
+    "minutes": 14.39,
+    "gen_tokens": 67001,
+    "proc_tokens": 1669928,
+    "tool_calls": 43,
+    "actions": 31,
+    "levels": 3,
+    "level": 3
+   },
+   {
+    "minutes": 61.05,
+    "gen_tokens": 321572,
+    "proc_tokens": 10458089,
+    "tool_calls": 113,
+    "actions": 144,
+    "levels": 4,
+    "level": 4
+   },
+   {
+    "minutes": 112.65,
+    "gen_tokens": 562361,
+    "proc_tokens": 15546136,
+    "tool_calls": 168,
+    "actions": 288,
+    "levels": 5,
+    "level": 5
+   },
+   {
+    "minutes": 125.74,
+    "gen_tokens": 619322,
+    "proc_tokens": 18749560,
+    "tool_calls": 189,
+    "actions": 320,
+    "levels": 6,
+    "level": 6
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 0.55,
+    "gen_tokens": 321,
+    "proc_tokens": 21240,
+    "tool_calls": 5,
+    "actions": 0,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "I1": "partial",
+     "I2": "absent",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "absent"
+    }
+   },
+   {
+    "minutes": 6.95,
+    "gen_tokens": 31869,
+    "proc_tokens": 714847,
+    "tool_calls": 30,
+    "actions": 15,
+    "levels": 2,
+    "source": "snapshot:level-2-a0015.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "absent",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "partial"
+    }
+   },
+   {
+    "minutes": 14.39,
+    "gen_tokens": 67001,
+    "proc_tokens": 1669928,
+    "tool_calls": 43,
+    "actions": 31,
+    "levels": 3,
+    "source": "snapshot:level-3-a0031.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "absent",
+     "I6": "absent",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 52.67,
+    "gen_tokens": 254637,
+    "proc_tokens": 8005633,
+    "tool_calls": 98,
+    "actions": 106,
+    "levels": 3,
+    "source": "snapshot:a0100.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "wrong",
+     "I6": "correct",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 61.05,
+    "gen_tokens": 321572,
+    "proc_tokens": 10458089,
+    "tool_calls": 113,
+    "actions": 144,
+    "levels": 4,
+    "source": "snapshot:level-4-a0144.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "absent",
+     "I5": "wrong",
+     "I6": "correct",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 125.55,
+    "gen_tokens": 618825,
+    "proc_tokens": 18356856,
+    "tool_calls": 187,
+    "actions": 300,
+    "levels": 5,
+    "source": "snapshot:a0300.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "correct",
+     "I5": "partial",
+     "I6": "correct",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 125.74,
+    "gen_tokens": 619322,
+    "proc_tokens": 18749560,
+    "tool_calls": 189,
+    "actions": 320,
+    "levels": 6,
+    "source": "snapshot:final.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "correct",
+     "I5": "wrong",
+     "I6": "correct",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 125.74,
+    "gen_tokens": 619322,
+    "proc_tokens": 18749560,
+    "tool_calls": 189,
+    "actions": 320,
+    "levels": 6,
+    "source": "snapshot:level-6-a0320.md",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "correct",
+     "I5": "partial",
+     "I6": "correct",
+     "I7": "correct"
+    }
+   },
+   {
+    "minutes": 131.04,
+    "gen_tokens": 626447,
+    "proc_tokens": 19238355,
+    "tool_calls": 196,
+    "actions": 320,
+    "levels": 6,
+    "source": "edit",
+    "grades": {
+     "I1": "correct",
+     "I2": "correct",
+     "I3": "correct",
+     "I4": "correct",
+     "I5": "wrong",
+     "I6": "correct",
+     "I7": "correct"
+    }
+   }
+  ]
+ },
+ "20261021T144508-vast-fp8-harness2-153a4dc2/run-0003/rollouts/base1": {
+  "game": "ps_knightoban-v1",
+  "driver": "agent",
+  "totals": {
+   "minutes": 66.22,
+   "gen_tokens": 291944,
+   "proc_tokens": 18935693,
+   "tool_calls": 202,
+   "actions": 326,
+   "levels": 6
+  },
+  "levelups": [
+   {
+    "minutes": 19.36,
+    "gen_tokens": 81219,
+    "proc_tokens": 3938296,
+    "tool_calls": 80,
+    "actions": 109,
+    "levels": 1,
+    "level": 1
+   },
+   {
+    "minutes": 32.5,
+    "gen_tokens": 123656,
+    "proc_tokens": 9192118,
+    "tool_calls": 119,
+    "actions": 164,
+    "levels": 2,
+    "level": 2
+   },
+   {
+    "minutes": 43.18,
+    "gen_tokens": 162999,
+    "proc_tokens": 13817423,
+    "tool_calls": 146,
+    "actions": 226,
+    "levels": 3,
+    "level": 3
+   },
+   {
+    "minutes": 49.4,
+    "gen_tokens": 217929,
+    "proc_tokens": 14719629,
+    "tool_calls": 166,
+    "actions": 267,
+    "levels": 4,
+    "level": 4
+   },
+   {
+    "minutes": 59.18,
+    "gen_tokens": 244754,
+    "proc_tokens": 15925116,
+    "tool_calls": 180,
+    "actions": 298,
+    "levels": 5,
+    "level": 5
+   },
+   {
+    "minutes": 62.8,
+    "gen_tokens": 264666,
+    "proc_tokens": 16673533,
+    "tool_calls": 188,
+    "actions": 326,
+    "levels": 6,
+    "level": 6
+   }
+  ],
+  "versions": [
+   {
+    "minutes": 0.3,
+    "gen_tokens": 129,
+    "proc_tokens": 21038,
+    "tool_calls": 3,
+    "actions": 1,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "K1": "partial",
+     "K2": "absent",
+     "K3": "absent",
+     "K4": "absent",
+     "K5": "absent",
+     "K6": "absent",
+     "K7": "partial"
+    }
+   },
+   {
+    "minutes": 6.61,
+    "gen_tokens": 26941,
+    "proc_tokens": 858315,
+    "tool_calls": 40,
+    "actions": 22,
+    "levels": 0,
+    "source": "edit",
+    "grades": {
+     "K1": "correct",
+     "K2": "absent",
+     "K3": "partial",
+     "K4": "absent",
+     "K5": "correct",
+     "K6": "correct",
+     "K7": "partial"
+    }
+   },
+   {
+    "minutes": 62.96,
+    "gen_tokens": 264862,
+    "proc_tokens": 16809467,
+    "tool_calls": 190,
+    "actions": 326,
+    "levels": 6,
+    "source": "edit",
+    "grades": {
+     "K1": "correct",
+     "K2": "partial",
+     "K3": "correct",
+     "K4": "partial",
+     "K5": "correct",
+     "K6": "correct",
+     "K7": "correct"
+    }
+   },
+   {
+    "minutes": 63.61,
+    "gen_tokens": 269160,
+    "proc_tokens": 17229722,
+    "tool_calls": 192,
+    "actions": 326,
+    "levels": 6,
+    "source": "edit",
+    "grades": {
+     "K1": "correct",
+     "K2": "partial",
+     "K3": "correct",
+     "K4": "partial",
+     "K5": "correct",
+     "K6": "correct",
+     "K7": "correct"
+    }
+   },
+   {
+    "minutes": 63.7,
+    "gen_tokens": 270889,
+    "proc_tokens": 17520749,
+    "tool_calls": 194,
+    "actions": 326,
+    "levels": 6,
+    "source": "edit",
+    "grades": {
+     "K1": "correct",
+     "K2": "partial",
+     "K3": "correct",
+     "K4": "partial",
+     "K5": "correct",
+     "K6": "correct",
+     "K7": "correct"
+    }
+   },
+   {
+    "minutes": 63.73,
+    "gen_tokens": 270889,
+    "proc_tokens": 17520749,
+    "tool_calls": 195,
+    "actions": 326,
+    "levels": 6,
+    "source": "edit",
+    "grades": {
+     "K1": "correct",
+     "K2": "partial",
+     "K3": "correct",
+     "K4": "partial",
+     "K5": "correct",
+     "K6": "correct",
+     "K7": "correct"
+    }
+   }
+  ]
+ }
+}

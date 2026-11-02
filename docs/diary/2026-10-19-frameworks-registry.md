@@ -6,6 +6,7 @@ runs: []
 commits: []
 docs: [frameworks/README.md]
 reconstructed: false
+brief: true
 ---
 ## Did
 - Read Google Research Harness² (arXiv 2610.14224, github.com/google-research/harness2) and ran its offline demo in Docker: a fixed propose (INV + DOM) → probe → compose → reflect pipeline per task, score-blind, editing an 8-part harness folder (AGENTS.md, guardrails, memory, tool guidance, skills, subagents, scripts, plugins) on top of OpenCode or Codex, with a per-domain library across tasks.

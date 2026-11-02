@@ -4,7 +4,7 @@ title: Astra and DeepSeek Flash campaigns on the hard games
 threads: [avo-campaigns]
 runs: [output/workbench/20260923T*, output/workbench/20260924T*, output/deepseek-max-trace-probe-20260923*]
 commits: []
-docs: [docs/research/three-game-mechanics-demo.md]
+docs: [docs/research/diary-figures-20261029/avo-era/fig2_games_levels_vs_tokens.png, docs/research/diary-figures-20261029/avo-era/fig5_tokens_overview.png, docs/research/three-game-mechanics-demo.md, docs/research/diary-figures-20261029/avo-era/README.md]
 reconstructed: true
 ---
 ## Did

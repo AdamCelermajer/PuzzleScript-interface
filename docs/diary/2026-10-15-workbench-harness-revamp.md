@@ -6,6 +6,7 @@ runs: [harness-smoke-*]
 commits: [94086fe, f5ead4f, 951ced8, 9bfd741]
 docs: [docs/architecture/revamp-contract.md, docs/architecture/revamp-status.md, harnesses/README.md, docs/diary/README.md]
 reconstructed: false
+brief: true
 ---
 ## Did
 - Committed the in-flight work as phase 0 (`94086fe`): NanoGPT provider, `image` gateway tool, `max_wall_seconds=0` = unlimited.

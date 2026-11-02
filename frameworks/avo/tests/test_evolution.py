@@ -159,6 +159,17 @@ class EvolutionTests(unittest.TestCase):
             gateway.handle("register", {"candidate_id": "x_0001"})
             self.assertEqual(store.get_candidate("x_0001").strategy(), "fitness=1\nouter-designed baseline")
 
+    def test_first_candidate_seed_holds_only_notes(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            store = EvolutionStore.create(Path(raw) / "evolution")
+            draft = Path(str(store.prepare_seed_draft("x_0001")["draft_path"]))
+            (draft / "seed" / "solver.py").write_text("print('mock game')\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "only notes"):
+                store.register_draft("x_0001")
+            (draft / "seed" / "solver.py").unlink()
+            (draft / "seed" / "world_model.md").write_text("# Model\n", encoding="utf-8")
+            self.assertEqual(store.register_draft("x_0001").candidate_id, "x_0001")
+
     def test_existing_population_keeps_legacy_layout(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "evolution"

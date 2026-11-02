@@ -4,8 +4,9 @@ title: 20-game selection and GPT-5.5 on Modality
 threads: [benchmark-curation, codex-direct-player]
 runs: []
 commits: []
-docs: []
+docs: [docs/proposal/figures/modality-level1.png, docs/proposal/figures/modality-level2.png]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Picked a 20-game set (5 easy, 10 medium, 5 hard) with engine verification (`output/game-selection-20`).

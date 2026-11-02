@@ -272,6 +272,81 @@ class ExperimentTests(unittest.TestCase):
             self.assertTrue((self.root / "output/workbench/owned/stop.request").exists())
             self.assertEqual(client.get("/api/workbench/record/file", params={"run":"output/codex", "file":"auth.json"}).status_code, 400)
 
+    def test_stop_run_removes_only_that_runs_container_and_records_it(self):
+        directory = self.root / "output/workbench/owned"
+        rows = [{"id": f"output/workbench/owned/run-000{i}", "kind": "codex", "launcher": "harnesses",
+                 "output": str(directory / f"run-000{i}"), "status": status}
+                for i, status in ((1, "running"), (2, "running"), (3, "completed"))]
+        self.put("output/workbench/owned/job.json", {"status": "running", "heartbeat": time.time(),
+                                                     "config": {"kind": "matrix"}, "runs": rows})
+        for i in (1, 2, 3):
+            self.put(f"output/workbench/owned/run-000{i}/launcher.json", {"container": f"ps-agent-{i}{i}{i}"})
+        self.put("output/other/job.json", {"runs": rows})
+        with self.client() as client, patch("workbench.experiments.subprocess.run") as run:
+            stop = lambda job, name: client.post("/api/workbench/experiments/stop-run", params={"job": job, "run": name})
+            self.assertEqual(stop("output/other", "run-0001").status_code, 400)
+            self.assertEqual(stop("output/workbench/owned", "../run-0001").status_code, 400)
+            self.assertEqual(stop("output/workbench/owned", "run-0009").status_code, 400)
+            self.assertEqual(stop("output/workbench/owned", "run-0003").status_code, 400)  # already finished
+            run.assert_not_called()
+            response = stop("output/workbench/owned", "run-0002")
+            self.assertEqual(response.status_code, 202)
+            self.assertTrue(response.json()["container_removed"])
+            run.assert_called_once_with(["docker", "rm", "-f", "ps-agent-222"], capture_output=True, timeout=20)
+            self.assertEqual(stop("output/workbench/owned", "run-0002").status_code, 202)  # a repeat is recorded once
+        saved = json.loads((directory / "stopped_runs.json").read_text())["runs"]
+        self.assertEqual([entry["run"] for entry in saved], ["run-0002"])
+        self.assertTrue(saved[0]["at"])
+        self.assertFalse((directory / "stop.request").exists())
+        catalog = {row["id"]: row for row in snapshot(self.root, {})["runs"]}
+        self.assertEqual(catalog["output/workbench/owned/run-0001"]["job_run"], "run-0001")
+        self.assertTrue(catalog["output/workbench/owned/run-0001"]["can_stop"])
+        self.assertFalse(catalog["output/workbench/owned/run-0002"]["can_stop"])
+        self.assertFalse(catalog["output/workbench/owned/run-0003"]["can_stop"])
+
+    def test_worker_records_a_stopped_child_as_cancelled_and_lets_the_batch_go_on(self):
+        directory = self.root / "output/workbench/job"
+        directory.mkdir(parents=True)
+        stopped = directory / "stopped_runs.json"
+        write_json(stopped, {"runs": [{"run": "run-0003", "at": "before the start"}]})
+        # The first child asks for its own stop, then waits to be stopped.
+        stop_self = [sys.executable, "-c", "import json, time; from pathlib import Path; p = Path(" + repr(str(stopped)) + "); "
+                     "d = json.loads(p.read_text()); d['runs'].append({'run': 'run-0001', 'at': 'now'}); "
+                     "p.write_text(json.dumps(d)); time.sleep(60)"]
+        commands = {1: stop_self, 2: [sys.executable, "-c", "pass"], 3: [sys.executable, "-c", "import sys; sys.exit(1)"]}
+        rows = [{"id": str(i), "kind": "codex", "output": str(directory / f"run-000{i}"), "command": commands[i], "status": "queued"}
+                for i in (1, 2, 3)]
+        write_json(directory / "job.json", {"config": {"parallel": 1, "max_hours": .1}, "runs": rows})
+        run_job(directory)
+        data = json.loads((directory / "job.json").read_text())
+        self.assertEqual([r["status"] for r in data["runs"]], ["cancelled", "completed", "cancelled"])
+        self.assertNotIn("pid", data["runs"][2])  # a queued run stopped before its start never starts
+        self.assertEqual(data["status"], "cancelled")
+
+    def test_catalog_shows_a_run_stopped_by_hand_as_stopped_not_failed(self):
+        directory = self.root / "output/workbench/owned"
+        rows = [{"id": "output/workbench/owned/run-0001", "kind": "codex", "output": str(directory / "run-0001"),
+                 "status": "failed", "returncode": 143},
+                {"id": "output/workbench/owned/run-0002/campaign", "kind": "avo", "output": str(directory / "run-0002"),
+                 "status": "cancelled"}]
+        job = {"status": "failed", "heartbeat": time.time() - 60, "config": {"kind": "matrix"}, "runs": rows}
+        self.put("output/workbench/owned/job.json", job)
+        self.put("output/workbench/owned/run-0001/run_config.json", {"condition": "baseline-plus", "game_id": "ps_modality-v1"})
+        self.put("output/workbench/owned/stopped_runs.json", {"runs": [{"run": "run-0001", "at": "2026-10-21T12:11:00Z"}]})
+        data = snapshot(self.root, {})
+        run = next(r for r in data["runs"] if r["id"] == "output/workbench/owned/run-0001")
+        self.assertEqual(run["status"], "cancelled")
+        self.assertIn("Stopped by you", run["status_source"])
+        self.assertEqual(data["jobs"][0]["status"], "cancelled")
+        self.assertTrue(data["jobs"][0]["can_resume"])
+        # A real failure next to it still fails the batch.
+        job["runs"].append({"id": "output/workbench/owned/run-0003", "kind": "codex", "output": str(directory / "run-0003"),
+                            "status": "failed", "returncode": 1})
+        self.put("output/workbench/owned/job.json", job)
+        data = snapshot(self.root, {})
+        self.assertEqual(data["jobs"][0]["status"], "failed")
+        self.assertEqual(next(r for r in data["runs"] if r["id"] == "output/workbench/owned/run-0003")["status"], "failed")
+
     def test_record_serves_only_numbered_frame_pngs(self):
         run = self.put("output/codex/run_config.json", {"condition": "baseline-plus"})
         (run / "frames").mkdir()

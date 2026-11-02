@@ -120,9 +120,23 @@ function countCompletedPlayableLevels(levels, currentLevelIndex) {
         .length;
 }
 
+// Raw index in gameData.levels of playable level `level` (1-based, message screens not counted); -1 if none.
+function playableLevelIndex(levels, level) {
+    let seen = 0;
+    for (let index = 0; index < levels.length; index++) {
+        const entry = levels[index];
+        if (entry && entry.type === 'LEVEL_MAP' && Array.isArray(entry.cells) && entry.cells.length > 0) {
+            seen += 1;
+            if (seen === level) return index;
+        }
+    }
+    return -1;
+}
+
 module.exports = {
     buildArcProjectionSpec,
     projectRawGrid,
     countPlayableLevels,
     countCompletedPlayableLevels,
+    playableLevelIndex,
 };

@@ -45,6 +45,8 @@ Rules:
   with that prefix (e.g. `output/workbench/20260923T*`).
 - `reconstructed: true` marks entries written after the fact from git history,
   documents and run folders. Live entries are `reconstructed: false`.
+- `brief: true` (optional) marks a minor entry: present mode folds it into one
+  "also done" slide per month instead of giving it its own slide.
 - Claim only what the sources show. Cite numbers with their source document or run.
 - Runs stopped from the workbench are usually stopped by hand to save money.
   Write "stopped", not "failed", unless an artifact shows a real error.
@@ -61,7 +63,7 @@ Rules:
 | `codex-direct-player` | Persistent direct player: baseline and baseline+ (notes) conditions | active |
 | `avo-campaigns` | AVO optimizer + player + fresh solver evaluation campaigns, Docker isolation | active |
 | `workbench` | Run catalog website, launch forms, batch workers | active |
-| `qwen-harness` | Main thread since Oct 2026: why Qwen 3.8-27B fails (harness, size, pretraining) | active |
+| `qwen-harness` | Main thread since Oct 2026: under which conditions Qwen 3.8-27B learns a game (premise revised 21 Oct: it solves 2/3 agent-driven, misses hidden rules) | active |
 | `proposal` | M.Sc research proposal (Bar-Ilan CS format, Overleaf) | active |
 | `harness-revamp` | One run spec over codex, claude-code, opencode, antigravity and bare harnesses | active |
 | `harness2` | Score-aware Harness² edits the direct player's OpenCode harness and re-runs the adopted harness fresh | active |

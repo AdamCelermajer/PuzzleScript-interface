@@ -74,6 +74,7 @@ describe('matrix preview helpers', () => {
     expect(modelProvider('claude-sonnet-5-5')).toBe('anthropic')
     expect(modelProvider('gemini-3.8-flash-high')).toBe('google')
     expect(modelProvider('nanogpt/qwen/x')).toBe('nanogpt')
+    expect(modelProvider('vast/q3.8-27b-fp8')).toBe('vast')
     expect(modelFitsHarness(harnesses[0], 'openrouter/qwen/qwen3.8-27b')).toBe(false)
     expect(modelFitsHarness(harnesses[1], 'nanogpt/qwen/qwen3.8-27b')).toBe(true)
   })

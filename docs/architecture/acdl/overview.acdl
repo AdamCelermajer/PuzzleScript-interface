@@ -1,0 +1,111 @@
+// Overview of the four frameworks, simplified. The coding agent (OpenCode, Codex, Claude Code)
+// is abstracted as one loop of tool calls and results per instruction; compaction, retries and
+// exact wording are left out. Detailed specs: baseline-controller, baseline-agent, harness2, avo.
+
+// The coding agent: after each instruction it calls tools until it replies.
+RolesFrag CodingAgentLoop[@t]: {
+  ForEach(step: @t.substeps) {
+    A: resp.tool_calls[@t.step]
+    T: sys.tool_results[@t.step]
+  }
+  A: resp.reply[@t]
+}
+
+// Baseline, controller driver: we send one frame per turn, the agent submits one action.
+BaselineController[@T]: {
+  S: {
+    CODING_AGENT_PROMPT
+    PLAY_ONE_ACTION_PER_TURN // notes/ is your memory
+    TOOLS(act_py, notes) // python act.py ACTION ends the turn
+  }
+  ForEach(@t: range(1, @T+1)) {
+    U: {
+      FEEDBACK(resp.action[@t-1], env.changed_cells[@t])
+      STATUS(env.levels[@t], sys.actions_used[@t])
+      env.grid[@t]
+      If sys.world_model_due[@t] {
+        WORLD_MODEL_REQUEST // every 100 actions and at each level-up
+      }
+    }
+    Frag CodingAgentLoop[@t]
+  }
+}
+
+// Baseline, agent driver: the agent plays the whole game itself through game.py.
+BaselineAgent[@T]: {
+  S: {
+    CODING_AGENT_PROMPT
+    PLAY_THE_GAME
+    TOOLS(game_look, game_do, game_reset, own_scripts)
+    KEEP_WORLD_MODEL
+  }
+  ForEach(@t: range(1, @T+1)) {
+    U: {
+      If sys.game_over[@t] {
+        WRITE_WORLD_MODEL_AND_SOLVER // world_model.md, then solver.py
+      } Else {
+        KEEP_PLAYING(env.levels[@t], sys.actions_left[@t])
+      }
+    }
+    Frag CodingAgentLoop[@t]
+  }
+}
+
+// Harness² player: the agent driver, plus the harness the coaches edit.
+Harness2Player[@T, harness]: {
+  S: {
+    CODING_AGENT_PROMPT
+    PLAY_THE_GAME
+    TOOLS(game_look, game_do, game_reset, harness.scripts, harness.skills)
+    harness.always_on_files // system prompt, guardrails, memory, tool guidance
+  }
+  ForEach(@t: range(1, @T+1)) {
+    U: KEEP_PLAYING(env.levels[@t], sys.actions_left[@t])
+    Frag CodingAgentLoop[@t]
+  }
+}
+
+// Harness² coach: one fresh session per stage; it reads the runs and edits the harness.
+Harness2Coach[stage]: {
+  U: {
+    Switch stage.kind {
+      Case "INV": { HOW_THE_AGENT_WORKS } // procedure, tools, notes, scripts
+      Case "DOM": { WHAT_THE_GAME_IS } // objects, controls, goals
+      Case "AGG": { COMPOSE_THE_CANDIDATES } // merge, adopt one, or keep the base
+    }
+    ForEach(run: sys.rollouts) {
+      SCORE(run.levels, run.actions)
+      run.trajectory
+      run.world_model
+    }
+    harness.files
+  }
+  Frag CodingAgentLoop[@1]
+}
+
+// AVO optimizer: proposes candidates and evaluates them.
+AvoOptimizer[@T]: {
+  S: {
+    CODING_AGENT_PROMPT
+    IMPROVE_THE_PLAYER(env.objective, env.max_evaluations)
+    TOOLS(population, inspect, fork, register, evaluate) // evaluate = AvoPlayer, then solver.py alone
+  }
+  ForEach(@t: range(1, @T+1)) {
+    U: KEEP_GOING
+    Frag CodingAgentLoop[@t]
+  }
+}
+
+// AVO player: researches the game and writes solver.py for one candidate.
+AvoPlayer[@T, candidate]: {
+  S: {
+    CODING_AGENT_PROMPT
+    BUILD_A_SOLVER
+    TOOLS(observe, probe, reset, checkpoint, restore, evaluate_solver)
+    candidate.strategy // STRATEGY.md from the optimizer
+  }
+  ForEach(@t: range(1, @T+1)) {
+    U: KEEP_GOING
+    Frag CodingAgentLoop[@t]
+  }
+}

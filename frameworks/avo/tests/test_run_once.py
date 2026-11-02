@@ -9,6 +9,7 @@ from frameworks.avo.core.agent_backend import AgentRunResult
 from frameworks.avo.core.framework import Action, Comparison, Observation
 from frameworks.avo.core.profile import LoadedProfile, TaskEvaluation
 from frameworks.avo.run_once import PlayerRunSettings, execute_player_run
+from frameworks import world_model
 
 
 class OneStepEnvironment:
@@ -135,6 +136,36 @@ def test_execute_player_run_preserves_single_run_behavior_and_fitness() -> None:
         assert result.summary["candidate_id"] == "x_test"
         assert (root / "run" / "workspace" / "NOTES.md").read_text() == "learned"
         assert (root / "run" / "final_summary.json").is_file()
+
+
+class ModelKeepingAgent(ScriptedAgent):
+    instructions = ""
+
+    def run(self, gateway, workspace) -> AgentRunResult:
+        type(self).instructions = self.config.task_instructions
+        (Path(workspace) / "world_model.md").write_text("A1 wins.", encoding="utf-8")
+        return super().run(gateway, workspace)
+
+
+def test_research_session_keeps_a_world_model_that_is_copied_during_play() -> None:
+    with tempfile.TemporaryDirectory() as raw, patch.object(world_model, "EVERY", 1):
+        root = Path(raw)
+        prompt = root / "prompt.md"
+        base_prompt = root / "base.txt"
+        prompt.write_text("environment instructions", encoding="utf-8")
+        base_prompt.write_text("base instructions", encoding="utf-8")
+        loaded = LoadedProfile(implementation=OneStepProfile(), prompt=prompt.read_text(encoding="utf-8"),
+                               settings={}, manifest_path=root / "profile.toml", prompt_path=prompt,
+                               manifest_hash="manifest-hash", prompt_hash="prompt-hash")
+        (root / "profile.toml").write_text("id='one-step'", encoding="utf-8")
+        with patch("frameworks.avo.run_once.CliAgent", ModelKeepingAgent):
+            execute_player_run(loaded_profile=loaded, output_dir=root / "run", workspace=root / "workspace",
+                               settings=PlayerRunSettings(base_prompt=base_prompt))
+
+        assert world_model.keep_instruction() in ModelKeepingAgent.instructions
+        copies = root / "run" / world_model.SNAPSHOT_DIR
+        assert sorted(p.name for p in copies.iterdir()) == ["a0001.md", "final.md", "level-1-a0001.md"]
+        assert (copies / "final.md").read_text(encoding="utf-8") == "A1 wins."
 
 
 def test_player_run_has_no_internal_theory_budget() -> None:

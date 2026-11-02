@@ -6,6 +6,7 @@ runs: []
 commits: []
 docs: [docs/research/qwen-modality-max-analysis-20261014.md, docs/research/qwen-modality-yoav-brief-20261014.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Analysed the Modality campaigns and the generated programs of Max, Flash and 27B.

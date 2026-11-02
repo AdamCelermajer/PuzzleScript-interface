@@ -8,6 +8,7 @@ from typing import Any, Mapping
 from frameworks.avo.core.framework import JsonValue, _jsonable
 from frameworks.avo.evolution.evaluator import RunCandidateEvaluator
 from frameworks.avo.evolution.store import EvolutionStore
+from frameworks.world_model import final_prompt
 
 
 @dataclass(frozen=True)
@@ -16,21 +17,7 @@ class EvolutionBudget:
     max_wall_seconds: float = 14_400
 
 
-FINAL_WORLD_MODEL_PROMPT = (
-    "Write world_model.md in your current workspace now. Describe your inferred game rules "
-    "for a reader who has not seen the run. Use a concise Markdown research-note style: "
-    "start with the objective and the best evaluated outcome, then explain the objects and "
-    "state, controls, movement and interactions, goal and level transitions, and any undo or "
-    "history effects. Include observation quirks only when they matter to the rules. "
-    "Describe any critical discovery, and end with remaining uncertainty. Use only headings "
-    "relevant to this game. "
-    "Explain important interactions step by step and give a few decisive observations, while "
-    "keeping exhaustive traces, level maps, RGB values, API schemas, and solver implementation "
-    "details out of the main report. Clearly separate observed rules from hypotheses; do not "
-    "invent behavior for unseen situations. Aim for roughly 400–900 words unless the game's "
-    "complexity requires more. Save the file before optional further checking, then refine it "
-    "with any remaining time."
-)
+FINAL_WORLD_MODEL_PROMPT = final_prompt()  # the shared research-note format (frameworks/world_model.py)
 
 
 class EvolutionGateway:
@@ -45,6 +32,7 @@ class EvolutionGateway:
         initial_observation: Mapping[str, Any] | None = None,
         budget: EvolutionBudget | None = None,
         world_model_mode: str = "off",
+        research_moves_schedule: tuple[int, ...] = (),
     ) -> None:
         self.store = store
         self.evaluator = evaluator
@@ -58,6 +46,8 @@ class EvolutionGateway:
         if world_model_mode not in {"off", "final-only", "between-hypotheses"}:
             raise ValueError("Invalid world-model mode")
         self.world_model_mode = world_model_mode
+        # Research moves per attempt, in order; a crashed attempt is not recorded, so it retries the same rung.
+        self.research_moves_schedule = tuple(research_moves_schedule)
         self._final_report_requested = False
 
     def finalization_instruction(self) -> str | None:
@@ -80,9 +70,18 @@ class EvolutionGateway:
             or (self.budget.max_wall_seconds > 0 and time.monotonic() - self.started_at >= self.budget.max_wall_seconds)
         )
 
+    def next_research_moves(self) -> int | None:
+        if not self.research_moves_schedule:
+            return None
+        used = len(self.store.evaluations())
+        return self.research_moves_schedule[min(used, len(self.research_moves_schedule) - 1)]
+
     def _budgets(self) -> dict[str, float | int]:
         used = len(self.store.evaluations())
+        schedule = {"research_moves_schedule": list(self.research_moves_schedule),
+                    "next_attempt_research_moves": self.next_research_moves()} if self.research_moves_schedule else {}
         return {
+            **schedule,
             "evaluations_used": used,
             "evaluations_remaining": max(0, self.budget.max_evaluations - used),
             "wall_seconds_remaining": None if self.budget.max_wall_seconds == 0 else max(
@@ -153,9 +152,11 @@ class EvolutionGateway:
                         f"{candidate_id} is already evaluated; fork a child to vary it"
                     )
                 candidate = self.store.get_candidate(candidate_id)
+                moves = self.next_research_moves()
                 evaluation = self.evaluator.evaluate(
                     candidate,
                     self.store.next_run_dir(candidate.candidate_id),
+                    **({"research_moves": moves} if moves is not None else {}),
                 )
                 evaluation = replace(evaluation, score={**evaluation.score,
                     "search_session_elapsed_seconds": time.monotonic() - self.started_at})

@@ -1,0 +1,151 @@
+// AVO (frameworks/avo). The outer optimizer proposes candidates (STRATEGY.md + seed files).
+// Each candidate is evaluated by a full inner session; its solver.py is then run alone in a fresh game,
+// and fitness = levels the solver completes (research mode: levels reached during the session).
+// Mark 1: evaluation result. Mark 2: harness compaction. Mark 3: the candidate the optimizer wrote. Mark 4: tools.
+
+// The outer optimizer: one CLI session for the campaign, at most 30 turns.
+AvoOptimizer[@T.I]: {
+  S: {
+    HARNESS_SYSTEM_PROMPT(env.harness)
+    Switch env.fitness {
+      Case "solver": { OUTER_OPTIMIZER_PROMPT } // outer_optimizer.txt "You own the AVO search ..."
+      Case "research": { OUTER_OPTIMIZER_RESEARCH_PROMPT }
+    }
+    MISSION(env.objective, env.max_evaluations) // evolve.py:193, + move schedule, continue-levels
+    Mark 4 {
+    NATIVE_TOOLS(env.harness) // the harness's shell and file tools, web tools off; edits drafts/<id>/STRATEGY.md and seed/
+    }
+  }
+  Mark 2 {
+  Name C := sys.last_compaction_time[@T]
+  If @$C > 1 {
+    U: WHAT_DID_WE_DO
+    A: sys.conversation_summary[@$C]
+  }
+  }
+  ForEach(@t: range(@$C, @T+1)) {
+    U: {
+      If @t == 1 {
+        OPERATE_AUTONOMOUSLY
+      } ElseIf sys.finished[@t] {
+        FINAL_WORLD_MODEL_PROMPT
+      } Else {
+        CONTINUE_INSTRUCTION // turns.py:50
+      }
+    }
+    ForEach(step: @t.substeps) {
+      A: {
+        resp.reasoning[@t.step]
+        ForEach(tool: sys.tool_requests[step]) {
+          tool.id_name_and_args // python avo_evolve_tool.py population | initial | inspect | evidence | fork | register | evaluate | finish; edits drafts/<id>/
+        }
+      }
+      ForEach(tool: sys.tool_requests[step]) {
+        T: {
+          Switch tool.method {
+            Case "read AGENT_INTERFACE.md": {
+              Mark 4 {
+              OPTIMIZER_INTERFACE // tool_server.py:10, python avo_evolve_tool.py ...
+              TOOL_POPULATION // candidates, evaluations, the best so far
+              TOOL_INITIAL // the frozen initial observation and its PNG path
+              TOOL_INSPECT(candidate_id) // strategy, notes, solver source and diff from its parent, trace summary
+              TOOL_EVIDENCE(candidate_id, phase, offset, limit) // raw events: research | evaluation | self_check_01 | self_check_02
+              TOOL_FORK(parent_id, child_id) // new draft inheriting the parent's final solver, notes and scripts
+              TOOL_REGISTER(candidate_id) // makes the draft immutable
+              TOOL_EVALUATE(candidate_id) // inner session + solver.py in a fresh game; returns fitness
+              TOOL_STATUS // evaluations and wall time left
+              TOOL_FINISH(reason)
+              }
+            }
+            Case "inspect": { CANDIDATE(c.strategy, c.evaluations, c.learned_notes, c.solver_diff, c.trace_summary) }
+            Case "evidence": { ForEach(ev: c.evidence_page) { ev } }
+            Case "evaluate": { Mark 1 { EVALUATION(e.fitness, e.success, e.environment_steps, e.agent_turns) } } // blocks while AvoPlayer plays and solver.py is scored
+            Default: { tool.id_and_response }
+          }
+        }
+      }
+    }
+    A: sys.response[@t]
+  }
+}
+
+// The inner player for one candidate: a new CLI session, at most 4 turns, folder seeded from the parent.
+AvoPlayer[@T.I, candidate]: {
+  S: {
+    HARNESS_SYSTEM_PROMPT(env.harness)
+    Switch env.fitness {
+      Case "solver": { // base_agent.txt + prompt.md "Build solver.py for this unknown game ..."
+        BASE_AGENT_PROMPT
+        TASK_PROMPT
+      }
+      Case "research": {
+        BASE_AGENT_RESEARCH_PROMPT
+        TASK_RESEARCH_PROMPT
+      }
+    }
+    KEEP_WORLD_MODEL
+    Mark 4 {
+    NATIVE_TOOLS(env.harness) // the harness's shell and file tools, web tools off
+    }
+    Mark 3 {
+    If candidate.strategy {
+      CANDIDATE_STRATEGY(candidate.strategy) // STRATEGY.md from the optimizer
+    }
+    }
+  }
+  ForEach(@t: range(1, @T+1)) {
+    U: {
+      If @t == 1 {
+        INNER_RUN_INSTRUCTION // turns.py:22
+      } ElseIf sys.finished[@t] {
+        ATTEMPT_WORLD_MODEL_PROMPT // only with attempt_world_model
+      } Else {
+        CONTINUE_INSTRUCTION
+      }
+    }
+    ForEach(step: @t.substeps) {
+      A: {
+        resp.reasoning[@t.step]
+        ForEach(tool: sys.tool_requests[step]) {
+          tool.id_name_and_args // python avo_tool.py observe | image | history | probe ACTION | reset | checkpoint | restore | evaluate_solver | archive; seed files
+        }
+      }
+      ForEach(tool: sys.tool_requests[step]) {
+        T: {
+          Switch tool.method {
+            Case "read AGENT_INTERFACE.md": {
+              Mark 4 {
+              AGENT_INTERFACE // tool_gateway.py:426, python avo_tool.py ...
+              TOOL_OBSERVE // state, levels, available actions, the current board, its image path
+              TOOL_IMAGE // the PNG path of the current frame, without a game action
+              TOOL_MISSION // the objective and the task status
+              TOOL_HISTORY(offset, limit, move) // recorded moves, 20 per page, or every board of one move
+              TOOL_PROBE(action_id, rationale) // one game action: changed cells, engine steps, new board; costs 1 step
+              TOOL_RESET(reason) // a new episode from a fresh reset; costs 1 step
+              TOOL_CHECKPOINT(label) // saves the current state
+              TOOL_RESTORE(checkpoint_id) // returns to a checkpoint; free
+              TOOL_ACKNOWLEDGE_SUPERVISOR(text) // resumes probing after a supervisor pause
+              If env.fitness == "solver" {
+                TOOL_EVALUATE_SOLVER(max_actions) // runs solver.py alone in a fresh game, returns fitness only; at most 2
+              }
+              TOOL_ARCHIVE // saves the workspace to the run record
+              TOOL_STATUS // budgets and task status
+              TOOL_FINISH(reason)
+              }
+            }
+            Case "observe": { OBSERVATION(env.state, env.levels, env.grid, env.image_path, sys.budgets) }
+            Case "probe": {
+              PROBE_RESULT(tool.action, tool.what_changed, env.grid, sys.budgets) // changed cells or LEVEL COMPLETED
+              If sys.supervisor_event[step] {
+                SUPERVISOR_MESSAGE // no change after 3 probes, or the same action 4 times
+              }
+            }
+            Case "evaluate_solver": { SOLVER_FITNESS(check.fitness, check.checks_remaining) } // at most 2; trace withheld
+            Default: { tool.id_and_response }
+          }
+        }
+      }
+    }
+    A: sys.response[@t]
+  }
+}

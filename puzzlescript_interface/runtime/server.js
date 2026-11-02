@@ -7,6 +7,7 @@ const {
     projectRawGrid,
     countPlayableLevels,
     countCompletedPlayableLevels,
+    playableLevelIndex,
 } = require('./arc_projection');
 const { renderSessionFrame, renderSessionVisualGrid } = require('./rendered_frame');
 
@@ -420,9 +421,21 @@ function loadGameSourceByName(gameName) {
     return fs.readFileSync(gamePath, 'utf8');
 }
 
-function createSessionFromSource(gameSource, levelIndex = 0) {
+class LevelRangeError extends Error {}
+
+// `level` (1-based, playable levels only) takes precedence over the raw `levelIndex`, which counts message screens.
+function createSessionFromSource(gameSource, levelIndex = 0, level = null) {
     const normalizedSource = gameSource.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     const { data } = Parser.parse(normalizedSource);
+    const levels = data.levels || [];
+    if (level !== null) {
+        levelIndex = playableLevelIndex(levels, level);
+        if (levelIndex < 0) {
+            throw new LevelRangeError(`level must be between 1 and ${countPlayableLevels(levels)}, not ${level}.`);
+        }
+    } else if (levelIndex >= levels.length) {
+        throw new LevelRangeError(`levelIndex must be below ${levels.length}, not ${levelIndex}.`);
+    }
     const sessionId = newId("ps");
     const session = new Session(sessionId, data, levelIndex);
     gameSessions.set(sessionId, session);
@@ -523,7 +536,7 @@ async function executeAction(session, action, {
 
 app.post('/init', (req, res) => {
     try {
-        let { gameSource, gameName, levelIndex = 0 } = req.body;
+        let { gameSource, gameName, levelIndex = 0, level = null } = req.body;
         if (gameName) {
             gameSource = loadGameSourceByName(gameName);
             if (!gameSource) {
@@ -537,7 +550,10 @@ app.post('/init', (req, res) => {
         if (!Number.isInteger(levelIndex) || levelIndex < 0) {
             return res.status(400).json({ error: "levelIndex must be a non-negative integer." });
         }
-        const { sessionId, session, data } = createSessionFromSource(gameSource, levelIndex);
+        if (level !== null && (!Number.isInteger(level) || level < 1)) {
+            return res.status(400).json({ error: "level must be a positive integer." });
+        }
+        const { sessionId, session, data } = createSessionFromSource(gameSource, levelIndex, level);
         const boardRender = session.render();
         const boardJSON = session.renderJSON();
         logHistory(sessionId, session.engine.currentLevelNum + 1, "INIT", boardRender, boardJSON);
@@ -559,6 +575,9 @@ app.post('/init', (req, res) => {
             available_actions: session.availableActions
         });
     } catch (e) {
+        if (e instanceof LevelRangeError) {
+            return res.status(400).json({ error: e.message });
+        }
         console.error(e);
         res.status(500).json({ error: e.message });
     }

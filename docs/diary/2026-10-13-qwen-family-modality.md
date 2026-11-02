@@ -4,7 +4,7 @@ title: Qwen family on Modality, Flash and Max vs 27B
 threads: [qwen-harness]
 runs: []
 commits: []
-docs: [docs/research/qwen-modality-max-analysis-20261014.md, docs/research/qwen-modality-claim-audit-20261015.md]
+docs: [docs/research/diary-figures-20261029/qwen-era/fig2_qwen_family_modality.png, docs/research/qwen-modality-max-analysis-20261014.md, docs/research/qwen-modality-claim-audit-20261015.md, docs/research/diary-figures-20261029/qwen-era/README.md]
 reconstructed: true
 ---
 ## Did

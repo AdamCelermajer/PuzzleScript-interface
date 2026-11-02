@@ -4,8 +4,9 @@ title: Workflow consolidation, Docker isolation and Astra/Luna six pairs
 threads: [avo-campaigns, workbench, benchmark-curation]
 runs: []
 commits: [c6a701a]
-docs: [docs/architecture/workbench.md, docs/architecture/avo-framework.acdl, benchmark/vetting/README.md]
+docs: [docs/research/diary-figures-20261029/avo-era/fig3_sep14_world_model_modes.png, docs/architecture/workbench.md, docs/architecture/avo-framework.acdl, benchmark/vetting/README.md, docs/research/diary-figures-20261029/avo-era/README.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - Committed `c6a701a`: AVO Docker isolation (`avo/docker/`, request guard and capture proxy), OpenRouter model provider, the `workbench/` backend (catalog, bounded batch jobs, comparisons, submissions) and the runs pages.

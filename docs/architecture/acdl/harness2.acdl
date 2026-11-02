@@ -1,0 +1,116 @@
+// Harness² (frameworks/harness2, upstream google-research/harness2).
+// Outer loop, no LLM: base rollouts are played; INV and DOM coaches each edit the harness; AGG composes;
+// every candidate is played once; the kept harness has the most levels, then the fewest actions.
+// Per-level mode: each level is a task, rounds at growing budgets (30, 50, 100, 200, 500) until it is solved.
+// Mark 1: the harness the coaches edit. Mark 2: harness compaction. Mark 3: rollout evidence. Mark 4: tools.
+
+// The player: the baseline agent driver in OpenCode, with the harness in its folder.
+Harness2Player[@T.I, harness]: {
+  S: {
+    HARNESS_SYSTEM_PROMPT(env.harness) // always OpenCode
+    SYSTEM_PROMPT // baseline agent.py:73, the game through python game.py
+    Mark 4 {
+    NATIVE_TOOLS(env.harness) // OpenCode: bash, read, write, edit, glob, grep; web tools off
+    TOOL_GAME_LOOK // python game.py look: the current grid and status; saves the picture as frame.png
+    TOOL_GAME_DO(action) // python game.py do ACTION: one game action; prints what changed and the new grid
+    TOOL_GAME_RESET // python game.py reset: restarts the current level; costs one action
+    TOOL_SKILL(skill_name) // OpenCode skill tool: loads harness skills/<name>/SKILL.md
+    TOOL_TASK(subagent, instruction) // OpenCode task tool: runs a harness subagent, sub_agents/<name>/AGENT.md
+    ForEach(script: harness.scripts) {
+      script.usage // harness scripts/*.py, run with bash
+    }
+    }
+    KEEP_WORLD_MODEL
+    Mark 1 {
+    AGENTS_MD(harness.systemprompt, harness.guardrails, harness.long_term_memory, harness.tool_guidance) // always-on files
+    ForEach(skill: harness.skills) {
+      skill.name_and_description // loaded on demand with the skill tool
+    }
+    }
+  }
+  Mark 2 {
+  Name C := sys.last_compaction_time[@T]
+  If @$C > 1 {
+    U: WHAT_DID_WE_DO
+    A: sys.conversation_summary[@$C]
+  }
+  }
+  ForEach(@t: range(@$C, @T+1)) {
+    U: {
+      Switch sys.turn_kind[@t] {
+        Case "first": { PLAY_NOW(env.max_steps, env.start_level) }
+        Case "continue": { NOT_FINISHED(env.levels[@t], sys.actions_left[@t]) }
+        Case "report": { REPORT_PROMPT(sys.end_reason, env.levels[@t]) }
+        Case "solver": { SOLVER_PROMPT(env.start_level) }
+      }
+    }
+    ForEach(step: @t.substeps) {
+      A: {
+        resp.reasoning[@t.step]
+        ForEach(tool: sys.tool_requests[step]) {
+          tool.id_name_and_args // python game.py, harness scripts, skills, subagents
+        }
+      }
+      ForEach(tool: sys.tool_requests[step]) {
+        T: tool.id_and_response
+      }
+    }
+    A: sys.response[@t]
+  }
+}
+
+// A coach: a fresh OpenCode session, no system prompt of ours, one user turn of up to 120 tool steps.
+Harness2Coach[@T.I, stage]: {
+  S: {
+    HARNESS_SYSTEM_PROMPT(env.harness) // OpenCode's own prompt only
+    Mark 4 {
+    NATIVE_TOOLS(env.harness) // OpenCode: bash, read, write, edit, glob, grep, task; web tools off
+    // reads context/, edits context/harness/ in place, saves its reply to output/answer.md
+    }
+  }
+  U: {
+    Switch stage.kind {
+      Case "INV": { INV_MISSION(bp.work, bp.inv_levers, bp.yardstick) } // how the agent works: procedure, tools, notes, scripts
+      Case "DOM": { DOM_MISSION(bp.work, bp.dom_levers, bp.yardstick) } // what a practitioner knows: objects, controls, goals
+      Case "AGG": { AGGREGATE_MISSION(bp.work, bp.yardstick) } // merge candidates, adopt one, or keep the base
+    }
+    EVIDENCE_POINTER // the layout of context/; read everything, cite the moment
+    READ_MISSION_AND_EDIT // proposer.py:94, edit context/harness/ in place
+  }
+  ForEach(step: @1.substeps) {
+    A: {
+      resp.reasoning[@1.step]
+      ForEach(tool: sys.tool_requests[step]) {
+        tool.id_name_and_args // read context/..., edit context/harness/...
+      }
+    }
+    ForEach(tool: sys.tool_requests[step]) {
+      T: {
+        Switch tool.file {
+          Case "context/task.md": { TASK_PROMPT(env.per_level) }
+          Case "context/rollouts/": {
+            Mark 3 {
+            SCORE_HEADER(rollout.levels, rollout.actions, rollout.budget)
+            compactEvents(rollout.agent_events)
+            }
+          }
+          Case "context/deliverables/": {
+            rollout.world_model
+            rollout.solver_py
+          }
+          Case "context/harness/": { Mark 1 { harness.files } }
+          Case "context/pool/": { // AGG only
+            candidate.harness
+            candidate.diff
+            candidate.rollout
+            candidate.world_model
+          }
+          Case "context/decisions/": { candidate.notes } // AGG only
+          Default: { tool.id_and_response }
+        }
+      }
+    }
+    PromptEndsHere when (@T.I == step)
+  }
+  A: resp.notes // <notes> block, read by AGG
+}

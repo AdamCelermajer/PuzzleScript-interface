@@ -5,10 +5,11 @@ import { useCatalog } from '../api/hooks'
 import type { CatalogJob, ResumeResult } from '../api/types'
 import { GameThumb, HarnessChip, LevelPips, RunId, StatusDot } from '../components/identity'
 import { ProgressText } from '../components/status'
-import { Button, ErrorBox, Loading, Notice } from '../components/ui'
+import { Button, Collapsible, ErrorBox, Loading, Notice } from '../components/ui'
 import { dateTime, gameName, relativeTime } from '../lib/format'
-import { gameHref, normalizeRun, optionsText, runHref, type RunView } from '../lib/runs'
+import { campaignScore, gameHref, levelScoreText, levelText, normalizeRun, optionsText, runHref, type RunView } from '../lib/runs'
 import { BaselineDetail } from './BaselineDetail'
+import { Calls } from './Calls'
 import { CampaignDetail } from './CampaignDetail'
 import { Harness2Detail } from './Harness2Detail'
 
@@ -32,6 +33,11 @@ export function RunDetailView() {
         </div>
       )}
       {campaign ? <CampaignDetail runId={id} live={run?.process.tone === 'running'} /> : run?.framework === 'harness2' ? <Harness2Detail runId={id} live={run.process.tone === 'running'} /> : <BaselineDetail runId={id} live={run?.process.tone === 'running'} notes={run ? run.raw.options?.notes !== false : true} />}
+      {(campaign || run?.framework === 'harness2') && (
+        <Collapsible title="Model calls (exact): every recorded session of this run">
+          <Calls runId={id} live={run?.process.tone === 'running'} />
+        </Collapsible>
+      )}
     </div>
   )
 }
@@ -54,13 +60,14 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
         <Link to={gameHref(run.game)} className="shrink-0"><GameThumb gameId={run.game} size={88} rounded="rounded-lg" /></Link>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h1 className="text-[26px] leading-tight font-semibold tracking-[-0.02em]"><Link to={gameHref(run.game)} className="text-fg">{gameName(run.game)}</Link></h1>
+            <h1 className="text-[26px] leading-tight font-semibold tracking-[-0.02em]"><Link to={gameHref(run.game)} className="text-fg">{gameName(run.game)}</Link>{levelText(run)}</h1>
             <span className="rounded-md bg-neutral-soft px-1.5 py-px text-[12px] font-medium text-muted">{run.variant}</span>
             <HarnessChip harness={run.harness} legacy={run.legacy} />
             <StatusDot status={run.process} />
           </div>
           <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
             <LevelPips levels={run.outcome.score} total={run.outcome.total} solved={run.outcome.tone === 'solved'} size="lg" />
+            {run.raw.level_score && <span className="text-[13px] text-muted">level {run.raw.level ?? run.startLevel}: {levelScoreText(run.raw.level_score)}</span>}
             <span className="text-[13px] text-muted"><span className="font-medium text-fg">{run.model}</span> · {run.effort}</span>
           </div>
           <RunId id={run.id} className="mt-2" />
@@ -79,6 +86,7 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
       {raw.failure_reason && <Notice tone="warn">{raw.failure_reason}</Notice>}
       <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[12.5px] md:grid-cols-4 xl:grid-cols-6">
         {run.optimizerModel && <Fact label="Optimizer" value={<span className="break-all">{run.optimizerModel ?? "—"} · {raw.optimizer_effort ?? "—"}</span>} />}
+        {run.framework === 'avo' && <Fact label="Score" value={campaignScore(raw.options)} />}
         {run.worldModel && <Fact label="World model" value={run.worldModel} />}
         <Fact label="Progress" value={<ProgressText run={run} />} />
         <Fact label="Wall budget" value={raw.max_wall_seconds === 0 ? 'unlimited' : raw.max_wall_seconds ? `${(raw.max_wall_seconds / 3600).toFixed(1)}h` : '—'} />

@@ -6,6 +6,7 @@ runs: []
 commits: [d1ae720, 698b598]
 docs: []
 reconstructed: true
+brief: true
 ---
 ## Did
 - Added `client/live_sokoban_poc/`: a LIVE-style loop that learns readable action-effect rules for Sokoban from observed transitions, with tests.

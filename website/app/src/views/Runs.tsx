@@ -7,13 +7,15 @@ import type { CatalogJob, ResumeResult } from '../api/types'
 import { RunList, type JobVerb } from '../components/RunList'
 import { Button, Empty, ErrorBox, Input, Loading, Notice, Select, cx } from '../components/ui'
 import { gameName, relativeTime } from '../lib/format'
-import { EMPTY_FILTERS, distinct, groupLaunches, matchesFilters, type RunFilters } from '../lib/runs'
+import { EMPTY_FILTERS, distinct, groupLaunches, matchesFilters, type RunFilters, type RunView } from '../lib/runs'
 
 const STATUS_OPTIONS: [string, string][] = [
-  ['', 'Any status'], ['active', 'Active'], ['running', 'Running'], ['queued', 'Queued'], ['paused', 'Paused'],
+  ['any', 'Any status'], ['active', 'Active'], ['running', 'Running'], ['queued', 'Queued'], ['paused', 'Paused'],
   ['finished', 'Finished'], ['stopped', 'Stopped'], ['failed', 'Failed'], ['attention', 'Needs assistance'], ['unconfirmed', 'Unconfirmed'],
   ['solved', 'Solved'],
 ]
+/** With no status in the URL the page shows active runs; "Any status" is `status=any`. */
+const DEFAULT_STATUS = 'active'
 const ARCHIVE_PAGE = 40
 const FILTER_SELECT = 'h-8 min-w-0 max-w-44 shrink text-[12.5px]'
 
@@ -29,6 +31,10 @@ export function useJobActions() {
     mutationFn: (runId: string) => api.post<ResumeResult>('/runs/resume', { run_id: runId }),
     onSuccess: (result) => { client.invalidateQueries({ queryKey: ['catalog'] }); navigate(`/runs${q({ job: result.job_id })}`) },
   })
+  const stopRun = useMutation({
+    mutationFn: ({ job, run }: { job: string; run: string }) => api.post(`/experiments/stop-run${q({ job, run })}`),
+    onSettled: () => client.invalidateQueries({ queryKey: ['catalog'] }),
+  })
   const onJob = (verb: JobVerb, job: CatalogJob) => {
     const name = job.id.split('/').at(-1)
     const prompts: Partial<Record<JobVerb, string>> = {
@@ -39,12 +45,15 @@ export function useJobActions() {
     if (!prompts[verb] || window.confirm(prompts[verb])) jobAction.mutate({ verb, job: job.id })
   }
   const onResume = (runId: string) => { if (window.confirm('Resume this run in a new batch? This starts paid model calls.')) resume.mutate(runId) }
-  return { onJob, onResume, busy: jobAction.isPending || resume.isPending, error: jobAction.error ?? resume.error }
+  const onStopRun = (run: RunView, game: string) => {
+    if (run.raw.job_run && window.confirm(`Stop ${game}? It is recorded as stopped; files are kept.`)) stopRun.mutate({ job: run.batch, run: run.raw.job_run })
+  }
+  return { onJob, onResume, onStopRun, busy: jobAction.isPending || resume.isPending || stopRun.isPending, error: jobAction.error ?? resume.error ?? stopRun.error }
 }
 
 export function RunsView() {
   const [params, setParams] = useSearchParams()
-  const filters: RunFilters = { ...EMPTY_FILTERS, ...Object.fromEntries([...params.entries()].filter(([k]) => k in EMPTY_FILTERS)) }
+  const filters: RunFilters = { ...EMPTY_FILTERS, status: DEFAULT_STATUS, ...Object.fromEntries([...params.entries()].filter(([k]) => k in EMPTY_FILTERS)) }
   const catalog = useCatalog(5000)
   const navigate = useNavigate()
   const actions = useJobActions()
@@ -77,7 +86,7 @@ export function RunsView() {
   const archivedByHand = archive.reduce((n, l) => n + l.runs.filter((r) => r.archived).length, 0)
   const selectedRuns = runs.filter((r) => selected.has(r.id))
   const options = useMemo(() => ({ variant: distinct(runs, (r) => r.variant), harness: distinct(runs, (r) => r.harness), model: distinct(runs, (r) => r.model), game: distinct(runs, (r) => r.game) }), [runs])
-  const anyFilter = Object.values(filters).some(Boolean)
+  const anyFilter = Object.entries(filters).some(([key, value]) => value && !(key === 'status' && value === DEFAULT_STATUS))
   const showArchive = archiveOpen || Boolean(filters.job)
   const listProps = {
     selectable: true,
@@ -85,6 +94,7 @@ export function RunsView() {
     onSelect: (id: string, on: boolean) => setSelected((s) => { const n = new Set(s); if (on) n.add(id); else n.delete(id); return n }),
     onResume: actions.onResume,
     onJob: actions.onJob,
+    onStopRun: actions.onStopRun,
     busy: actions.busy,
     expanded: (l: { id: string; runs: { process: { tone: string } }[] }) => l.id === filters.job || l.runs.some((r) => r.process.tone === 'running'),
   }

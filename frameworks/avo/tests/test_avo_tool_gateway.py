@@ -148,8 +148,9 @@ class AvoToolGatewayTests(unittest.TestCase):
             finally:
                 server.stop()
 
-            payload = json.loads(completed.stdout)
-            self.assertEqual(payload["observation"]["payload"], {"value": 0})
+            # The game commands print plain text; a payload that is not a board is compact JSON.
+            self.assertIn('payload: {"value":0}', completed.stdout)
+            self.assertIn("available_actions=A1, A2", completed.stdout)
             self.assertTrue((workspace / "AGENT_INTERFACE.md").is_file())
             self.assertEqual((workspace / "MISSION.md").read_text(encoding="utf-8").splitlines()[2], "Reach DONE.")
             self.assertIn("Action IDs are opaque", AGENT_INTERFACE)

@@ -6,6 +6,7 @@ runs: []
 commits: [bcd2bd8]
 docs: [docs/architecture/workbench.md, docs/research/avo-framework.md, docs/research/three-game-mechanics-demo.md]
 reconstructed: true
+brief: true
 ---
 ## Did
 - The run catalog carries compact per-run result inputs, so result pages no longer fetch every run archive.

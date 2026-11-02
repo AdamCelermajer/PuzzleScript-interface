@@ -153,8 +153,11 @@ def validate_request(config: RunRequest) -> tuple[list[tuple[str, str]], list[st
     if config.provider:
         if any(h not in {"opencode", "bare"} for h in config.harnesses):
             raise ValueError("Provider pinning applies only to the opencode and bare harnesses")
-        if any(model_provider(m) != "openrouter" for m in config.models + ([config.optimizer_model] if config.optimizer_model else [])):
-            raise ValueError("Provider pinning is only supported for OpenRouter models")
+        pinned = config.models + ([config.optimizer_model] if config.optimizer_model else [])
+        if any(model_provider(m) not in {"openrouter", "nanogpt"} for m in pinned):
+            raise ValueError("Provider pinning is only supported for OpenRouter and NanoGPT models")
+        if "bare" in config.harnesses and any(model_provider(m) == "nanogpt" for m in pinned):
+            raise ValueError("NanoGPT host pinning applies to the opencode harness only")
     pairs, warnings, fitting = [], [], set()
     for harness, model in product(config.harnesses, config.models):
         reason = model_error(harness, model)

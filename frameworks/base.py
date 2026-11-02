@@ -80,13 +80,20 @@ class Framework:
     check_restart: Callable[[dict, Path], None] | None = None
     # Display name for one set of options, e.g. baseline with notes -> "Baseline+".
     variant: Callable[[dict], str] | None = None
+    # Host-side check across options (each already valid); raises ValueError.
+    check: Callable[[dict], None] | None = None
+    # Host-side, before the container starts: copy what the run needs into its directory (spec, run dir).
+    prepare: Callable[[dict, Path], None] | None = None
 
     def check_options(self, given: dict[str, Any]) -> dict[str, Any]:
         """All options with defaults filled in; ValueError for unknown or invalid ones."""
         unknown = sorted(set(given) - {option.name for option in self.options})
         if unknown:
             raise ValueError(f"The {self.id} framework has no option {', '.join(unknown)}")
-        return {option.name: option.check(given.get(option.name)) for option in self.options}
+        options = {option.name: option.check(given.get(option.name)) for option in self.options}
+        if self.check:
+            self.check(options)
+        return options
 
     def variant_label(self, options: dict[str, Any]) -> str:
         return self.variant(options) if self.variant else self.label

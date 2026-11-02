@@ -55,7 +55,8 @@ Static build output still requires local services for live APIs. FastAPI serves 
 catalogs, launch controls, the AVO trace bridge (`/api/workbench/avo/*`), notebook saves
 and paper storage; Vite only proxies (the old `/__avo/*`, `/__notes/save` and
 `/__pseudocode/save` paths are proxy rewrites until the UI calls the new paths).
-The workbench launcher reuses recognized occupied service ports and refuses an
+The workbench launcher starts/reuses the [Docker backend](docker-backend.md).
+Local workbench/frontend services reuse recognized occupied ports and refuse an
 unknown owner rather than killing it. A frontend-only server is insufficient.
 
 Run `npm run workbench` in one persistent terminal, or use the existing
@@ -65,11 +66,15 @@ frontend API proxy, and the configured Tailscale URL. The website is a productio
 build served by `vite preview` and rebuilt by `vite build --watch` on every source
 change (reload the page to pick it up); `WORKBENCH_WEB_DEV=1` serves the Vite dev
 server with hot reload instead, which is much slower on a laptop. It starts only missing
-services and rechecks them every five seconds. Existing healthy processes are
+local services and rechecks them every five seconds. Backend containers are started
+once at launch; an explicit Docker stop is respected until the user starts them again.
+Existing healthy local processes are
 reused, including an API whose command line Windows does not expose when its
 health response identifies it. A failed check is printed in the terminal and
 retried without stopping the other services; closing the terminal stops only
-processes that launcher started.
+local processes that launcher started. The shared backend has its own explicit stop.
+Use `scripts/start-workbench.ps1 -LocalBackend` for the original host backend when
+debugging (stop Docker's backend first).
 
 The benchmark library joins the current 20-game selection, the earlier 30-game
 curation and the 21-game reference catalog by exact game ID. It retains their

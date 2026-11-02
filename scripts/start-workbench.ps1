@@ -1,5 +1,6 @@
 param(
-    [int]$ExitAfterSeconds = 0
+    [int]$ExitAfterSeconds = 0,
+    [switch]$LocalBackend
 )
 
 $ErrorActionPreference = "Stop"
@@ -106,21 +107,34 @@ function Stop-Children {
 }
 
 try {
+    # Compose owns shared backend services; this launcher owns only local UI/API
+    # children. Start once so an explicit Docker stop is respected thereafter.
+    if (-not $LocalBackend) { & (Join-Path $PSScriptRoot "backend.ps1") up }
     $reportedReady = $false
     $lastError = ""
     $startedAt = Get-Date
+    $webWatcher = $null
+    $webServer = $null
     while ($true) {
         try {
             $runtimeUrl = "http://127.0.0.1:$runtimePort/health"
             $runtimePattern = '"service"\s*:\s*"puzzlescript-runtime"'
-            if (-not (Test-KnownPortOwner -Port $runtimePort -AllowedCommandParts @("puzzlescript_interface/runtime/server.js") -HealthUrl $runtimeUrl -HealthPattern $runtimePattern)) {
+            if (-not $LocalBackend) {
+                if (-not (Test-HttpReady -Url $runtimeUrl -Pattern $runtimePattern)) {
+                    throw "Docker runtime is stopped or unhealthy. Run scripts/backend.ps1 up to start it."
+                }
+            } elseif (-not (Test-KnownPortOwner -Port $runtimePort -AllowedCommandParts @("puzzlescript_interface/runtime/server.js") -HealthUrl $runtimeUrl -HealthPattern $runtimePattern)) {
                 [void](Start-OwnedProcess -FileName "node" -Arguments "puzzlescript_interface/runtime/server.js" -Environment @{ PORT = $runtimePort })
                 Wait-HttpReady -Url $runtimeUrl -Pattern $runtimePattern
             }
 
             $arcUrl = "http://127.0.0.1:$arcPort/api/games"
             $arcPattern = '"game_id"\s*:'
-            if (-not (Test-KnownPortOwner -Port $arcPort -AllowedCommandParts @("puzzlescript_interface.api.main") -HealthUrl $arcUrl -HealthPattern $arcPattern)) {
+            if (-not $LocalBackend) {
+                if (-not (Test-HttpReady -Url $arcUrl -Pattern $arcPattern)) {
+                    throw "Docker game API is stopped or unhealthy. Run scripts/backend.ps1 up to start it."
+                }
+            } elseif (-not (Test-KnownPortOwner -Port $arcPort -AllowedCommandParts @("puzzlescript_interface.api.main") -HealthUrl $arcUrl -HealthPattern $arcPattern)) {
                 [void](Start-OwnedProcess -FileName $pythonFileName -Arguments "${pythonPrefix}-m puzzlescript_interface.api.main" -Environment @{
                     ARC_PROXY_PORT = $arcPort
                     PUZZLESCRIPT_SERVER_URL = "http://127.0.0.1:$runtimePort"
@@ -138,18 +152,23 @@ try {
             $webUrl = "http://127.0.0.1:$webPort/"
             $webPattern = '<title>[^<]*Research Workbench'
             if (-not (Test-KnownPortOwner -Port $webPort -AllowedCommandParts @("vite.js", "vite/bin/vite") -HealthUrl $webUrl -HealthPattern $webPattern)) {
+                # A failed port lookup must not start a second copy while ours is still alive.
+                if ($webServer -and -not $webServer.HasExited) { throw "Website PID $($webServer.Id) is not listening on port $webPort" }
                 $vite = "website/app/node_modules/vite/bin/vite.js"
                 $webEnvironment = @{ WORKBENCH_API_PORT = $apiPort; WORKBENCH_ALLOWED_HOSTS = $tailscaleDnsName }
                 if ($env:WORKBENCH_WEB_DEV -eq "1") {
                     # Dev server: hot reload, but unbundled modules and React's development build.
-                    [void](Start-OwnedProcess -FileName "node" -Arguments "$vite --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment $webEnvironment)
+                    $webServer = Start-OwnedProcess -FileName "node" -Arguments "$vite --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment $webEnvironment
                 } else {
                     # Production build (much smoother on a laptop over Tailscale), rebuilt on every
                     # source change by `build --watch`; reload the page to pick up a rebuild.
-                    & node $vite build --config website/app/vite.config.ts --logLevel warn
-                    if ($LASTEXITCODE -ne 0) { throw "Workbench website build failed" }
-                    [void](Start-OwnedProcess -FileName "node" -Arguments "$vite build --watch --config website/app/vite.config.ts --logLevel warn" -Environment $webEnvironment)
-                    [void](Start-OwnedProcess -FileName "node" -Arguments "$vite preview --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment $webEnvironment)
+                    # One watcher per launcher: a restarted preview reuses it.
+                    if (-not $webWatcher -or $webWatcher.HasExited) {
+                        & node $vite build --config website/app/vite.config.ts --logLevel warn
+                        if ($LASTEXITCODE -ne 0) { throw "Workbench website build failed" }
+                        $webWatcher = Start-OwnedProcess -FileName "node" -Arguments "$vite build --watch --config website/app/vite.config.ts --logLevel warn" -Environment $webEnvironment
+                    }
+                    $webServer = Start-OwnedProcess -FileName "node" -Arguments "$vite preview --config website/app/vite.config.ts --host 127.0.0.1 --port $webPort --strictPort" -Environment $webEnvironment
                 }
                 Wait-HttpReady -Url $webUrl -Pattern $webPattern
             }

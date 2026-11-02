@@ -4,9 +4,13 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+VAST_BASE_URL = "http://host.docker.internal:18100/v1"
 API_PROVIDERS = {
     "openrouter": {"label": "OpenRouter", "origin": "https://openrouter.ai", "env_key": "OPENROUTER_API_KEY"},
     "nanogpt": {"label": "NanoGPT", "origin": "https://nano-gpt.com", "env_key": "NANOGPT_API_KEY"},
+    # Self-hosted vLLM on a rented vast.ai machine, behind an SSH tunnel on the host
+    # (docs/research/vast-setup-20261021.md). Its variable is the endpoint, not a secret.
+    "vast": {"label": "vast.ai vLLM", "origin": VAST_BASE_URL, "env_key": "VAST_LLM_BASE_URL", "default": VAST_BASE_URL},
 }
 
 
@@ -33,6 +37,11 @@ def resolve_model(model: str) -> tuple[str, str]:
         if not native or any(not part for part in native.split("/")):
             raise ValueError("Use nanogpt/model with a model ID from the NanoGPT catalog")
         return "nanogpt", native
+    if model.startswith("vast/"):
+        native = model.removeprefix("vast/")
+        if not native or any(not part for part in native.split("/")):
+            raise ValueError("Use vast/<served-model-name> for the self-hosted vLLM")
+        return "vast", native
     if model.startswith("openrouter/"):
         native = model.removeprefix("openrouter/")
         if "/" not in native or any(not part for part in native.split("/")):

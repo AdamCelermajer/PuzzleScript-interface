@@ -50,6 +50,22 @@ class MatrixTests(unittest.TestCase):
         campaign = matrix["cells"]["ps_beta-v1|opencode|openrouter/qwen/qwen3.8-27b"]
         self.assertEqual((campaign["best_levels"], campaign["win_levels"], campaign["solved"]), (6, 6, True))
 
+    def test_a_one_level_task_gets_its_own_row(self):
+        level = {"kind": "codex", "harness": "opencode", "model": "q", "game_id": "ps_alpha-v1",
+                 "spec_source": "run_spec", "has_result": True, "level": 2, "recorded_win_levels": 4}
+        runs = [{**level, "id": "l/a", "variant": "Baseline · agent · level 2", "levels": 1, "solved": False,
+                 "level_score": {"solved": False, "moves": 40, "shortest": 33, "ratio": None}, "modified": 2},
+                {**level, "id": "l/b", "variant": "Harness²", "levels": 2, "solved": False,
+                 "level_score": {"solved": True, "moves": 50, "shortest": 33, "ratio": 1.52}, "modified": 1},
+                {**level, "id": "l/old", "level": 1, "levels": 1, "solved": False, "modified": 0}]
+        matrix = build_matrix(RUNS + runs, GAMES)
+        self.assertEqual([(g["key"], g["level"], g["win_levels"]) for g in matrix["games"]][:3],
+                         [("ps_alpha-v1", None, 4), ("ps_alpha-v1#L1", 1, 1), ("ps_alpha-v1#L2", 2, 1)])
+        cell = matrix["cells"]["ps_alpha-v1#L2|opencode|q"]
+        self.assertEqual((cell["best_levels"], cell["win_levels"], cell["solved"], cell["best_run_id"], cell["runs"]),
+                         (1, 1, True, "l/b", 2))
+        self.assertTrue(matrix["cells"]["ps_alpha-v1#L1|opencode|q"]["solved"])  # before per-level scores
+
     def test_archive_and_variant_filters(self):
         archive = build_matrix(RUNS, GAMES, archive=True)
         legacy = archive["cells"]["ps_alpha-v1|codex|gpt-5.5"]

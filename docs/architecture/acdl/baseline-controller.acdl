@@ -1,0 +1,67 @@
+// Baseline, controller driver (frameworks/baseline/run.py, runner.py, session.py).
+// Our controller sends one frame per turn; the model submits one action with act.py.
+// One CLI harness session (OpenCode, Codex, Claude Code, bare) for the whole run.
+// Mark 1: game turn from the controller. Mark 2: harness compaction. Mark 3: periodic world-model request. Mark 4: tools.
+BaselineController[@T.I]: {
+  S: {
+    HARNESS_SYSTEM_PROMPT(env.harness) // the harness's own prompt
+    GAME_INSTRUCTIONS // session.py:96 "You are playing a puzzle game. Play one action per turn. The notes/ directory ... is your memory."
+    Mark 4 {
+    NATIVE_TOOLS(env.harness) // the harness's shell and file tools, web tools off; bare: shell, read_file, write_file, view_image
+    TOOL_ACT(action, note) // python act.py ACTION_NAME [--note "why"]: submits this turn's one action and ends the turn
+    }
+  }
+  Mark 2 {
+  Name C := sys.last_compaction_time[@T]
+  If @$C > 1 {
+    U: WHAT_DID_WE_DO
+    A: sys.conversation_summary[@$C]
+  }
+  }
+  ForEach(@t: range(@$C, @T+1)) {
+    U: {
+      If sys.game_over[@t] {
+        FINAL_WORLD_MODEL_PROMPT // session.py:118, after the last move: write notes/world_model.md
+      } Else {
+        Mark 1 {
+        If @t == 1 {
+          If env.continued_from {
+            HISTORY_PROMPT(sys.parent_transitions) // continuation.py:66, new session on a parent's position
+          }
+          INTRODUCTION
+        }
+        Switch sys.previous_outcome[@t] {
+          Case "start": { INITIAL_FEEDBACK(env.start_level) }
+          Case "moved": { ACTION_FEEDBACK(resp.action[@t-1], env.changed_cells[@t], env.state[@t], env.levels[@t]) }
+          Case "level_up": { LEVEL_COMPLETED(resp.action[@t-1], env.levels[@t]) }
+          Default: { REJECTED(sys.reason[@t]) } // unusable reply, FINISH refused, action not available
+        }
+        FRAME_HEADER(env.state[@t], env.levels[@t], env.available_actions[@t], sys.actions_used[@t], env.max_steps)
+        GRID_ENCODING(env.encoding)
+        env.grid[@t]
+        }
+        Mark 3 {
+        If sys.level_completed[@t-1] || sys.actions_used[@t] % 100 == 0 {
+          WORLD_MODEL_REQUEST // runner.py:316, write notes/world_model.md this turn
+        }
+        }
+        CHOOSE_ONE_ACTION
+        PICTURE_LINE // frame.png is in the folder; the image is not attached
+      }
+    }
+    PromptEndsHere when (@T == @t && @T.0)
+    ForEach(step: @t.substeps) {
+      A: {
+        resp.reasoning[@t.step]
+        ForEach(tool: sys.tool_requests[step]) {
+          tool.id_name_and_args // read or write notes/, open frame.png, python act.py ACTION
+        }
+      }
+      ForEach(tool: sys.tool_requests[step]) {
+        T: tool.id_and_response
+      }
+      PromptEndsHere when (@T == @t && @T.I)
+    }
+    A: sys.response[@t] // the turn is cut once act.py has submitted
+  }
+}

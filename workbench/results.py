@@ -2,7 +2,9 @@
 
 Computed from the run catalog on request (cached briefly), never stored. A cell's level
 count is what the run recorded: levels completed for direct play, best fresh-solver fitness
-for campaigns. Runs without `run_spec.json` (before the harness revamp) are archive runs and
+for campaigns. A one-level task (catalog ``level``) gets its own row, "game · level k", whose cells
+count 1 when that level was solved, so the same level lines up across configurations and frameworks.
+Runs without `run_spec.json` (before the harness revamp) are archive runs and
 are only included with `archive=1`.
 """
 from __future__ import annotations
@@ -61,7 +63,7 @@ def harness_rank(harness: str) -> int:
 def build_matrix(runs: list[dict], games: dict, archive: bool = False, variant: str | None = None) -> dict:
     cells: dict[str, dict] = {}
     columns: dict[tuple[str, str], dict] = {}
-    rows: set[str] = set()
+    rows: dict[str, tuple[str, int | None]] = {}
     for run in runs:
         game_id, model = run.get("game_id"), run.get("model")
         harness = run.get("harness") or run.get("agent_backend")
@@ -71,14 +73,22 @@ def build_matrix(runs: list[dict], games: dict, archive: bool = False, variant: 
             continue
         if variant and run.get("variant") != variant:
             continue
-        key = f"{game_id}|{harness}|{model}"
-        levels, total = run_levels(run), run_win_levels(run, games)
+        level = _count(run.get("level"))
+        row = f"{game_id}#L{level}" if level else game_id
+        key = f"{row}|{harness}|{model}"
+        if level:
+            # Runs from before per-level scores: the level is solved once levels_completed reaches it.
+            score = run.get("level_score") or {"solved": (_count(run.get("levels")) or 0) >= level}
+            levels, total = int(score.get("solved") is True), 1
+        else:
+            levels, total = run_levels(run), run_win_levels(run, games)
         cell = cells.setdefault(key, {"best_levels": None, "win_levels": total, "runs": 0, "best_run_id": None,
                                       "solved": False, "run_ids": [], "_rank": None})
         cell["runs"] += 1
-        cell["solved"] = cell["solved"] or run.get("solved") is True
         cell["run_ids"].append((run.get("modified") or 0, run["id"]))
-        rank = (levels if levels is not None else -1, run.get("solved") is True, run.get("modified") or 0)
+        solved = levels == 1 if level else run.get("solved") is True
+        cell["solved"] = cell["solved"] or solved
+        rank = (levels if levels is not None else -1, solved, run.get("modified") or 0)
         if cell["_rank"] is None or rank > cell["_rank"]:
             cell.update(_rank=rank, best_levels=levels, best_run_id=run["id"])
             if total:
@@ -86,17 +96,18 @@ def build_matrix(runs: list[dict], games: dict, archive: bool = False, variant: 
         column = columns.setdefault((harness, model), {"harness": harness, "model": model,
                                                        "label": model.split("/")[-1], "runs": 0})
         column["runs"] += 1
-        rows.add(game_id)
+        rows[row] = (game_id, level)
     for cell in cells.values():
         cell.pop("_rank")
         cell["run_ids"] = [run_id for _, run_id in sorted(cell["run_ids"], reverse=True)][:20]
     game_rows = []
-    for game_id in rows:
+    for row, (game_id, level) in rows.items():
         entry = games.get(game_id) or {}
-        totals = [c["win_levels"] for k, c in cells.items() if k.startswith(game_id + "|") and c["win_levels"]]
-        game_rows.append({"game_id": game_id, "title": entry.get("title") or game_id, "tier": entry.get("tier"),
-                          "win_levels": _count(entry.get("levels")) or (max(totals) if totals else None)})
-    game_rows.sort(key=lambda g: (TIER_ORDER.get(g["tier"], 3), g["title"].casefold()))
+        totals = [c["win_levels"] for k, c in cells.items() if k.startswith(row + "|") and c["win_levels"]]
+        game_rows.append({"game_id": game_id, "key": row, "level": level, "title": entry.get("title") or game_id,
+                          "tier": entry.get("tier"),
+                          "win_levels": 1 if level else _count(entry.get("levels")) or (max(totals) if totals else None)})
+    game_rows.sort(key=lambda g: (TIER_ORDER.get(g["tier"], 3), g["title"].casefold(), g["level"] or 0))
     ordered = sorted(columns.values(), key=lambda c: (harness_rank(c["harness"]), c["harness"], c["model"]))
     return {"games": game_rows, "columns": ordered, "cells": cells}
 

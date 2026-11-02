@@ -17,7 +17,13 @@ Model ids: codex = bare OpenAI ids (`gpt-5.6-sol`); claude-code = `claude-*`;
 opencode/bare = `openrouter/<vendor>/<model>` or `nanogpt/<model>` (opencode declares
 the model in its config, NanoGPT as an OpenAI-compatible provider); antigravity =
 ids from `agy models` (`gemini-3.8-flash-high`). `--provider SLUG` pins one
-OpenRouter upstream (opencode/bare only).
+OpenRouter upstream (opencode/bare) or one NanoGPT host (opencode; sent as
+`provider.only`, because NanoGPT's `X-Provider` header silently falls back on an unknown id).
+opencode also runs `vast/<served-name>`: the self-hosted vLLM on vast.ai behind an SSH
+tunnel (`VAST_LLM_BASE_URL`, default `http://host.docker.internal:18100/v1`, no key). The
+session reads `/v1/models`, declares the server's context as OpenCode's `limit`, so OpenCode
+compacts, asks for xhigh thinking, and records endpoint, weights, limit, thinking and sampling
+in `session.json`. Setup: `docs/research/vast-setup-20261021.md`.
 
 Images on opencode: OpenCode forwards a `-f` image only when the model's config declares
 image input; otherwise it swaps the image for "ERROR: Cannot read … (this model does not
@@ -77,7 +83,7 @@ it to `<dir>/campaign/` for avo) and `<dir>/launcher.json` (`{"container": ...}`
 
 Image `puzzlescript-agents:local` (`harnesses/docker/Dockerfile`, self-contained:
 python 3.12 venv with the controller deps, node 22, `@openai/codex` 0.162.1,
-`@anthropic-ai/claude-code` 2.1.299, `opencode-ai` 1.14.19, `agy` 1.3.5). Per run:
+`@anthropic-ai/claude-code` 2.1.299, `opencode-ai` 1.19.5 (1.14.19 until 2 Nov 2026), `agy` 1.3.5). Per run:
 
 - controller source staged read-only at `/controller` (`client`, `frameworks`,
   `harnesses`; only .py/.md/.txt/.toml; no games, no `.env`, no outputs, no tests);

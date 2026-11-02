@@ -3,12 +3,21 @@
 The other driver (``run.py``, ``driver=controller``) sends one frame per call and gets one action
 back. Here, as in the Harness² paper, the agent gets one task and one working folder that persists
 for the whole run (Harness² places its candidate harness, AGENTS.md, .opencode/, scripts/, there
-first; this is Harness²'s player). With ``--notes`` it is also told to keep notes/strategy.md, the
-Baseline+ instruction. The game is a command in that folder, ``python game.py look | do ACTION | reset``, answered by a small
-server in this process: it owns the game session and the action budget, and records every move
-in the baseline shape (transitions.jsonl, frames/, result.json) so the run page replays it.
-If the agent ends its turn with actions left, it is told to continue in the same session; at
-the end, with the game closed, it writes world_model.md and then solver.py (saved, not run).
+first; this is Harness²'s player). It is told what the controller-driven player is told, word for word
+(frameworks/baseline/prompt.py), but for the line on how to move. The game is a command in that folder,
+``python game.py look | do ACTION`` (RESET is one more action), offered as the ``look`` and ``do`` tools
+to a harness that takes tools, and answered by a small server in this process: it owns the game
+session and the action budget, and records every move in the baseline shape (transitions.jsonl,
+frames/, result.json) so the run page replays it. world_model.md, if the agent writes one, is copied
+after every 100 actions, each completed level and the end (frameworks/world_model.py). If it ends
+its turn with actions left, it is told to continue in the same session; at the end, with the game
+closed, it writes world_model.md as a final report.
+A turn the provider fails is followed by another turn (a fresh session in the same folder when
+the conversation itself cannot go on, e.g. a full context); three failed turns in a row end the
+run. With ``--stop-after-levels N`` the game ends once N levels are completed and the next level
+is never shown: not printed, not in frame.png, and its record is written only after the session.
+``--start-level k`` opens the game at level k (frameworks/levels.py); N then counts from k, so
+``--start-level k --stop-after-levels 1`` is the one-level task, scored in result.json's ``levels``.
 """
 from __future__ import annotations
 
@@ -25,6 +34,8 @@ from pathlib import Path
 from client.arc.arcade_env import ArcadeEnv
 from client.arc.types import FrameData, GameAction, GameState
 from client.engine.utils import last_grid
+from frameworks import levels, world_model
+from frameworks.baseline import prompt as baseline_prompt
 from harnesses.registry import HARNESS_IDS, create_session
 
 RPC_DIR = ".game"
@@ -33,12 +44,19 @@ IDLE_TURNS = 2
 # Provider errors worth retrying when the turn did no work.
 TRANSIENT = ("unavailable", "temporarily", "at capacity", "rate limit", "429", "502", "503", "504",
              "timed out", "timeout", "connection", "stream disconnected", "overloaded")
+# Failed turns in a row (no work done, after those retries) before the run ends with an error.
+FAILED_TURNS = 3
+# Errors after which the conversation itself cannot go on, so the player continues in a fresh session
+# in the same folder. NanoGPT answers a full context with the generic "Invalid request parameters"
+# (20 Oct, Harness² rollout "final": 261k of the 27B's 262k tokens before the failing request).
+SESSION_ENDED = ("invalid request parameters", "context length", "context window", "maximum context",
+                 "too many tokens", "prompt is too long")
 
-GAME_CLI = r'''"""The game. Usage: python game.py look | python game.py do ACTION | python game.py reset"""
+GAME_CLI = r'''"""The game. Usage: python game.py look | python game.py do ACTION"""
 import json, sys, time, uuid
 from pathlib import Path
 
-if len(sys.argv) < 2 or sys.argv[1] not in ("look", "do", "reset") or (sys.argv[1] == "do") != (len(sys.argv) == 3):
+if len(sys.argv) < 2 or sys.argv[1] not in ("look", "do") or (sys.argv[1] == "do") != (len(sys.argv) == 3):
     raise SystemExit(__doc__)
 root = Path(__file__).resolve().parent / ".game"
 name = uuid.uuid4().hex
@@ -54,47 +72,29 @@ print(reply["text"])
 sys.exit(0 if reply["ok"] else 1)
 '''
 
-SYSTEM_PROMPT = """You are playing an unknown puzzle game. Your working folder persists for the whole run: keep notes, write and run your own scripts here, as you find useful.
-
-The game is played only through this command in your folder:
-
-    python game.py look           show the current grid and status; saves the current picture as frame.png (view it with your file reader)
-    python game.py do ACTION      take one game action (e.g. ACTION3); prints what changed and the new grid
-    python game.py reset          restart the current level; costs one action
-
-Actions are opaque names; learn what they do from what changes. Every `do` and `reset` uses one action from your budget. Complete as many levels as you can within the budget. Your own scripts may call `python game.py` too.
-
-Learn about the game only through game.py. Do not search this machine, other folders or the network for the game's files, source code, solutions or server; that is not playing the game."""
-
-NOTES_PROMPT = """
-
-Keep your notes in notes/ in your folder. Before your first game action, write notes/strategy.md with your initial observations, hypotheses and plan. Read it before deciding what to do next, and update it whenever evidence confirms or rejects a hypothesis, your plan changes, you reach a dead end, or a level changes. Keep confirmed facts separate from hypotheses."""
-
-REPORT_PROMPT = (
-    "The game session has ended ({reason}; levels completed {levels}/{total}). Do not use game.py any more. "
-    "Write world_model.md in your folder: the objects, what each action does, the rules you found, the goal, "
-    "and what is still uncertain. Separate confirmed facts from guesses. Then reply 'done'."
-)
-
-SOLVER_PROMPT = (
-    "Last task, still without game.py: write solver.py in your folder, a Python program that plays this game "
-    "from the very first level using what you learned. It must define next_action(grid, levels_completed) -> str, "
-    "taking the current grid (a list of rows of integers, as game.py prints it) and returning one action name; "
-    "it may keep state between calls (e.g. a planned move list). It is saved for reading, not run now. "
-    "Then reply 'done'."
-)
+CONTINUE_PROMPT = ("The game is not finished: levels {levels}/{total}, {left} of {budget} actions left. "
+                   "Keep playing.")
+FAILED_PROMPT = ("The last reply failed; continue playing the game: levels {levels}/{total}, "
+                 "{left} of {budget} actions left. Keep playing.")
+RESTART_PROMPT = ("This is a new session: the previous conversation could not continue. Your folder is as you left "
+                  "it. The game is still running: levels {levels}/{total}, {left} of {budget} actions left. "
+                  "Keep playing.")
 
 
 class GameServer:
     """Answers game.py requests: one game session, one action budget, the full record."""
 
-    def __init__(self, env, workspace: Path, output_dir: Path, max_steps: int, max_wall_seconds: float = 0) -> None:
+    def __init__(self, env, workspace: Path, output_dir: Path, max_steps: int, max_wall_seconds: float = 0,
+                 stop_after_levels: int = 0) -> None:
         self.env, self.workspace, self.output = env, workspace, output_dir
         self.max_steps, self.deadline = max_steps, (time.monotonic() + max_wall_seconds) if max_wall_seconds else None
+        self.stop_after_levels = stop_after_levels
         self.actions: list[str] = []
         self.closed = False  # set once play is over and only the final reports remain
+        self._withheld: tuple[dict, bytes | None] | None = None  # the move that reached the level target
         self.frames = output_dir / "frames"
         self.frames.mkdir(parents=True, exist_ok=True)
+        self.snapshots = world_model.Snapshots(workspace / world_model.NAME, output_dir)
         self.rpc = workspace / RPC_DIR
         self.rpc.mkdir(parents=True, exist_ok=True)
         (workspace / "game.py").write_text(GAME_CLI, encoding="utf-8")
@@ -114,47 +114,68 @@ class GameServer:
         return self.deadline is not None and time.monotonic() >= self.deadline
 
     @property
+    def level_target_reached(self) -> bool:
+        return bool(self.stop_after_levels) and self.frame.levels_completed >= self.stop_after_levels
+
+    @property
     def finished(self) -> bool:
-        return self.solved or len(self.actions) >= self.max_steps or self.out_of_time
+        return self.solved or self.level_target_reached or len(self.actions) >= self.max_steps or self.out_of_time
 
     @property
     def reason(self) -> str:
         if self.solved:
             return "task_goal_reached"
+        if self.level_target_reached:
+            return "level_target_reached"
         if len(self.actions) >= self.max_steps:
             return "step_budget_exhausted"
         return "wall_budget_exhausted" if self.out_of_time else "agent_stopped"
 
     def _status(self) -> str:
         f = self.frame
-        grid = "\n".join(" ".join(str(cell) for cell in row) for row in last_grid(f.frame))
-        available = ", ".join(a.name for a in f.available_actions or []) or "unknown"
-        return (f"state={getattr(f.state, 'value', f.state)} levels={f.levels_completed}/{f.win_levels} "
-                f"actions_used={len(self.actions)}/{self.max_steps}\navailable_actions={available}\n"
-                "grid (one number per visible tile; same picture = same number):\n" + grid)
+        if self.level_target_reached:  # the frame is the next level, which stays unseen
+            return (f"state=OVER levels={f.levels_completed}/{f.win_levels} actions_used={len(self.actions)}/"
+                    f"{self.max_steps}\nThe game is over: the level target is reached.")
+        return baseline_prompt.observation(f, len(self.actions), self.max_steps)
 
-    def _save_picture(self) -> None:
+    def _png(self) -> bytes | None:
         data_url = str(getattr(self.frame.rendered_frame, "data_url", "") or "")
         prefix = "data:image/png;base64,"
-        if data_url.startswith(prefix):
-            png = base64.b64decode(data_url[len(prefix):])
+        return base64.b64decode(data_url[len(prefix):]) if data_url.startswith(prefix) else None
+
+    def _save_picture(self) -> None:
+        png = self._png()
+        if png is not None:
             (self.workspace / "frame.png").write_bytes(png)
             (self.frames / f"{len(self.actions):03d}.png").write_bytes(png)
+
+    def _record(self, record: dict) -> None:
+        with (self.output / "transitions.jsonl").open("a", encoding="utf-8") as stream:
+            stream.write(json.dumps(record) + "\n")
+
+    def release(self) -> None:
+        """Record the move that reached the level target (its after-frame is the next level) once play is over."""
+        if self._withheld is not None:
+            record, png = self._withheld
+            self._withheld = None
+            self._record(record)
+            if png is not None:
+                (self.frames / f"{record['action_index']:03d}.png").write_bytes(png)
 
     # -- commands ---------------------------------------------------------------------
     def handle(self, command: str, action: str) -> tuple[bool, str]:
         if command == "look":
-            return True, self._status() + "\npicture: frame.png"
+            return True, self._status()
         if self.finished or self.closed:
             return False, f"The game session is over ({self.reason}). No more actions."
-        if command == "reset":
-            return self._act("RESET", self.env.reset)
         try:
             game_action = GameAction[action.strip().upper()]
         except KeyError:
-            return False, f"Unknown action {action!r}. {self._status()}"
+            return False, f"Unknown action {action!r}.\n{self._status()}"
+        if game_action is GameAction.RESET:
+            return self._act("RESET", self.env.reset)
         if self.frame.available_actions and game_action not in self.frame.available_actions:
-            return False, f"{game_action.name} is not available. {self._status()}"
+            return False, f"{game_action.name} is not available.\n{self._status()}"
         return self._act(game_action.name, lambda: self.env.step(game_action))
 
     def _act(self, name: str, call) -> tuple[bool, str]:
@@ -171,20 +192,20 @@ class GameServer:
                   "decision": len(self.actions), "action_index": len(self.actions), "action": name,
                   "before": side(before, before_grid), "after": side(self.frame, after_grid),
                   "changed": before_grid != after_grid, "changed_cells": changed, "note": ""}
-        with (self.output / "transitions.jsonl").open("a", encoding="utf-8") as stream:
-            stream.write(json.dumps(record) + "\n")
-        self._save_picture()
+        if self.level_target_reached:
+            self._withheld = (record, self._png())  # written by release(), after the session
+        else:
+            self._record(record)
+            self._save_picture()
+        self.snapshots.after_action(len(self.actions), before.levels_completed, self.frame.levels_completed)
         # Mirror the agent's notes so the run page shows them while it plays (as baseline+ does).
         if (self.workspace / "notes").is_dir():
             shutil.copytree(self.workspace / "notes", self.output / "workspace" / "notes", dirs_exist_ok=True)
-        if self.frame.levels_completed > before.levels_completed:
-            what = f"LEVEL COMPLETED ({self.frame.levels_completed}/{self.frame.win_levels}). The grid below is the next level."
-        elif len(before_grid) != len(after_grid) or (before_grid and len(before_grid[0]) != len(after_grid[0])):
-            what = "The grid changed size."
-        else:
-            what = ("changed " + ", ".join(f"({c['row']},{c['col']}) {c['before']}->{c['after']}" for c in changed[:40])
-                    if changed else "nothing changed")
-        return True, f"{name}: {what}\n{self._status()}"
+        if self.level_target_reached:
+            return True, (f"{name}: LEVEL COMPLETED ({self.frame.levels_completed}/{self.frame.win_levels}). "
+                          "Level target reached; the game is over.")
+        last = baseline_prompt.change(name, before_grid, after_grid, before.levels_completed, self.frame)
+        return True, baseline_prompt.observation(self.frame, len(self.actions), self.max_steps, last)
 
     # -- request loop -----------------------------------------------------------------
     def start(self) -> "GameServer":
@@ -229,53 +250,87 @@ def _turn(session, instruction: str, timeout: float | None):
 
 
 def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provider: str, max_steps: int,
-         max_wall_seconds: float, harness_dir: Path | None, notes: bool = False, max_turns: int = 40) -> dict:
+         max_wall_seconds: float, harness_dir: Path | None, notes: bool = False, max_turns: int = 40,
+         stop_after_levels: int = 0, start_level: int = 1) -> dict:
+    """``env`` already opens at ``start_level``; ``stop_after_levels`` counts from it."""
     output_dir.mkdir(parents=True, exist_ok=True)
     workspace = Path(tempfile.mkdtemp(prefix="agent-player-"))
     if harness_dir is not None:
         shutil.copytree(harness_dir, workspace, dirs_exist_ok=True)
-    server = GameServer(env, workspace, output_dir, max_steps, max_wall_seconds).start()
-    session = create_session(harness)
-    turns, idle, error = 0, 0, ""
+    server = GameServer(env, workspace, output_dir, max_steps, max_wall_seconds,
+                        levels.stop_target(start_level, stop_after_levels)).start()
+
+    def open_session(turn_number: int = 0):
+        new = create_session(harness)
+        new.game_tools = baseline_prompt.game_tools("agent", new)
+        new.start(workspace, baseline_prompt.system_prompt("agent", bool(new.game_tools)), model, effort, "player",
+                  output_dir, provider=provider)
+        new.turn_number = turn_number  # raw/turn-<n>.jsonl keeps counting across sessions
+        return new
+
+    def status() -> dict:
+        f = server.frame
+        return {"levels": f.levels_completed, "total": f.win_levels, "left": max_steps - len(server.actions),
+                "budget": max_steps}
+
+    session = None
+    turns, idle, error, failed_in_a_row = 0, 0, "", 0
+    failed_turns: list[dict] = []
     try:
-        session.start(workspace, SYSTEM_PROMPT + (NOTES_PROMPT if notes else ""), model, effort, "player", output_dir,
-                      provider=provider)
-        instruction = (f"Play the game now. You have {max_steps} actions. Start with `python game.py look`, "
-                       "then keep playing until the game is solved or the actions run out.")
+        session = open_session()
+        instruction = baseline_prompt.first_message(max_steps, start_level, server.frame)
         while not server.finished and turns < max_turns and idle < IDLE_TURNS:
             used = len(server.actions)
             remaining = None if server.deadline is None else max(1.0, server.deadline - time.monotonic())
             result = _turn(session, instruction, remaining)
             turns += 1
             if result.error and not result.timed_out and not _worked(result):
-                raise RuntimeError(f"{harness} turn {turns} failed: {result.error}")
+                failed_in_a_row += 1
+                restart = any(word in result.error.lower() for word in SESSION_ENDED)
+                failed_turns.append({"turn": turns, "action_count": len(server.actions), "error": result.error,
+                                     "new_session": restart and failed_in_a_row < FAILED_TURNS})
+                if failed_in_a_row >= FAILED_TURNS:
+                    raise RuntimeError(f"{harness} turn {turns} failed ({failed_in_a_row} in a row): {result.error}")
+                if restart:
+                    session.close()
+                    if (output_dir / "session.json").is_file():  # keep the ended session's manifest
+                        (output_dir / "session.json").replace(output_dir / f"session-{turns}.json")
+                    session = open_session(session.turn_number)
+                    instruction = RESTART_PROMPT.format(**status())
+                else:
+                    instruction = FAILED_PROMPT.format(**status())
+                continue
+            failed_in_a_row = 0
             idle = idle + 1 if len(server.actions) == used else 0
-            f = server.frame
-            instruction = (f"The game is not finished: levels {f.levels_completed}/{f.win_levels}, "
-                           f"{max_steps - len(server.actions)} of {max_steps} actions left. Keep playing with python game.py.")
+            instruction = CONTINUE_PROMPT.format(**status())
         reason = server.reason if server.finished else ("agent_idle" if idle >= IDLE_TURNS else "turn_budget_exhausted")
         # Missing reports leave the rollout's score intact; the coach then sees no world_model.md.
         server.closed = True
-        _turn(session, REPORT_PROMPT.format(reason=reason, levels=server.frame.levels_completed,
-                                            total=server.frame.win_levels), 600)
-        _turn(session, SOLVER_PROMPT, 900)
+        _turn(session, baseline_prompt.REPORT_PROMPT.format(reason=reason, levels=server.frame.levels_completed,
+                                                            total=server.frame.win_levels), 600)
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
         reason = "error"
     finally:
         server.stop()
-        session.close()
-        for name in ("world_model.md", "solver.py"):
+        if session is not None:
+            session.close()
+        server.release()
+        for name in (world_model.NAME, "solver.py"):
             if (workspace / name).is_file():
                 shutil.copyfile(workspace / name, output_dir / name)
+        server.snapshots.final()
         shutil.copytree(workspace, output_dir / "workspace", dirs_exist_ok=True, ignore=shutil.ignore_patterns(RPC_DIR))
         shutil.rmtree(workspace, ignore_errors=True)
     result = {"status": "error" if error else "completed", "reason": reason, "error": error or None,
               "solved": server.solved, "actions": server.actions, "action_count": len(server.actions),
               "agent_turns": turns, "final_state": getattr(server.frame.state, "value", str(server.frame.state)),
               "levels_completed": server.frame.levels_completed, "win_levels": server.frame.win_levels,
+              "stop_after_levels": stop_after_levels or None, "failed_turns": failed_turns,
               "world_model": str(output_dir / "world_model.md") if (output_dir / "world_model.md").is_file() else None,
-              "solver": str(output_dir / "solver.py") if (output_dir / "solver.py").is_file() else None}
+              "solver": str(output_dir / "solver.py") if (output_dir / "solver.py").is_file() else None,
+              **levels.result_fields(output_dir / "transitions.jsonl", getattr(env, "game_id", ""), start_level,
+                                     stop_after_levels)}
     (output_dir / "result.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     return result
 
@@ -290,10 +345,20 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--backend-url", required=True)
     parser.add_argument("--max-steps", type=int, default=200)
     parser.add_argument("--max-wall-seconds", type=int, default=0)
-    parser.add_argument("--harness-dir", type=Path, help="Files placed in the folder before the session (Harness²).")
-    parser.add_argument("--notes", action="store_true", help="Tell the agent to keep notes/strategy.md (Baseline+).")
+    parser.add_argument("--harness-dir", type=Path,
+                        help="Files placed in the folder before the session (Harness² harness, Baseline start folder).")
+    parser.add_argument("--start", default="", help="The Baseline start folder's name, recorded in run_config.json.")
+    parser.add_argument("--start-level", type=int, default=1,
+                        help="Open the game at this level (1-based, message screens not counted).")
+    parser.add_argument("--stop-after-levels", type=int, default=0,
+                        help="End the game once this many levels are completed, counted from the start level; "
+                             "the next level stays unseen.")
+    parser.add_argument("--notes", action="store_true",
+                        help="Recorded only: since 2 Nov 2026 the shared baseline prompt always offers the folder for notes.")
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
+    if args.start_level < 1:
+        parser.error("--start-level must be 1 or more")
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
     (output / "run_config.json").write_text(json.dumps({
@@ -301,10 +366,17 @@ def main(argv: list[str] | None = None) -> None:
         "harness": args.harness,
         "provider": args.provider, "model": args.model, "reasoning_effort": args.effort, "game_id": args.game_id,
         "backend_url": args.backend_url, "max_steps": args.max_steps, "max_wall_seconds": args.max_wall_seconds,
+        "start": args.start or None, "stop_after_levels": args.stop_after_levels or None,
+        "start_level": args.start_level,
     }, indent=2), encoding="utf-8")
-    result = play(ArcadeEnv(game_id=args.game_id, backend_url=args.backend_url), output, harness=args.harness,
-                  model=args.model, effort=args.effort, provider=args.provider, max_steps=args.max_steps,
-                  max_wall_seconds=args.max_wall_seconds, harness_dir=args.harness_dir, notes=args.notes)
+    try:  # a level beyond the game's last one, or a game service without start levels
+        env = ArcadeEnv(game_id=args.game_id, backend_url=args.backend_url, start_level=args.start_level)
+        result = play(env, output, harness=args.harness, model=args.model, effort=args.effort,
+                      provider=args.provider, max_steps=args.max_steps, max_wall_seconds=args.max_wall_seconds,
+                      harness_dir=args.harness_dir, notes=args.notes, stop_after_levels=args.stop_after_levels,
+                      start_level=args.start_level)
+    except (ValueError, RuntimeError) as exc:
+        raise SystemExit(f"error: {exc}") from exc
     print(f"levels_completed={result['levels_completed']} actions={result['action_count']} reason={result['reason']}")
 
 

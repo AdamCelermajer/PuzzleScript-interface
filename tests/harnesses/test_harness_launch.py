@@ -1,4 +1,4 @@
-"""Registry, launcher, in-container entry, bare loop, baseline wipe and the AVO CliAgent."""
+"""Registry, launcher, in-container entry, bare loop, baseline workspace and the AVO CliAgent."""
 import argparse
 import json
 from pathlib import Path
@@ -27,6 +27,7 @@ def private_root(tmp_path, monkeypatch):
     ("claude-code", "claude-haiku-5-5", ("anthropic", "claude-haiku-5-5")),
     ("opencode", "openrouter/qwen/qwen3.8-27b", ("openrouter", "qwen/qwen3.8-27b")),
     ("bare", "nanogpt/deepseek/deepseek-v4.1-flash", ("nanogpt", "deepseek/deepseek-v4.1-flash")),
+    ("opencode", "vast/q3.8-27b-fp8", ("vast", "q3.8-27b-fp8")),
     ("antigravity", "gemini-3.8-flash-high", ("google", "gemini-3.8-flash-high")),
 ])
 def test_models_resolve_per_harness(harness, model, expected):
@@ -36,6 +37,7 @@ def test_models_resolve_per_harness(harness, model, expected):
 @pytest.mark.parametrize("harness,model", [
     ("codex", "openrouter/qwen/qwen3.8-27b"), ("codex", "claude-haiku-5-5"), ("claude-code", "gpt-5.6-sol"),
     ("opencode", "gpt-5.6-sol"), ("bare", "openrouter/qwen"), ("antigravity", "openrouter/a/b"), ("nope", "x"),
+    ("bare", "vast/q3.8-27b-fp8"), ("opencode", "vast/"),
 ])
 def test_wrong_model_for_harness_is_rejected(harness, model):
     with pytest.raises(HarnessError):
@@ -51,7 +53,8 @@ def test_listing_shape_readiness_and_models_hook():
         assert entry["efforts"] == ["low", "medium", "high", "xhigh", "max"]
     assert listing["claude-code"]["ready"] and listing["opencode"]["ready"]
     assert listing["opencode"]["models"] == [{"id": "openrouter/a/b", "label": "openrouter/a/b"},
-                                             {"id": "nanogpt/a/b", "label": "nanogpt/a/b"}]
+                                             {"id": "nanogpt/a/b", "label": "nanogpt/a/b"},
+                                             {"id": "vast/a/b", "label": "vast/a/b"}]
     assert not list_harnesses(env={})[1]["ready"]
     assert HARNESSES["claude-code"]["models"][0]["id"].startswith("claude-")
 
@@ -61,6 +64,18 @@ def test_credentials_are_per_harness_and_provider():
     assert credentials_for("claude-code", ["claude-haiku-5-5"]) == ["CLAUDE_CODE_OAUTH_TOKEN"]
     assert credentials_for("antigravity", ["gemini-3.8-flash-low"]) == ["agy-volume"]
     assert credentials_for("bare", ["openrouter/a/b", "nanogpt/c"]) == ["NANOGPT_API_KEY", "OPENROUTER_API_KEY"]
+    assert credentials_for("opencode", ["vast/q3.8-27b-fp8"]) == ["VAST_LLM_BASE_URL"]
+
+
+def test_vast_endpoint_is_staged_with_its_default_and_never_the_account_key(tmp_path):
+    docker, child = launch.stage_credentials("opencode", ["vast/q3.8-27b-fp8"], tmp_path, env={})
+    assert docker == ["--env", "VAST_LLM_BASE_URL"] and child == {"VAST_LLM_BASE_URL": "http://host.docker.internal:18100/v1"}
+    _, child = launch.stage_credentials("opencode", ["vast/q3.8-27b-fp8"], tmp_path,
+                                        env={"VAST_LLM_BASE_URL": "http://other:1/v1", "VAST_API_KEY": "account-secret"})
+    assert child == {"VAST_LLM_BASE_URL": "http://other:1/v1"}
+    assert list_harnesses(env={})[HARNESS_IDS.index("opencode")]["ready"]  # no key needed
+    with pytest.raises(HarnessError):
+        launch.validate(options(harness="opencode", model="vast/q3.8-27b-fp8", provider="deepinfra"), BASELINE)
 
 
 # ---------------------------------------------------------------- launch
@@ -93,13 +108,16 @@ def test_backend_url_rewrites_host_loopback():
 def test_run_spec_records_framework_and_options():
     spec = launch.run_spec(options(), BASELINE)
     assert spec["schema"] == "run-spec-v2" and spec["framework"] == "baseline"
-    assert spec["options"] == {"max_steps": 3, "notes": True, "driver": "controller"} and spec["max_wall_seconds"] == 0
+    assert spec["options"] == {"max_steps": 3, "driver": "controller", "memento": False, "start": "",
+                               "stop_after_levels": 0, "start_level": 1, "one_level": False} and spec["max_wall_seconds"] == 0
     assert spec["optimizer_model"] is None and spec["continued_from"] is None
     campaign = launch.run_spec(options(framework="avo", harness="opencode", model="openrouter/qwen/qwen3.8-27b",
                                        max_evaluations=2, research_moves=30, max_steps=None, notes=None), AVO)
     assert campaign["optimizer_model"] == "openrouter/qwen/qwen3.8-27b" and campaign["optimizer_effort"] == "low"
     assert campaign["options"] == {"max_evaluations": 2, "research_moves": 30, "solver_moves": 400,
-                                   "world_model_mode": "final-only"}
+                                   "world_model_mode": "final-only", "fitness": "solver",
+                                   "research_moves_schedule": "", "attempt_world_model": False, "final_solver": False,
+                                   "continue_levels": False}
 
 
 @pytest.mark.parametrize("overrides", [
@@ -110,7 +128,13 @@ def test_invalid_launch_options(overrides):
         launch.validate(options(**overrides), BASELINE)
 
 
-@pytest.mark.parametrize("given", [{"max_steps": 0}, {"notes": "yes"}, {"research_moves": 5}])
+def test_nanogpt_host_pin_needs_opencode():
+    launch.validate(options(harness="opencode", model="nanogpt/qwen/qwen3.8-27b:thinking", provider="deepinfra"), BASELINE)
+    with pytest.raises(HarnessError, match="NanoGPT"):
+        launch.validate(options(harness="bare", model="nanogpt/qwen/qwen3.8-27b:thinking", provider="deepinfra"), BASELINE)
+
+
+@pytest.mark.parametrize("given", [{"max_steps": 0}, {"notes": True}, {"research_moves": 5}])
 def test_framework_options_are_checked(given):
     with pytest.raises(ValueError):
         BASELINE.check_options(given)
@@ -120,7 +144,9 @@ def test_registry_describes_every_framework():
     listing = {entry["id"]: entry for entry in list_frameworks()}
     assert set(listing) == set(FRAMEWORKS) and json.dumps(listing)
     assert listing["avo"]["optimizer"] and listing["avo"]["restart"] == "resume"
-    assert BASELINE.variant_label({"notes": True}) == "Baseline+" and AVO.variant_label({}) == "AVO"
+    assert BASELINE.variant_label({}) == "Baseline" and AVO.variant_label({}) == "AVO · solver score"  # older AVO runs
+    assert AVO.variant_label({"fitness": "research"}) == "AVO · research score"
+    assert BASELINE.variant_label({"notes": False}) == "Baseline · no notes (old)"  # recorded before 21 Oct
     for framework in FRAMEWORKS.values():
         framework.check_options({})  # every default is valid
 
@@ -197,11 +223,12 @@ def launch_args(tmp_path, *extra):
 
 def test_dry_run_prints_command_without_writing(tmp_path, capsys, monkeypatch):
     monkeypatch.setenv("OPENROUTER_API_KEY", "unit-test")
-    code = launch.launch(["--framework", "baseline", "--max-steps", "2", "--notes", *launch_args(tmp_path)])
+    code = launch.launch(["--framework", "baseline", "--max-steps", "2", *launch_args(tmp_path)])
     printed = json.loads(capsys.readouterr().out)
     assert code == 0 and not (tmp_path / "run").exists()
     assert printed["run_spec"]["backend_url"] == "http://host.docker.internal:8000"
-    assert printed["run_spec"]["options"] == {"max_steps": 2, "notes": True, "driver": "controller"}
+    assert printed["run_spec"]["options"] == {"max_steps": 2, "driver": "controller", "memento": False, "start": "",
+                                              "stop_after_levels": 0, "start_level": 1, "one_level": False}
     assert printed["command"][-3:] == ["harnesses.entry", "--spec", "/results/run_spec.json"]
     assert "--env" in printed["command"] and "OPENROUTER_API_KEY" in printed["command"]
 
@@ -247,18 +274,31 @@ def test_avo_entry_argv():
     assert value("--max-wall-seconds") == "0" and value("--world-model-mode") == "between-hypotheses"
     assert value("--provider") == "deepinfra" and "game_id=ps_modality-v1" in argv
     assert Path(value("--output-dir")).as_posix() == "/results/campaign"
+    assert value("--fitness") == "solver"  # a spec from before the fitness option
+    research = AVO.entry({**SPEC, "options": {**SPEC["options"], "fitness": "research"}}, False, Path("/r"), Path("/p"))
+    assert research[research.index("--fitness") + 1] == "research"
+
+
+def test_avo_resume_keeps_the_fitness(tmp_path):
+    campaign = tmp_path / "campaign"
+    campaign.mkdir()
+    (campaign / "lineage.json").write_text("{}")
+    (campaign / "evolution_config.json").write_text(json.dumps(
+        {"harness": "opencode", "provider": "deepinfra", "profile_settings": {"game_id": "ps_modality-v1"},
+         "world_model_mode": "between-hypotheses"}))  # recorded before the fitness option: solver
+    AVO.check_restart(SPEC, tmp_path)
+    with pytest.raises(ValueError, match="fitness"):
+        AVO.check_restart({**SPEC, "options": {**SPEC["options"], "fitness": "research"}}, tmp_path)
 
 
 def test_baseline_entry_argv_and_continuation():
     spec = {**SPEC, "framework": "baseline", "harness": "claude-code", "model": "claude-haiku-5-5", "provider": "",
-            "max_wall_seconds": 60, "options": {"max_steps": 3, "notes": True}, "continued_from": "C:/runs/parent"}
+            "max_wall_seconds": 60, "options": {"max_steps": 3}, "continued_from": "C:/runs/parent"}
     argv = BASELINE.entry(spec, False, Path("/results"), Path("/parent"))
     assert argv[:2] == ["frameworks.baseline.run", "--no-window"]
     assert "--notes" in argv and argv[argv.index("--max-steps") + 1] == "3"
     assert argv[argv.index("--max-wall-seconds") + 1] == "60"
     assert Path(argv[argv.index("--continue-from") + 1]).as_posix() == "/parent"
-    assert "--notes" not in BASELINE.entry({**spec, "options": {"max_steps": 3, "notes": False}}, False,
-                                           Path("/results"), Path("/parent"))
 
 
 def test_harness2_launch_flags_spec_and_entry(tmp_path, capsys, monkeypatch):
@@ -270,7 +310,10 @@ def test_harness2_launch_flags_spec_and_entry(tmp_path, capsys, monkeypatch):
             "--dry-run"]
     assert launch.launch(args) == 0
     config = json.loads(capsys.readouterr().out)["run_spec"]
-    assert config["framework"] == "harness2" and config["options"] == {"k": 1, "recursion": "sequential", "max_steps": 20}
+    assert config["framework"] == "harness2" and config["options"] == {"k": 1, "recursion": "sequential", "max_steps": 20,
+                                                                       "stop_after_levels": 0, "levels": 0,
+                                                                       "budgets": "30,50,100,200,500",
+                                                                       "skip_below_shortest": False, "max_rounds": 5}
     assert config["optimizer_model"] == "openrouter/anthropic/claude-opus-4.8" and config["optimizer_effort"] == "high"
     argv = HARNESS2.entry(config, True, Path("/results"), Path("/parent"))
     assert argv[0] == "frameworks.harness2.run" and argv[-1] == "--resume"
@@ -289,6 +332,7 @@ def test_opencode_error_event_with_zero_exit_is_a_failed_turn(tmp_path, monkeypa
                                  "player", tmp_path / "analysis") as session:
         result = session.turn("go")
     assert result.error == "Insufficient credits" and result.text == ""
+    assert json.loads((tmp_path / "analysis/sent.jsonl").read_text())["instruction"] == "go"
 
 
 def test_entry_copies_codex_auth_into_a_writable_home(tmp_path, monkeypatch):
@@ -335,6 +379,7 @@ def test_bare_loop_runs_tools_without_credentials(tmp_path, monkeypatch):
     assert "must-not-leak" not in result.events[0]["output"]
     assert result.events[2]["exit_code"] == 1 and result.usage["input"] == 10
     assert session.messages[0]["content"].startswith("S") and (tmp_path / "analysis/raw/turn-1.jsonl").is_file()
+    assert json.loads((tmp_path / "analysis/sent.jsonl").read_text())["instruction"] == "go"
 
 
 # ---------------------------------------------------------------- direct player session
@@ -363,8 +408,9 @@ class FakeHarness:
         pass
 
 
-@pytest.mark.parametrize("enabled,kept", [(False, ["frame.png"]), (True, ["frame.png", "notes"])])
-def test_baseline_wipe_keeps_only_frames_and_notes(tmp_path, monkeypatch, enabled, kept):
+@pytest.mark.parametrize("enabled,kept", [(False, ["frame.png", "scratch.py", "tmpdir"]),
+                                          (True, [".act", "act.py", "frame.png", "notes", "scratch.py", "tmpdir"])])
+def test_baseline_keeps_every_file_between_turns(tmp_path, monkeypatch, enabled, kept):
     from frameworks.baseline import session as module
     monkeypatch.setattr("harnesses.registry.create_session", lambda harness: FakeHarness())
     frame = tmp_path / "f.png"
@@ -380,7 +426,56 @@ def test_baseline_wipe_keeps_only_frames_and_notes(tmp_path, monkeypatch, enable
     if enabled:
         assert (output / "workspace/notes/strategy.md").read_text() == "turn 2"
     manifest = json.loads((output / "isolation_manifest.json").read_text())
-    assert manifest["harness"] == "claude-code" and "delete everything else" in manifest["workspace_policy"]
+    assert manifest["harness"] == "claude-code" and "nothing deleted" in manifest["workspace_policy"]
+
+
+class ActingHarness(FakeHarness):
+    """Submits the action with act.py instead of replying with JSON."""
+    action = "ACTION3"
+
+    def turn(self, instruction, images=(), timeout=None):
+        import subprocess
+        import sys
+        self.turn_number += 1
+        done = subprocess.run([sys.executable, "act.py", self.action, "--note", "why"], cwd=self.workspace,
+                              capture_output=True, text=True)
+        again = subprocess.run([sys.executable, "act.py", self.action], cwd=self.workspace,
+                               capture_output=True, text=True)
+        assert self.stop_check() and "Your turn ends now" in done.stdout and "already submitted" in again.stderr
+        return TurnResult(text="", session_id="s", usage={}, events=[{"type": "command"}])
+
+
+def test_baseline_act_py_submits_the_action(tmp_path, monkeypatch):
+    import subprocess
+    import sys
+    from frameworks.baseline import session as module
+    monkeypatch.setattr("harnesses.registry.create_session", lambda harness: ActingHarness())
+    config = module.GameSessionConfig(model="claude-haiku-5-5", harness="claude-code", workspace_enabled=True)
+    workspace = tmp_path / "ws"
+    with module.CliGameSession(config, workspace, tmp_path / "out") as game:
+        game.available_actions = ["ACTION3", "ACTION4"]
+        assert game.next_action("p") == {"operation": "ACT", "action": "ACTION3", "note": "why"}
+        assert not game.session.stop_check()  # nothing stays submitted between turns
+        refused = subprocess.run([sys.executable, "act.py", "ACTION3"], cwd=workspace, capture_output=True, text=True)
+        assert "No game turn is open" in refused.stderr
+        ActingHarness.action = "ACTION1"
+        try:
+            with pytest.raises(AssertionError):
+                game.next_action("p")  # not available this turn: act.py refuses, nothing submitted
+        finally:
+            ActingHarness.action = "ACTION3"
+
+
+def test_run_streaming_stops_when_asked(tmp_path):
+    import os
+    import sys
+    from harnesses.base import run_streaming
+    lines = []
+    code, timed_out, _ = run_streaming(
+        [sys.executable, "-c", "import time\nfor i in range(50):\n print(i, flush=True); time.sleep(0.1)"],
+        cwd=tmp_path, env=dict(os.environ), timeout=30, raw_path=tmp_path / "raw.jsonl",
+        on_line=lines.append, should_stop=lambda line: line == "2")
+    assert code == 0 and not timed_out and lines == ["0", "1", "2"]
 
 
 # ---------------------------------------------------------------- AVO CliAgent
@@ -442,12 +537,30 @@ def test_cli_agent_raises_when_the_cli_fails_without_working(tmp_path, monkeypat
 def test_baseline_driver_agent_runs_the_agent_player():
     spec = {"framework": "baseline", "harness": "opencode", "model": "nanogpt/qwen/qwen3.8-27b:thinking", "effort": "medium",
             "game_id": "ps_modality-v1", "backend_url": "http://host.docker.internal:8000", "provider": "",
-            "max_wall_seconds": 0, "options": BASELINE.check_options({"driver": "agent", "notes": True, "max_steps": 50})}
+            "max_wall_seconds": 0, "options": BASELINE.check_options({"driver": "agent", "max_steps": 50})}
     argv = BASELINE.entry(spec, False, Path("/results"), Path("/parent"))
-    assert argv[0] == "frameworks.baseline.agent" and argv[-1] == "--notes" and argv[argv.index("--max-steps") + 1] == "50"
+    assert argv[0] == "frameworks.baseline.agent" and "--notes" not in argv and argv[argv.index("--max-steps") + 1] == "50"
     assert BASELINE.entry({**spec, "options": {**spec["options"], "driver": "controller"}}, False,
                           Path("/results"), Path("/parent"))[0] == "frameworks.baseline.run"
-    assert BASELINE.variant_label(spec["options"]) == "Baseline+ · agent"
-    assert BASELINE.variant_label({"notes": False}) == "Baseline"  # runs recorded before the driver option
+    assert BASELINE.variant_label(spec["options"]) == "Baseline · agent"
+    assert BASELINE.variant_label({"driver": "agent", "notes": True}) == "Baseline · agent · notes"  # older runs
     with pytest.raises(ValueError, match="cannot be continued"):
         BASELINE.entry({**spec, "continued_from": "/runs/parent"}, False, Path("/results"), Path("/parent"))
+
+
+def test_baseline_level_options_reach_both_drivers():
+    spec = {"framework": "baseline", "harness": "opencode", "model": "m", "effort": "medium", "game_id": "ps_modality-v1",
+            "backend_url": "http://host.docker.internal:8001", "provider": "", "max_wall_seconds": 0}
+    for driver in ("agent", "controller"):
+        options = BASELINE.check_options({"driver": driver, "start_level": 3, "one_level": True})
+        argv = BASELINE.entry({**spec, "options": options}, False, Path("/results"), Path("/parent"))
+        assert argv[argv.index("--start-level") + 1] == "3" and argv[argv.index("--stop-after-levels") + 1] == "1"
+    plain = BASELINE.entry({**spec, "options": BASELINE.check_options({})}, False, Path("/results"), Path("/parent"))
+    assert "--start-level" not in plain and "--stop-after-levels" not in plain
+    assert BASELINE.variant_label({"driver": "agent", "start_level": 3, "one_level": True}) == "Baseline · agent · level 3"
+    assert BASELINE.variant_label({"driver": "agent", "start_level": 3}) == "Baseline · agent · from level 3"
+    assert BASELINE.variant_label({"driver": "agent", "start_level": 2, "stop_after_levels": 2}) ==         "Baseline · agent · levels 2-3"
+    with pytest.raises(ValueError, match="one-level"):
+        BASELINE.check_options({"one_level": True, "stop_after_levels": 2})
+    with pytest.raises(ValueError, match="start-level"):
+        BASELINE.check_options({"start_level": 0})

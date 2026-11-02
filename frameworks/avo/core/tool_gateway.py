@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
+from frameworks.avo.core import player_view
 from frameworks.avo.core.framework import Action, AvoLaboratory, Observation, _jsonable
 from frameworks.avo.core.profile import EnvironmentProfile, TaskEvaluation
 
@@ -30,8 +31,17 @@ class AvoToolGateway:
         solver_self_check: Callable[[int, int], Mapping[str, Any]] | None = None,
         max_solver_self_checks: int = 2,
         max_solver_self_check_steps: int = 1_500,
+        on_step: Callable[[int, float, float], None] | None = None,
+        solver: bool = True,
+        final_report: str | None = None,
     ) -> None:
         self.laboratory = laboratory
+        # AVO3's attempt_world_model: one last turn asking the player to write world_model.md.
+        self.final_report = final_report
+        # Called after every environment step with (steps taken, fitness before, fitness after).
+        self.on_step = on_step
+        # False for AVO's research score (frameworks/avo/research_score.py): no solver, no self-checks.
+        self.solver = solver
         self.profile = profile
         self.budget = budget or GatewayBudget()
         self.solver_self_check = solver_self_check
@@ -45,6 +55,11 @@ class AvoToolGateway:
         self._supervisor_attention: list[dict[str, Any]] = []
         self._checkpoints: dict[str, str] = {}
         self._lock = threading.Lock()
+
+    def finalization_instruction(self) -> str | None:
+        """The end-of-attempt world-model report, asked once after the run is finished."""
+        report, self.final_report = self.final_report, None
+        return report
 
     def initialize(self) -> Observation:
         if self.laboratory.current is None:
@@ -82,7 +97,7 @@ class AvoToolGateway:
         }
 
     def _budget_payload(self) -> dict[str, Any]:
-        return {
+        budgets = {
             "environment_steps_used": self.environment_steps,
             "environment_steps_remaining": max(
                 0, self.budget.max_environment_steps - self.environment_steps
@@ -91,11 +106,13 @@ class AvoToolGateway:
                 0.0,
                 self.budget.max_wall_seconds - (time.monotonic() - self.started_at),
             ),
-            "solver_self_checks_used": len(self.self_checks),
-            "solver_self_checks_remaining": max(
-                0, self.max_solver_self_checks - len(self.self_checks)
-            ),
         }
+        if self.solver:
+            budgets["solver_self_checks_used"] = len(self.self_checks)
+            budgets["solver_self_checks_remaining"] = max(
+                0, self.max_solver_self_checks - len(self.self_checks)
+            )
+        return budgets
 
     def _evaluate_solver(self, params: Mapping[str, Any]) -> dict[str, Any]:
         if self.solver_self_check is None:
@@ -160,12 +177,23 @@ class AvoToolGateway:
         self.laboratory.store.append("image_requested", result)
         return result
 
-    def _history_payload(self) -> dict[str, Any]:
-        return {
-            "transitions": _jsonable(self.laboratory.history),
-            "count": len(self.laboratory.history),
-            "episodes": self.laboratory.episode,
-        }
+    def _history_payload(self, params: Mapping[str, Any]) -> dict[str, Any]:
+        """One recorded move with every board, or a page of one-line move summaries."""
+        history = self.laboratory.history
+        result: dict[str, Any] = {"count": len(history), "episodes": self.laboratory.episode}
+        if params.get("move") is not None:
+            move = int(params["move"])
+            if not 1 <= move <= len(history):
+                raise ValueError(f"No move {move}; {len(history)} moves are recorded")
+            return {**result, "move": _jsonable(history[move - 1])}
+        limit = int(params.get("limit") or player_view.HISTORY_PAGE)
+        offset = params.get("offset")
+        offset = max(0, len(history) - limit) if offset is None else int(offset)
+        if limit < 1 or offset < 0:
+            raise ValueError("offset must be at least 0 and limit at least 1")
+        selected = history[offset:offset + limit]
+        return {**result, "offset": offset, "limit": limit,
+                "moves": [player_view.move_summary(_jsonable(transition)) for transition in selected]}
 
     def _supervisor_payload(self) -> dict[str, Any]:
         return {
@@ -185,6 +213,10 @@ class AvoToolGateway:
             '"revised approach"`.'
         )
 
+    def _notify_step(self, fitness_before: float, fitness_after: float) -> None:
+        if self.on_step is not None:
+            self.on_step(self.environment_steps, fitness_before, fitness_after)
+
     def _check_environment_budget(self) -> None:
         if self.finished:
             raise RuntimeError(f"Run already finished: {self.finish_reason}")
@@ -203,9 +235,11 @@ class AvoToolGateway:
             "agent_reset_requested",
             {"episode": self.laboratory.episode, "reason": reason},
         )
+        fitness_before = self._task_evaluation().fitness
         current = self.laboratory.restart_episode(reason)
         self.environment_steps += 1
         task = self._task_payload()
+        self._notify_step(fitness_before, task["fitness"])
         self.laboratory.store.append("task_evaluated", task)
         return {
             "episode": self.laboratory.episode,
@@ -319,6 +353,7 @@ class AvoToolGateway:
             "agent_decision",
             {"action": Action(action_id), "rationale": rationale},
         )
+        fitness_before = self._task_evaluation().fitness
         result = self.laboratory.step(Action(action_id, dict(params.get("data", {}))))
         self.environment_steps += 1
         redirects = [
@@ -331,6 +366,7 @@ class AvoToolGateway:
             self.laboratory.store.append("supervisor_paused", redirects)
         task = self._task_payload()
         self.laboratory.store.append("task_evaluated", task)
+        self._notify_step(fitness_before, task["fitness"])
         return {
             "transition": _jsonable(result.transition),
             "evaluations": _jsonable(result.evaluations),
@@ -351,7 +387,7 @@ class AvoToolGateway:
                 self.initialize()
                 return self._task_payload()
             if method == "history":
-                return self._history_payload()
+                return self._history_payload(params)
             if method == "archive":
                 return self._archive_workspace(params)
             if method == "evaluate_solver":
@@ -396,7 +432,8 @@ Use only the evidence returned by these commands.
 python avo_tool.py observe
 python avo_tool.py image
 python avo_tool.py mission
-python avo_tool.py history
+python avo_tool.py history [--offset N --limit N]
+python avo_tool.py history --move N
 python avo_tool.py archive .
 python avo_tool.py evaluate_solver --max-actions N
 python avo_tool.py probe ACTION_ID --rationale "why this experiment"
@@ -412,8 +449,17 @@ You own the workspace. Organize notes, programs, simulations, tests, and interme
 files however you find useful. The required final deliverable is documented by the task
 prompt; there is no framework-owned internal hypothesis format.
 
+`probe`, `observe`, `reset` and `restore` print plain text: the state, levels, available
+actions and the current board, one row per line, with the path of its image. A move can
+produce several boards: the board before it, then one per engine step (for example while
+something slides). Only the last, the current board, is shown; `probe` also lists the cells
+that changed since the previous board and the move's number of engine steps. `history` lists
+recorded moves, the latest 20 unless `--offset N --limit N` picks others; `history --move N`
+prints every board of move N in order. Every board stays in the run record. Observations
+that are not boards are printed as compact JSON.
+
 `image` requests the lossless PNG of the current observation without taking a game
-action. Open the returned `rendered_frame.path` with your `view_image` tool to see
+action. Open the returned `rendered_frame.path` with your own file or image tool to see
 the image; the command itself returns metadata, not image pixels in its text output.
 Images are viewed on demand. Each request is recorded with its episode and observation
 fingerprint, and the original PNG remains in the run artifacts. Environments without
@@ -438,6 +484,13 @@ run but does not declare success; only the task evaluator can do that. Do not
 edit `.avo_rpc/`. Before returning, archive the workspace so its contents become
 part of the run record.
 """
+
+# AVO's research score (frameworks/avo/research_score.py) has no solver, so no self-check.
+RESEARCH_AGENT_INTERFACE = AGENT_INTERFACE.replace(
+    "python avo_tool.py evaluate_solver --max-actions N\n", ""
+).replace(
+    AGENT_INTERFACE[AGENT_INTERFACE.index("`evaluate_solver` launches"):AGENT_INTERFACE.index("Reset starts")], ""
+)
 
 
 AGENT_CLI = r'''from __future__ import annotations
@@ -470,15 +523,20 @@ def call(method, params=None):
             continue
         if not data.get("ok"):
             raise SystemExit(data.get("error", "AVO tool failed"))
-        print(json.dumps(data["result"], indent=2))
+        result = data["result"]
+        print(result if isinstance(result, str) else json.dumps(result, indent=2))
         return
     raise SystemExit("AVO tool timed out")
 
 
 parser = argparse.ArgumentParser()
 sub = parser.add_subparsers(dest="method", required=True)
-for name in ("observe", "image", "mission", "history", "status"):
+for name in ("observe", "image", "mission", "status"):
     sub.add_parser(name)
+history = sub.add_parser("history")
+history.add_argument("--move", type=int)
+history.add_argument("--offset", type=int)
+history.add_argument("--limit", type=int)
 probe = sub.add_parser("probe")
 probe.add_argument("action_id")
 probe.add_argument("--rationale", default="")
@@ -498,7 +556,10 @@ evaluate_solver = sub.add_parser("evaluate_solver")
 evaluate_solver.add_argument("--max-actions", type=int, default=1500)
 args = parser.parse_args()
 params = {}
-if args.method == "probe":
+if args.method == "history":
+    params.update({key: value for key, value in (("move", args.move), ("offset", args.offset),
+                                                 ("limit", args.limit)) if value is not None})
+elif args.method == "probe":
     params.update(action_id=args.action_id, rationale=args.rationale)
 elif args.method == "reset":
     params["reason"] = args.reason
@@ -547,7 +608,7 @@ class FileToolServer:
         self.rpc_root.mkdir(parents=True, exist_ok=True)
         (self.workspace / "avo_tool.py").write_text(AGENT_CLI, encoding="utf-8")
         (self.workspace / "AGENT_INTERFACE.md").write_text(
-            AGENT_INTERFACE,
+            AGENT_INTERFACE if getattr(self.gateway, "solver", True) else RESEARCH_AGENT_INTERFACE,
             encoding="utf-8",
         )
         (self.workspace / "MISSION.md").write_text(
@@ -582,11 +643,10 @@ class FileToolServer:
                     finally:
                         # The complete payload is now in memory; never retain uploads.
                         request_path.unlink(missing_ok=True)
-                    result = self.gateway.handle(
-                        str(request.get("method", "")),
-                        request.get("params", {}),
-                    )
-                    response = {"id": request_id, "ok": True, "result": self.model_view.present(result)}
+                    method = str(request.get("method", ""))
+                    result = self.model_view.present(self.gateway.handle(method, request.get("params", {})))
+                    text = player_view.render(method, result)
+                    response = {"id": request_id, "ok": True, "result": result if text is None else text}
                 except Exception as exc:
                     response = {
                         "id": request_id,

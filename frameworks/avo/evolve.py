@@ -10,13 +10,15 @@ from typing import Any
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from frameworks.avo import research_score
 from frameworks.avo.client.turns import AgentConfig, CliAgent
 from frameworks.avo.core.framework import _jsonable
 from frameworks.avo.core.profile import load_profile
 from frameworks.avo.evolution.evaluator import CandidateEvaluator, PlayerEvaluationConfig
 from frameworks.avo.evolution.gateway import EvolutionBudget, EvolutionGateway
 from frameworks.avo.evolution.store import EvolutionStore
-from frameworks.avo.evolution.tool_server import EvolutionFileToolServer
+from frameworks.avo.evolution.tool_server import (EvolutionFileToolServer, OPTIMIZER_INTERFACE,
+                                                  RESEARCH_OPTIMIZER_INTERFACE)
 from frameworks.avo.run_once import PlayerRunSettings
 from frameworks.avo.isolation import ISOLATION_VERSION, IsolationError, new_workspace
 from harnesses.registry import HARNESS_IDS
@@ -74,10 +76,29 @@ def main() -> None:
     parser.add_argument("--max-evaluations", type=int, default=10)
     parser.add_argument("--max-wall-seconds", type=float, default=14_400)
     parser.add_argument("--world-model-mode", choices=("off", "final-only", "between-hypotheses"), default=None)
+    parser.add_argument("--fitness", choices=research_score.FITNESS_MODES, default=None,
+                        help="solver (default): levels the candidate's solver.py completes from a fresh reset; "
+                             "research: levels its research session completes, with no solver")
+    parser.add_argument("--research-moves-schedule", default="",
+                        help="AVO3: research moves per attempt, in order (e.g. 30,50,100,200,500); "
+                             "a crashed attempt retries the same budget")
+    parser.add_argument("--attempt-world-model", action="store_true",
+                        help="AVO3: the research player writes world_model.md at the end of every attempt")
+    parser.add_argument("--final-solver", action="store_true",
+                        help="AVO3: after the campaign the player writes solver.py from what it learned; it is played "
+                             "once alone on a fresh game (--fresh-solver-max-environment-steps), for information")
+    parser.add_argument("--continue-levels", action="store_true",
+                        help="each research session starts at the level where the previous one stopped "
+                             "(frameworks/levels.py); solvers are still played from level 1")
     parser.add_argument("--harness", choices=HARNESS_IDS, default="codex",
                         help="Agent harness for both optimizer and player")
     parser.add_argument("--provider", default="", help="Pin one OpenRouter provider slug for all agents")
     args = parser.parse_args()
+    from frameworks.avo.framework import research_schedule
+    schedule = research_schedule(args.research_moves_schedule)
+    if schedule:  # one attempt per budget; the first budget also sizes the defaults
+        args.max_evaluations = len(schedule)
+        args.player_max_environment_steps = schedule[0]
 
     overrides = dict(_setting(item) for item in args.set)
     run_id = datetime.now().strftime("%Y%m%dT%H%M%S")
@@ -102,8 +123,15 @@ def main() -> None:
         saved_harness = LEGACY_HARNESS.get(saved.get("harness", "codex"), saved.get("harness", "codex"))
         if saved_harness != args.harness or saved.get("provider", "") != args.provider:
             raise ValueError("Cannot change the agent harness while continuing a campaign")
+        args.fitness = args.fitness or saved.get("fitness", "solver")
+        if saved.get("fitness", "solver") != args.fitness:
+            raise ValueError("Cannot change the fitness while continuing a campaign")
     elif args.world_model_mode is None:
         args.world_model_mode = "final-only"
+    args.fitness = args.fitness or "solver"
+    research = args.fitness == "research"
+    if research:  # the research objective and task prompt
+        loaded_for_metadata = research_score.research_profile(loaded_for_metadata)
     initial_path = root / "initial_observation.json"
     if initial_path.is_file():
         initial_observation = json.loads(initial_path.read_text(encoding="utf-8"))
@@ -136,16 +164,19 @@ def main() -> None:
     player_settings = PlayerRunSettings(
         model=args.player_model,
         effort=args.player_effort,
-        base_prompt=args.player_base_prompt or PlayerRunSettings.base_prompt,
+        base_prompt=args.player_base_prompt or (research_score.BASE_PROMPT if research
+                                                else PlayerRunSettings.base_prompt),
         max_environment_steps=args.player_max_environment_steps,
         max_wall_seconds=args.player_max_wall_seconds,
         max_agent_turns=args.player_max_agent_turns,
-        max_solver_self_checks=args.player_max_solver_self_checks,
+        max_solver_self_checks=0 if research else args.player_max_solver_self_checks,
         solver_self_check_max_environment_steps=(
             args.solver_self_check_max_environment_steps
         ),
         harness=args.harness,
         provider=args.provider,
+        fitness=args.fitness,
+        final_world_model=args.attempt_world_model,
     )
     evaluator = CandidateEvaluator(
         PlayerEvaluationConfig(
@@ -153,6 +184,7 @@ def main() -> None:
             profile_settings=overrides,
             player=player_settings,
             fresh_solver_max_environment_steps=args.fresh_solver_max_environment_steps,
+            level_progress=root / "level_progress.json" if args.continue_levels else None,
         )
     )
     gateway = EvolutionGateway(
@@ -161,7 +193,7 @@ def main() -> None:
         mission=(
             f"Improve complete player-agent candidates for profile "
             f"{loaded_for_metadata.implementation.profile_id!r}.\n\n"
-            f"Environment objective: {loaded_for_metadata.implementation.objective}\n\n"
+            f"Inner player's objective: {loaded_for_metadata.implementation.objective}\n\n"
             f"The fixed evaluator allows {args.max_evaluations} candidate evaluations."
         ),
         initial_observation=initial_observation,
@@ -170,8 +202,24 @@ def main() -> None:
             max_wall_seconds=args.max_wall_seconds,
         ),
         world_model_mode=args.world_model_mode,
+        research_moves_schedule=tuple(schedule),
     )
+    if schedule:
+        gateway.mission += (
+            "\n\nEach evaluation's research session gets a larger move budget than the one before: "
+            + ", ".join(f"attempt {i + 1}: {moves}" for i, moves in enumerate(schedule))
+            + ". The status command shows the next attempt's budget; size each hypothesis to it. "
+            + ("" if args.continue_levels else "Every attempt starts from a fresh reset at level 1.")
+        )
+    if args.continue_levels:
+        gateway.mission += (
+            "\n\nEach attempt's research session starts at the level where the previous attempt stopped, "
+            "not at level 1; levels already passed are not replayed. "
+            + ("The score is the farthest level reached." if research
+               else "Solvers and their self-checks are still played from level 1, over the whole game.")
+        )
     if args.world_model_mode == "between-hypotheses":
+        reread = "before each new plan" if research else "before solver changes or self-checks"
         gateway.mission += (
             "\n\nBefore registering every hypothesis, including x_0001, write "
             "drafts/CANDIDATE_ID/seed/world_model.md with the current entity map, "
@@ -179,7 +227,7 @@ def main() -> None:
             "contradictions. Reconcile the parent's learned model against saved transitions. "
             "The inner session receives this as world_model.md in its workspace root and "
             "must update that same file after decisive experiments, reread it after "
-            "compaction and before solver changes or self-checks, and cite episode/history "
+            f"compaction and {reread}, and cite episode/history "
             "transition numbers. Make this memory protocol explicit in STRATEGY.md."
         )
     if args.resume_saved_campaign:
@@ -205,7 +253,9 @@ def main() -> None:
         "profile_settings": _jsonable(overrides),
         "objective": loaded_for_metadata.implementation.objective,
         "initial_observation": str(initial_path),
-        "fitness_owner": "fresh solver levels completed",
+        "fitness": args.fitness,
+        "fitness_owner": ("research session levels completed, fewer actions breaking ties" if research
+                          else "fresh solver levels completed"),
         "player": _jsonable(player_settings),
         "fresh_solver_max_environment_steps": args.fresh_solver_max_environment_steps,
         "harness": args.harness,
@@ -216,18 +266,23 @@ def main() -> None:
         "max_evaluations": args.max_evaluations,
         "max_wall_seconds": args.max_wall_seconds,
         "world_model_mode": args.world_model_mode,
+        "research_moves_schedule": schedule,
+        "attempt_world_model": args.attempt_world_model,
+        "final_solver": args.final_solver,
+        "continue_levels": args.continue_levels,
     }
     (root / "evolution_config.json").write_text(
         json.dumps(config, indent=2),
         encoding="utf-8",
     )
 
-    tool_server = EvolutionFileToolServer(gateway, optimizer_workspace)
+    tool_server = EvolutionFileToolServer(
+        gateway, optimizer_workspace, interface=RESEARCH_OPTIMIZER_INTERFACE if research else OPTIMIZER_INTERFACE)
     optimizer = CliAgent(
         AgentConfig(
             model=args.optimizer_model,
             effort=args.optimizer_effort,
-            prompt_path=OUTER_PROMPT,
+            prompt_path=research_score.OUTER_PROMPT if research else OUTER_PROMPT,
             task_instructions=gateway.mission,
             max_turns=args.optimizer_max_agent_turns,
             analysis_dir=root / "optimizer_analysis",
@@ -261,9 +316,15 @@ def main() -> None:
         "best_evaluation": store.population_summary()["best"],
     }
     (root / "world_model.json").write_text(json.dumps(_jsonable(report_record), indent=2), encoding="utf-8")
+    final_solver = None
+    if args.final_solver:  # AVO3: information only, never the score (frameworks/avo/final_solver.py)
+        from frameworks.avo.final_solver import run_final_solver
+        final_solver = run_final_solver(root=root, evaluations=store.evaluations(), profile=args.profile,
+                                        profile_settings=overrides, player=player_settings,
+                                        max_steps=args.fresh_solver_max_environment_steps)
     summary = {
         "success": gateway.success and (args.world_model_mode == "off" or report_present),
-        "solver_success": gateway.success,
+        ("research_success" if research else "solver_success"): gateway.success,
         "status": "completed" if args.world_model_mode == "off" or report_present else "failed",
         "finish_reason": result.finish_reason,
         "optimizer_turns": result.turns,
@@ -272,6 +333,7 @@ def main() -> None:
         "optimizer_events": str(root / "optimizer_analysis" / "agent_events.jsonl"),
         "output_dir": str(root),
         "world_model": report_record,
+        **({"final_solver": final_solver} if final_solver is not None else {}),
     }
     (root / "evolution_summary.json").write_text(
         json.dumps(_jsonable(summary), indent=2),

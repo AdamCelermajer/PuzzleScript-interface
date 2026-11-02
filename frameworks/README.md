@@ -6,9 +6,9 @@ Docker container by `python -m harnesses.launch`.
 
 | id | folder | what it is | options | restart |
 |---|---|---|---|---|
-| `baseline` | `baseline/` | the coding agent plays the game itself, no outer method; `driver` sets who drives it: `controller` (`run.py`, we send one frame per call and get one action) or `agent` (`agent.py`, the agent plays through `python game.py` in a folder that persists) | `max_steps`, `notes` (on = "Baseline+"), `driver` | `--continue-from PARENT` into a new directory (controller only) |
-| `avo` | `avo/` | an optimizer agent evolves a player's strategy; each candidate's `solver.py` is scored by a fresh run | `max_evaluations`, `research_moves`, `solver_moves`, `world_model_mode`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
-| `harness2` | `harness2/` | Harness²: a coach edits the harness files (AGENTS.md, skills, scripts) of an agent that plays through `game.py` in its own folder, from run outcomes; the kept harness is re-run fresh | `k`, `recursion`, `max_steps`; plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
+| `baseline` | `baseline/` | the coding agent plays the game itself, no outer method; `driver` sets who drives it: `controller` (`run.py`, we send one frame per call and get one action) or `agent` (`agent.py`, the agent plays through `python game.py` in a folder that persists) | `max_steps`, `driver`, `stop_after_levels` (end once N levels are done, without showing the next one); agent driver only: `start` (a repository folder whose files the agent's folder starts with). The controller always gives the agent a `notes/` folder and asks it to keep its working memory there (until 21 Oct 2026 this was the `notes` option, "Baseline+") | `--continue-from PARENT` into a new directory (controller only) |
+| `avo` | `avo/` | an optimizer agent evolves a player's strategy; each candidate's `solver.py` is scored by a fresh run ("AVO · solver score"), or with `fitness=research` there is no solver and a candidate scores the levels its research session completes, fewer actions breaking ties ("AVO · research score", `avo/research_score.py`) | `max_evaluations`, `research_moves`, `solver_moves` (unused under the research score), `world_model_mode`, `fitness` (`solver`/`research`); plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory (keeps the fitness) |
+| `harness2` | `harness2/` | Harness²: a coach edits the harness files (AGENTS.md, skills, scripts) of an agent that plays through `game.py` in its own folder, from run outcomes; the kept harness is re-run fresh | `k`, `recursion`, `max_steps`, `stop_after_levels` (per player run); plus `--optimizer-model/--optimizer-effort` | `--resume` in the same directory |
 
 The launcher, the container entry (`harnesses/entry.py`) and the workbench read only the
 interface in `base.py`, through `registry.py`:
@@ -21,6 +21,9 @@ interface in `base.py`, through `registry.py`:
 - `optimizer`, `artifact` (subfolder the framework writes its records to, e.g. AVO's
   `campaign/`), `restart` and `check_restart`, and `variant` (display name for a set of
   options).
+- `check(options)`: a host-side check across options (e.g. Baseline's `start` needs the agent
+  driver); `prepare(spec, run_dir)`: host-side, before the container starts, copies what the run
+  needs into its directory (Baseline's `start` folder becomes `<run>/start/`).
 
 ## Adding a framework
 

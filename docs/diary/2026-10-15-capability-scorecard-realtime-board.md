@@ -6,6 +6,7 @@ runs: [20261013T152559-avo-max-92c30e52, 20261013T173422-avo-flash-modality-reco
 commits: []
 docs: [docs/research/capability-scorecard-modality-20261015.md, docs/research/realtime-llm-controllers-direction.md, docs/board/]
 reconstructed: false
+brief: true
 ---
 ## Did
 - Scored Max, Flash and 27B on the proposal's seven capabilities, plus verification, using only existing Modality evidence. Produced a Markdown report and JSON.

@@ -38,10 +38,13 @@ if __package__ in {None, ""}:
 from frameworks.base import Framework
 from frameworks.registry import FRAMEWORK_IDS, get_framework
 from harnesses.base import EFFORTS, HarnessError
+from harnesses.model_provider import API_PROVIDERS
 from harnesses.registry import (AGY_VOLUME, HARNESS_IDS, IMAGE, ROOT, codex_auth_path, credentials_for,
                                 docker_object_exists, env_values, list_harnesses, resolve_model_for)
 
 DEFAULT_ROOT = ROOT / "output"
+# Provider variables that may be unset (the vast.ai endpoint URL).
+ENV_DEFAULTS = {details["env_key"]: details["default"] for details in API_PROVIDERS.values() if details.get("default")}
 CONTROLLER_TREES = ("client", "frameworks", "harnesses")
 SKIPPED_PARTS = {"output", "outputs", "__pycache__", ".venv", "rules", "tests", "legacy", "games", "docker",
                  "node_modules", "codex_request_capture"}
@@ -106,8 +109,10 @@ def validate(options: argparse.Namespace, framework: Framework) -> None:
     models = [options.model] + ([options.optimizer_model] if framework.optimizer and options.optimizer_model else [])
     for model in models:
         provider, _ = resolve_model_for(options.harness, model)
-        if options.provider and provider != "openrouter":
-            raise HarnessError("--provider pins an OpenRouter upstream; it needs openrouter/... models")
+        if options.provider and provider not in {"openrouter", "nanogpt"}:
+            raise HarnessError("--provider pins an upstream host; it needs openrouter/... or nanogpt/... models")
+        if options.provider and provider == "nanogpt" and options.harness != "opencode":
+            raise HarnessError("--provider pins a NanoGPT host with the opencode harness only")
     if options.provider and options.harness not in {"opencode", "bare"}:
         raise HarnessError("--provider applies to the opencode and bare harnesses only")
     if options.max_wall_seconds < 0:
@@ -139,9 +144,10 @@ def stage_credentials(harness: str, models: list[str], credentials: Path,
                                    "`uv run python -m harnesses.launch login antigravity` first")
             options += ["--mount", f"type=volume,src={AGY_VOLUME},dst={CONTAINER_GEMINI}"]
         else:
-            if not values.get(need):
+            value = values.get(need) or ENV_DEFAULTS.get(need, "")
+            if not value:
                 raise HarnessError(f"{harness} needs {need} in .env or the environment")
-            child_env[need] = values[need]
+            child_env[need] = value
             options += ["--env", need]
     return options, child_env
 
@@ -190,7 +196,8 @@ def build_parser(framework: Framework | None = None) -> argparse.ArgumentParser:
     parser.add_argument("--backend-url", required=True)
     parser.add_argument("--output-dir", default="")
     parser.add_argument("--max-wall-seconds", type=int, default=0, help="0 = unlimited")
-    parser.add_argument("--provider", default="", help="OpenRouter upstream pin (opencode/bare only)")
+    parser.add_argument("--provider", default="",
+                        help="Upstream host pin: OpenRouter (opencode/bare) or NanoGPT (opencode)")
     parser.add_argument("--memory", default="4g")
     parser.add_argument("--cpus", default="2")
     parser.add_argument("--dry-run", action="store_true", help="print the docker command and exit")
@@ -267,6 +274,8 @@ def launch(argv: list[str]) -> int:
             "started_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "command": command,
         }, indent=2), encoding="utf-8")
         stage_controller(Path(controller))
+        if framework.prepare:
+            framework.prepare(spec, output)
         print(f"[harnesses.launch] {framework.id} {options.harness} {options.model} -> {output} (container {name})",
               flush=True)
         return _run_owned(command, name, child_env)
