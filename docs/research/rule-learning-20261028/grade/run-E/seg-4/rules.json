@@ -1,0 +1,34 @@
+[
+ {
+  "id": "M1",
+  "rule": "Controls: four moves (up, down, left, right). There is no use for an action button."
+ },
+ {
+  "id": "M2",
+  "rule": "Walking into a crate pushes it one cell (Sokoban push); crates cannot be pulled."
+ },
+ {
+  "id": "M3",
+  "rule": "A crate cannot be pushed into another crate or off the grid; the push is refused."
+ },
+ {
+  "id": "M4",
+  "rule": "Floor colour restricts the player: a step from a white (light) tile onto a black (dark) tile, or from black onto white, is refused."
+ },
+ {
+  "id": "M5",
+  "rule": "Grey tiles connect both colours: the player can step onto grey from white or black, and from grey onto white or black."
+ },
+ {
+  "id": "M6",
+  "rule": "Pushing also depends on floor: a player on white/grey can push only a crate standing on white/grey, a player on black only a crate standing on black; otherwise the push is refused."
+ },
+ {
+  "id": "M7",
+  "rule": "The crate itself is not restricted by colour: a pushed crate may move onto any floor colour (which changes who can push it next)."
+ },
+ {
+  "id": "M8",
+  "rule": "Win: when every crate is on a target (blue tile) the level is completed and the next level loads."
+ }
+]

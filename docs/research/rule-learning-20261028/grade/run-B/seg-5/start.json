@@ -1,0 +1,44 @@
+{
+ "I1": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: Hypothesis: 4 = 4 directions, 1 = other verb (interact/jump/toggle)."
+ },
+ "I2": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: The creature slides in the specified direction until it hits a wall/block."
+ },
+ "I3": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: the box slides until it hits a wall, and the creature slides until it hits the box."
+ },
+ "I4": {
+  "belief": "correct",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: Chain push: box (8,6) pushed box (7,6); box (7,6) was absorbed by the blue door (6,6)"
+ },
+ "I5": {
+  "belief": "correct",
+  "source": "thinking",
+  "notebook": "partial",
+  "note": "T: Both directions thoroughly tested. I'm confident: blue = always blocked."
+ },
+ "I6": {
+  "belief": "correct",
+  "source": "thinking",
+  "notebook": "partial",
+  "note": "T: So: gold door = horizontal passage open (at least in the direction of exit)!"
+ },
+ "I7": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: Given the consistency, plant-stop is almost certainly the goal"
+ }
+}

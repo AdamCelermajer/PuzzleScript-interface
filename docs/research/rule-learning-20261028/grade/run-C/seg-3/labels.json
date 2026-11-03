@@ -1,0 +1,22 @@
+[
+ {"cp": 31, "labels": {
+  "M1": {"belief": "partial", "source": "both", "notebook": "partial"},
+  "M2": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M3": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M4": {"belief": "partial", "source": "thinking", "notebook": "correct", "note": "T: Since the game is presumably winnable, at least some B-W edges must be open."},
+  "M5": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M6": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M7": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M8": {"belief": "correct", "source": "both", "notebook": "correct"}
+ }},
+ {"cp": 32, "labels": {
+  "M1": {"belief": "partial", "source": "both", "notebook": "partial"},
+  "M2": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M3": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M4": {"belief": "partial", "source": "thinking", "notebook": "correct"},
+  "M5": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M6": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M7": {"belief": "correct", "source": "both", "notebook": "correct"},
+  "M8": {"belief": "correct", "source": "both", "notebook": "correct"}
+ }}
+]

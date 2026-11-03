@@ -1,0 +1,421 @@
+[
+ {
+  "cp": 0,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: ACTION1 = up... ACTION3 = left... ACTION4 = right confirmed; also believes ACTION7 on checkerboard launches player"
+   },
+   "M2": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: blocked because the box is there (can't walk onto a box, only push)"
+   },
+   "M3": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: Push left: O->(1,-1) off-grid. Fail. ... O (1,0)->(0,0)? BLUE is there. Fail."
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: White->black direct crossing at (2,2)->(2,3) is also blocked. So the boundary is completely two-way"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: Door: (1,2) is the sole passage between the black area and the white room."
+   },
+   "M6": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: no belief about floor affecting pushes"
+   },
+   "M7": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: no belief about crates on floor colours"
+   },
+   "M8": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: only 'maybe one ... is a box and the other is a goal'; not adopted"
+   }
+  }
+ },
+ {
+  "cp": 1,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M2": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M3": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M6": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   },
+   "M7": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   },
+   "M8": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 2,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: Pushing: walk into box; box moves 1 cell if destination free; else both blocked (observed)."
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: box moves 1 cell if destination free; else both blocked (observed)."
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: if the player's destination is blocked, the push is invalid. So this push is invalid."
+   },
+   "M7": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial",
+    "note": "T: the box must be able to cross the boundary... I'll assume the box can cross"
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: Win: box lands on goal marker => instant level advance (L1)."
+   }
+  }
+ },
+ {
+  "cp": 3,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M7": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   }
+  }
+ },
+ {
+  "cp": 4,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M7": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   }
+  }
+ },
+ {
+  "cp": 5,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M7": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   }
+  }
+ },
+ {
+  "cp": 6,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "M7": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   }
+  }
+ },
+ {
+  "cp": 7,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M6": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial",
+    "note": "T: if (4,2) were a white cell covered by the box, then the push (5,2)W->(4,2)W would be allowed!"
+   },
+   "M7": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   }
+  }
+ },
+ {
+  "cp": 8,
+  "labels": {
+   "M1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M4": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M6": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial"
+   },
+   "M7": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   }
+  }
+ }
+]

@@ -1,0 +1,50 @@
+{
+ "M1": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: So: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION7=undo the immediately preceding move."
+ },
+ "M2": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: PUSHABLE BOX (Sokoban): pushing = character moves into it, box moves 1 cell same direction"
+ },
+ "M3": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: blocked if box would go off-grid or into wall/box"
+ },
+ "M4": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "N: Hidden walls ... (0,1)-(0,2): WALL; (2,2)-(2,3): WALL (tested both sides)"
+ },
+ "M5": {
+  "belief": "absent",
+  "source": "none",
+  "notebook": "absent",
+  "note": "T: no belief yet; only reading game.py and planning first look"
+ },
+ "M6": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: the edge (3,3)-(3,2) is blocked ... This confirms it: the box can't cross the dark tile\u2192blue tile edge"
+ },
+ "M7": {
+  "belief": "absent",
+  "source": "none",
+  "notebook": "absent",
+  "note": "T: My assumption that \"dark\u2192blue is always a wall\" was wrong \u2014 walls exist per edge."
+ },
+ "M8": {
+  "belief": "correct",
+  "source": "thinking",
+  "notebook": "partial",
+  "note": "T: Level 1 complete! Pushing the box onto the blue tile was the goal. Confirmed: blue (0) = target"
+ }
+}

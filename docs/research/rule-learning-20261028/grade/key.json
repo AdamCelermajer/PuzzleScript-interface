@@ -1,0 +1,32 @@
+{
+ "A": {
+  "run": "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0003",
+  "game": "ps_knightoban-v1",
+  "driver": "controller"
+ },
+ "B": {
+  "run": "20261021T144508-vast-fp8-harness2-153a4dc2/run-0002/rollouts/base1",
+  "game": "ps_icecrates-v1",
+  "driver": "agent"
+ },
+ "C": {
+  "run": "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0001",
+  "game": "ps_modality-v1",
+  "driver": "controller"
+ },
+ "D": {
+  "run": "20261021T144508-vast-fp8-harness2-153a4dc2/run-0003/rollouts/base1",
+  "game": "ps_knightoban-v1",
+  "driver": "agent"
+ },
+ "E": {
+  "run": "20261021T144508-vast-fp8-harness2-153a4dc2/run-0001/rollouts/base1",
+  "game": "ps_modality-v1",
+  "driver": "agent"
+ },
+ "F": {
+  "run": "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0002",
+  "game": "ps_icecrates-v1",
+  "driver": "controller"
+ }
+}

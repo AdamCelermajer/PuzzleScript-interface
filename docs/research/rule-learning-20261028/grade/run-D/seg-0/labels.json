@@ -1,0 +1,337 @@
+[
+ {
+  "cp": 0,
+  "labels": {
+   "K1": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "N: Mapping of ACTION1..5,7 to movement/interactions."
+   },
+   "K2": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "N: The player likely moves with some of the actions; others may interact/teleport/etc."
+   },
+   "K3": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "N: red hollow square/frame (tile 3) at (3,4)"
+   },
+   "K4": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "N: red hollow square/frame (tile 3) at (3,4)"
+   },
+   "K5": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "N: Mapping of ACTION1..5,7 to movement/interactions."
+   },
+   "K6": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "N: Mapping of ACTION1..5,7 to movement/interactions."
+   },
+   "K7": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "N: Goal unknown: maybe push/bring dark square to frame, or align items."
+   }
+  }
+ },
+ {
+  "cp": 1,
+  "labels": {
+   "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right ... ACTION5 = interact/commit"
+   },
+   "K2": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   },
+   "K3": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "N: Player steps onto bright ring tile: ring disappears; DARK ring + DASHED ring appear above and below the socket"
+   },
+   "K4": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   },
+   "K5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket"
+   },
+   "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: ACTION5 (while frozen): removes dashed ring, dark ring -> bright ring at same spot. Player UNFROZEN"
+   },
+   "K7": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 2,
+  "labels": {
+   "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K2": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   },
+   "K3": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   },
+   "K5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K7": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 3,
+  "labels": {
+   "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K2": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   },
+   "K3": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: Bright ring: an object; the player cannot step on it (it blocks)."
+   },
+   "K5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K7": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 4,
+  "labels": {
+   "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K2": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: (1,5)→up was blocked (\"no change\") — so row 0 is a wall"
+   },
+   "K3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial",
+    "note": "T: The pair is a vertical bar centered on the tile 2 tiles ahead of the player's entry direction"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K7": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 5,
+  "labels": {
+   "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K2": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K7": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: So level 1's goal: place the bright ring on top of the socket."
+   }
+  }
+ },
+ {
+  "cp": 6,
+  "labels": {
+   "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K2": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K7": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 7,
+  "labels": {
+   "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K2": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct"
+   },
+   "K7": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   }
+  }
+ }
+]

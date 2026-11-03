@@ -1,0 +1,583 @@
+{
+ "game": "ps_modality-v1",
+ "driver": "controller",
+ "run": "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0001",
+ "levelups": [
+  {
+   "minutes": 8.96,
+   "gen_tokens": 37793,
+   "proc_tokens": 1245854,
+   "tool_calls": 40,
+   "actions": 25,
+   "levels": 1,
+   "level": 1
+  },
+  {
+   "minutes": 15.24,
+   "gen_tokens": 55569,
+   "proc_tokens": 4045152,
+   "tool_calls": 77,
+   "actions": 60,
+   "levels": 2,
+   "level": 2
+  },
+  {
+   "minutes": 54.47,
+   "gen_tokens": 194495,
+   "proc_tokens": 14820665,
+   "tool_calls": 183,
+   "actions": 155,
+   "levels": 3,
+   "level": 3
+  }
+ ],
+ "totals": {
+  "minutes": 107.45,
+  "gen_tokens": 364614,
+  "proc_tokens": 24962795,
+  "tool_calls": 263,
+  "actions": 226,
+  "levels": 3
+ },
+ "checkpoints": [
+  {
+   "cp": 0,
+   "t": 1792589550.31,
+   "why": [
+    "thinking"
+   ],
+   "actions": 22,
+   "levels": 0,
+   "minutes": 8.66,
+   "gen_tokens": 33324,
+   "tool_calls": 37,
+   "notebook_version": null,
+   "notebook_changed": false,
+   "thinking_chars": 102106
+  },
+  {
+   "cp": 1,
+   "t": 1792589569.999,
+   "why": [
+    "level 1 completed",
+    "moves"
+   ],
+   "actions": 25,
+   "levels": 1,
+   "minutes": 8.98,
+   "gen_tokens": 37978,
+   "tool_calls": 41,
+   "notebook_version": null,
+   "notebook_changed": false,
+   "thinking_chars": 279
+  },
+  {
+   "cp": 2,
+   "t": 1792589782.109,
+   "why": [
+    "notebook"
+   ],
+   "actions": 25,
+   "levels": 1,
+   "minutes": 12.52,
+   "gen_tokens": 37978,
+   "tool_calls": 41,
+   "notebook_version": 0,
+   "notebook_changed": true,
+   "thinking_chars": 28186
+  },
+  {
+   "cp": 3,
+   "t": 1792589858.309,
+   "why": [
+    "notebook"
+   ],
+   "actions": 39,
+   "levels": 1,
+   "minutes": 13.79,
+   "gen_tokens": 52379,
+   "tool_calls": 56,
+   "notebook_version": 1,
+   "notebook_changed": true,
+   "thinking_chars": 2579
+  },
+  {
+   "cp": 4,
+   "t": 1792589908.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 50,
+   "levels": 1,
+   "minutes": 14.63,
+   "gen_tokens": 54594,
+   "tool_calls": 68,
+   "notebook_version": 1,
+   "notebook_changed": false,
+   "thinking_chars": 1356
+  },
+  {
+   "cp": 5,
+   "t": 1792589946.999,
+   "why": [
+    "level 2 completed"
+   ],
+   "actions": 60,
+   "levels": 2,
+   "minutes": 15.27,
+   "gen_tokens": 55738,
+   "tool_calls": 78,
+   "notebook_version": 1,
+   "notebook_changed": false,
+   "thinking_chars": 607
+  },
+  {
+   "cp": 6,
+   "t": 1792590169.7089999,
+   "why": [
+    "notebook"
+   ],
+   "actions": 60,
+   "levels": 2,
+   "minutes": 18.98,
+   "gen_tokens": 55738,
+   "tool_calls": 78,
+   "notebook_version": 2,
+   "notebook_changed": true,
+   "thinking_chars": 38166
+  },
+  {
+   "cp": 7,
+   "t": 1792590311.909,
+   "why": [
+    "notebook"
+   ],
+   "actions": 71,
+   "levels": 2,
+   "minutes": 21.35,
+   "gen_tokens": 77513,
+   "tool_calls": 90,
+   "notebook_version": 3,
+   "notebook_changed": true,
+   "thinking_chars": 16915
+  },
+  {
+   "cp": 8,
+   "t": 1792590332.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 75,
+   "levels": 2,
+   "minutes": 21.7,
+   "gen_tokens": 82060,
+   "tool_calls": 95,
+   "notebook_version": 3,
+   "notebook_changed": false,
+   "thinking_chars": 382
+  },
+  {
+   "cp": 9,
+   "t": 1792590898.65,
+   "why": [
+    "thinking"
+   ],
+   "actions": 75,
+   "levels": 2,
+   "minutes": 31.13,
+   "gen_tokens": 82060,
+   "tool_calls": 95,
+   "notebook_version": 3,
+   "notebook_changed": false,
+   "thinking_chars": 110475
+  },
+  {
+   "cp": 10,
+   "t": 1792590904.7089999,
+   "why": [
+    "notebook"
+   ],
+   "actions": 75,
+   "levels": 2,
+   "minutes": 31.23,
+   "gen_tokens": 82060,
+   "tool_calls": 95,
+   "notebook_version": 4,
+   "notebook_changed": true,
+   "thinking_chars": 0
+  },
+  {
+   "cp": 11,
+   "t": 1792591084.7089999,
+   "why": [
+    "notebook"
+   ],
+   "actions": 78,
+   "levels": 2,
+   "minutes": 34.23,
+   "gen_tokens": 123951,
+   "tool_calls": 99,
+   "notebook_version": 5,
+   "notebook_changed": true,
+   "thinking_chars": 33025
+  },
+  {
+   "cp": 12,
+   "t": 1792591246.7089999,
+   "why": [
+    "notebook"
+   ],
+   "actions": 86,
+   "levels": 2,
+   "minutes": 36.93,
+   "gen_tokens": 132711,
+   "tool_calls": 108,
+   "notebook_version": 6,
+   "notebook_changed": true,
+   "thinking_chars": 20760
+  },
+  {
+   "cp": 13,
+   "t": 1792591346.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 100,
+   "levels": 2,
+   "minutes": 38.6,
+   "gen_tokens": 144053,
+   "tool_calls": 123,
+   "notebook_version": 6,
+   "notebook_changed": false,
+   "thinking_chars": 1513
+  },
+  {
+   "cp": 14,
+   "t": 1792591361.909,
+   "why": [
+    "notebook"
+   ],
+   "actions": 100,
+   "levels": 2,
+   "minutes": 38.85,
+   "gen_tokens": 144053,
+   "tool_calls": 123,
+   "notebook_version": 7,
+   "notebook_changed": true,
+   "thinking_chars": 185
+  },
+  {
+   "cp": 15,
+   "t": 1792591663.7089999,
+   "why": [
+    "notebook"
+   ],
+   "actions": 106,
+   "levels": 2,
+   "minutes": 43.88,
+   "gen_tokens": 146182,
+   "tool_calls": 130,
+   "notebook_version": 8,
+   "notebook_changed": true,
+   "thinking_chars": 33832
+  },
+  {
+   "cp": 16,
+   "t": 1792591964.909,
+   "why": [
+    "notebook"
+   ],
+   "actions": 109,
+   "levels": 2,
+   "minutes": 48.9,
+   "gen_tokens": 165462,
+   "tool_calls": 136,
+   "notebook_version": 9,
+   "notebook_changed": true,
+   "thinking_chars": 35445
+  },
+  {
+   "cp": 17,
+   "t": 1792592083.7089999,
+   "why": [
+    "notebook"
+   ],
+   "actions": 112,
+   "levels": 2,
+   "minutes": 50.88,
+   "gen_tokens": 178889,
+   "tool_calls": 140,
+   "notebook_version": 10,
+   "notebook_changed": true,
+   "thinking_chars": 16972
+  },
+  {
+   "cp": 18,
+   "t": 1792592156.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 125,
+   "levels": 2,
+   "minutes": 52.1,
+   "gen_tokens": 189534,
+   "tool_calls": 154,
+   "notebook_version": 10,
+   "notebook_changed": false,
+   "thinking_chars": 991
+  },
+  {
+   "cp": 19,
+   "t": 1792592273.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 150,
+   "levels": 2,
+   "minutes": 54.05,
+   "gen_tokens": 193867,
+   "tool_calls": 179,
+   "notebook_version": 10,
+   "notebook_changed": false,
+   "thinking_chars": 2290
+  },
+  {
+   "cp": 20,
+   "t": 1792592300.999,
+   "why": [
+    "level 3 completed"
+   ],
+   "actions": 155,
+   "levels": 3,
+   "minutes": 54.5,
+   "gen_tokens": 194719,
+   "tool_calls": 184,
+   "notebook_version": 10,
+   "notebook_changed": false,
+   "thinking_chars": 449
+  },
+  {
+   "cp": 21,
+   "t": 1792592667.5089998,
+   "why": [
+    "notebook"
+   ],
+   "actions": 155,
+   "levels": 3,
+   "minutes": 60.61,
+   "gen_tokens": 194719,
+   "tool_calls": 184,
+   "notebook_version": 11,
+   "notebook_changed": true,
+   "thinking_chars": 39167
+  },
+  {
+   "cp": 22,
+   "t": 1792592702.309,
+   "why": [
+    "notebook"
+   ],
+   "actions": 155,
+   "levels": 3,
+   "minutes": 61.19,
+   "gen_tokens": 214067,
+   "tool_calls": 185,
+   "notebook_version": 12,
+   "notebook_changed": true,
+   "thinking_chars": 58
+  },
+  {
+   "cp": 23,
+   "t": 1792592830.109,
+   "why": [
+    "notebook"
+   ],
+   "actions": 159,
+   "levels": 3,
+   "minutes": 63.32,
+   "gen_tokens": 217778,
+   "tool_calls": 190,
+   "notebook_version": 13,
+   "notebook_changed": true,
+   "thinking_chars": 10490
+  },
+  {
+   "cp": 24,
+   "t": 1792593401.909,
+   "why": [
+    "notebook"
+   ],
+   "actions": 174,
+   "levels": 3,
+   "minutes": 72.85,
+   "gen_tokens": 232012,
+   "tool_calls": 206,
+   "notebook_version": 14,
+   "notebook_changed": true,
+   "thinking_chars": 48173
+  },
+  {
+   "cp": 25,
+   "t": 1792593428.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 175,
+   "levels": 3,
+   "minutes": 73.3,
+   "gen_tokens": 249987,
+   "tool_calls": 208,
+   "notebook_version": 14,
+   "notebook_changed": false,
+   "thinking_chars": 353
+  },
+  {
+   "cp": 26,
+   "t": 1792593728.309,
+   "why": [
+    "notebook"
+   ],
+   "actions": 198,
+   "levels": 3,
+   "minutes": 78.29,
+   "gen_tokens": 254007,
+   "tool_calls": 231,
+   "notebook_version": 15,
+   "notebook_changed": true,
+   "thinking_chars": 15362
+  },
+  {
+   "cp": 27,
+   "t": 1792593750.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 200,
+   "levels": 3,
+   "minutes": 78.67,
+   "gen_tokens": 262568,
+   "tool_calls": 234,
+   "notebook_version": 15,
+   "notebook_changed": false,
+   "thinking_chars": 874
+  },
+  {
+   "cp": 28,
+   "t": 1792593783.5089998,
+   "why": [
+    "notebook"
+   ],
+   "actions": 200,
+   "levels": 3,
+   "minutes": 79.21,
+   "gen_tokens": 262568,
+   "tool_calls": 234,
+   "notebook_version": 16,
+   "notebook_changed": true,
+   "thinking_chars": 332
+  },
+  {
+   "cp": 29,
+   "t": 1792594434.5089998,
+   "why": [
+    "notebook"
+   ],
+   "actions": 221,
+   "levels": 3,
+   "minutes": 90.06,
+   "gen_tokens": 280704,
+   "tool_calls": 256,
+   "notebook_version": 17,
+   "notebook_changed": true,
+   "thinking_chars": 50419
+  },
+  {
+   "cp": 30,
+   "t": 1792594554.999,
+   "why": [
+    "moves"
+   ],
+   "actions": 225,
+   "levels": 3,
+   "minutes": 92.07,
+   "gen_tokens": 301197,
+   "tool_calls": 261,
+   "notebook_version": 17,
+   "notebook_changed": false,
+   "thinking_chars": 5268
+  },
+  {
+   "cp": 31,
+   "t": 1792595477.881,
+   "why": [
+    "thinking"
+   ],
+   "actions": 226,
+   "levels": 3,
+   "minutes": 107.45,
+   "gen_tokens": 301350,
+   "tool_calls": 262,
+   "notebook_version": 17,
+   "notebook_changed": false,
+   "thinking_chars": 123332
+  },
+  {
+   "cp": 32,
+   "t": 1792595495.184,
+   "why": [
+    "run end"
+   ],
+   "actions": 226,
+   "levels": 3,
+   "minutes": 107.74,
+   "gen_tokens": 364614,
+   "tool_calls": 263,
+   "notebook_version": 17,
+   "notebook_changed": false,
+   "thinking_chars": 495
+  }
+ ],
+ "segments": [
+  [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  [
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16
+  ],
+  [
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30
+  ],
+  [
+   31,
+   32
+  ]
+ ]
+}

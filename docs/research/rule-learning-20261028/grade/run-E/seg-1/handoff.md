@@ -1,0 +1,8 @@
+# Handoff after cp-034 (728 moves, level 4 of 4 in progress, levels 1-3 cleared)
+
+- Vocabulary is unchanged: "character" (5/6/7 = on dark/checker/white), "box" (3/8/10 = on white/dark/checker), "target" (0 blue, 9 dark blue in level 4), "checker" (4, grey), "white" (1) and "dark" (2) floor, "hidden walls" between cells. It also names regions: the "cluster" (white cells around the box), the "blob" (dark region), "row-7 chain", "dead cells".
+- The notebook was rewritten at cp-033 (first rewrite since cp-005). It states controls (ACTION1-4, ACTION7 undo, 5/6 unavailable), "Sokoban", and "push the box onto the target tile (0 or 9). Next level starts automatically" (M8 now correct in the notebook too). It no longer says anything about pushing off-grid or into another box (M3 kept correct by persistence only).
+- Main wrong account, unchanged: "HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible". The notebook lists about 40 level-4 walls edge by edge. Colour is never given as the cause, although nearly all of them are white-dark edges (M4 partial). Refused pushes (e.g. character on white, box on dark at (4,5)) are listed as walls too (M6 partial, now in the notebook as well).
+- New wrong belief: "4 = checker (decoration, no effect)", first drafted in the thinking at cp-032 and written to the notebook at cp-033. Graded M5 wrong.
+- Box on any floor: from cp-030 it says the box can be pushed onto dark cells and travel through them, and the notebook lists box-on-white/dark/checker tiles. M7 partial: no link to who can push it next.
+- At cp-034 it is carrying out a 35-move plan from a reset. It accidentally pushed the box to (3,6) and is walking around to (3,7) to push it back left.

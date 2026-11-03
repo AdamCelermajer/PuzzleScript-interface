@@ -164,3 +164,6 @@ __pycache__
 tmp/
 tw_games/
 %SystemDrive%/
+
+# LaTeX build output of the proposal
+docs/proposal/build/

@@ -1,0 +1,122 @@
+[
+ {
+  "cp": 21,
+  "labels": {
+   "K1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K2": {
+    "belief": "partial",
+    "source": "notebook",
+    "notebook": "partial"
+   },
+   "K3": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K5": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K7": {
+    "belief": "wrong",
+    "source": "thinking",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 22,
+  "labels": {
+   "K1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K2": {
+    "belief": "partial",
+    "source": "notebook",
+    "notebook": "partial"
+   },
+   "K3": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K5": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K7": {
+    "belief": "wrong",
+    "source": "thinking",
+    "notebook": "absent"
+   }
+  }
+ },
+ {
+  "cp": 23,
+  "labels": {
+   "K1": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K2": {
+    "belief": "partial",
+    "source": "notebook",
+    "notebook": "partial"
+   },
+   "K3": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K5": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent"
+   },
+   "K6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial"
+   },
+   "K7": {
+    "belief": "wrong",
+    "source": "thinking",
+    "notebook": "absent"
+   }
+  }
+ }
+]

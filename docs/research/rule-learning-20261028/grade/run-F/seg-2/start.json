@@ -1,0 +1,44 @@
+{
+ "I1": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: the four actions 1\u00e2\u20ac\u201c4 are probably the four directions. ACTION7 = extra"
+ },
+ "I2": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: Ice = slide until hitting a wall/hazard/edge."
+ },
+ "I3": {
+  "belief": "correct",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: the crate is pushable, and slide-push is working exactly as predicted ... player ... right behind the crate"
+ },
+ "I4": {
+  "belief": "wrong",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: You can't push a crate with a crate."
+ },
+ "I5": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "correct",
+  "note": "T: the blue is passable in some states and blocking in others. State 24 = passable"
+ },
+ "I6": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: a crate that enters it while passable is absorbed; a passable blue does not stop the player"
+ },
+ "I7": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: WIN RULE REFINED: level completes when a slide ENDS ON the plant cell"
+ }
+}

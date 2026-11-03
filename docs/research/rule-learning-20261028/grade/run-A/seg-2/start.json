@@ -1,0 +1,44 @@
+{
+ "K1": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: ACTION1 = up, ACTION2 = down, ACTION4 = right. (ACTION3 = left is probably.) ACTION5 = wait (no change)."
+ },
+ "K2": {
+  "belief": "absent",
+  "source": "none",
+  "notebook": "absent",
+  "note": "T: no belief about walls or pushable normal crates; only 'probably' no Sokoban push."
+ },
+ "K3": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: when the player moves onto the ring's cell, the ring teleports. Where to? (4,6) ... below the ball"
+ },
+ "K4": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: So the ring is a solid obstacle - the player can't step onto the ring's cell."
+ },
+ "K5": {
+  "belief": "absent",
+  "source": "none",
+  "notebook": "absent",
+  "note": "T: dashed circle read as transient 'motion trail'/animation, no choosing belief."
+ },
+ "K6": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: ACTION5 = wait (advance the turn, let transient animations resolve)."
+ },
+ "K7": {
+  "belief": "wrong",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: So the ring can't land on the ball. The goal isn't \"ring on top of the ball.\""
+ }
+}

@@ -1,0 +1,50 @@
+{
+ "M1": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "T: ACTION1 = up... ACTION3 = left... ACTION4 = right confirmed; also believes ACTION7 on checkerboard launches player"
+ },
+ "M2": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: Pushing: walk into box; box moves 1 cell if destination free; else both blocked (observed)."
+ },
+ "M3": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: box moves 1 cell if destination free; else both blocked (observed)."
+ },
+ "M4": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "N: CONFLICT: under region rule L3 seems unsolvable. So region rule must be wrong/limited."
+ },
+ "M5": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: Door: (1,2) is the sole passage between the black area and the white room."
+ },
+ "M6": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "N: If black walkable: maybe (5,2)->(4,2) blocked by a specific wall"
+ },
+ "M7": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: the box must be able to cross the boundary... I'll assume the box can cross"
+ },
+ "M8": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: Win: box lands on goal marker => instant level advance (L1)."
+ }
+}

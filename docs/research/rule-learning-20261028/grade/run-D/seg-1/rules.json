@@ -1,0 +1,30 @@
+[
+ {
+  "id": "K1",
+  "rule": "Controls: four moves plus an action button (ACTION5) that confirms a choice."
+ },
+ {
+  "id": "K2",
+  "rule": "Walls block the player; orange (normal) crates are pushed one cell Sokoban-style and cannot be pushed into walls or crates."
+ },
+ {
+  "id": "K3",
+  "rule": "Red crates jump like a chess knight: walking into a red crate moves the player into its cell, and the crate can land two cells further in the push direction and one cell to either side (an L-shaped move)."
+ },
+ {
+  "id": "K4",
+  "rule": "A red-crate landing cell must be empty (no wall, crate or player); if no landing cell is free the move is refused."
+ },
+ {
+  "id": "K5",
+  "rule": "Choosing: the possible landing cells are shown (dark red); while choosing, the move keys switch which landing cell is selected and the player does not move."
+ },
+ {
+  "id": "K6",
+  "rule": "The action button (ACTION5) confirms: the red crate is placed on the selected landing cell and normal play resumes."
+ },
+ {
+  "id": "K7",
+  "rule": "Win: the level is completed when every target (dark blue tile) is covered by a crate of either kind."
+ }
+]

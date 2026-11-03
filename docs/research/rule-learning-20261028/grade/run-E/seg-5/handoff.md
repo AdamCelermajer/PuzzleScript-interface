@@ -1,0 +1,8 @@
+# Handoff after cp-055 (967 moves, level 4 of 4 in progress, levels 1-3 cleared)
+
+- Vocabulary unchanged: "character" (5/6/7), "box" (3/8/10), "target" (9), "checker" (4, grey), "white" (1) and "dark" (2) floor, "hidden walls" (edges), "false wall", "pocket", "blob"/"mega-region", "corridor", "right room", "col-2 route". Files: mapdata.py (W = walls, K = known open), plan.py (BFS), cand.py.
+- Notebook rewritten at cp-054 with the same rule content: Sokoban push, win = box onto target, "4 = checker (decoration)", "1 = white floor, 2 = dark floor (both walkable)", "HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible. Edge-based, not tile-based." Controls plus ACTION7 undo.
+- No rule beliefs changed in cp-052..055. All labels carried over from start.json.
+- Main wrong account still holds: every refused step or push is an invisible edge wall. In cp-052 it says "All tiles are floor (no wall tiles — the walls are edge-based and hidden)"; in cp-055 "the dark cells are walkable! The whole grid is walkable except for hidden walls" and "box edges = char edges (the same hidden wall)". Colour is never named as the cause (M4, M6 partial). Grey/checker is still decoration (M5 wrong).
+- cp-054: it worked out that level 4 needs 47 more moves (1014 > 1000) and wrote "LEVEL 4 CANNOT BE COMPLETED IN BUDGET".
+- cp-055 (a new session, still at 967 moves): it found bugs in mapdata.py and planned to fix W/K, for example adding (4,5)-(4,4) to W and moving (4,5)-(4,6) to K. It is looking for a 33-move plan, but every candidate either runs over budget or crosses a recorded wall.

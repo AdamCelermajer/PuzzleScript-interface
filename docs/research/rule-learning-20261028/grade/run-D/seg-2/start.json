@@ -1,0 +1,44 @@
+{
+ "K1": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right ... ACTION5 = interact/commit"
+ },
+ "K2": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: (1,5)\u2192up was blocked (\"no change\") \u2014 so row 0 is a wall"
+ },
+ "K3": {
+  "belief": "correct",
+  "source": "thinking",
+  "notebook": "partial",
+  "note": "T: The pair is a vertical bar centered on the tile 2 tiles ahead of the player's entry direction"
+ },
+ "K4": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: Bright ring: an object; the player cannot step on it (it blocks)."
+ },
+ "K5": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket"
+ },
+ "K6": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "N: ACTION5 (while frozen): removes dashed ring, dark ring -> bright ring at same spot. Player UNFROZEN"
+ },
+ "K7": {
+  "belief": "partial",
+  "source": "thinking",
+  "notebook": "absent",
+  "note": "T: So level 1's goal: place the bright ring on top of the socket."
+ }
+}

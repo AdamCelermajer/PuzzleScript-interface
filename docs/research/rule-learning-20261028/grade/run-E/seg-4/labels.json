@@ -1,0 +1,479 @@
+[
+ {
+  "cp": 43,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 44,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 45,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 46,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 47,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 48,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 49,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 50,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ },
+ {
+  "cp": 51,
+  "labels": {
+   "M1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   },
+   "M3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": ""
+   },
+   "M4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M5": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": ""
+   },
+   "M6": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M7": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": ""
+   },
+   "M8": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": ""
+   }
+  }
+ }
+]
