@@ -22,7 +22,7 @@ interface CallRow {
 }
 
 /** A message part in the one shape harnesses/recorder.py `view` gives every API dialect. */
-type Part =
+export type Part =
   | { kind: 'text'; text: string }
   | { kind: 'image'; file: string }
   | { kind: 'reasoning'; text: string; field?: string }
@@ -38,7 +38,7 @@ interface View {
   settings: Record<string, unknown>
 }
 
-interface CallRecord {
+export interface CallRecord {
   call: number
   turn: number
   session: string

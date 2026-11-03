@@ -489,12 +489,15 @@ def test_prompt_build_is_the_conversation_once_with_ours_split_from_the_harness(
     assert [(p["source"], p["text"]) for p in build["system"]] == [
         ("harness", "You are opencode.\nInstructions from: SYSTEM_PROMPT.md\n"), ("ours", "Play the game.\n")]
     assert build["tools"][0]["name"] == "bash"
-    us, harness_note, model, result, answer = build["entries"]  # each message once; the reply's assistant copy skipped
+    first_call, second_call = build["calls"]  # one item per model call: what was new in its request, its answer
+    us, harness_note = first_call["sent"]
     assert [(p["source"], p["text"]) for p in us["pieces"] + harness_note["pieces"]] == [
         ("ours", "Turn 1: choose a move."), ("harness", "<system-reminder>harness note</system-reminder>")]
-    assert (model["who"], model["thinking"], model["tool_calls"]) == ("model", "look first", ['bash({"command": "ls"})'])
+    assert (first_call["answer"]["thinking"], first_call["answer"]["tool_calls"]) == ("look first", ['bash({"command": "ls"})'])
+    # The model's own answer is not repeated in the next request's new part; the tool result is.
+    [result] = second_call["sent"]
     assert (result["who"], result["of"], result["text"]) == ("result", 'bash({"command": "ls"})', "frame.png")
-    assert (answer["who"], answer["text"]) == ("model", "ACTION1")
+    assert second_call["answer"]["text"] == "ACTION1"
 
 # ---------------------------------------------------------------- ported Vite routes
 
