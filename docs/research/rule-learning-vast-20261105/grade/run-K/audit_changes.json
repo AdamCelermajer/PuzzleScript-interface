@@ -1,0 +1,239 @@
+[
+  {
+    "cp": 2,
+    "r": "M4",
+    "fields": {
+      "belief": "partial",
+      "note": "T: And a downward jump: is 7→5 allowed (−2)? Not yet observed."
+    }
+  },
+  {
+    "cp": 3,
+    "r": "M4",
+    "fields": {
+      "note": "T: So: 2→1 ✗ but 1→2 also ✗."
+    }
+  },
+  {
+    "cp": 3,
+    "r": "M6",
+    "fields": {
+      "belief": "wrong",
+      "source": "thinking",
+      "note": "T: the cursor can push the box from any adjacent value (as long as the box can move)!"
+    }
+  },
+  {
+    "cp": 4,
+    "r": "M6",
+    "removeNote": true
+  },
+  {
+    "cp": 5,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 6,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 7,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 8,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 9,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 10,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 11,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 12,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 13,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 14,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 15,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 16,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 17,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 18,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 19,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 20,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 21,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "notebook"
+    },
+    "removeNote": true
+  },
+  {
+    "cp": 22,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": true
+  },
+  {
+    "cp": 23,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 24,
+    "r": "M2",
+    "fields": {
+      "belief": "correct",
+      "notebook": "correct",
+      "source": "both"
+    },
+    "removeNote": false
+  },
+  {
+    "cp": 25,
+    "r": "M2",
+    "fields": {
+      "notebook": "correct",
+      "source": "thinking"
+    }
+  }
+]

@@ -1,0 +1,77 @@
+{
+  "run": "run-A",
+  "identity": {
+    "run": "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0003",
+    "game": "ps_knightoban-v1",
+    "driver": "controller"
+  },
+  "frozen_labels_sha256": "3b1e04f731fd26e00a6fbd8fb5076317fb197cbdd261f50d1bdcd24e15774abe",
+  "comparison_after_freeze": true,
+  "raw_checkpoints": 24,
+  "published_checkpoints": 24,
+  "slots_checked": 168,
+  "fields_checked": 504,
+  "field_disagreements": 108,
+  "slot_disagreements": 56,
+  "by_field": {
+    "belief": 32,
+    "source": 52,
+    "notebook": 24
+  },
+  "by_category": {
+    "clear_error": {
+      "field_entries": 28,
+      "checkpoint_rule_slots": 22,
+      "fields": {
+        "belief": 6,
+        "source": 22
+      }
+    },
+    "ambiguity": {
+      "field_entries": 17,
+      "checkpoint_rule_slots": 9,
+      "fields": {
+        "belief": 1,
+        "notebook": 8,
+        "source": 8
+      }
+    },
+    "rubric_issue": {
+      "field_entries": 63,
+      "checkpoint_rule_slots": 25,
+      "fields": {
+        "belief": 25,
+        "source": 22,
+        "notebook": 16
+      }
+    }
+  },
+  "unresolved_field_entries": 80,
+  "unresolved_checkpoint_rule_slots": 34,
+  "missing_slots": 0,
+  "unreviewed_slots": 0,
+  "raw_vs_published_field_disagreements": [],
+  "published_run_A_corrections": {},
+  "published_score_mismatch_count": 20,
+  "published_notebook_score_mismatch_count": 0,
+  "independent_combined_counts": {
+    "partial": 117,
+    "absent": 2,
+    "wrong": 49
+  },
+  "original_combined_counts": {
+    "partial": 131,
+    "absent": 14,
+    "wrong": 23
+  },
+  "independent_notebook_counts": {
+    "absent": 56,
+    "partial": 80,
+    "wrong": 32
+  },
+  "original_notebook_counts": {
+    "absent": 80,
+    "partial": 80,
+    "wrong": 8
+  }
+}

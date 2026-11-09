@@ -1,0 +1,14 @@
+{
+  "frozen_at_utc": "2026-11-04T18:23:38.381152+00:00",
+  "checkpoints": 29,
+  "slots": 203,
+  "originals_read": false,
+  "sha256": {
+    "independent-labels.json": "54de80a1b6bcb4eeb28c94c040e6b3b77a12be82a315a78313d3fe0b4802986e",
+    "independent-handoff.md": "94b8f75061863ed740b6cef3c0f84a6a29404376dcf4cbb36bb37101d02a0f32",
+    "batch-025-028.md": "1b36c024d87530b59cd9e9a66afe619259dc68d3d39f88272da1f6f40820b862",
+    "validation-final.json": "e3e80273ff835424717096c3067d72e74c55cbbfdddbc700a2ee909ec802487d",
+    "prior-000-024.json": "36fda15394c0e7c16e77d9b6836aaca21c2474ae4c0351dbbc0e14223b172114"
+  },
+  "caveat": "cp20 graded before cp21 but saved after cp21 read following failed BOM save; prior cp10 recovery disclosed in batch notes."
+}

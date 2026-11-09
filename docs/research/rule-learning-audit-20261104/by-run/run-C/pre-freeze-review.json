@@ -1,0 +1,47 @@
+{
+  "prior_original_labels_read": false,
+  "changes": [
+    {
+      "cp": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "rule": "M5",
+      "field": "notebook",
+      "from": "partial",
+      "to": "correct",
+      "reason": "Explicit two-way white/door/black connectivity is the essential rule."
+    },
+    {
+      "cp": [
+        6
+      ],
+      "rule": "M6",
+      "field": "notebook",
+      "from": "partial",
+      "to": "absent",
+      "reason": "Strict-rule push analysis is conditional, not adopted in this notebook."
+    },
+    {
+      "cp": [
+        10
+      ],
+      "rule": "M4",
+      "field": "source",
+      "from": "both",
+      "to": "notebook",
+      "reason": "New notebook rejects the global rule; earlier thinking had retained it."
+    }
+  ],
+  "interpretation_questions": [
+    "M1 action button versus ACTION7 undo vocabulary",
+    "M2 whether push-only deadlock reasoning suffices for no-pull clause",
+    "M8 plural boxes-to-goals versus explicit universal quantifier"
+  ]
+}

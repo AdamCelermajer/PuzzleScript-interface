@@ -1,0 +1,4730 @@
+{
+  "run": "run-F",
+  "identity": {
+    "run": "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0002",
+    "game": "ps_icecrates-v1",
+    "driver": "controller"
+  },
+  "labels_sha256": "78ba25d7f401b6ee1bb896b1d29b604d52356943ab5758402efe435f4b123597",
+  "comparison_utc": "2026-11-04T18:08:40.432323+00:00",
+  "coverage": {
+    "checkpoints": 32,
+    "rules": 7,
+    "slots": 224,
+    "unreviewed": 0
+  },
+  "summary": {
+    "raw": {
+      "field_disagreements": 96,
+      "rule_checkpoint_slots_with_disagreement": 48,
+      "by_field": {
+        "belief": 44,
+        "source": 12,
+        "notebook": 40
+      },
+      "by_category_fields": {
+        "rubric_issue": 62,
+        "clear_error": 25,
+        "ambiguity": 9
+      },
+      "by_category_slots": {
+        "clear_error": 12,
+        "ambiguity": 5,
+        "rubric_issue": 32
+      },
+      "original_belief_counts": {
+        "correct": 127,
+        "absent": 21,
+        "partial": 51,
+        "wrong": 25
+      }
+    },
+    "published": {
+      "field_disagreements": 72,
+      "rule_checkpoint_slots_with_disagreement": 37,
+      "by_field": {
+        "belief": 37,
+        "notebook": 30,
+        "source": 5
+      },
+      "by_category_fields": {
+        "rubric_issue": 62,
+        "ambiguity": 8,
+        "clear_error": 2
+      },
+      "by_category_slots": {
+        "clear_error": 1,
+        "ambiguity": 4,
+        "rubric_issue": 32
+      },
+      "original_belief_counts": {
+        "correct": 119,
+        "absent": 29,
+        "partial": 51,
+        "wrong": 25
+      }
+    }
+  },
+  "published_score_points_different": 30,
+  "published_notebook_points_different": 30,
+  "disagreements": {
+    "raw": [
+      {
+        "cp": 0,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "T: Ice = slide until hitting a wall/hazard/edge.",
+        "published_correction": null
+      },
+      {
+        "cp": 0,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "T: the pit blocks movement. The dark cells are probably all impassable hazards.",
+        "published_correction": "the 'pit'/'rimmed dark blockers' of levels 1-3 are walls; the first water appears in level 4"
+      },
+      {
+        "cp": 0,
+        "rule": "I5",
+        "field": "source",
+        "original": "thinking",
+        "independent": "none",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "T: the pit blocks movement. The dark cells are probably all impassable hazards.",
+        "published_correction": "the 'pit'/'rimmed dark blockers' of levels 1-3 are walls; the first water appears in level 4"
+      },
+      {
+        "cp": 1,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 1,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "the 'pit'/'rimmed dark blockers' of levels 1-3 are walls; the first water appears in level 4"
+      },
+      {
+        "cp": 1,
+        "rule": "I5",
+        "field": "source",
+        "original": "thinking",
+        "independent": "none",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "the 'pit'/'rimmed dark blockers' of levels 1-3 are walls; the first water appears in level 4"
+      },
+      {
+        "cp": 2,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 2,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 2,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 2,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 2,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 2,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 2,
+        "rule": "I5",
+        "field": "source",
+        "original": "both",
+        "independent": "none",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 3,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 3,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 3,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 3,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 3,
+        "rule": "I5",
+        "field": "source",
+        "original": "both",
+        "independent": "none",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 4,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 4,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 4,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 4,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 4,
+        "rule": "I5",
+        "field": "source",
+        "original": "both",
+        "independent": "none",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 5,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I3",
+        "field": "belief",
+        "original": "absent",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "cp5 adopts pushability as necessary, then entertains alternatives. Frozen grade treats adoption as persistent working belief; absent is plausible if interpreted as exploratory.",
+        "evidence": [
+          {
+            "cp": 5,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-005.md",
+            "section": "thinking",
+            "quote": "So the orange must be pushable (B).",
+            "line": 358
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I3",
+        "field": "source",
+        "original": "none",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "cp5 adopts pushability as necessary, then entertains alternatives. Frozen grade treats adoption as persistent working belief; absent is plausible if interpreted as exploratory.",
+        "evidence": [
+          {
+            "cp": 5,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-005.md",
+            "section": "thinking",
+            "quote": "So the orange must be pushable (B).",
+            "line": 358
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 5,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 5,
+        "rule": "I5",
+        "field": "source",
+        "original": "both",
+        "independent": "none",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 6,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 6,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 6,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 6,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 6,
+        "rule": "I5",
+        "field": "source",
+        "original": "both",
+        "independent": "none",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 7,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 7,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 7,
+        "rule": "I5",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "Blocking is directly recognized; later most-likely timing-gate model suggests passable phases. Correct versus partial depends on whether that account is adopted.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "Most likely: a timing gate (a door that opens/cycles on a period-3 timer)",
+            "line": 1062
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 7,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "Most likely: a timing gate (a door that opens/cycles on a period-3 timer)",
+            "line": 1062
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 7,
+        "rule": "I5",
+        "field": "source",
+        "original": "both",
+        "independent": "thinking",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "Most likely: a timing gate (a door that opens/cycles on a period-3 timer)",
+            "line": 1062
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 8,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 8,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 8,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "T: the blue is passable in some states and blocking in others. State 24 = passable",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 8,
+        "rule": "I7",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 8,
+        "rule": "I7",
+        "field": "source",
+        "original": "both",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 9,
+        "rule": "I7",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I7",
+        "field": "source",
+        "original": "both",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 10,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 10,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 10,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 11,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 11,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 11,
+        "rule": "I5",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "absent",
+        "category": "clear_error",
+        "reason": "Raw grade attributes fixed dark wall/pit geometry to water. Notebook through cp11 has no blue-water rule; cp7 water belief is thinking-only.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 11,
+        "rule": "I7",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 11,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-011.md",
+            "section": "thinking",
+            "quote": "\"Feed 2\" is achievable. Let's go with that.",
+            "line": 206
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 11,
+        "rule": "I7",
+        "field": "source",
+        "original": "both",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 11,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-011.md",
+            "section": "thinking",
+            "quote": "\"Feed 2\" is achievable. Let's go with that.",
+            "line": 206
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 12,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 12,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 13,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 13,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 14,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 14,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 15,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 15,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 16,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 16,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 17,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 17,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 18,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 18,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 19,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 19,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 20,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 20,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 21,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 21,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 22,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 22,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 23,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 23,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 24,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 24,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 25,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 25,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 26,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 26,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 27,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 27,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 28,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 28,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 29,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 29,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 30,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 30,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 31,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 31,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      }
+    ],
+    "published": [
+      {
+        "cp": 0,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "T: Ice = slide until hitting a wall/hazard/edge.",
+        "published_correction": null
+      },
+      {
+        "cp": 1,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 2,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 2,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 2,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 2,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 3,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 3,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 4,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 4,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I3",
+        "field": "belief",
+        "original": "absent",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "cp5 adopts pushability as necessary, then entertains alternatives. Frozen grade treats adoption as persistent working belief; absent is plausible if interpreted as exploratory.",
+        "evidence": [
+          {
+            "cp": 5,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-005.md",
+            "section": "thinking",
+            "quote": "So the orange must be pushable (B).",
+            "line": 358
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 5,
+        "rule": "I3",
+        "field": "source",
+        "original": "none",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "cp5 adopts pushability as necessary, then entertains alternatives. Frozen grade treats adoption as persistent working belief; absent is plausible if interpreted as exploratory.",
+        "evidence": [
+          {
+            "cp": 5,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-005.md",
+            "section": "thinking",
+            "quote": "So the orange must be pushable (B).",
+            "line": 358
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 6,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 6,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 7,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 7,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 7,
+        "rule": "I5",
+        "field": "belief",
+        "original": "absent",
+        "independent": "partial",
+        "category": "clear_error",
+        "reason": "Published correction deletes actual blue-water blocking belief at cp7; full trace states that the blue object stops the slide. Partial versus correct may be debated, absent is unsupported.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "Most likely: a timing gate (a door that opens/cycles on a period-3 timer)",
+            "line": 1062
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 7,
+        "rule": "I5",
+        "field": "source",
+        "original": "none",
+        "independent": "thinking",
+        "category": "clear_error",
+        "reason": "Published correction deletes actual blue-water blocking belief at cp7; full trace states that the blue object stops the slide. Partial versus correct may be debated, absent is unsupported.",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "Most likely: a timing gate (a door that opens/cycles on a period-3 timer)",
+            "line": 1062
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": "same: the notebook's impassable dark blocks are walls, not water"
+      },
+      {
+        "cp": 8,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 8,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 8,
+        "rule": "I7",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 8,
+        "rule": "I7",
+        "field": "source",
+        "original": "both",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I7",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 9,
+        "rule": "I7",
+        "field": "source",
+        "original": "both",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 10,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 10,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 11,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 11,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 11,
+        "rule": "I7",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 11,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-011.md",
+            "section": "thinking",
+            "quote": "\"Feed 2\" is achievable. Let's go with that.",
+            "line": 206
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 11,
+        "rule": "I7",
+        "field": "source",
+        "original": "both",
+        "independent": "thinking",
+        "category": "ambiguity",
+        "reason": "Feeding becomes the selected/remaining L4 objective in thinking, but correct stop-on-plant evidence persists for earlier levels. Commitment versus continued exploration is interpretive.",
+        "evidence": [
+          {
+            "cp": 11,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-011.md",
+            "section": "thinking",
+            "quote": "\"Feed 2\" is achievable. Let's go with that.",
+            "line": 206
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 12,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 12,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 13,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 13,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 14,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 14,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 15,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 15,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 16,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 16,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 17,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 17,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 18,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 18,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 19,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 19,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 20,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 20,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 21,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 21,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 22,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 22,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 23,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 23,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 24,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 24,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 25,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 25,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 26,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 26,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 27,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 27,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 28,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 28,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 29,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 29,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 30,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 30,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 31,
+        "rule": "I2",
+        "field": "belief",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      },
+      {
+        "cp": 31,
+        "rule": "I2",
+        "field": "notebook",
+        "original": "correct",
+        "independent": "partial",
+        "category": "rubric_issue",
+        "reason": "Composite-rule granularity: frozen grade requires wall/water/immovable-crate applicability; original credits generic sliding-to-blocker knowledge. State the policy before adjudicating.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "absence_rationale": null,
+        "original_note": "",
+        "published_correction": null
+      }
+    ]
+  },
+  "curves": [
+    {
+      "cp": 0,
+      "actions": 2,
+      "minutes": 10.09,
+      "raw_score": 50.0,
+      "published_score": 35.7,
+      "independent_score": 28.6,
+      "published_notebook_score": 0.0,
+      "independent_notebook_score": 0.0,
+      "score_delta": -7.1,
+      "notebook_score_delta": 0.0
+    },
+    {
+      "cp": 1,
+      "actions": 7,
+      "minutes": 10.8,
+      "raw_score": 50.0,
+      "published_score": 35.7,
+      "independent_score": 28.6,
+      "published_notebook_score": 0.0,
+      "independent_notebook_score": 0.0,
+      "score_delta": -7.1,
+      "notebook_score_delta": 0.0
+    },
+    {
+      "cp": 2,
+      "actions": 7,
+      "minutes": 12.42,
+      "raw_score": 50.0,
+      "published_score": 35.7,
+      "independent_score": 28.6,
+      "published_notebook_score": 35.7,
+      "independent_notebook_score": 28.6,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 3,
+      "actions": 9,
+      "minutes": 13.81,
+      "raw_score": 57.1,
+      "published_score": 42.9,
+      "independent_score": 35.7,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": -7.2,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 4,
+      "actions": 12,
+      "minutes": 14.07,
+      "raw_score": 57.1,
+      "published_score": 42.9,
+      "independent_score": 35.7,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": -7.2,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 5,
+      "actions": 25,
+      "minutes": 20.9,
+      "raw_score": 57.1,
+      "published_score": 42.9,
+      "independent_score": 42.9,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": 0.0,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 6,
+      "actions": 37,
+      "minutes": 23.5,
+      "raw_score": 71.4,
+      "published_score": 57.1,
+      "independent_score": 50.0,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 7,
+      "actions": 43,
+      "minutes": 36.76,
+      "raw_score": 71.4,
+      "published_score": 57.1,
+      "independent_score": 57.1,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": 0.0,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 8,
+      "actions": 46,
+      "minutes": 50.73,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 57.1,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": -14.3,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 9,
+      "actions": 50,
+      "minutes": 53.02,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 57.1,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": -14.3,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 10,
+      "actions": 75,
+      "minutes": 63.2,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 11,
+      "actions": 100,
+      "minutes": 75.27,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 57.1,
+      "published_notebook_score": 42.9,
+      "independent_notebook_score": 35.7,
+      "score_delta": -14.3,
+      "notebook_score_delta": -7.2
+    },
+    {
+      "cp": 12,
+      "actions": 100,
+      "minutes": 76.57,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 13,
+      "actions": 125,
+      "minutes": 80.0,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 14,
+      "actions": 150,
+      "minutes": 92.88,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 15,
+      "actions": 160,
+      "minutes": 94.2,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 16,
+      "actions": 160,
+      "minutes": 94.24,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 17,
+      "actions": 175,
+      "minutes": 95.42,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 18,
+      "actions": 180,
+      "minutes": 95.89,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 19,
+      "actions": 180,
+      "minutes": 95.94,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 20,
+      "actions": 200,
+      "minutes": 97.63,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 21,
+      "actions": 200,
+      "minutes": 97.76,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 22,
+      "actions": 200,
+      "minutes": 97.83,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 23,
+      "actions": 200,
+      "minutes": 97.91,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 24,
+      "actions": 200,
+      "minutes": 97.98,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 25,
+      "actions": 220,
+      "minutes": 100.03,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 26,
+      "actions": 220,
+      "minutes": 100.07,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 27,
+      "actions": 225,
+      "minutes": 100.57,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 28,
+      "actions": 240,
+      "minutes": 103.3,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 29,
+      "actions": 240,
+      "minutes": 103.96,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 30,
+      "actions": 250,
+      "minutes": 104.97,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    },
+    {
+      "cp": 31,
+      "actions": 271,
+      "minutes": 107.2,
+      "raw_score": 71.4,
+      "published_score": 71.4,
+      "independent_score": 64.3,
+      "published_notebook_score": 71.4,
+      "independent_notebook_score": 64.3,
+      "score_delta": -7.1,
+      "notebook_score_delta": -7.1
+    }
+  ],
+  "unresolved_adjudication": {
+    "definition": "Assigned independent labels are final; these differences need human rubric/interpretation adjudication, not more unread slots. Fields can share one rule/checkpoint slot.",
+    "raw_field_entries": 71,
+    "published_field_entries": 70,
+    "raw_unique_slots": 37,
+    "published_unique_slots": 36
+  },
+  "read_only_inputs_sha256": {
+    "docs\\research\\rule-learning-20261028\\grade\\run-F\\seg-0\\labels.json": "e3c8063f631013ab84b062e41487061796859c385283d2b9ecb85036c0eb8909",
+    "docs\\research\\rule-learning-20261028\\grade\\run-F\\seg-1\\labels.json": "153d52b1459fce6f79b8d126568d5cd67a1fd89284318eaac90f64a5a79af449",
+    "docs\\research\\rule-learning-20261028\\grade\\run-F\\seg-2\\labels.json": "faef8736b221b865e84c67d5a7a62ded38fe90be38ad11fe3fc9404e904a5191",
+    "docs\\research\\rule-learning-20261028\\grade\\run-F\\seg-3\\labels.json": "c1005568c0b58b7d0adb131e96397a3959394b472fc1569ce5544d4042ef93fa",
+    "docs\\research\\rule-learning-20261028\\curves-combined.json": "141017eec5a3c7f85647648891572cf443f1e703163b0386ad9630d5055dae29",
+    "docs\\research\\rule-learning-20261028\\grade\\key.json": "3a85909352d76c934b30745177da96bcfc5767ec88e2c656a34a6771bf53af53",
+    "docs\\research\\rule-learning-20261028\\combine.py": "7e9553a421c4a630822de630b25eaf6657f8ce9977416d642b219c2c8c4e5f06"
+  },
+  "original_inputs_unchanged": true
+}

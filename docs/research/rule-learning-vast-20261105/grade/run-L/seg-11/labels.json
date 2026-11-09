@@ -1,0 +1,83 @@
+[
+  {
+    "cp": 44,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 45,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: So the player can't reach (9,5). So the win isn't \"player ends on the goal.\""
+      }
+    }
+  }
+]

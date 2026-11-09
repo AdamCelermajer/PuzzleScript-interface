@@ -1,0 +1,80 @@
+{
+  "status": "independently assigned, pre-comparison",
+  "ungraded_slots": 0,
+  "boundary_cases": [
+    {
+      "slots": [
+        {
+          "cp": 5,
+          "rule": "I3"
+        }
+      ],
+      "chosen": "partial",
+      "alternative": "absent",
+      "reason": "Adopts orange pushability as necessary conclusion, then explores alternatives without explicit retraction; working belief persistence."
+    },
+    {
+      "slots": [
+        {
+          "cp": 7,
+          "rule": "I4"
+        }
+      ],
+      "chosen": "wrong",
+      "alternative": "absent",
+      "reason": "Explicit no-two-crate assumption outweighs earlier hypothetical whole-row push; onset could be read as exploratory. Subsequent checkpoints make adoption categorical."
+    },
+    {
+      "slots": [
+        {
+          "cp": 8,
+          "rule": "I7"
+        },
+        {
+          "cp": 9,
+          "rule": "I7"
+        },
+        {
+          "cp": 11,
+          "rule": "I7"
+        }
+      ],
+      "chosen": "partial",
+      "alternative": "correct",
+      "reason": "Explicit feeding adoption as remaining/selected objective narrows retained stop-on-plant rule to prior levels; degree of commitment is interpretive."
+    },
+    {
+      "slots": [
+        {
+          "cp": 10,
+          "rule": "I7"
+        }
+      ],
+      "chosen": "correct",
+      "alternative": "partial",
+      "reason": "Calls plant route lost the true state and labels feeding speculation/distraction, restoring plant-goal account; still explores alternatives."
+    }
+  ],
+  "rubric_policy": [
+    {
+      "rule": "I2",
+      "policy": "Generic slide-to-blocker knowledge is partial until complete wall/water/immovable-crate applicability is held."
+    },
+    {
+      "rule": "I5",
+      "policy": "Blocking in some water animation states but alleged passability in others is partial: substantial correct blocking effect with wrong applicability."
+    },
+    {
+      "rule": "I6",
+      "policy": "Absorption plus crossing under a pre-existing passable-gate condition is partial, even though the object name itself is irrelevant."
+    },
+    {
+      "rule": "I7",
+      "cp_range": [
+        12,
+        31
+      ],
+      "policy": "Generic stop-on-plant factual notebook sentence earns correct; explicitly unconfirmed alternative goals do not replace it."
+    }
+  ]
+}

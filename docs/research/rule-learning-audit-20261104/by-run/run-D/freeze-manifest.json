@@ -1,0 +1,18 @@
+{
+  "run": "run-D",
+  "frozen_at_utc": "2026-11-04T18:08:04.944814+00:00",
+  "checkpoints": 25,
+  "rules": 7,
+  "slots": 175,
+  "comparison_inputs_read_before_freeze": false,
+  "sha256": {
+    "independent-labels.json": "6cef23513f3801a82bf12d04cfdd2fc6289951e49bea0567df59f61d69211e6d",
+    "labels.json": "6cef23513f3801a82bf12d04cfdd2fc6289951e49bea0567df59f61d69211e6d",
+    "evidence.json": "25e70b574dcbb170708b816d21473819bf82cef3ee889d60946817f0cd22d812",
+    "reading-coverage.json": "739460441d0910ad603e5eb52408280566b23bdea3056122f9cd311d337f0f80",
+    "source-verification.json": "bebdb14dd47d06ff20d1d42fa5267cd01386e9937ba059cd291fa739d26c1d0d",
+    "rules.json": "164a2b142bbe9d84f3823ce2505765a75a094b42b452419e784992a23713a163",
+    "handoff.md": "372bf2870e8625cb03aa55fca1eb2d4b5d88ed3187155e579cebdcc09a25c0eb",
+    "pre-freeze-ambiguities.json": "fe4173e1692c8b3592f2bf0aff915fc77482401f52c0a49ea956b7ac0d4c4c2c"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "checkpoints": 33,
+  "rules": 8,
+  "slots": 264,
+  "unreviewed": 0,
+  "quote_occurrences_validated": 1304,
+  "errors": [],
+  "official_checker_output": "ok: 33 checkpoints x 8 rules",
+  "official_checker_returncode": 0
+}

@@ -1,0 +1,169 @@
+{
+  "method": "Independent full static reading of game source, then line-level verification. No runtime or gameplay. Current source only; no historical-version claim.",
+  "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+  "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+  "rules": {
+    "K1": {
+      "explanation": "Adapter maps ACTION1-4 to cardinal moves and ACTION5 to ACTION; game action rule commits selection.",
+      "evidence": [
+        {
+          "line": 136,
+          "quote": "[action player][selected_crate][player indicator_selecting] -> [action player][Crate][player] sfx1"
+        },
+        {
+          "line": 141,
+          "quote": "up [up player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        },
+        {
+          "line": 142,
+          "quote": "down [down player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        },
+        {
+          "line": 143,
+          "quote": "left [left player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        },
+        {
+          "line": 144,
+          "quote": "right [right player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        }
+      ]
+    },
+    "K2": {
+      "explanation": "Shared collision layer blocks walls/crates; adjacent normalcrate receives movement only from pushing player. No chain-push rule.",
+      "evidence": [
+        {
+          "line": 117,
+          "quote": "Player, Wall, Crate, possible_crate, selected_crate, normalcrate"
+        },
+        {
+          "line": 125,
+          "quote": "[> player no indicator | normalcrate] -> [> player no indicator | > normalcrate]"
+        }
+      ]
+    },
+    "K3": {
+      "explanation": "Entry replaces crate with player and places marker two cells further; perpendicular neighbor rules generate the two knight landing positions.",
+      "evidence": [
+        {
+          "line": 127,
+          "quote": "[> player no indicator| Crate | | ] -> [ | player indicator_placing | | > knight_marker]"
+        },
+        {
+          "line": 129,
+          "quote": "[^ knight_marker | no object] -> [^ knight_marker | possible_crate]"
+        },
+        {
+          "line": 130,
+          "quote": "[v knight_marker | no object] -> [v knight_marker | possible_crate]"
+        }
+      ]
+    },
+    "K4": {
+      "explanation": "Only no-object landing cells receive possible_crate; object includes wall, red/normal crates and player. Without a possible cell indicator_placing persists and cancels move.",
+      "evidence": [
+        {
+          "line": 96,
+          "quote": "object = Crate or wall or player or normalcrate"
+        },
+        {
+          "line": 129,
+          "quote": "[^ knight_marker | no object] -> [^ knight_marker | possible_crate]"
+        },
+        {
+          "line": 130,
+          "quote": "[v knight_marker | no object] -> [v knight_marker | possible_crate]"
+        },
+        {
+          "line": 132,
+          "quote": "[possible_crate][player indicator_placing] -> [possible_crate][player]"
+        },
+        {
+          "line": 133,
+          "quote": "[indicator_placing] -> cancel"
+        }
+      ]
+    },
+    "K5": {
+      "explanation": "A possible cell becomes selected, movement rules exchange selected/possible along the direction, and player orthogonal movement is stripped during selection.",
+      "evidence": [
+        {
+          "line": 139,
+          "quote": "[possible_crate][player no indicator_selecting] -> [selected_crate][player indicator_selecting] sfx0"
+        },
+        {
+          "line": 141,
+          "quote": "up [up player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        },
+        {
+          "line": 142,
+          "quote": "down [down player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        },
+        {
+          "line": 143,
+          "quote": "left [left player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        },
+        {
+          "line": 144,
+          "quote": "right [right player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+        },
+        {
+          "line": 146,
+          "quote": "[orthogonal player indicator_selecting] -> [player indicator_selecting]"
+        }
+      ]
+    },
+    "K6": {
+      "explanation": "ACTION removes other possible cells, converts selected_crate to Crate and clears selecting indicator on player.",
+      "evidence": [
+        {
+          "line": 135,
+          "quote": "[action player][possible_crate][player indicator_selecting] -> [action player][][player indicator_selecting]"
+        },
+        {
+          "line": 136,
+          "quote": "[action player][selected_crate][player indicator_selecting] -> [action player][Crate][player] sfx1"
+        }
+      ]
+    },
+    "K7": {
+      "explanation": "All Target on crates, with crates defined as Crate or normalcrate. Target itself is dark blue.",
+      "evidence": [
+        {
+          "line": 97,
+          "quote": "crates = Crate or normalcrate"
+        },
+        {
+          "line": 154,
+          "quote": "All Target on crates"
+        }
+      ]
+    }
+  },
+  "input_mapping": {
+    "path": "puzzlescript_interface/runtime/server.js",
+    "sha256": "65cf02d73399d34a43fbeacc2591b0cfd5795d2cf9b886a6663168f80e43a9eb",
+    "evidence": [
+      {
+        "line": 447,
+        "quote": "    if (a === 'action1' || a === 'up' || a === 'w' || a === '1') return INPUT_BUTTON.UP;"
+      },
+      {
+        "line": 448,
+        "quote": "    if (a === 'action2' || a === 'down' || a === 's' || a === '2') return INPUT_BUTTON.DOWN;"
+      },
+      {
+        "line": 449,
+        "quote": "    if (a === 'action3' || a === 'left' || a === 'a' || a === '3') return INPUT_BUTTON.LEFT;"
+      },
+      {
+        "line": 450,
+        "quote": "    if (a === 'action4' || a === 'right' || a === 'd' || a === '4') return INPUT_BUTTON.RIGHT;"
+      },
+      {
+        "line": 451,
+        "quote": "    if (a === 'action5' || a === ' ' || a === 'action' || a === 'x' || a === '5') return INPUT_BUTTON.ACTION;"
+      }
+    ]
+  },
+  "scope_note": "No normalcrate glyph occurs in the six level layouts; normal-crate pushing is in the source/rubric but this player remains in the tutorial and never describes it. Wall-only partial credit follows compound K2 rubric."
+}

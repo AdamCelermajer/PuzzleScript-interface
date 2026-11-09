@@ -1,0 +1,534 @@
+{
+  "status": "INCOMPLETE",
+  "bounded_batch_status": "PASS",
+  "bounded_batch": [
+    5,
+    9
+  ],
+  "expected_checkpoints": 29,
+  "reviewed_checkpoints": 10,
+  "reviewed_slots": 70,
+  "unreviewed_checkpoints": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28
+  ],
+  "unreviewed_slots": 133,
+  "label_counts": {
+    "absent": 26,
+    "correct": 28,
+    "partial": 14,
+    "wrong": 2
+  },
+  "issues": [],
+  "quote_matches": [
+    {
+      "cp": 1,
+      "rule": "I1",
+      "evidence_cp": 1,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-001.md",
+      "line": 138,
+      "quote": "ACTION3 = slide left is confirmed.",
+      "exact_match": true
+    },
+    {
+      "cp": 1,
+      "rule": "I2",
+      "evidence_cp": 1,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-001.md",
+      "line": 45,
+      "quote": "The creature slides in the specified direction until it hits a wall/block.",
+      "exact_match": true
+    },
+    {
+      "cp": 2,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 2,
+      "rule": "I2",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 40,
+      "quote": "creature moves in direction until the next tile is an obstacle",
+      "exact_match": true
+    },
+    {
+      "cp": 2,
+      "rule": "I7",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 351,
+      "quote": "Passed through the plant (no win — need to stop on the plant to win).",
+      "exact_match": true
+    },
+    {
+      "cp": 3,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 3,
+      "rule": "I2",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 40,
+      "quote": "creature moves in direction until the next tile is an obstacle",
+      "exact_match": true
+    },
+    {
+      "cp": 3,
+      "rule": "I3",
+      "evidence_cp": 3,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-003.md",
+      "line": 342,
+      "quote": "the box slides until it hits a wall, and the creature slides until it hits the box.",
+      "exact_match": true
+    },
+    {
+      "cp": 3,
+      "rule": "I7",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 351,
+      "quote": "Passed through the plant (no win — need to stop on the plant to win).",
+      "exact_match": true
+    },
+    {
+      "cp": 4,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 4,
+      "rule": "I2",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 40,
+      "quote": "creature moves in direction until the next tile is an obstacle",
+      "exact_match": true
+    },
+    {
+      "cp": 4,
+      "rule": "I3",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 70,
+      "quote": "The orange box is a pushable object.",
+      "exact_match": true
+    },
+    {
+      "cp": 4,
+      "rule": "I7",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 80,
+      "quote": "Plant is passable; landing on it completes the level.",
+      "exact_match": true
+    },
+    {
+      "cp": 5,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 5,
+      "rule": "I2",
+      "evidence_cp": 5,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+      "line": 319,
+      "quote": "the creature cannot pass through the door in any state.",
+      "exact_match": true
+    },
+    {
+      "cp": 5,
+      "rule": "I3",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 70,
+      "quote": "The orange box is a pushable object.",
+      "exact_match": true
+    },
+    {
+      "cp": 5,
+      "rule": "I5",
+      "evidence_cp": 5,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+      "line": 319,
+      "quote": "the creature cannot pass through the door in any state.",
+      "exact_match": true
+    },
+    {
+      "cp": 5,
+      "rule": "I7",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 80,
+      "quote": "Plant is passable; landing on it completes the level.",
+      "exact_match": true
+    },
+    {
+      "cp": 6,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 6,
+      "rule": "I2",
+      "evidence_cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "line": 968,
+      "quote": "The beam blocks horizontal crossings of column 4",
+      "exact_match": true
+    },
+    {
+      "cp": 6,
+      "rule": "I3",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 70,
+      "quote": "The orange box is a pushable object.",
+      "exact_match": true
+    },
+    {
+      "cp": 6,
+      "rule": "I5",
+      "evidence_cp": 5,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+      "line": 319,
+      "quote": "the creature cannot pass through the door in any state.",
+      "exact_match": true
+    },
+    {
+      "cp": 6,
+      "rule": "I6",
+      "evidence_cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "line": 333,
+      "quote": "box is consumed, door becomes passable",
+      "exact_match": true
+    },
+    {
+      "cp": 6,
+      "rule": "I7",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 80,
+      "quote": "Plant is passable; landing on it completes the level.",
+      "exact_match": true
+    },
+    {
+      "cp": 7,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 7,
+      "rule": "I2",
+      "evidence_cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "line": 968,
+      "quote": "The beam blocks horizontal crossings of column 4",
+      "exact_match": true
+    },
+    {
+      "cp": 7,
+      "rule": "I3",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 70,
+      "quote": "The orange box is a pushable object.",
+      "exact_match": true
+    },
+    {
+      "cp": 7,
+      "rule": "I5",
+      "evidence_cp": 5,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+      "line": 319,
+      "quote": "the creature cannot pass through the door in any state.",
+      "exact_match": true
+    },
+    {
+      "cp": 7,
+      "rule": "I6",
+      "evidence_cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "line": 333,
+      "quote": "box is consumed, door becomes passable",
+      "exact_match": true
+    },
+    {
+      "cp": 7,
+      "rule": "I7",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 80,
+      "quote": "Plant is passable; landing on it completes the level.",
+      "exact_match": true
+    },
+    {
+      "cp": 8,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 8,
+      "rule": "I2",
+      "evidence_cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "line": 968,
+      "quote": "The beam blocks horizontal crossings of column 4",
+      "exact_match": true
+    },
+    {
+      "cp": 8,
+      "rule": "I3",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 70,
+      "quote": "The orange box is a pushable object.",
+      "exact_match": true
+    },
+    {
+      "cp": 8,
+      "rule": "I4",
+      "evidence_cp": 8,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+      "line": 778,
+      "quote": "box 2 blocks → box 3 can't move",
+      "exact_match": true
+    },
+    {
+      "cp": 8,
+      "rule": "I5",
+      "evidence_cp": 8,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+      "line": 279,
+      "quote": "Vertical movement through column 4 is always allowed.",
+      "exact_match": true
+    },
+    {
+      "cp": 8,
+      "rule": "I6",
+      "evidence_cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "line": 333,
+      "quote": "box is consumed, door becomes passable",
+      "exact_match": true
+    },
+    {
+      "cp": 8,
+      "rule": "I7",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 80,
+      "quote": "Plant is passable; landing on it completes the level.",
+      "exact_match": true
+    },
+    {
+      "cp": 9,
+      "rule": "I1",
+      "evidence_cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+      "line": 36,
+      "quote": "ACTION1 = slide UP (stops just before first obstacle)",
+      "exact_match": true
+    },
+    {
+      "cp": 9,
+      "rule": "I2",
+      "evidence_cp": 9,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+      "line": 256,
+      "quote": "Vertical (up/down): always passable (observed).",
+      "exact_match": true
+    },
+    {
+      "cp": 9,
+      "rule": "I3",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 70,
+      "quote": "The orange box is a pushable object.",
+      "exact_match": true
+    },
+    {
+      "cp": 9,
+      "rule": "I4",
+      "evidence_cp": 9,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+      "line": 254,
+      "quote": "If the box can't move (the cell in front is a wall or a box)",
+      "exact_match": true
+    },
+    {
+      "cp": 9,
+      "rule": "I5",
+      "evidence_cp": 8,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+      "line": 279,
+      "quote": "Vertical movement through column 4 is always allowed.",
+      "exact_match": true
+    },
+    {
+      "cp": 9,
+      "rule": "I6",
+      "evidence_cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "line": 333,
+      "quote": "box is consumed, door becomes passable",
+      "exact_match": true
+    },
+    {
+      "cp": 9,
+      "rule": "I7",
+      "evidence_cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+      "line": 80,
+      "quote": "Plant is passable; landing on it completes the level.",
+      "exact_match": true
+    }
+  ],
+  "requested_coverage": [
+    {
+      "cp": 5,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+      "bytes": 76060,
+      "sha256": "fb7c04ba72ae354ff19452afa15af3bd73dfe02eef0df780065ea77a53af4b99",
+      "fully_read": true,
+      "notebook_inherited_from": 4,
+      "thinking_fully_read": true,
+      "rules": [
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "I5",
+        "I6",
+        "I7"
+      ]
+    },
+    {
+      "cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+      "bytes": 116366,
+      "sha256": "a42bf6f10815bb6f672cf7721249ef4e915f98d0cd9b6ececbfa10fb6d04cacf",
+      "fully_read": true,
+      "notebook_inherited_from": 4,
+      "thinking_fully_read": true,
+      "rules": [
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "I5",
+        "I6",
+        "I7"
+      ]
+    },
+    {
+      "cp": 7,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-007.md",
+      "bytes": 5669,
+      "sha256": "e30e3fdfc0718711a35d162118eeb973803a398ff0e5284e84623893471ccde0",
+      "fully_read": true,
+      "notebook_inherited_from": 4,
+      "thinking_fully_read": true,
+      "rules": [
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "I5",
+        "I6",
+        "I7"
+      ]
+    },
+    {
+      "cp": 8,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+      "bytes": 136813,
+      "sha256": "47f827eef6f06c527dab3742afd711aed5f85fc3f4b1b408ee562cbe2164e7d8",
+      "fully_read": true,
+      "notebook_inherited_from": 4,
+      "thinking_fully_read": true,
+      "rules": [
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "I5",
+        "I6",
+        "I7"
+      ]
+    },
+    {
+      "cp": 9,
+      "path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+      "bytes": 103986,
+      "sha256": "4254b7e039ce215c67e55ddf3bcfdff6b43481056d6281a7aca75ff33a65e3d2",
+      "fully_read": true,
+      "notebook_inherited_from": 4,
+      "thinking_fully_read": true,
+      "rules": [
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "I5",
+        "I6",
+        "I7"
+      ]
+    }
+  ],
+  "frozen": false,
+  "comparison_performed": false,
+  "requested_judgments": 35,
+  "next_checkpoint": 10
+}

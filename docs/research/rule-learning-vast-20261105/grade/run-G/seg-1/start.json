@@ -1,0 +1,44 @@
+{
+  "I1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "T: ACTION1/2/3/4 = slide up/down/left/right across 6 tiles, stopping just before a non-6 tile."
+  },
+  "I2": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "T: Stopped at the last 6 before the wall."
+  },
+  "I3": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: the crate slides forward as far as it can, and the player ends up adjacent behind it."
+  },
+  "I4": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: The grid is 7x7, with values 0-14."
+  },
+  "I5": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: The blue/white striped area is walkable floor, and the dark area is wall."
+  },
+  "I6": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: The blue/white striped area is walkable floor, and the dark area is wall."
+  },
+  "I7": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "T: it only clears when you \"stop\" on the grass"
+  }
+}

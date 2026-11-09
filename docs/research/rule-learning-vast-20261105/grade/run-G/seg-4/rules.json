@@ -1,0 +1,30 @@
+[
+ {
+  "id": "I1",
+  "rule": "Controls: four moves (up, down, left, right)."
+ },
+ {
+  "id": "I2",
+  "rule": "Ice sliding: after a move the player keeps sliding in that direction until the next cell is a wall, water or a crate that cannot move."
+ },
+ {
+  "id": "I3",
+  "rule": "Pushing: sliding into a crate pushes it, and the player and crate slide together until the crate hits an obstacle; both stop, the player next to the crate."
+ },
+ {
+  "id": "I4",
+  "rule": "Chains: a pushed crate that runs into another crate pushes that crate too; the whole row moves together."
+ },
+ {
+  "id": "I5",
+  "rule": "Water blocks the player: the player cannot enter water and stops in front of it."
+ },
+ {
+  "id": "I6",
+  "rule": "A crate pushed into water fills it: the crate disappears, the water becomes walkable floor, and the player can then slide across it."
+ },
+ {
+  "id": "I7",
+  "rule": "Win: the player must come to rest (stop) on the goal tile; sliding over the goal does not complete the level."
+ }
+]

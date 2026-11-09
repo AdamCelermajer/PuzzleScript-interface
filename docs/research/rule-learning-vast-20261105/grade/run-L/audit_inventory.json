@@ -1,0 +1,3105 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION1..4 = up/down/left/right"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Sliding ice puzzle: move in a direction, slide until hitting wall/border, stop before it."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Where the player is: probably (4,4)"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Where the player is: probably (4,4)"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: If holes, sliding toward a hole = death"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: If holes, sliding toward a hole = death"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Goal: reach plant."
+      }
+    },
+    "move": 1,
+    "seg": "seg-0",
+    "chars": 49326,
+    "thinking_chars": 47934
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    },
+    "move": 7,
+    "seg": "seg-0",
+    "chars": 8590,
+    "thinking_chars": 8394
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: stop at (2,4) = goal."
+      }
+    },
+    "move": 12,
+    "seg": "seg-0",
+    "chars": 12299,
+    "thinking_chars": 12102
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: 21 = wooden crate (brown, also wall)."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    },
+    "move": 13,
+    "seg": "seg-0",
+    "chars": 28417,
+    "thinking_chars": 24482
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    },
+    "move": 25,
+    "seg": "seg-0",
+    "chars": 73972,
+    "thinking_chars": 73775
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: player ends directly BEHIND crate final pos."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    },
+    "move": 29,
+    "seg": "seg-0",
+    "chars": 29414,
+    "thinking_chars": 24790
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    },
+    "move": 43,
+    "seg": "seg-0",
+    "chars": 2036,
+    "thinking_chars": 1839
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: if (nr,nc) in occ: chain.append((nr,nc))"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: movables={22:[(3,4)], 21:[(5,4),(5,5),(5,6)]}"
+      },
+      "I6": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: posmap={cell:(cell[0]+dist*dr, cell[1]+dist*dc) for cell in chain}"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 44,
+    "seg": "seg-1",
+    "chars": 88099,
+    "thinking_chars": 81103
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: The gold at (3,4) is passable (the player can slide through)."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 48,
+    "seg": "seg-1",
+    "chars": 122495,
+    "thinking_chars": 122298
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 49,
+    "seg": "seg-2",
+    "chars": 70959,
+    "thinking_chars": 53619
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 50,
+    "seg": "seg-2",
+    "chars": 485,
+    "thinking_chars": 288
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: Accept: the wave is a permanent wall to the player."
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 54,
+    "seg": "seg-2",
+    "chars": 118394,
+    "thinking_chars": 118197
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 55,
+    "seg": "seg-2",
+    "chars": 57969,
+    "thinking_chars": 34562
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 75,
+    "seg": "seg-3",
+    "chars": 36373,
+    "thinking_chars": 36176
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 100,
+    "seg": "seg-3",
+    "chars": 26789,
+    "thinking_chars": 26591
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 101,
+    "seg": "seg-3",
+    "chars": 74266,
+    "thinking_chars": 73788
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: The player passes through blue tiles"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: Blue: permanent, lethal to the crate, passable by the player."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 107,
+    "seg": "seg-3",
+    "chars": 100505,
+    "thinking_chars": 100307
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 119,
+    "seg": "seg-4",
+    "chars": 101179,
+    "thinking_chars": 100981
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: The win must be a pass-through or state condition."
+      }
+    },
+    "move": 125,
+    "seg": "seg-4",
+    "chars": 66868,
+    "thinking_chars": 66670
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: each arm is solid until its own crate is absorbed"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: each arm is solid until its own crate is absorbed, and after that it becomes passable."
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    },
+    "move": 150,
+    "seg": "seg-4",
+    "chars": 82974,
+    "thinking_chars": 82776
+  },
+  {
+    "cp": 20,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    },
+    "move": 171,
+    "seg": "seg-5",
+    "chars": 117290,
+    "thinking_chars": 117092
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A4 (5,1)->(5,2)"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: win = player ON goal (5,6) at the EXACT frame the 4th arm feeds"
+      }
+    },
+    "move": 171,
+    "seg": "seg-5",
+    "chars": 99972,
+    "thinking_chars": 75566
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 175,
+    "seg": "seg-5",
+    "chars": 535,
+    "thinking_chars": 337
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: player PUSHES crate A instead of stopping before it"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 184,
+    "seg": "seg-5",
+    "chars": 43554,
+    "thinking_chars": 18381
+  },
+  {
+    "cp": 24,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 200,
+    "seg": "seg-6",
+    "chars": 60143,
+    "thinking_chars": 59945
+  },
+  {
+    "cp": 25,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 213,
+    "seg": "seg-6",
+    "chars": 64119,
+    "thinking_chars": 37913
+  },
+  {
+    "cp": 26,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 225,
+    "seg": "seg-6",
+    "chars": 1050,
+    "thinking_chars": 852
+  },
+  {
+    "cp": 27,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: But \"stop on the goal\" is the primary victory condition"
+      }
+    },
+    "move": 243,
+    "seg": "seg-6",
+    "chars": 33603,
+    "thinking_chars": 33405
+  },
+  {
+    "cp": 28,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "T: the win condition here must be something else."
+      }
+    },
+    "move": 244,
+    "seg": "seg-6",
+    "chars": 76285,
+    "thinking_chars": 75807
+  },
+  {
+    "cp": 29,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: A3 (left) \u2192 (3,11)."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "T: the cleanest intended solution: push the blue (5,5) down"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: the cleanest intended solution: push the blue (5,5) down \u2192 it ends at (10,5), the player at (9,5) = goal."
+      }
+    },
+    "move": 244,
+    "seg": "seg-7",
+    "chars": 108441,
+    "thinking_chars": 108243
+  },
+  {
+    "cp": 30,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: P6 C2-up: A1(4,10) A1: C2(3,10)->(1,10), P(2,10)."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: P(9,5)=WIN."
+      }
+    },
+    "move": 245,
+    "seg": "seg-7",
+    "chars": 28330,
+    "thinking_chars": 9
+  },
+  {
+    "cp": 31,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: So the win is not the player on the goal at the end of the action."
+      }
+    },
+    "move": 247,
+    "seg": "seg-7",
+    "chars": 103301,
+    "thinking_chars": 103103
+  },
+  {
+    "cp": 32,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Player-on-goal impossible."
+      }
+    },
+    "move": 247,
+    "seg": "seg-7",
+    "chars": 34928,
+    "thinking_chars": 4989
+  },
+  {
+    "cp": 33,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 250,
+    "seg": "seg-7",
+    "chars": 4360,
+    "thinking_chars": 4162
+  },
+  {
+    "cp": 34,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: at 24 solid (blocked col5 slide at (6,5))."
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 268,
+    "seg": "seg-8",
+    "chars": 52813,
+    "thinking_chars": 22069
+  },
+  {
+    "cp": 35,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 275,
+    "seg": "seg-8",
+    "chars": 1137,
+    "thinking_chars": 939
+  },
+  {
+    "cp": 36,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    },
+    "move": 300,
+    "seg": "seg-8",
+    "chars": 74983,
+    "thinking_chars": 74785
+  },
+  {
+    "cp": 37,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Crates (21) are pushed automatically on contact and slide to the end of the line."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: L1-L3 won by LANDING on goal."
+      }
+    },
+    "move": 316,
+    "seg": "seg-8",
+    "chars": 111930,
+    "thinking_chars": 80484
+  },
+  {
+    "cp": 38,
+    "labels": {
+      "I1": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: the quadrant hypothesis is confirmed"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 322,
+    "seg": "seg-9",
+    "chars": 146717,
+    "thinking_chars": 146519
+  },
+  {
+    "cp": 39,
+    "labels": {
+      "I1": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Actions are DIAGONAL QUADRANTS"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 323,
+    "seg": "seg-9",
+    "chars": 32686,
+    "thinking_chars": 92
+  },
+  {
+    "cp": 40,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: A1=up, A2=down, A3=left, A4=right."
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 325,
+    "seg": "seg-9",
+    "chars": 26642,
+    "thinking_chars": 26444
+  },
+  {
+    "cp": 41,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Crate at (4,5): the player is at (3,5) [unreachable]."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 329,
+    "seg": "seg-10",
+    "chars": 113446,
+    "thinking_chars": 113248
+  },
+  {
+    "cp": 42,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: ACTION MAP (final): A1=up A2=down A3=left A4=right (standard)."
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 330,
+    "seg": "seg-10",
+    "chars": 33423,
+    "thinking_chars": 9
+  },
+  {
+    "cp": 43,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: automatic push on contact (object slides to line end, player ends directly behind it)"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 331,
+    "seg": "seg-10",
+    "chars": 108392,
+    "thinking_chars": 108194
+  },
+  {
+    "cp": 44,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 331,
+    "seg": "seg-11",
+    "chars": 117953,
+    "thinking_chars": 117755
+  },
+  {
+    "cp": 45,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: So the player can't reach (9,5). So the win isn't \"player ends on the goal.\""
+      }
+    },
+    "move": 333,
+    "seg": "seg-11",
+    "chars": 131108,
+    "thinking_chars": 130910
+  },
+  {
+    "cp": 46,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So the player stops at (3,10) [in front of the crate (3,9)]."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: The player ends at (3,9) [where the crate was]."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: Let me reconsider the goal (9,5). The player needs to end on (9,5)."
+      }
+    },
+    "move": 334,
+    "seg": "seg-12",
+    "chars": 107107,
+    "thinking_chars": 106909
+  },
+  {
+    "cp": 47,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: the player CONTINUES sliding (because the path is now clear)."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 347,
+    "seg": "seg-12",
+    "chars": 154507,
+    "thinking_chars": 154309
+  },
+  {
+    "cp": 48,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 350,
+    "seg": "seg-12",
+    "chars": 2168,
+    "thinking_chars": 1970
+  },
+  {
+    "cp": 49,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 352,
+    "seg": "seg-13",
+    "chars": 101098,
+    "thinking_chars": 100900
+  },
+  {
+    "cp": 50,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: So the crates (3,9) and (3,10) are stuck (they block each other)."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 354,
+    "seg": "seg-13",
+    "chars": 148408,
+    "thinking_chars": 148210
+  },
+  {
+    "cp": 51,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 356,
+    "seg": "seg-14",
+    "chars": 147229,
+    "thinking_chars": 147031
+  },
+  {
+    "cp": 52,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: Then push it up again: crate (6,5) \u2192 hits blue (5,5) \u2192 ABSORBED!"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 356,
+    "seg": "seg-15",
+    "chars": 133906,
+    "thinking_chars": 133708
+  },
+  {
+    "cp": 53,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: Player continues: (3,5), (3,4), (3,3), (3,2)=7 wall. Player stops at (3,3)."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 360,
+    "seg": "seg-15",
+    "chars": 143045,
+    "thinking_chars": 142847
+  },
+  {
+    "cp": 54,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: up column 12 - this will push the crate up to (3,12)."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: But in my earlier observation, the crate at (3,10) DID push the crate at (3,9) into the blue."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 375,
+    "seg": "seg-16",
+    "chars": 17524,
+    "thinking_chars": 17326
+  },
+  {
+    "cp": 55,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The ONLY way to push a crate down column 5 is from (3,5) [for crate at (4,5)]"
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Push left: blocked by (3,9). Stop at (3,11)."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 392,
+    "seg": "seg-16",
+    "chars": 104667,
+    "thinking_chars": 104469
+  },
+  {
+    "cp": 56,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: player can start at (2,5); no need to stop at (3,5)."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Chain push: crates can push other crates; observed f359/f378."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 393,
+    "seg": "seg-16",
+    "chars": 82292,
+    "thinking_chars": 81814
+  },
+  {
+    "cp": 57,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So route R U L D R U R D lands P at (3,5)."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: if (nr,nc) in crates: break"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 394,
+    "seg": "seg-17",
+    "chars": 132673,
+    "thinking_chars": 97374
+  },
+  {
+    "cp": 58,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 395,
+    "seg": "seg-17",
+    "chars": 110721,
+    "thinking_chars": 110523
+  },
+  {
+    "cp": 59,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct",
+        "note": "N: res=push_crate(nr,nc,d,crates,blue_pass)"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 395,
+    "seg": "seg-18",
+    "chars": 40089,
+    "thinking_chars": 9
+  },
+  {
+    "cp": 60,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 396,
+    "seg": "seg-18",
+    "chars": 114703,
+    "thinking_chars": 66624
+  },
+  {
+    "cp": 61,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: So the player can't stop on the goal. So the win must be a pass-through or a transformation-timing."
+      }
+    },
+    "move": 400,
+    "seg": "seg-18",
+    "chars": 88948,
+    "thinking_chars": 88750
+  },
+  {
+    "cp": 62,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: So I can't push a crate right in row 4 (from (4,2))."
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Crate B is blocked by crate A (4,3). So crate B doesn't move"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: the crate (3,7) can't go left (blocked by (3,6))."
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    },
+    "move": 404,
+    "seg": "seg-19",
+    "chars": 195897,
+    "thinking_chars": 195699
+  },
+  {
+    "cp": 63,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: In the actual game, the player pushes the crate when it reaches it during a slide."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: When it reaches a crate, it pushes the group (player + chain)."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: If the lead hits a shatter, the crate is removed, and the group continues."
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    },
+    "move": 404,
+    "seg": "seg-20",
+    "chars": 104050,
+    "thinking_chars": 103852
+  },
+  {
+    "cp": 64,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: 32 A2  -> P(9,5)  [crate 4,5 -> 10,5; PLAYER ON GOAL = WIN]"
+      }
+    },
+    "move": 405,
+    "seg": "seg-20",
+    "chars": 66387,
+    "thinking_chars": 15674
+  },
+  {
+    "cp": 65,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 425,
+    "seg": "seg-20",
+    "chars": 14470,
+    "thinking_chars": 14272
+  },
+  {
+    "cp": 66,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 437,
+    "seg": "seg-20",
+    "chars": 5053,
+    "thinking_chars": 4855
+  },
+  {
+    "cp": 67,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: until the lead crate hits a wall or another crate"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 437,
+    "seg": "seg-20",
+    "chars": 57819,
+    "thinking_chars": 1481
+  },
+  {
+    "cp": 68,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    },
+    "move": 437,
+    "seg": "seg-20",
+    "chars": 471,
+    "thinking_chars": 273
+  }
+]

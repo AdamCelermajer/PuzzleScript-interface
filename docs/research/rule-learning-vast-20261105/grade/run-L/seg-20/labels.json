@@ -1,0 +1,247 @@
+[
+  {
+    "cp": 63,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: In the actual game, the player pushes the crate when it reaches it during a slide."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: When it reaches a crate, it pushes the group (player + chain)."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: If the lead hits a shatter, the crate is removed, and the group continues."
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 64,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: 32 A2  -> P(9,5)  [crate 4,5 -> 10,5; PLAYER ON GOAL = WIN]"
+      }
+    }
+  },
+  {
+    "cp": 65,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 66,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 67,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: until the lead crate hits a wall or another crate"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 68,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  }
+]

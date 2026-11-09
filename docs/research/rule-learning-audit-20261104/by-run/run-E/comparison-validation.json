@@ -1,0 +1,65 @@
+{
+  "completed_at_utc": "2026-11-04T18:30:51.079472+00:00",
+  "freeze_timestamp": "2026-11-04T18:27:31.064508+00:00",
+  "coverage_slots": 520,
+  "raw_checkpoint_count": 65,
+  "published_checkpoint_count": 65,
+  "fields_compared_each": 1560,
+  "raw_vs_published_field_differences": 0,
+  "frozen_hash_unchanged": true,
+  "independent_hash_unchanged": true,
+  "comparison_inputs": [
+    {
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/labels.json",
+      "sha256": "a92f0c61d689cb38770bf37ffb0cb09d3bd080065dac16bb55de4f9550435f63"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/labels.json",
+      "sha256": "ebb56819c6359fbdb81b8e4a942e3a3bdc341390341acfacc3f2aa47160e3529"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/labels.json",
+      "sha256": "f693989286fa2a2f00eac67971ac9ee274f8bdd2aa9fff439a0ebcfa8b1c1a0a"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/labels.json",
+      "sha256": "21ea4a2b7f166bdde00b96da2f254dd430a8f77daf5f948c51619ad7817f572a"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/labels.json",
+      "sha256": "09e3fe00d11cbfa59b160aa5f30991f7df33b6fb477c04e4e0916ee94209e351"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-5/labels.json",
+      "sha256": "490471c9dd2b95bdde66c934fabe24f4e653e00922a3b5dd431f571e7923341b"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/labels.json",
+      "sha256": "abfc99e3584679b5a0f0a65dfb9de2ed4abd05af5ef76d204d9a0c08ec5bddcd"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/grade/key.json",
+      "sha256": "3a85909352d76c934b30745177da96bcfc5767ec88e2c656a34a6771bf53af53"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/curves-combined.json",
+      "sha256": "141017eec5a3c7f85647648891572cf443f1e703163b0386ad9630d5055dae29"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/curves.json",
+      "sha256": "0eebea544f375283260f1a45c3ac705bab47512a914f1e197a7320dcdcb5a67a"
+    },
+    {
+      "path": "docs/research/rule-learning-20261028/README.md",
+      "sha256": "e1751f126f3cc5bb5db32be8a7b0d6574092d070df158f17407fff8ca7aebde2"
+    }
+  ],
+  "output_hashes": {
+    "comparison-all-520.json": "dcf2c477c902f78f9f07260631e805fe2fa15d35ccae0117195558d8d51247b4",
+    "differences.json": "56c55eb6e1b7268f251c6b859049b1f27ec6733b3dcd0dd48ea198e7dca9dd4f",
+    "comparison-summary.json": "d1138e7eca725da5959dd0d32469492869f82eb3c2c0b8e2d934259f93e9e2c2",
+    "post-comparison-adjudication.json": "ce370ea8126a15e758a3be1aa410e78aa7179c5deb1648a6938766eba0f7c215"
+  },
+  "errors": [],
+  "supplemental_exact_line_checks": 7579
+}

@@ -1,0 +1,1352 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "K1": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "N: Mapping of ACTION1..5,7 to movement/interactions.",
+        "evidence_cp": 0
+      },
+      "K2": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "N: Level 1: grass field (tile 1) in rows 1-5, cols 1-7; border tiles are 0.",
+        "evidence_cp": 0
+      },
+      "K3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "N: The player likely moves with some of the actions; others may interact/teleport/etc.",
+        "evidence_cp": 0
+      },
+      "K4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "N: Level 1: grass field (tile 1) in rows 1-5, cols 1-7; border tiles are 0.",
+        "evidence_cp": 0
+      },
+      "K5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "N: Mapping of ACTION1..5,7 to movement/interactions.",
+        "evidence_cp": 0
+      },
+      "K6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "N: Mapping of ACTION1..5,7 to movement/interactions.",
+        "evidence_cp": 0
+      },
+      "K7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "N: Goal unknown: maybe push/bring dark square to frame, or align items.",
+        "evidence_cp": 0
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      },
+      "K3": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Player steps onto bright ring tile (3,4): ring disappears from there;",
+        "evidence_cp": 1
+      },
+      "K4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      },
+      "K3": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Player steps onto bright ring tile (3,4): ring disappears from there;",
+        "evidence_cp": 1
+      },
+      "K4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      }
+    }
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      },
+      "K3": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Player steps onto bright ring tile (3,4): ring disappears from there;",
+        "evidence_cp": 1
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Bright ring: an object; the player cannot step on it (it blocks).",
+        "evidence_cp": 3
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Bright ring: an object; the player cannot step on it (it blocks).",
+        "evidence_cp": 3
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence_cp": 0
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: endpoints E1=C+p, E2=C-p (p=rot90cw(D)) are in-field",
+        "evidence_cp": 5
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: So level 1's goal: place the bright ring on top of the socket.",
+        "evidence_cp": 5
+      }
+    }
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: endpoints E1=C+p, E2=C-p (p=rot90cw(D)) are in-field",
+        "evidence_cp": 5
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: So level 1's goal: place the bright ring on top of the socket.",
+        "evidence_cp": 5
+      }
+    }
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: the bar existed even though the \"other\" end was on the fused tile!",
+        "evidence_cp": 7
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: So level 1's goal: place the bright ring on top of the socket.",
+        "evidence_cp": 5
+      }
+    }
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: a fused tile cannot receive another ring.",
+        "evidence_cp": 8
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: So level 1's goal: place the bright ring on top of the socket.",
+        "evidence_cp": 5
+      }
+    }
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: a fused tile cannot receive another ring.",
+        "evidence_cp": 8
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: a fused tile cannot receive another ring.",
+        "evidence_cp": 8
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "correct",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: an endpoint is suppressed if a bright ring or cage currently occupies that tile.",
+        "evidence_cp": 11
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "correct",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: an endpoint is suppressed if a bright ring or cage currently occupies that tile.",
+        "evidence_cp": 11
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 = interact/commit (context dependent; see below).",
+        "evidence_cp": 1
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: so row 0 is a wall",
+        "evidence_cp": 4
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "note": "T: the bar appears centered 2 tiles ahead in the direction of travel.",
+        "evidence_cp": 4
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: While frozen: ACTION1/ACTION2 toggle the dark ring between N and S of the socket",
+        "evidence_cp": 1
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player UNFROZEN, can move again.",
+        "evidence_cp": 1
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Win condition = \"all rings are caged/fused into sockets\"!",
+        "evidence_cp": 9
+      }
+    }
+  },
+  {
+    "cp": 20,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1/2/3/4 = up/down/left/right (move or bar-flip). ACTION5 = commit.",
+        "evidence_cp": 20
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: 0 brick (impassable)",
+        "evidence_cp": 20
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Bar center C = R + 2·D",
+        "evidence_cp": 20
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player freezes at R.",
+        "evidence_cp": 20
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION5 commits the dark end",
+        "evidence_cp": 20
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: No bright rings remain (all caged).",
+        "evidence_cp": 20
+      }
+    }
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `do ACTION5` — interact/commit (1 action).",
+        "evidence_cp": 21
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: brick blocks.",
+        "evidence_cp": 21
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Bar center C = R + 2·D",
+        "evidence_cp": 21
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player freezes at R; arrows no longer move it.",
+        "evidence_cp": 21
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `ACTION5` while frozen: the dark end becomes a **cage**",
+        "evidence_cp": 21
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: A level completes exactly when **no bright rings remain**",
+        "evidence_cp": 21
+      }
+    }
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `do ACTION5` — commit (1 action).",
+        "evidence_cp": 22
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: brick blocks.",
+        "evidence_cp": 22
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Bar center C = R + 2·D",
+        "evidence_cp": 22
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player freezes at R; arrows no longer move it.",
+        "evidence_cp": 22
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `ACTION5` while frozen: the dark end becomes a **cage**",
+        "evidence_cp": 22
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: A level completes exactly when **no bright rings remain**",
+        "evidence_cp": 22
+      }
+    }
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `do ACTION5` — commit (1 action).",
+        "evidence_cp": 23
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: brick blocks.",
+        "evidence_cp": 23
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Bar center C = R + 2·D",
+        "evidence_cp": 23
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "T: both endpoints must be in range",
+        "evidence_cp": 13
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player freezes at R; arrows no longer move it.",
+        "evidence_cp": 23
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `ACTION5` while frozen: the dark end becomes a **cage**",
+        "evidence_cp": 23
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: A level completes exactly when **no bright rings remain**",
+        "evidence_cp": 23
+      }
+    }
+  },
+  {
+    "cp": 24,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `do ACTION5` — commit (1 action).",
+        "evidence_cp": 23
+      },
+      "K2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: brick blocks.",
+        "evidence_cp": 23
+      },
+      "K3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Bar center C = R + 2·D",
+        "evidence_cp": 23
+      },
+      "K4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "T: else: self.dark,self.dashed=None,None",
+        "evidence_cp": 24
+      },
+      "K5": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: Player freezes at R; arrows no longer move it.",
+        "evidence_cp": 23
+      },
+      "K6": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: `ACTION5` while frozen: the dark end becomes a **cage**",
+        "evidence_cp": 23
+      },
+      "K7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: A level completes exactly when **no bright rings remain**",
+        "evidence_cp": 23
+      }
+    }
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "cp": 25,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 26,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    }
+  }
+]

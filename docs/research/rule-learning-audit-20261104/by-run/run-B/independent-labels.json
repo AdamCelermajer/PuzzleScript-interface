@@ -1,0 +1,2169 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "I1": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "evidence_cp": 1,
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION3 = slide left is confirmed."
+      },
+      "I2": {
+        "source": "thinking",
+        "evidence_cp": 1,
+        "note": "T: The creature slides in the specified direction until it hits a wall/block.",
+        "belief": "partial",
+        "notebook": "absent",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I2": {
+        "source": "both",
+        "evidence_cp": 2,
+        "note": "N: creature moves in direction until the next tile is an obstacle",
+        "belief": "partial",
+        "notebook": "partial",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "correct",
+        "evidence_cp": 2,
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Passed through the plant (no win — need to stop on the plant to win)."
+      }
+    }
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I2": {
+        "source": "both",
+        "evidence_cp": 2,
+        "note": "N: creature moves in direction until the next tile is an obstacle",
+        "belief": "partial",
+        "notebook": "partial",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "belief": "correct",
+        "evidence_cp": 3,
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the box slides until it hits a wall, and the creature slides until it hits the box."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "correct",
+        "evidence_cp": 2,
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Passed through the plant (no win — need to stop on the plant to win)."
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I2": {
+        "source": "both",
+        "evidence_cp": 2,
+        "note": "N: creature moves in direction until the next tile is an obstacle",
+        "belief": "partial",
+        "notebook": "partial",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct"
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The beam blocks horizontal crossings of column 4",
+        "evidence_cp": 6,
+        "explanation": "Retains sliding and real blockers, but adopts nonexistent remote beam stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 968,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued slide learned, but final adopted account restricts filled tile passage to vertical and asserts horizontal beam blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The beam blocks horizontal crossings of column 4",
+        "evidence_cp": 6,
+        "explanation": "Retains sliding and real blockers, but adopts nonexistent remote beam stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 968,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued slide learned, but final adopted account restricts filled tile passage to vertical and asserts horizontal beam blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The beam blocks horizontal crossings of column 4",
+        "evidence_cp": 6,
+        "explanation": "Retains sliding and real blockers, but adopts nonexistent remote beam stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 968,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box 2 blocks → box 3 can't move",
+        "evidence_cp": 8,
+        "explanation": "Later planning adopts crate-on-crate blocking, rather than leaving chain pushing as an open alternative.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+        "evidence_line": 778,
+        "notebook_cp": 4
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Vertical movement through column 4 is always allowed.",
+        "evidence_cp": 8,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+        "evidence_line": 279,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued slide learned, but final adopted account restricts filled tile passage to vertical and asserts horizontal beam blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Vertical (up/down): always passable (observed).",
+        "evidence_cp": 9,
+        "explanation": "Beam explicitly retracted after discovering wall (6,3); partial remains because unfilled water is still treated as vertically passable.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 256,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: If the box can't move (the cell in front is a wall or a box)",
+        "evidence_cp": 9,
+        "explanation": "Adopted solver assumption treats another crate as blocking; no substantial chain-pushing belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 254,
+        "notebook_cp": 4
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Vertical movement through column 4 is always allowed.",
+        "evidence_cp": 8,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+        "evidence_line": 279,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued sliding retained; general walkable-floor result remains unresolved, with horizontal passage in filled state treated as untested/parameterized.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 10
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: VERTICALLY passable (observed states 23,24,27, both directions; assume all).",
+        "evidence_cp": 10,
+        "explanation": "Beam explicitly retracted after discovering wall (6,3); partial remains because unfilled water is still treated as vertically passable.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 126,
+        "notebook_cp": 10
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 10
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: If the box can't move (the cell in front is a wall or a box)",
+        "evidence_cp": 9,
+        "explanation": "Adopted solver assumption treats another crate as blocking; no substantial chain-pushing belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 254,
+        "notebook_cp": 10
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: LEFT entry blocked in ALL of 22-26",
+        "evidence_cp": 10,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 127,
+        "notebook_cp": 10
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Box entering (3,4) from below (col 4 up-push) is ABSORBED (disappears)",
+        "evidence_cp": 10,
+        "explanation": "Absorption and continued vertical crossing explicit; filled-state horizontal passability remains untested in newer notebook.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 128,
+        "notebook_cp": 10
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 10,
+        "explanation": "Thinking briefly rejects plant, but newer notebook ranks plant IS goal first and retains explicit landing-win rule; notebook wins temporal conflict."
+      }
+    }
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 10
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: VERTICALLY passable (observed states 23,24,27, both directions; assume all).",
+        "evidence_cp": 10,
+        "explanation": "Beam explicitly retracted after discovering wall (6,3); partial remains because unfilled water is still treated as vertically passable.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 126,
+        "notebook_cp": 10
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 10
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: If the box can't move (the cell in front is a wall or a box)",
+        "evidence_cp": 9,
+        "explanation": "Adopted solver assumption treats another crate as blocking; no substantial chain-pushing belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 254,
+        "notebook_cp": 10
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: LEFT entry blocked in ALL of 22-26",
+        "evidence_cp": 10,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 127,
+        "notebook_cp": 10
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Box entering (3,4) from below (col 4 up-push) is ABSORBED (disappears)",
+        "evidence_cp": 10,
+        "explanation": "Corrects repeated absorption: ring passes later boxes through; horizontal floor passability still parameterized, so partial persists.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 128,
+        "notebook_cp": 10
+      },
+      "I7": {
+        "source": "thinking",
+        "note": "T: the plant is a decoy / trap in L4",
+        "evidence_cp": 11,
+        "notebook": "correct",
+        "belief": "partial",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-011.md",
+        "evidence_line": 687,
+        "notebook_cp": 10,
+        "explanation": "Explicitly adopts L4 plant as decoy; retains learned stop-on-goal for prior levels. Ending tests plant conditionally (if the plant is the goal), without unconditionally restoring it."
+      }
+    }
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 10
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: the creature stays at (7,1)",
+        "evidence_cp": 12,
+        "explanation": "Adds false whole-slide cancellation when remote crate cannot move; retains wall stopping and erroneous unfilled-water vertical passage.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-012.md",
+        "evidence_line": 60,
+        "notebook_cp": 10
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 10
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: If the box can't move (the cell in front is a wall or a box)",
+        "evidence_cp": 9,
+        "explanation": "Adopted solver assumption treats another crate as blocking; no substantial chain-pushing belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 254,
+        "notebook_cp": 10
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: LEFT entry blocked in ALL of 22-26",
+        "evidence_cp": 10,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 127,
+        "notebook_cp": 10
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Box entering (3,4) from below (col 4 up-push) is ABSORBED (disappears)",
+        "evidence_cp": 10,
+        "explanation": "Corrects repeated absorption: ring passes later boxes through; horizontal floor passability still parameterized, so partial persists.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 128,
+        "notebook_cp": 10
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: This is the solution. 33 moves.",
+        "evidence_cp": 12,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-012.md",
+        "evidence_line": 116,
+        "notebook_cp": 10,
+        "explanation": "Adopts and executes plant-reaching solution; replaces decoy belief. Earlier stop-not-pass condition persists."
+      }
+    }
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: VERTICALLY passable for creature AND boxes in all states (observed).",
+        "evidence_cp": 13,
+        "explanation": "Newer notebook restores normal last-free-tile stopping (line 40), superseding cp12 whole-slide cancellation; still partial because unfilled water vertically passable.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-013.md",
+        "evidence_line": 126,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 13
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: If the box can't move (the cell in front is a wall or a box)",
+        "evidence_cp": 9,
+        "explanation": "Prior false chain-blocking persists. Notebook stopper is wall-backed, compatible with chains; notebook alone does not address movable chains (absent).",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 254,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: LEFT entry blocked in ALL of 22-26",
+        "evidence_cp": 10,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 127,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Box entering (3,4) from below (col 4 up-push) is ABSORBED (disappears)",
+        "evidence_cp": 10,
+        "explanation": "New notebook explicitly distinguishes absorption from later crate passage and permits landing/left exit; lacks general filled-floor entry account and retains directional door theory.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 128,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: This is the solution. 33 moves.",
+        "evidence_cp": 12,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-012.md",
+        "evidence_line": 116,
+        "notebook_cp": 13,
+        "explanation": "Adopts and executes plant-reaching solution; replaces decoy belief. Earlier stop-not-pass condition persists."
+      }
+    }
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: the creature just slides until it's blocked by the box",
+        "evidence_cp": 14,
+        "explanation": "Normal approach to immovable crate restored explicitly; water stopping still modeled as level/direction/rotor-dependent.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 179,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 13
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: in a push only one box moves at a time.",
+        "evidence_cp": 14,
+        "explanation": "Explicitly denies chain pushing; substantial correct chain content still absent.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 204,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So this level's doors are different, or the \"passability\" depends on state",
+        "evidence_cp": 14,
+        "explanation": "Learns L5 vertical blocking but retains L4 vertical passage and adopts global rotor/open-phase theory; no general water-blocking correction.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 676,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Box entering (3,4) from below (col 4 up-push) is ABSORBED (disappears)",
+        "evidence_cp": 10,
+        "explanation": "New notebook explicitly distinguishes absorption from later crate passage and permits landing/left exit; lacks general filled-floor entry account and retains directional door theory.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-010.md",
+        "evidence_line": 128,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: The creature slid left from (3,4) to (3,1) plant",
+        "evidence_cp": 14,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 45,
+        "notebook_cp": 13,
+        "explanation": "L4 plant win confirmed. Later pass-through trigger is a possibility under test alongside stopping alternatives; no settled replacement of persistent stop-on-goal belief."
+      }
+    }
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: the creature just slides until it's blocked by the box",
+        "evidence_cp": 14,
+        "explanation": "Normal approach to immovable crate restored explicitly; water stopping still modeled as level/direction/rotor-dependent.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 179,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 13
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is blocked by (5,4) box",
+        "evidence_cp": 15,
+        "explanation": "Still predicts adjacent movable crates cannot push together (line 704).",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 704,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: gold door = horizontal passage open (at least in the direction of exit)!",
+        "evidence_cp": 15,
+        "explanation": "Reinterprets L4 gold exit correctly; broader gold entry remains probably/conditional and blue vertical-passage exception persists. Partial retained.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 815,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: The creature slid left from (3,4) to (3,1) plant",
+        "evidence_cp": 14,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 45,
+        "notebook_cp": 13,
+        "explanation": "L4 plant win confirmed. Later pass-through trigger is a possibility under test alongside stopping alternatives; no settled replacement of persistent stop-on-goal belief."
+      }
+    }
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: the creature just slides until it's blocked by the box",
+        "evidence_cp": 14,
+        "explanation": "Normal approach to immovable crate restored explicitly; water stopping still modeled as level/direction/rotor-dependent.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 179,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 13
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is blocked by (5,4) box",
+        "evidence_cp": 15,
+        "explanation": "Still predicts adjacent movable crates cannot push together (line 704).",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 704,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: gold door = horizontal passage open (at least in the direction of exit)!",
+        "evidence_cp": 15,
+        "explanation": "Reinterprets L4 gold exit correctly; broader gold entry remains probably/conditional and blue vertical-passage exception persists. Partial retained.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 815,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: The creature slid left from (3,4) to (3,1) plant",
+        "evidence_cp": 14,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 45,
+        "notebook_cp": 13,
+        "explanation": "L4 plant win confirmed. Later pass-through trigger is a possibility under test alongside stopping alternatives; no settled replacement of persistent stop-on-goal belief."
+      }
+    }
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: the creature just slides until it's blocked by the box",
+        "evidence_cp": 14,
+        "explanation": "Normal approach to immovable crate restored explicitly; water stopping still modeled as level/direction/rotor-dependent.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-014.md",
+        "evidence_line": 179,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 13
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is blocked by (5,4) box",
+        "evidence_cp": 15,
+        "explanation": "Still predicts adjacent movable crates cannot push together (line 704).",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 704,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: gold door = horizontal passage open (at least in the direction of exit)!",
+        "evidence_cp": 15,
+        "explanation": "Reinterprets L4 gold exit correctly; broader gold entry remains probably/conditional and blue vertical-passage exception persists. Partial retained.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 815,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: The goal is something else.",
+        "evidence_cp": 17,
+        "notebook": "correct",
+        "belief": "partial",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-017.md",
+        "evidence_line": 440,
+        "notebook_cp": 13,
+        "explanation": "Adopted L5 exception at lines 440 and 518, acted on via empirical sweep; earlier levels still stop-on-plant. Later alternatives do not restore belief."
+      }
+    }
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So (10,6) is just a \"slide stopper\"",
+        "evidence_cp": 18,
+        "explanation": "Normal sliding persists, but adopts a false passable brake/stopper explanation for a mislocated wall; earlier blue vertical passage also not retracted.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 136,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 13
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: chain push: box (5,4) slid right:",
+        "evidence_cp": 18,
+        "explanation": "Vertical chain correctly inferred at line 48, temporarily fails to apply to horizontal pair, then explicitly explains horizontal chain at line 337. Newer thinking replaces no-chain belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 337,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Row 5 is now fully open (both doors are gold, no boxes)",
+        "evidence_cp": 18,
+        "explanation": "Lines 48 and 337 explain each crate disappearing into blue water and later crates passing filled tiles; lines 87, 273, 347 generalize gold passage horizontally and vertically. Current notebook still partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 347,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: So the plant is really not the goal (neither stop nor pass-through).",
+        "evidence_cp": 18,
+        "notebook": "correct",
+        "belief": "partial",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 216,
+        "notebook_cp": 13,
+        "explanation": "Briefly restores stop-required at line 55, then explicitly rejects plant goal at lines 120, 208, 216 and 249 and acts on other-stop sweep. Earlier-level correct stopping belief remains, hence partial."
+      }
+    }
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So (10,6) is just a \"slide stopper\"",
+        "evidence_cp": 18,
+        "explanation": "Normal sliding persists, but adopts a false passable brake/stopper explanation for a mislocated wall; earlier blue vertical passage also not retracted.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 136,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 13
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: chain push: box (5,4) slid right:",
+        "evidence_cp": 18,
+        "explanation": "Vertical chain correctly inferred at line 48, temporarily fails to apply to horizontal pair, then explicitly explains horizontal chain at line 337. Newer thinking replaces no-chain belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 337,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Row 5 is now fully open (both doors are gold, no boxes)",
+        "evidence_cp": 18,
+        "explanation": "Lines 48 and 337 explain each crate disappearing into blue water and later crates passing filled tiles; lines 87, 273, 347 generalize gold passage horizontally and vertically. Current notebook still partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 347,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: So the plant is really not the goal (neither stop nor pass-through).",
+        "evidence_cp": 18,
+        "notebook": "correct",
+        "belief": "partial",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 216,
+        "notebook_cp": 13,
+        "explanation": "Briefly restores stop-required at line 55, then explicitly rejects plant goal at lines 120, 208, 216 and 249 and acts on other-stop sweep. Earlier-level correct stopping belief remains, hence partial."
+      }
+    }
+  },
+  {
+    "cp": 20,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So the \"brake\" interpretation of (10,6) at m200 was wrong",
+        "evidence_cp": 20,
+        "explanation": "Retracts brake (610), but adopted stop-before-movable-crate predictions (1039-1051) and unretracted L4 blue exception retain partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "evidence_line": 610,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "T: creature stops at (8,6).",
+        "evidence_cp": 20,
+        "notebook": "correct",
+        "belief": "partial",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "evidence_line": 993,
+        "notebook_cp": 13,
+        "explanation": "Adopted plan at 1049-1051 stops before movable crate then leaves player at original crate position; directional pushing and occasional correct adjacent stopping remain."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: chain push: box (5,4) slid right:",
+        "evidence_cp": 18,
+        "explanation": "Vertical chain correctly inferred at line 48, temporarily fails to apply to horizontal pair, then explicitly explains horizontal chain at line 337. Newer thinking replaces no-chain belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 337,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Row 5 is now fully open (both doors are gold, no boxes)",
+        "evidence_cp": 18,
+        "explanation": "Lines 48 and 337 explain each crate disappearing into blue water and later crates passing filled tiles; lines 87, 273, 347 generalize gold passage horizontally and vertically. Current notebook still partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 347,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: the goal is almost certainly plant-stop with 1 blue door;",
+        "evidence_cp": 20,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "evidence_line": 1004,
+        "notebook_cp": 13,
+        "explanation": "Adopts plant-stop and reset plan (1004,1011,1019); prior rejection replaced."
+      }
+    }
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So the \"brake\" interpretation of (10,6) at m200 was wrong",
+        "evidence_cp": 20,
+        "explanation": "Retracts brake (610), but adopted stop-before-movable-crate predictions (1039-1051) and unretracted L4 blue exception retain partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "evidence_line": 610,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "T: next (7,6) = box",
+        "evidence_cp": 21,
+        "notebook": "correct",
+        "belief": "partial",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-021.md",
+        "evidence_line": 237,
+        "notebook_cp": 13,
+        "explanation": "Corrects final adjacent stopping at 92-94 but repeatedly retains separate approach-before-push, including adopted final plan 237-247. Partial persists."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box stops at (10,5); creature stops at (10,4).",
+        "evidence_cp": 21,
+        "explanation": "217 explicitly accepts box-pushes-box but predicts leading object slides to far edge while trailing box/player stop at original positions; substantial chain understanding with incorrect whole-row movement.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-021.md",
+        "evidence_line": 217,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Row 5 is now fully open (both doors are gold, no boxes)",
+        "evidence_cp": 18,
+        "explanation": "Lines 48 and 337 explain each crate disappearing into blue water and later crates passing filled tiles; lines 87, 273, 347 generalize gold passage horizontally and vertically. Current notebook still partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 347,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: the goal is almost certainly plant-stop with 1 blue door;",
+        "evidence_cp": 20,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "evidence_line": 1004,
+        "notebook_cp": 13,
+        "explanation": "Adopts plant-stop and reset plan (1004,1011,1019); prior rejection replaced."
+      }
+    }
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So the \"brake\" interpretation of (10,6) at m200 was wrong",
+        "evidence_cp": 20,
+        "explanation": "Retracts brake (610), but adopted stop-before-movable-crate predictions (1039-1051) and unretracted L4 blue exception retain partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "evidence_line": 610,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "T: the creature slides all the way to directly behind the box.",
+        "evidence_cp": 22,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-022.md",
+        "evidence_line": 578,
+        "notebook_cp": 13,
+        "explanation": "Explicit final-position correction at 527,578 and final adopted 757/761/765 remove both erroneous push landing and separate approach-before-push."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the current box moves to (nr,nc) and slides further.",
+        "evidence_cp": 22,
+        "explanation": "Recursive chain motion corrected at 427,468,719,732-736: trailing box continues to adjacent behind leading final box; earlier non-following chain replaced.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-022.md",
+        "evidence_line": 736,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Also... the creature passed through vertically in blue (c4)",
+        "evidence_cp": 15,
+        "explanation": "L5 blue blocking learned, but explicit L4 blue vertical-passage belief persists; partial, not universal blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-3/cp-015.md",
+        "evidence_line": 819,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Row 5 is now fully open (both doors are gold, no boxes)",
+        "evidence_cp": 18,
+        "explanation": "Lines 48 and 337 explain each crate disappearing into blue water and later crates passing filled tiles; lines 87, 273, 347 generalize gold passage horizontally and vertically. Current notebook still partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 347,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: the goal is almost certainly plant-stop with 1 blue door;",
+        "evidence_cp": 20,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "evidence_line": 1004,
+        "notebook_cp": 13,
+        "explanation": "Adopts plant-stop and reset plan (1004,1011,1019); prior rejection replaced."
+      }
+    }
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 13
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: The creature slides in direction d until blocked by a wall/frame/box/blue door.",
+        "evidence_cp": 23,
+        "explanation": "General slide model at 566-568 and final corrected dynamic simulation 1068-1095 pushes movable crates immediately and blocks at blue/walls. General adopted blue blocking replaces older directional exception; notebook remains partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-023.md",
+        "evidence_line": 567,
+        "notebook_cp": 13
+      },
+      "I3": {
+        "source": "both",
+        "note": "T: the creature follows the box all the way, stopping directly behind it.",
+        "evidence_cp": 23,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-023.md",
+        "evidence_line": 769,
+        "notebook_cp": 13,
+        "explanation": "Earlier push errors in planning/code explicitly corrected at 765-771, final model 1084 retains correct final-adjacent landing."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the current box moves to (nr,nc) and slides further.",
+        "evidence_cp": 22,
+        "explanation": "Recursive chain motion corrected at 427,468,719,732-736: trailing box continues to adjacent behind leading final box; earlier non-following chain replaced.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-022.md",
+        "evidence_line": 736,
+        "notebook_cp": 13
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Let me assume blue = always blocks.",
+        "evidence_cp": 23,
+        "explanation": "Explicit working assumption (586) plus uniform blocking in final simulator (1087-1091) generalizes beyond L5 tests to L6 and supersedes earlier directional exception. Notebook alone still partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-023.md",
+        "evidence_line": 586,
+        "notebook_cp": 13
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Row 5 is now fully open (both doors are gold, no boxes)",
+        "evidence_cp": 18,
+        "explanation": "Lines 48 and 337 explain each crate disappearing into blue water and later crates passing filled tiles; lines 87, 273, 347 generalize gold passage horizontally and vertically. Current notebook still partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "evidence_line": 347,
+        "notebook_cp": 13
+      },
+      "I7": {
+        "source": "both",
+        "note": "T: The plant-stop hypothesis was correct!",
+        "evidence_cp": 23,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-023.md",
+        "evidence_line": 10,
+        "notebook_cp": 13,
+        "explanation": "L5 completion confirms adopted goal; L6 uses same stop-only goal despite exploratory doubts (572,735-737,1134)."
+      }
+    }
+  },
+  {
+    "cp": 24,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 24
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Blue door: blocks creature in all states;",
+        "evidence_cp": 24,
+        "explanation": "New notebook append 177 adopts general blocking plus existing slide rule 40 and push rule 70-72. Treat appended general rule as correction superseding historical L4 directional exception.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 177,
+        "notebook_cp": 24
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: creature lands behind box FINAL pos;",
+        "evidence_cp": 24,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 198,
+        "notebook_cp": 24,
+        "explanation": "New notebook 198 explicitly corrects prior final-position errors; current thinking verifies 249,252,429,432."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: box can push box (chain);",
+        "evidence_cp": 24,
+        "explanation": "Notebook now explicitly states chain (178) and documents 190: leading box absorbed, trailing box continues to wall with player adjacent. Thinking 256 and 434 agrees.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 178,
+        "notebook_cp": 24
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Blue door: blocks creature in all states;",
+        "evidence_cp": 24,
+        "explanation": "Appended general rule 177 supersedes stale L4 vertically-passable text (126); newer notebook and thinking agree on blue blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 177,
+        "notebook_cp": 24
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: absorbs pushed box (any blue state) -> door gold 27 (passable).",
+        "evidence_cp": 24,
+        "explanation": "New notebook 177,190,193,197 states absorption, passability, and subsequent traversal by player and crates; supersedes older partial account.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 177,
+        "notebook_cp": 24
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Goal = stop creature ON plant",
+        "evidence_cp": 24,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 175,
+        "notebook_cp": 24,
+        "explanation": "New notebook 175 confirms stopping; 193 and 197 contrast pass-through with final push landing. Thinking agrees."
+      }
+    }
+  },
+  {
+    "cp": 25,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 24
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Blue door: blocks creature in all states;",
+        "evidence_cp": 24,
+        "explanation": "New notebook append 177 adopts general blocking plus existing slide rule 40 and push rule 70-72. Treat appended general rule as correction superseding historical L4 directional exception.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 177,
+        "notebook_cp": 24
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: creature lands behind box FINAL pos;",
+        "evidence_cp": 24,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 198,
+        "notebook_cp": 24,
+        "explanation": "New notebook 198 explicitly corrects prior final-position errors; current thinking verifies 249,252,429,432."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: box can push box (chain);",
+        "evidence_cp": 24,
+        "explanation": "Notebook now explicitly states chain (178) and documents 190: leading box absorbed, trailing box continues to wall with player adjacent. Thinking 256 and 434 agrees.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 178,
+        "notebook_cp": 24
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Blue door: blocks creature in all states;",
+        "evidence_cp": 24,
+        "explanation": "Appended general rule 177 supersedes stale L4 vertically-passable text (126); newer notebook and thinking agree on blue blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 177,
+        "notebook_cp": 24
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: absorbs pushed box (any blue state) -> door gold 27 (passable).",
+        "evidence_cp": 24,
+        "explanation": "New notebook 177,190,193,197 states absorption, passability, and subsequent traversal by player and crates; supersedes older partial account.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 177,
+        "notebook_cp": 24
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Goal = stop creature ON plant",
+        "evidence_cp": 24,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-024.md",
+        "evidence_line": 175,
+        "notebook_cp": 24,
+        "explanation": "New notebook 175 confirms stopping; 193 and 197 contrast pass-through with final push landing. Thinking agrees."
+      }
+    }
+  },
+  {
+    "cp": 26,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: `ACTION1 / 2 / 3 / 4` = slide **up / down / left / right**",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 24,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: while vertical travel through the door is passable",
+        "evidence_cp": 26,
+        "explanation": "New notebook supersedes earlier general blocking: explicitly re-adopts false vertical blue-door passage; substantial blocking/sliding knowledge retained.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 34,
+        "notebook_cp": 26
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: one tile behind the box's final position",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 31,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: chain pushes work",
+        "evidence_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 31,
+        "notebook_cp": 26
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: while vertical travel through the door is passable",
+        "evidence_cp": 26,
+        "explanation": "New notebook supersedes earlier general blocking: explicitly re-adopts false vertical blue-door passage; substantial blocking/sliding knowledge retained.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 34,
+        "notebook_cp": 26
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Gold doors are passable and absorb nothing",
+        "evidence_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 35,
+        "notebook_cp": 26
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Stopping on the plant completes the level.",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 38,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      }
+    }
+  },
+  {
+    "cp": 27,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: `ACTION1 / 2 / 3 / 4` = slide **up / down / left / right**",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 24,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: while vertical travel through the door is passable",
+        "evidence_cp": 26,
+        "explanation": "Thinking adopts always-blocking solver as a conservative simplification, but explicitly retains claimed blue vertical passage at cp27:1219-1227. Not an unqualified retraction; notebook cp26 also partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 34,
+        "notebook_cp": 26
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: one tile behind the box's final position",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 31,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: chain pushes work",
+        "evidence_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 31,
+        "notebook_cp": 26
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: while vertical travel through the door is passable",
+        "evidence_cp": 26,
+        "explanation": "Thinking adopts always-blocking solver as a conservative simplification, but explicitly retains claimed blue vertical passage at cp27:1219-1227. Not an unqualified retraction; notebook cp26 also partial.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 34,
+        "notebook_cp": 26
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Gold doors are passable and absorb nothing",
+        "evidence_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 35,
+        "notebook_cp": 26
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Stopping on the plant completes the level.",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 38,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      }
+    }
+  },
+  {
+    "cp": 28,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: `ACTION1 / 2 / 3 / 4` = slide **up / down / left / right**",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 24,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: blue doors block the creature (opaque)",
+        "evidence_cp": 28,
+        "explanation": "Latest thinking explicitly identifies L4 passage as after gold conversion (line 10), adopts blocking working model at 14. Treat as replacement of blue-passage exception. Notebook remains partial. Borderline: conservative-model language can alternatively preserve partial if read as implementation-only simplification.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-028.md",
+        "evidence_line": 14,
+        "notebook_cp": 26
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: one tile behind the box's final position",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 31,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      },
+      "I4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: chain pushes work",
+        "evidence_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 31,
+        "notebook_cp": 26
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: blue doors block the creature (opaque)",
+        "evidence_cp": 28,
+        "explanation": "Latest thinking explicitly identifies L4 passage as after gold conversion (line 10), adopts blocking working model at 14. Treat as replacement of blue-passage exception. Notebook remains partial. Borderline: conservative-model language can alternatively preserve partial if read as implementation-only simplification.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-028.md",
+        "evidence_line": 14,
+        "notebook_cp": 26
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Gold doors are passable and absorb nothing",
+        "evidence_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 35,
+        "notebook_cp": 26
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Stopping on the plant completes the level.",
+        "evidence_cp": 26,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-6/cp-026.md",
+        "evidence_line": 38,
+        "notebook_cp": 26,
+        "explanation": "New notebook independently supports rule; thinking agrees, with prior belief persistence."
+      }
+    }
+  }
+]

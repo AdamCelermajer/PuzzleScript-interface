@@ -1,0 +1,725 @@
+{
+  "meaning": "Reviewed disagreements requiring interpretation/rubric adjudication, not unreviewed or missing labels.",
+  "entries": [
+    {
+      "cp": 0,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 0,
+      "rule": "K5",
+      "field": "source",
+      "independent": "thinking",
+      "original_raw": "none",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 0,
+      "rule": "K7",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "reverse_goal"
+    },
+    {
+      "cp": 1,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 1,
+      "rule": "K5",
+      "field": "source",
+      "independent": "thinking",
+      "original_raw": "none",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 2,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 2,
+      "rule": "K5",
+      "field": "source",
+      "independent": "thinking",
+      "original_raw": "none",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 2,
+      "rule": "K7",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "ambiguity",
+      "group": "conditional_goal"
+    },
+    {
+      "cp": 3,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 3,
+      "rule": "K5",
+      "field": "source",
+      "independent": "thinking",
+      "original_raw": "none",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 4,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 4,
+      "rule": "K5",
+      "field": "source",
+      "independent": "thinking",
+      "original_raw": "none",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 5,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 5,
+      "rule": "K5",
+      "field": "source",
+      "independent": "thinking",
+      "original_raw": "none",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 6,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 7,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 8,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 8,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 8,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 9,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 9,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 9,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 10,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 10,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 10,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 11,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 11,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 11,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 12,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 12,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 12,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 13,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 13,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 13,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 14,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 14,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 14,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 15,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 15,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 15,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 16,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 16,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 16,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 16,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 16,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 17,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 17,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 17,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 17,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 17,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 18,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 18,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 18,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 18,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 18,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 19,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 19,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 19,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 19,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 19,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 20,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 20,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 20,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 20,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 20,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 21,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 21,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 21,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 21,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 21,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 22,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 22,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 22,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 22,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 22,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 23,
+      "rule": "K5",
+      "field": "belief",
+      "independent": "wrong",
+      "original_raw": "partial",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 23,
+      "rule": "K5",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 23,
+      "rule": "K5",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "rubric_issue",
+      "group": "selection_animation"
+    },
+    {
+      "cp": 23,
+      "rule": "K7",
+      "field": "notebook",
+      "independent": "wrong",
+      "original_raw": "absent",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    },
+    {
+      "cp": 23,
+      "rule": "K7",
+      "field": "source",
+      "independent": "both",
+      "original_raw": "thinking",
+      "category": "ambiguity",
+      "group": "notebook_unknown"
+    }
+  ]
+}

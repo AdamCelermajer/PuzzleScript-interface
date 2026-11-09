@@ -1,0 +1,126 @@
+[
+  {
+    "cp": 3,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: settle the box first (ACTION5) → box 3 (5,4), dot disappears."
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: settle the box first (ACTION5) → box 3 (5,4), dot disappears."
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Then the goal of the level isn't \"the box on the black square.\""
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: The box is 3 at (3,6) = the goal!!!"
+      }
+    }
+  }
+]

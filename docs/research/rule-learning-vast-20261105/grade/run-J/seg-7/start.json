@@ -1,0 +1,44 @@
+{
+  "K1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "T: settle the box first (ACTION5) → box 3 (5,4), dot disappears."
+  },
+  "K2": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "T: blocked by walls (0)"
+  },
+  "K3": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "T: So a box adjacent to the goal, when pushed toward the goal, flies."
+  },
+  "K4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "N: If flight path hits wall on step 1: push fully blocked"
+  },
+  "K5": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "T: While the box is in the 5/6 state, the player can't move"
+  },
+  "K6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "T: settle the box first (ACTION5) → box 3 (5,4), dot disappears."
+  },
+  "K7": {
+    "belief": "wrong",
+    "source": "both",
+    "notebook": "wrong",
+    "note": "N: Box on goal: all 4 landing approaches deflect (aligned starts)"
+  }
+}

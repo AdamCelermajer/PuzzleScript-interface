@@ -1,0 +1,96 @@
+{
+  "frozen_labels_edited": false,
+  "source_corrections": [
+    {
+      "cp": 17,
+      "rule": "I7",
+      "field": "source",
+      "frozen": "both",
+      "recommended": "thinking",
+      "classification": "source_attribution_correction",
+      "reason": "Current notebook alone earns correct; combined partial arises from newer thinking, so thinking supports the changed grade under operational label-support reading. Both is defensible only under a broader contribution interpretation.",
+      "evidence": {
+        "cp": 17,
+        "rule": "I7",
+        "evidence_cp": 17,
+        "path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-017.md",
+        "line": 440,
+        "quote": "The goal is something else.",
+        "exact_match": true
+      }
+    },
+    {
+      "cp": 18,
+      "rule": "I7",
+      "field": "source",
+      "frozen": "both",
+      "recommended": "thinking",
+      "classification": "source_attribution_correction",
+      "reason": "Current notebook alone earns correct; combined partial arises from newer thinking, so thinking supports the changed grade under operational label-support reading. Both is defensible only under a broader contribution interpretation.",
+      "evidence": {
+        "cp": 18,
+        "rule": "I7",
+        "evidence_cp": 18,
+        "path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "line": 216,
+        "quote": "So the plant is really not the goal (neither stop nor pass-through).",
+        "exact_match": true
+      }
+    },
+    {
+      "cp": 19,
+      "rule": "I7",
+      "field": "source",
+      "frozen": "both",
+      "recommended": "thinking",
+      "classification": "source_attribution_correction",
+      "reason": "Current notebook alone earns correct; combined partial arises from newer thinking, so thinking supports the changed grade under operational label-support reading. Both is defensible only under a broader contribution interpretation.",
+      "evidence": {
+        "cp": 19,
+        "rule": "I7",
+        "evidence_cp": 18,
+        "path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-018.md",
+        "line": 216,
+        "quote": "So the plant is really not the goal (neither stop nor pass-through).",
+        "exact_match": true
+      }
+    },
+    {
+      "cp": 20,
+      "rule": "I3",
+      "field": "source",
+      "frozen": "both",
+      "recommended": "thinking",
+      "classification": "source_attribution_correction",
+      "reason": "Current notebook alone earns correct; combined partial arises from newer thinking, so thinking supports the changed grade under operational label-support reading. Both is defensible only under a broader contribution interpretation.",
+      "evidence": {
+        "cp": 20,
+        "rule": "I3",
+        "evidence_cp": 20,
+        "path": "docs/research/rule-learning-20261028/grade/run-B/seg-4/cp-020.md",
+        "line": 993,
+        "quote": "creature stops at (8,6).",
+        "exact_match": true
+      }
+    },
+    {
+      "cp": 21,
+      "rule": "I3",
+      "field": "source",
+      "frozen": "both",
+      "recommended": "thinking",
+      "classification": "source_attribution_correction",
+      "reason": "Current notebook alone earns correct; combined partial arises from newer thinking, so thinking supports the changed grade under operational label-support reading. Both is defensible only under a broader contribution interpretation.",
+      "evidence": {
+        "cp": 21,
+        "rule": "I3",
+        "evidence_cp": 21,
+        "path": "docs/research/rule-learning-20261028/grade/run-B/seg-5/cp-021.md",
+        "line": 237,
+        "quote": "next (7,6) = box",
+        "exact_match": true
+      }
+    }
+  ],
+  "interpretive_disagreements": "See comparison.json; no forced adjudication of ambiguity/rubric issues."
+}

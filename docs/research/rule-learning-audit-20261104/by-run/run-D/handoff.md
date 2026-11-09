@@ -1,0 +1,11 @@
+# Independent run-D handoff (complete)
+- Fully read cp000-cp024 sequentially: 25 checkpoints, 175 rule slots; no unreviewed slots.
+- Final combined: K1 correct, K2 partial, K3 correct, K4 partial, K5 correct, K6 correct, K7 partial.
+- Final notebook has the same seven grades; all final sources are both.
+- Calls red crates bright rings, targets sockets, crate-on-target cages, and jump preview a bar.
+- Knows four moves, ACTION5 commit, center two ahead with perpendicular endpoints, frozen choice, and release at original ring cell.
+- Knows wall blocking, but never adopts orange normal-crate pushing.
+- Holds all-rings-caged goal; misses either-kind all-target source formulation.
+- Landing model wrongly requires both endpoints in range; final solver freezes/removes a ring with zero valid landings.
+- Evidence ledger cites exact text and prior support; progress log retains per-checkpoint review and pre-freeze refinements.
+- Labels are frozen before comparison; semantic boundary ambiguities are recorded separately, never unresolved/unread slots.

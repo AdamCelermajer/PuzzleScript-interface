@@ -1,0 +1,467 @@
+[
+  {
+    "cp": 40,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: pushing = character moves into it, box moves 1 cell same direction"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "N: blocked if box would go off-grid or into wall/box"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: All 9 column-1 / row-8 candidates are real walls."
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: (1,1)-(1,2),(1,2)-(1,3)"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So the conclusion is: (1,4)-(2,4) is a hidden wall. My K list was wrong."
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Box: 3 = on white, 8 = on dark, 10 = on checker."
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Win a level: push the box onto the target tile (0 or 9). Next level starts automatically."
+      }
+    }
+  },
+  {
+    "cp": 41,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: push box (2,4)->(1,4) BLOCKED"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 42,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: (6,2)-(6,3) is a real wall."
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 43,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: (3,2)-(3,3) is a real wall."
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 44,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The level is a complex Sokoban with hidden walls."
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 45,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: pushes the box (0,2)\u2192(-1,2) off-board \u2192 blocked."
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 46,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible. Edge-based, not tile-based."
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 47,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 48,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: (6,3)-(7,3) is a genuine wall."
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 49,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  }
+]

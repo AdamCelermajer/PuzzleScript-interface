@@ -1,0 +1,975 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION1 = up, ACTION2 = down, ACTION4 = right. (ACTION3 = left is probably.) ACTION5 = wait (no change)."
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: no belief about walls or pushable normal crates; only 'probably' no Sokoban push."
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: when the player moves onto the ring's cell, the ring teleports. Where to? (4,6) ... below the ball"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: So the ring is a solid obstacle - the player can't step onto the ring's cell."
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: dashed circle read as transient 'motion trail'/animation, no choosing belief."
+      },
+      "K6": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION5 = wait (no change). ... the animation completes: the dashed circle vanishes, and the ring settles"
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: I think the goal is to drop the ball into the hoop."
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: So the win condition isn't just reaching a cell. It must involve an action (ACTION5)."
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION5 = wait (advance the turn, let transient animations resolve)."
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Since the ball is fixed, the ring needs to move onto the ball."
+      }
+    }
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: So the ring can't land on the ball. The goal isn't \"ring on top of the ball.\""
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: dashed = counterclockwise knight destination... the dashed shows the counterclockwise option."
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial",
+        "note": "N: ACTION1=up... (player moves 1 cell; blocked by ring or border)."
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 20,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  }
+]

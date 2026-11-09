@@ -1,0 +1,40 @@
+{
+  "status": "PASS",
+  "checked_at_utc": "2026-11-04T18:26:56.227796+00:00",
+  "coverage": {
+    "checkpoints": 29,
+    "slots": 203,
+    "compared_slots_each_target": 203,
+    "categorical_fields_each_target": 609
+  },
+  "frozen_hashes_unchanged": true,
+  "prior175_preserved": true,
+  "old_preserved_manifest_files_unchanged": true,
+  "original_comparison_inputs_unchanged": true,
+  "difference_evidence_refs_validated": 162,
+  "rules_input_hashes": {
+    "docs/research/rule-learning-20261028/grade/run-B/seg-0/rules.json": "46a39b70d745b2f419ff8006523ca84ac89157ac5149d8e23ae519e3d2afc8f7",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-1/rules.json": "46a39b70d745b2f419ff8006523ca84ac89157ac5149d8e23ae519e3d2afc8f7",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-2/rules.json": "46a39b70d745b2f419ff8006523ca84ac89157ac5149d8e23ae519e3d2afc8f7",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-3/rules.json": "46a39b70d745b2f419ff8006523ca84ac89157ac5149d8e23ae519e3d2afc8f7",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-4/rules.json": "46a39b70d745b2f419ff8006523ca84ac89157ac5149d8e23ae519e3d2afc8f7",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-5/rules.json": "46a39b70d745b2f419ff8006523ca84ac89157ac5149d8e23ae519e3d2afc8f7",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-6/rules.json": "46a39b70d745b2f419ff8006523ca84ac89157ac5149d8e23ae519e3d2afc8f7"
+  },
+  "original_input_hashes": {
+    "docs/research/rule-learning-20261028/grade/run-B/seg-0/labels.json": "10cc74fd33a823857c9eacb34a0254416c370ea988e77496296d3f0ac5bb986d",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-1/labels.json": "6065151f72c5678f55376d0c35fed22f851a06191b2ccc8301d76cf70fea3dc4",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-2/labels.json": "afb85976fdeab98ff9e8ae754d5d1e3fc6065bfad983a215f24f6ca1a694cfec",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-3/labels.json": "777f8b673d81a39ff1bf705abb6a55271584e4a19d15259ccf49bbf9769945a2",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-4/labels.json": "3462847d28a7e599c1523bf261cc9a1b7b17aa9a210cb688c4b1685c771e536c",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-5/labels.json": "e96e763912354710129fccad1d9974215bd05b1f67404cf9c41c992c610ad52a",
+    "docs/research/rule-learning-20261028/grade/run-B/seg-6/labels.json": "3d0a9890eb5e05bc9b1a6dfa802a8494e913128c7fc5fc86883eadf16fec7469",
+    "docs/research/rule-learning-20261028/curves-combined.json": "141017eec5a3c7f85647648891572cf443f1e703163b0386ad9630d5055dae29",
+    "docs/research/rule-learning-20261028/grade/key.json": "3a85909352d76c934b30745177da96bcfc5767ec88e2c656a34a6771bf53af53",
+    "docs/research/rule-learning-20261028/combine.py": "7e9553a421c4a630822de630b25eaf6657f8ce9977416d642b219c2c8c4e5f06",
+    "docs/research/rule-learning-20261028/grade/INSTRUCTIONS.md": "4ac3cea808d7a666de912185b5962e07aed45af8435b23472438397dec30d5bf",
+    "puzzlescript_interface/games/ps_icecrates-v1/script.txt": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3"
+  },
+  "issues": [],
+  "limits": "Structural/evidence integrity checks do not prove semantic correctness; post-freeze adjudication remains separate."
+}

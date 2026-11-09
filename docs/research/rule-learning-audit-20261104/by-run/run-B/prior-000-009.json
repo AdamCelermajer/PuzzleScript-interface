@@ -1,0 +1,637 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "I1": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "evidence_cp": 1,
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION3 = slide left is confirmed."
+      },
+      "I2": {
+        "source": "thinking",
+        "evidence_cp": 1,
+        "note": "T: The creature slides in the specified direction until it hits a wall/block.",
+        "belief": "partial",
+        "notebook": "absent",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I2": {
+        "source": "both",
+        "evidence_cp": 2,
+        "note": "N: creature moves in direction until the next tile is an obstacle",
+        "belief": "partial",
+        "notebook": "partial",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "correct",
+        "evidence_cp": 2,
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Passed through the plant (no win — need to stop on the plant to win)."
+      }
+    }
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I2": {
+        "source": "both",
+        "evidence_cp": 2,
+        "note": "N: creature moves in direction until the next tile is an obstacle",
+        "belief": "partial",
+        "notebook": "partial",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "belief": "correct",
+        "evidence_cp": 3,
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the box slides until it hits a wall, and the creature slides until it hits the box."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "belief": "correct",
+        "evidence_cp": 2,
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Passed through the plant (no win — need to stop on the plant to win)."
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I2": {
+        "source": "both",
+        "evidence_cp": 2,
+        "note": "N: creature moves in direction until the next tile is an obstacle",
+        "belief": "partial",
+        "notebook": "partial",
+        "explanation": "Sliding known, actual water stopping condition not learned."
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint."
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct"
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The beam blocks horizontal crossings of column 4",
+        "evidence_cp": 6,
+        "explanation": "Retains sliding and real blockers, but adopts nonexistent remote beam stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 968,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued slide learned, but final adopted account restricts filled tile passage to vertical and asserts horizontal beam blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The beam blocks horizontal crossings of column 4",
+        "evidence_cp": 6,
+        "explanation": "Retains sliding and real blockers, but adopts nonexistent remote beam stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 968,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted belief after full sequential reading through this checkpoint.",
+        "notebook_cp": 4,
+        "explanation": "No adopted belief after full reading through this checkpoint; competing chain/filling possibilities were not settled."
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the creature cannot pass through the door in any state.",
+        "evidence_cp": 5,
+        "explanation": "Blue animated door maps to water; blocking belief adopted, opening alternatives speculative. I2 retains wall and immovable-crate stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-005.md",
+        "evidence_line": 319,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued slide learned, but final adopted account restricts filled tile passage to vertical and asserts horizontal beam blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: The beam blocks horizontal crossings of column 4",
+        "evidence_cp": 6,
+        "explanation": "Retains sliding and real blockers, but adopts nonexistent remote beam stopping.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 968,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box 2 blocks → box 3 can't move",
+        "evidence_cp": 8,
+        "explanation": "Later planning adopts crate-on-crate blocking, rather than leaving chain pushing as an open alternative.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+        "evidence_line": 778,
+        "notebook_cp": 4
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Vertical movement through column 4 is always allowed.",
+        "evidence_cp": 8,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+        "evidence_line": 279,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued slide learned, but final adopted account restricts filled tile passage to vertical and asserts horizontal beam blocking.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "I1": {
+        "source": "both",
+        "note": "N: ACTION1 = slide UP (stops just before first obstacle)",
+        "evidence_cp": 2,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-002.md",
+        "evidence_line": 36,
+        "notebook_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Vertical (up/down): always passable (observed).",
+        "evidence_cp": 9,
+        "explanation": "Beam explicitly retracted after discovering wall (6,3); partial remains because unfilled water is still treated as vertically passable.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 256,
+        "notebook_cp": 4
+      },
+      "I3": {
+        "source": "both",
+        "note": "N: The orange box is a pushable object.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 70,
+        "notebook_cp": 4
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: If the box can't move (the cell in front is a wall or a box)",
+        "evidence_cp": 9,
+        "explanation": "Adopted solver assumption treats another crate as blocking; no substantial chain-pushing belief.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-2/cp-009.md",
+        "evidence_line": 254,
+        "notebook_cp": 4
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Vertical movement through column 4 is always allowed.",
+        "evidence_cp": 8,
+        "explanation": "Still knows unfilled head blocks horizontal player passage, but explicitly extends vertical passability to unfilled states 23/24.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-008.md",
+        "evidence_line": 279,
+        "notebook_cp": 4
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: box is consumed, door becomes passable",
+        "evidence_cp": 6,
+        "explanation": "Absorption and continued sliding retained; general walkable-floor result remains unresolved, with horizontal passage in filled state treated as untested/parameterized.",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-1/cp-006.md",
+        "evidence_line": 333,
+        "notebook_cp": 4
+      },
+      "I7": {
+        "source": "both",
+        "note": "N: Plant is passable; landing on it completes the level.",
+        "evidence_cp": 4,
+        "notebook": "correct",
+        "belief": "correct",
+        "evidence_path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-004.md",
+        "evidence_line": 80,
+        "notebook_cp": 4
+      }
+    }
+  }
+]

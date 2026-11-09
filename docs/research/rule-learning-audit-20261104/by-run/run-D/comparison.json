@@ -1,0 +1,298 @@
+{
+  "run": "run-D",
+  "identity": {
+    "run": "20261021T144508-vast-fp8-harness2-153a4dc2/run-0003/rollouts/base1",
+    "game": "ps_knightoban-v1",
+    "driver": "agent"
+  },
+  "comparison_started_after_freeze": true,
+  "freeze_sha256": "6cef23513f3801a82bf12d04cfdd2fc6289951e49bea0567df59f61d69211e6d",
+  "compared_at_utc": "2026-11-04T18:10:45.283178+00:00",
+  "inputs_sha256": {
+    "docs/research/rule-learning-20261028/grade/run-D/seg-0/labels.json": "36a0001e4332583dafe246d33e9a80a894710fb66dd236993f90cd05fddbe829",
+    "docs/research/rule-learning-20261028/grade/run-D/seg-1/labels.json": "2a747600896a96fbc013ba392d8561671ea1dd5f1754d62e7e9f63673090bf11",
+    "docs/research/rule-learning-20261028/grade/run-D/seg-2/labels.json": "a0df32511179a4b6460d1151645829e3734db291ccc0f0245c4a77e3ccafc497",
+    "docs/research/rule-learning-20261028/curves-combined.json": "141017eec5a3c7f85647648891572cf443f1e703163b0386ad9630d5055dae29",
+    "docs/research/rule-learning-20261028/grade/key.json": "3a85909352d76c934b30745177da96bcfc5767ec88e2c656a34a6771bf53af53",
+    "docs/research/rule-learning-20261028/grade/run-D/meta.json": "62e3e2fb484bd07ff69874a69653eba4d6804d49841f74cc298a45e02849df2f",
+    "docs/research/rule-learning-20261028/combine.py": "7e9553a421c4a630822de630b25eaf6657f8ce9977416d642b219c2c8c4e5f06",
+    "docs/research/rule-learning-20261028/grade/run-D/seg-1/handoff.md": "c1cb5f9b94716d9cfeb14dfcb2935322fb3557154f5ac2eb48fca2207c9c1707"
+  },
+  "summaries": {
+    "original_raw": {
+      "checkpoints": 25,
+      "rule_slots": 175,
+      "field_comparisons": 525,
+      "differing_rule_slots": 2,
+      "matching_rule_slots": 173,
+      "field_differences": {
+        "belief": 2,
+        "notebook": 0,
+        "source": 0
+      },
+      "category_counts": {
+        "clear_error": 0,
+        "ambiguity": 2,
+        "rubric_issue": 0
+      }
+    },
+    "published_corrected": {
+      "checkpoints": 25,
+      "rule_slots": 175,
+      "field_comparisons": 525,
+      "differing_rule_slots": 2,
+      "matching_rule_slots": 173,
+      "field_differences": {
+        "belief": 2,
+        "notebook": 0,
+        "source": 0
+      },
+      "category_counts": {
+        "clear_error": 0,
+        "ambiguity": 2,
+        "rubric_issue": 0
+      }
+    }
+  },
+  "disagreements": [
+    {
+      "comparator": "original_raw",
+      "cp": 11,
+      "rule": "K4",
+      "field": "belief",
+      "independent": "correct",
+      "original": "partial",
+      "category": "ambiguity",
+      "adjudication": "unresolved; both readings defensible; frozen labels unchanged",
+      "explanation": "Frozen independent grade credits the adopted empty-endpoint model after brick-center and dynamic occupancy corrections. Original partial is defensible: no explicit no-free-end cancellation/player restoration, and prior endpoint-in-range constraints were not clearly retracted. This is an essential-content/persistence boundary, not a demonstrated original grading error. The original seg-1 handoff, read only after freezing, explicitly gives the missing/refused-move rationale.",
+      "evidence": [
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 158,
+          "line_end": 158,
+          "quote": "an endpoint is suppressed if a bright ring or cage currently occupies that tile."
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 19,
+          "line_end": 19,
+          "quote": "Brick centers are valid!!"
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 114,
+          "line_end": 114,
+          "quote": "Ring (3), cage (8), brick (0), player… all suppressed."
+        }
+      ],
+      "original_raw_file": "docs/research/rule-learning-20261028/grade/run-D/seg-1/labels.json",
+      "original_json_pointer": "/3/labels/K4/belief",
+      "published_json_pointer": "/20261021T144508-vast-fp8-harness2-153a4dc2~1run-0003~1rollouts~1base1/checkpoints/11/belief/K4"
+    },
+    {
+      "comparator": "original_raw",
+      "cp": 12,
+      "rule": "K4",
+      "field": "belief",
+      "independent": "correct",
+      "original": "partial",
+      "category": "ambiguity",
+      "adjudication": "unresolved; both readings defensible; frozen labels unchanged",
+      "explanation": "Frozen independent grade credits the adopted empty-endpoint model after brick-center and dynamic occupancy corrections. Original partial is defensible: no explicit no-free-end cancellation/player restoration, and prior endpoint-in-range constraints were not clearly retracted. This is an essential-content/persistence boundary, not a demonstrated original grading error. The original seg-1 handoff, read only after freezing, explicitly gives the missing/refused-move rationale.",
+      "evidence": [
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 158,
+          "line_end": 158,
+          "quote": "an endpoint is suppressed if a bright ring or cage currently occupies that tile."
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 19,
+          "line_end": 19,
+          "quote": "Brick centers are valid!!"
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 114,
+          "line_end": 114,
+          "quote": "Ring (3), cage (8), brick (0), player… all suppressed."
+        }
+      ],
+      "original_raw_file": "docs/research/rule-learning-20261028/grade/run-D/seg-1/labels.json",
+      "original_json_pointer": "/4/labels/K4/belief",
+      "published_json_pointer": "/20261021T144508-vast-fp8-harness2-153a4dc2~1run-0003~1rollouts~1base1/checkpoints/12/belief/K4"
+    },
+    {
+      "comparator": "published_corrected",
+      "cp": 11,
+      "rule": "K4",
+      "field": "belief",
+      "independent": "correct",
+      "original": "partial",
+      "category": "ambiguity",
+      "adjudication": "unresolved; both readings defensible; frozen labels unchanged",
+      "explanation": "Frozen independent grade credits the adopted empty-endpoint model after brick-center and dynamic occupancy corrections. Original partial is defensible: no explicit no-free-end cancellation/player restoration, and prior endpoint-in-range constraints were not clearly retracted. This is an essential-content/persistence boundary, not a demonstrated original grading error. The original seg-1 handoff, read only after freezing, explicitly gives the missing/refused-move rationale.",
+      "evidence": [
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 158,
+          "line_end": 158,
+          "quote": "an endpoint is suppressed if a bright ring or cage currently occupies that tile."
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 19,
+          "line_end": 19,
+          "quote": "Brick centers are valid!!"
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 114,
+          "line_end": 114,
+          "quote": "Ring (3), cage (8), brick (0), player… all suppressed."
+        }
+      ],
+      "original_raw_file": "docs/research/rule-learning-20261028/grade/run-D/seg-1/labels.json",
+      "original_json_pointer": "/3/labels/K4/belief",
+      "published_json_pointer": "/20261021T144508-vast-fp8-harness2-153a4dc2~1run-0003~1rollouts~1base1/checkpoints/11/belief/K4"
+    },
+    {
+      "comparator": "published_corrected",
+      "cp": 12,
+      "rule": "K4",
+      "field": "belief",
+      "independent": "correct",
+      "original": "partial",
+      "category": "ambiguity",
+      "adjudication": "unresolved; both readings defensible; frozen labels unchanged",
+      "explanation": "Frozen independent grade credits the adopted empty-endpoint model after brick-center and dynamic occupancy corrections. Original partial is defensible: no explicit no-free-end cancellation/player restoration, and prior endpoint-in-range constraints were not clearly retracted. This is an essential-content/persistence boundary, not a demonstrated original grading error. The original seg-1 handoff, read only after freezing, explicitly gives the missing/refused-move rationale.",
+      "evidence": [
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 158,
+          "line_end": 158,
+          "quote": "an endpoint is suppressed if a bright ring or cage currently occupies that tile."
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 19,
+          "line_end": 19,
+          "quote": "Brick centers are valid!!"
+        },
+        {
+          "cp": 11,
+          "path": "docs/research/rule-learning-20261028/grade/run-D/seg-1/cp-011.md",
+          "origin": "thinking",
+          "line_start": 114,
+          "line_end": 114,
+          "quote": "Ring (3), cage (8), brick (0), player… all suppressed."
+        }
+      ],
+      "original_raw_file": "docs/research/rule-learning-20261028/grade/run-D/seg-1/labels.json",
+      "original_json_pointer": "/4/labels/K4/belief",
+      "published_json_pointer": "/20261021T144508-vast-fp8-harness2-153a4dc2~1run-0003~1rollouts~1base1/checkpoints/12/belief/K4"
+    }
+  ],
+  "unique_disagreement_slots": 2,
+  "unresolved_disagreement_slots": 2,
+  "unreviewed_slots": 0,
+  "unassigned_labels": 0,
+  "original_and_published_equal": true,
+  "published_run_specific_corrections": 0,
+  "final_score": {
+    "independent": 78.6,
+    "original": 78.6,
+    "published": 78.6
+  },
+  "counts": {
+    "independent": {
+      "belief": {
+        "absent": 16,
+        "correct": 95,
+        "partial": 64
+      },
+      "notebook": {
+        "absent": 64,
+        "correct": 77,
+        "partial": 34
+      },
+      "source": {
+        "none": 16,
+        "both": 95,
+        "thinking": 64
+      }
+    },
+    "original_raw": {
+      "belief": {
+        "absent": 16,
+        "correct": 93,
+        "partial": 66
+      },
+      "notebook": {
+        "absent": 64,
+        "correct": 77,
+        "partial": 34
+      },
+      "source": {
+        "none": 16,
+        "both": 95,
+        "thinking": 64
+      }
+    },
+    "published_corrected": {
+      "belief": {
+        "absent": 16,
+        "correct": 93,
+        "partial": 66
+      },
+      "notebook": {
+        "absent": 64,
+        "correct": 77,
+        "partial": 34
+      },
+      "source": {
+        "none": 16,
+        "both": 95,
+        "thinking": 64
+      }
+    }
+  },
+  "scope_note": "curves-combined.json is the published combined/corrected series. curves.json is the older notebook-only series and is not counted as the corrected comparator.",
+  "shared_rubric_limitations": [
+    {
+      "rules": [
+        "K2"
+      ],
+      "issue": "Compound rule includes orange crates never described in this run; walls-only knowledge stays partial. Not a label disagreement."
+    },
+    {
+      "rules": [
+        "K7"
+      ],
+      "issue": "All-red-rings-caged agrees with observed equal ring/target counts but is incomplete versus all targets covered by either crate kind. Not a label disagreement."
+    }
+  ]
+}

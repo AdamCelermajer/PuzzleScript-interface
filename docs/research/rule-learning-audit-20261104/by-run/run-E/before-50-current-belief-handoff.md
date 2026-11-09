@@ -1,0 +1,11 @@
+Last fully read and saved checkpoint: 49. Next: 50. This batch is cp40-49 only; 80 new judgments, 400 cumulative across cp0-49. Not frozen; no original comparison.
+All eight rules were graded in order after reading every notebook and all thinking. Current notebook is cp48; cp49 only executes its Phase 1 route.
+Combined labels: M1/M4/M5/M6/M7 partial; M2/M3/M8 correct. Notebook labels are the same except M3 partial. No grade changes in cp40-49.
+M1 retains four directional controls but misreads unavailable actions as context-locked, rather than knowing no action button. M2 retains ordinary one-cell Sokoban pushing and opposite-side access.
+M3 retains crate-boundary and crate-collision knowledge from cp5 notebook line15: "blocked if box would go off-grid or into wall/box". Cp45 thinking line141 independently confirms off-board refusal; current notebook omits crate-crate collision. Both citations are attached to cp45-49.
+M4/M5 retain map-specific hidden-wall explanations and traversable checker/grey cases, without the white-black restriction or general grey-bridge rule. Cp48 thinking line133: "(6,3)-(7,3) is a genuine wall."
+M6 still mistakes a forbidden white-player/dark-box push for a box-destination edge wall. Cp40 thinking line165: "So the conclusion is: (1,4)-(2,4) is a hidden wall. My K list was wrong." Cp41 notebook line87 retains the blocked push.
+M7 retains boxes appearing on white, dark and checker, but wrongly subjects box destinations to invisible edge walls. M8 retains box-on-target completion and automatic next-level transition (cp33 notebook lines14 and9 respectively).
+Cp42-44 repeatedly reaffirm invisible walls; cp45 confirms an off-board push is blocked; cp46-48 continue mapping. The false-recorded-wall thesis revises particular edges without replacing the wall model.
+Cp48 notebook plans through an edge it also marks blocked and mispositions a push; these are local route/coordinate contradictions, not an adopted replacement for ordinary pushing. Cp49 contains no new mechanics conclusion.
+Validation passed: 80 primary + 5 supporting batch citations, exact lines/sections, 8 notes at most 16 words, all 10 input hashes/sizes plus 16 earlier cited/notebook inputs; prior 320 judgments and pre-batch output bytes preserved. Repository checker: 10 checkpoints x 8 rules. See validation.json and batch-40-49-schema-check.json.

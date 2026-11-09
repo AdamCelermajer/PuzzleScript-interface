@@ -1,0 +1,45 @@
+[
+  {
+    "cp": 62,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: So I can't push a crate right in row 4 (from (4,2))."
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Crate B is blocked by crate A (4,3). So crate B doesn't move"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: the crate (3,7) can't go left (blocked by (3,6))."
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    }
+  }
+]

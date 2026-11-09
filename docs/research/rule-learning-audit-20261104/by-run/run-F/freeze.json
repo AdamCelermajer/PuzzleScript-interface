@@ -1,0 +1,16 @@
+{
+  "run": "run-F",
+  "frozen_at_utc": "2026-11-04T18:06:38.896967+00:00",
+  "checkpoints": 32,
+  "rule_slots": 224,
+  "all_notebook_and_thinking_fully_read": true,
+  "prior_labels_start_handoffs_identity_and_curves_read_before_freeze": false,
+  "labels_sha256": "78ba25d7f401b6ee1bb896b1d29b604d52356943ab5758402efe435f4b123597",
+  "other_frozen_evidence": {
+    "independent-decisions.json": "f97895f00acf888351ad7a86f38dca5a723e19f77c7928498fcde7372ec630f1",
+    "source-verification.md": "45715fee26e8b4f58e09c06051cba873bbed86bdd5efded5062f0e0fe7a1e44d",
+    "progress.json": "9724320edabfb2afcb4a6b5f741e38f880174dc4bcc531f93abc3e62de2143ec",
+    "inventory.json": "6d6924ac16df51b29db834b26c066407a48c3a63e6b2d3a9317e2e101e3da4db",
+    "rules.json": "8e3f076974bd47b5880f9273e05181af0e7d3dc31b491fa118374ee0b975f203"
+  }
+}

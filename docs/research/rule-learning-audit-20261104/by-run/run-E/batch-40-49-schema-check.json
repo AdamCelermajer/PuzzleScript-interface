@@ -1,0 +1,10 @@
+{
+  "command": [
+    "C:\\Users\\adamc\\Desktop\\syncall\\uni\\adam_project\\PuzzleScript-interface\\.venv\\Scripts\\python.exe",
+    "docs/research/rule-learning-20261028/grade/check.py",
+    "docs\\research\\rule-learning-audit-20261104\\by-run\\run-E\\batch-40-49-check"
+  ],
+  "exit_code": 0,
+  "stdout": "ok: 10 checkpoints x 8 rules\n",
+  "stderr": ""
+}

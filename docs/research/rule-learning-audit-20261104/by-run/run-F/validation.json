@@ -1,0 +1,31 @@
+{
+  "checkpoints": 32,
+  "rules_per_checkpoint": 7,
+  "rule_slots": 224,
+  "exact_quote_references_checked": 363,
+  "input_hashes_checked": 32,
+  "original_checker": "ok: 32 checkpoints x 7 rules",
+  "belief_counts": {
+    "correct": 84,
+    "partial": 88,
+    "absent": 27,
+    "wrong": 25
+  },
+  "notebook_counts": {
+    "absent": 54,
+    "correct": 79,
+    "partial": 71,
+    "wrong": 20
+  },
+  "source_counts": {
+    "thinking": 30,
+    "none": 27,
+    "both": 167
+  },
+  "unreviewed_slots": 0,
+  "errors": [],
+  "frozen_labels_hash_matches": true,
+  "comparison_quote_references_checked": 274,
+  "read_only_comparison_inputs_unchanged": true,
+  "frozen_evidence_hashes_match": true
+}

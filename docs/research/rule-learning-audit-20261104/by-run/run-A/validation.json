@@ -1,0 +1,29 @@
+{
+  "status": "pass",
+  "checkpoint_count": 24,
+  "rule_count": 7,
+  "slot_count": 168,
+  "missing_slots": 0,
+  "unreviewed_slots": 0,
+  "checkpoint_hashes_matched": 24,
+  "exact_quote_checks": 271,
+  "note_checks": 15,
+  "persistence_links": 121,
+  "repository_checker": "ok: 24 checkpoints x 7 rules",
+  "checker_layout_adapter": "Inventory paths supplied to glob; original checker code unmodified.",
+  "combined_counts": {
+    "partial": 117,
+    "absent": 2,
+    "wrong": 49
+  },
+  "notebook_counts": {
+    "absent": 56,
+    "partial": 80,
+    "wrong": 32
+  },
+  "source_counts": {
+    "thinking": 54,
+    "none": 2,
+    "both": 112
+  }
+}

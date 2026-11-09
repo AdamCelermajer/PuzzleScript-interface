@@ -1,0 +1,50 @@
+{
+ "M1": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: The available actions are just the 5 movement/undo actions and RESET. There are no other actions."
+ },
+ "M2": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: In Sokoban, that's a dead state (the crate in the corner (2,0) can never be moved again)."
+ },
+ "M3": {
+  "belief": "correct",
+  "source": "thinking",
+  "notebook": "partial",
+  "note": "T: the crate's destination r is walkable (floor/marker/goal, no crate, in range)."
+ },
+ "M4": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: When on bright, can only step on bright (or the goal); when on dark, can only step on dark"
+ },
+ "M5": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: the goal {4} is accessible from any class"
+ },
+ "M6": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "T: The player stays on dark"
+ },
+ "M7": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: Therefore the crate must be able to cross classes"
+ },
+ "M8": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: crate onto blue marker = level complete."
+ }
+}

@@ -1,0 +1,17 @@
+# Run-E independent audit: INCOMPLETE, NOT FROZEN
+
+Checkpoints 0-49 have been fully read and graded: 50/65 checkpoints, 400/520 judgments. This bounded continuation covered only checkpoints 40-49, adding 80 judgments. Checkpoints 50-64 remain unreviewed and unlabeled. Next checkpoint: 50. No original-grade comparison or whole-run freeze was performed.
+
+`independent-labels.json` contains the independent labels and exact checkpoint/path/line/quote evidence. Each checkpoint was saved separately. `progress.json` and `current-belief-handoff.md` record the continuation point and current beliefs. All prior 0-39 records are unchanged, verified against the pre-batch canonical hash. The exact pre-batch label file and other replaced outputs are preserved as `before-40-*`; their byte hashes match `batch-40-49-prior-output-hashes.json`.
+
+All cp40-49 notebooks and thinking were read in full before each checkpoint was graded. Unchanged notebooks resolve to cp38 for cp40, cp41 for cp42-44, and cp48 for cp49. New notebook versions at cp41/45/46/47/48 were treated as later than their checkpoint thinking. Existing beliefs were carried until contradicted or replaced.
+
+No combined or notebook grades changed in this batch. Combined labels remain partial for M1/M4/M5/M6/M7 and correct for M2/M3/M8. Notebook M3 remains partial because the current notebook omits crate-crate collision; the combined belief persists from cp5. The explicit cp45 off-board observation supplements, rather than replaces, that earlier collision evidence.
+
+The player continues interpreting blocked steps and pushes as hidden edge walls. Cp40 explains a refused push of a dark-floor crate by a white-floor player as a destination wall; cp41 records that explanation. Cp42-44 reaffirm wall claims, cp45 correctly recognizes off-board blocking, and cp46-48 revise routes and edge maps. Cp48 has conflicting route/edge claims and a mispositioned push, assessed as local planning errors alongside continued ordinary pushing. Cp49 only executes a route. None establishes the floor-colour rules.
+
+Validation passed: exact cp0-49 and M1-M8 coverage; all 80 batch primary citations and 5 supporting citations match their real text, line and notebook/thinking section; 8 new notes are exact quotes of at most 16 words. All 366 non-absent primary citations across the reviewed prefix match. All 10 batch input files match inventory byte counts and SHA-256 values; 16 additional earlier cited or notebook-source inputs also match. `validation.json` and `batch-40-49-validation.json` record the results, including zero errors and preservation checks.
+
+The repository's `grade/check.py` also passed: `ok: 10 checkpoints x 8 rules`. It ran with the existing virtualenv Python against `batch-40-49-check`, an independent projection with byte-copied authorized checkpoint/rules inputs. The first projected row repeats carried evidence notes to satisfy the checker's first-checkpoint requirement. No original labels or starting-label files were loaded. Invocation and result are in `batch-40-49-schema-check.json`.
+
+This batch used only independent audit records, the rubric/rules, inventory, requested checkpoints and earlier cited evidence. No original grades, original handoffs, identity key, or curves were opened. No gameplay, services, installations, global edits, commits/pushes, model CLIs, API setup or subagents were used. All batch writes are within this run-E audit directory.

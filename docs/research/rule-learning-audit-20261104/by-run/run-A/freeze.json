@@ -1,0 +1,47 @@
+{
+  "run": "run-A",
+  "frozen_at_utc": "2026-11-04T18:10:42.167059+00:00",
+  "checkpoint_count": 24,
+  "rule_slots": 168,
+  "original_labels_and_published_curves_accessed_before_freeze": false,
+  "files": {
+    "independent-labels.json": "3b1e04f731fd26e00a6fbd8fb5076317fb197cbdd261f50d1bdcd24e15774abe",
+    "labels.json": "3b1e04f731fd26e00a6fbd8fb5076317fb197cbdd261f50d1bdcd24e15774abe",
+    "evidence.json": "fb049d750bad0812f790dffbe2adc8532f6875de625f711f6e20f5901a8a2278",
+    "prefreeze-decisions.md": "4ffd2ce312957a49a9e679cee0530bf2f0aaac7faf8ebcd3d5bfb30aca9c96b0",
+    "read-log.json": "7e629edf614e46795648df437d175f7a8cecc687c9f2a49623225d8f6b472481",
+    "source-verification.json": "f2b2e81210865ec8f3734543b55844bbec163be7d9c07baf3170c9f937fbcbe5",
+    "inventory.json": "f0bfeafa03b87b0ddac785293d087875a9f0ddc015f33c84552254375799929e",
+    "rules.json": "164a2b142bbe9d84f3823ce2505765a75a094b42b452419e784992a23713a163",
+    "handoff.md": "fd2f0ef6ccfe179fb74575f362115be9793eccb7205ad360da3dde23863df470"
+  },
+  "validation": {
+    "status": "pass",
+    "checkpoint_count": 24,
+    "rule_count": 7,
+    "slot_count": 168,
+    "missing_slots": 0,
+    "unreviewed_slots": 0,
+    "checkpoint_hashes_matched": 24,
+    "exact_quote_checks": 271,
+    "note_checks": 15,
+    "persistence_links": 121,
+    "repository_checker": "ok: 24 checkpoints x 7 rules",
+    "checker_layout_adapter": "Inventory paths supplied to glob; original checker code unmodified.",
+    "combined_counts": {
+      "partial": 117,
+      "absent": 2,
+      "wrong": 49
+    },
+    "notebook_counts": {
+      "absent": 56,
+      "partial": 80,
+      "wrong": 32
+    },
+    "source_counts": {
+      "thinking": 54,
+      "none": 2,
+      "both": 112
+    }
+  }
+}

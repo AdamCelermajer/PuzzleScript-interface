@@ -1,0 +1,124 @@
+[
+  {
+    "cp": 59,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct",
+        "note": "N: res=push_crate(nr,nc,d,crates,blue_pass)"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 60,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 61,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: So the player can't stop on the goal. So the win must be a pass-through or a transformation-timing."
+      }
+    }
+  }
+]

@@ -1,0 +1,327 @@
+[
+  {
+    "cp": 12,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: The most natural win condition: enter the goal while carrying the item. Let's go with that."
+      }
+    }
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the real goal of level 1 = \"move the goal to (3,6)\""
+      }
+    }
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial",
+        "note": "N: ACTION5 = clear enemies (5/6)"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "N: Level objective: UNKNOWN"
+      }
+    }
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the level's purpose = enter a goal while an enemy is present."
+      }
+    }
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      }
+    }
+  }
+]

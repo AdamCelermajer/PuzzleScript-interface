@@ -1,0 +1,207 @@
+[
+  {
+    "cp": 6,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: The tile at (3,4) blocks sliding."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: The tile at (3,4) blocks sliding."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: If not, push a crate (if one exists), then pass through the grass."
+      }
+    }
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: E pass-through: Up = free, Down = −1 cell (permanent)"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: pushing a crate into E consumes the crate and makes E passable"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct"
+      }
+    }
+  }
+]

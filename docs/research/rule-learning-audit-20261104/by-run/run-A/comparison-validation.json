@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "checkpoint_count": 24,
+  "rule_slots_checked": 168,
+  "fields_checked": 504,
+  "raw_published_fields_checked": 504,
+  "score_points_recomputed": 24,
+  "independent_freeze_hashes_unchanged": true,
+  "original_input_hashes_unchanged": true,
+  "group_quote_checks": 12,
+  "field_difference_rows": 108,
+  "distinct_difference_keys": 108,
+  "unresolved_field_entries": 80,
+  "missing_or_unreviewed_slots": 0
+}

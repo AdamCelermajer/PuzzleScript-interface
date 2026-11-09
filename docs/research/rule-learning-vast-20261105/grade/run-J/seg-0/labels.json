@@ -1,0 +1,131 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION1 = up"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: blocked by walls (0)"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: So a box adjacent to the goal, when pushed toward the goal, flies."
+      },
+      "K4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Why does it stop at (2,7)?"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: While the box is in the 5/6 state, the player can't move"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION5 ends the state, and the box stays put as a regular box."
+      },
+      "K7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Next, pressing UP (ACTION1) will push the box up to (3,6) = the goal"
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: If flight path hits wall on step 1: push fully blocked"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "N: UNKNOWN. Standing on 4: nothing."
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  }
+]

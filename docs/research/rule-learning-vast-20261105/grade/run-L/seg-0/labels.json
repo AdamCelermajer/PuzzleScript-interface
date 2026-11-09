@@ -1,0 +1,292 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION1..4 = up/down/left/right"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Sliding ice puzzle: move in a direction, slide until hitting wall/border, stop before it."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Where the player is: probably (4,4)"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Where the player is: probably (4,4)"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: If holes, sliding toward a hole = death"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: If holes, sliding toward a hole = death"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Goal: reach plant."
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: stop at (2,4) = goal."
+      }
+    }
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: 21 = wooden crate (brown, also wall)."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: player ends directly BEHIND crate final pos."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial"
+      }
+    }
+  }
+]

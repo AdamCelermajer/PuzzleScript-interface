@@ -1,0 +1,466 @@
+[
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a0210374c4678e069.jsonl",
+    "assignments": [
+      "run-A/seg-0"
+    ],
+    "models": {
+      "claude-opus-5-5": 17
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:09:36.447Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a0c7028d192628f92.jsonl",
+    "assignments": [
+      "run-C/seg-2"
+    ],
+    "models": {
+      "claude-opus-5-5": 49
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:16:11.823Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a1225f4a55ffcb334.jsonl",
+    "assignments": [
+      "run-C/seg-0"
+    ],
+    "models": {
+      "claude-opus-5-5": 27
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:09:41.183Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a1c4b9f8c11b8ada9.jsonl",
+    "assignments": [
+      "run-A/seg-3"
+    ],
+    "models": {
+      "claude-opus-5-5": 6
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:19:31.799Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a24c14182eb6d374d.jsonl",
+    "assignments": [
+      "run-D/seg-2"
+    ],
+    "models": {
+      "claude-opus-5-5": 24
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:16:12.719Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a2a48cc31e58bf7ca.jsonl",
+    "assignments": [
+      "run-E/seg-0"
+    ],
+    "models": {
+      "claude-opus-5-5": 58
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:09:45.307Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a2b7d01e8adcdd760.jsonl",
+    "assignments": [
+      "run-B/seg-0"
+    ],
+    "models": {
+      "claude-opus-5-5": 22
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:09:38.518Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a2d164b1fefcf7379.jsonl",
+    "assignments": [
+      "run-C/seg-3"
+    ],
+    "models": {
+      "claude-opus-5-5": 12
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:19:37.161Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a2e57d51352419cdd.jsonl",
+    "assignments": [
+      "run-F/seg-2"
+    ],
+    "models": {
+      "claude-opus-5-5": 29
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:16:17.381Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a36df264194b8a130.jsonl",
+    "assignments": [
+      "run-E/seg-3"
+    ],
+    "models": {
+      "claude-opus-5-5": 31
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:19:38.846Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a37717f296a0e4060.jsonl",
+    "assignments": [
+      "run-C/seg-1"
+    ],
+    "models": {
+      "claude-opus-5-5": 30
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:13:19.959Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a3863b0287ca44e6f.jsonl",
+    "assignments": [
+      "run-E/seg-2"
+    ],
+    "models": {
+      "claude-opus-5-5": 20
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:16:14.952Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a3b5364c7b0101a2c.jsonl",
+    "assignments": [
+      "run-F/seg-3"
+    ],
+    "models": {
+      "claude-opus-5-5": 13
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:19:41.135Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a4e991e16bd144c02.jsonl",
+    "assignments": [
+      "run-B/seg-3"
+    ],
+    "models": {
+      "claude-opus-5-5": 29
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:19:34.442Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a5f55f2a2f8db4553.jsonl",
+    "assignments": [
+      "run-B/seg-2"
+    ],
+    "models": {
+      "claude-opus-5-5": 24
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:16:07.852Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a61148be0ab87e28f.jsonl",
+    "assignments": [
+      "run-D/seg-1"
+    ],
+    "models": {
+      "claude-opus-5-5": 31
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:13:23.306Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a62e8c1ccf48a65a0.jsonl",
+    "assignments": [
+      "run-A/seg-1"
+    ],
+    "models": {
+      "claude-opus-5-5": 22
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:13:15.404Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a6b552602cfa72cfd.jsonl",
+    "assignments": [
+      "run-B/seg-6"
+    ],
+    "models": {
+      "claude-opus-5-5": 22
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:25:58.316Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a75865e753c258ffd.jsonl",
+    "assignments": [
+      "run-B/seg-1"
+    ],
+    "models": {
+      "claude-opus-5-5": 20
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:13:17.454Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a7652672769030e3e.jsonl",
+    "assignments": [
+      "run-D/seg-0"
+    ],
+    "models": {
+      "claude-opus-5-5": 26
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:09:43.096Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a76efd7c092a9e7b6.jsonl",
+    "assignments": [
+      "run-E/seg-5"
+    ],
+    "models": {
+      "claude-opus-5-5": 28
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:24:08.378Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a95bc33e63d7259f3.jsonl",
+    "assignments": [
+      "run-E/seg-1"
+    ],
+    "models": {
+      "claude-opus-5-5": 29
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:13:24.887Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-a9e5732c7b3c719be.jsonl",
+    "assignments": [
+      "run-E/seg-6"
+    ],
+    "models": {
+      "claude-opus-5-5": 31
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:26:00.832Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-aa42a774782e942dd.jsonl",
+    "assignments": [
+      "run-F/seg-1"
+    ],
+    "models": {
+      "claude-opus-5-5": 24
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:13:27.201Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-aa48a4afbe728f426.jsonl",
+    "assignments": [
+      "run-F/seg-0"
+    ],
+    "models": {
+      "claude-opus-5-5": 27
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:09:47.414Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-abe4d9df3f15e5347.jsonl",
+    "assignments": [
+      "run-B/seg-4"
+    ],
+    "models": {
+      "claude-opus-5-5": 25
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:21:57.195Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-acb6bbe6ca79c712b.jsonl",
+    "assignments": [
+      "run-E/seg-4"
+    ],
+    "models": {
+      "claude-opus-5-5": 29
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:21:59.234Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-ad8b36c4032af9ced.jsonl",
+    "assignments": [
+      "run-A/seg-2"
+    ],
+    "models": {
+      "claude-opus-5-5": 41
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:16:05.978Z"
+      }
+    ]
+  },
+  {
+    "path": "C:\\Users\\adamc\\.claude\\projects\\C--Users-adamc-Desktop-syncall-uni-adam-project-PuzzleScript-interface\\b467efdb-4d9b-4c89-8695-56239de14503\\subagents\\agent-afc424e79be4e6e8d.jsonl",
+    "assignments": [
+      "run-B/seg-5"
+    ],
+    "models": {
+      "claude-opus-5-5": 24
+    },
+    "evidence": [
+      {
+        "line": 17,
+        "model": "claude-opus-5-5",
+        "timestamp": "2026-11-01T13:24:05.307Z"
+      }
+    ]
+  }
+]

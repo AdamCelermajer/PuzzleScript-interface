@@ -1,0 +1,44 @@
+{
+  "I1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "T: ACTION1..4 = up/down/left/right"
+  },
+  "I2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: Sliding ice puzzle: move in a direction, slide until hitting wall/border, stop before it."
+  },
+  "I3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: player ends directly BEHIND crate final pos."
+  },
+  "I4": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: Where the player is: probably (4,4)"
+  },
+  "I5": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: If holes, sliding toward a hole = death"
+  },
+  "I6": {
+    "belief": "absent",
+    "source": "none",
+    "notebook": "absent",
+    "note": "T: If holes, sliding toward a hole = death"
+  },
+  "I7": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "partial",
+    "note": "T: stop at (2,4) = goal."
+  }
+}

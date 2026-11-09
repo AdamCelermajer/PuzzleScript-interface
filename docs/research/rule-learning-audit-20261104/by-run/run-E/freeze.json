@@ -1,0 +1,403 @@
+{
+  "frozen_at_utc": "2026-11-04T18:27:31.064508+00:00",
+  "checkpoints": 65,
+  "slots": 520,
+  "comparison_opened": false,
+  "files": {
+    "frozen-independent-labels.json": "ce069f70efb27b1008304f184141806d60e1794b23cace290cf65dbfe2be599c",
+    "independent-labels.json": "ce069f70efb27b1008304f184141806d60e1794b23cace290cf65dbfe2be599c",
+    "final-validation.json": "29d1f9138e8704bc42f8ed54a971362b138816d56cf7b8ec006c4521714da442"
+  },
+  "input_hashes": [
+    {
+      "cp": 0,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-000.md",
+      "sha256": "e9b682ea0422aaf093e926239f2bc485eeea69a8bc19c71015a3a0a711b7949d",
+      "matches": true
+    },
+    {
+      "cp": 1,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-001.md",
+      "sha256": "736448324a241e1efac22800884422b8706981856603fef4e5d908879c7b5314",
+      "matches": true
+    },
+    {
+      "cp": 2,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-002.md",
+      "sha256": "d15cc7786140e866ca5ecba116c3ddd41cf298d5c753baf617dfafe511eeb9e7",
+      "matches": true
+    },
+    {
+      "cp": 3,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+      "sha256": "b39e22df34544d6e7717856dd28884cf81495a475196b0d3577496aa80fa9ca1",
+      "matches": true
+    },
+    {
+      "cp": 4,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-004.md",
+      "sha256": "03651db709833ef03e98c9e7f0c0ea6366445c3e5bf53eef6b2565c3b2e45c29",
+      "matches": true
+    },
+    {
+      "cp": 5,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+      "sha256": "e354f3a77fa6c6f3c221d875ad73eaa19224a94bf213f29707782ed427e555b7",
+      "matches": true
+    },
+    {
+      "cp": 6,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-006.md",
+      "sha256": "0419c8fd94f622d9b29812fe23d56ee0ccfd6e1498806d92fa67d82fc0705c5e",
+      "matches": true
+    },
+    {
+      "cp": 7,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+      "sha256": "7674227b7fa5c3749ce7b1ed00827b484a0b0085ab70fc3cc7676f3934793086",
+      "matches": true
+    },
+    {
+      "cp": 8,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-008.md",
+      "sha256": "a12de4684f110371a2ace0e88abb3af7b2dd97ee0474097fdc0b73808da27fd9",
+      "matches": true
+    },
+    {
+      "cp": 9,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-009.md",
+      "sha256": "006b78d4cb0b1c3905e9808ce2863d98a675b40abd64b5ae4516c157309c1b34",
+      "matches": true
+    },
+    {
+      "cp": 10,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-010.md",
+      "sha256": "19fe9b7250030275058ca783c8eaab77ee9df7725e02aa5be0e1694aa9d5314a",
+      "matches": true
+    },
+    {
+      "cp": 11,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-011.md",
+      "sha256": "fc28d8663cad22b8e1a80b17cf76a1e74e1b9ed1989b7b9d5969d07eea2e5c39",
+      "matches": true
+    },
+    {
+      "cp": 12,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-012.md",
+      "sha256": "8557123aa48a1a7ba781821b4b32377bef5bf8fefbe14eb59da5312cef9c2d26",
+      "matches": true
+    },
+    {
+      "cp": 13,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-013.md",
+      "sha256": "f3e6d51c6b789b21968cec66dc5f8df4d4ffb4f07587a548f6117b79c82e7236",
+      "matches": true
+    },
+    {
+      "cp": 14,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-014.md",
+      "sha256": "c62ff2d2612bcedc8293c5b47d6055cdd5fb93cfce4e704202a9c85d65f082ae",
+      "matches": true
+    },
+    {
+      "cp": 15,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-015.md",
+      "sha256": "2f03260d76e66cef51c48249455584ddd5c13c2e529deeb2b094ec28320aeb38",
+      "matches": true
+    },
+    {
+      "cp": 16,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-016.md",
+      "sha256": "c703d6d1d88d423165ebe238b81aa8fe9eaabab48c0ff3cc14bd08589bb215e2",
+      "matches": true
+    },
+    {
+      "cp": 17,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+      "sha256": "92c6638b6f94e43a88de46069f665489021cb764b8e1180412b7874fe5ad5e59",
+      "matches": true
+    },
+    {
+      "cp": 18,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-018.md",
+      "sha256": "cf6cf0731f42fdf2420d74a7a24dd026158a1aa4e393fc54b01cf8d2f4582b98",
+      "matches": true
+    },
+    {
+      "cp": 19,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-019.md",
+      "sha256": "07dbde6a64134e157261bc4fb57bfe70bff3094a30d4737da229cf80e0f6a6f7",
+      "matches": true
+    },
+    {
+      "cp": 20,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-020.md",
+      "sha256": "ed9e4c2cec93f4463e8a913209522aecbefd287a9f2c7f1d6b0bf47f56b06e40",
+      "matches": true
+    },
+    {
+      "cp": 21,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+      "sha256": "6ed60a965fe911244fc9dd62a5845f644ec25e80d4dd2d060f2030794085fcd0",
+      "matches": true
+    },
+    {
+      "cp": 22,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-022.md",
+      "sha256": "ff8efb90387e65d42b9e0dd90ea37b173acf02c51d5c824bb28cf9a5b0808d77",
+      "matches": true
+    },
+    {
+      "cp": 23,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-023.md",
+      "sha256": "1ed12c1cf5d56843069245433fa0cea80ec8c6e3448c0f230a562ccfe3f82842",
+      "matches": true
+    },
+    {
+      "cp": 24,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-024.md",
+      "sha256": "80993a1209fae415b04ef3fcc6b6bbdf918913cc0c9065c9037ebe8708d99be4",
+      "matches": true
+    },
+    {
+      "cp": 25,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-025.md",
+      "sha256": "4c59c3a2429e9f644de5e9e31d67002fb742a00c77f131a860b0da9d4d51797a",
+      "matches": true
+    },
+    {
+      "cp": 26,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-026.md",
+      "sha256": "cf6da42f3773cd39179a0466b6bf1596d881b40fb7183e557120eab1f247f2ed",
+      "matches": true
+    },
+    {
+      "cp": 27,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-027.md",
+      "sha256": "1503f7579c2c0dcdd3d1448f490e616a1b4e9b98084d27743c9140b21d04798f",
+      "matches": true
+    },
+    {
+      "cp": 28,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-028.md",
+      "sha256": "d891fae956f0fe51f6b0cdfdcacea18f915927733813e26d3e2ccd74c807564a",
+      "matches": true
+    },
+    {
+      "cp": 29,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-029.md",
+      "sha256": "8af924859ccc07e12eaf7a34eca8be1e13e58a4c41e7424afbc5ad28847bc40e",
+      "matches": true
+    },
+    {
+      "cp": 30,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+      "sha256": "85919f5268f81993974dc669af69e9be9cd2d1b3b6f724b93b848d900e9dc3da",
+      "matches": true
+    },
+    {
+      "cp": 31,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-031.md",
+      "sha256": "a591b9a73ab2c11041f32cac297011f8bd8050dde77750af3023bf78667ee5b8",
+      "matches": true
+    },
+    {
+      "cp": 32,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-032.md",
+      "sha256": "f9acd63cc158388552babf0a779a4b02a2b4aa757beb39b03a17e66777f5d8a4",
+      "matches": true
+    },
+    {
+      "cp": 33,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+      "sha256": "ad458730e43ea7ac1b0df63bb65f8e93339121e4d66e6f2bcad10983846cd486",
+      "matches": true
+    },
+    {
+      "cp": 34,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-034.md",
+      "sha256": "d43449186be414be12ef4051e2f884d27c7360f8872564928b684d11991ab76c",
+      "matches": true
+    },
+    {
+      "cp": 35,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-035.md",
+      "sha256": "1c038fc748727aa414f15009c26b9e5710b86b3a42083e1820a7c9ecfec4484a",
+      "matches": true
+    },
+    {
+      "cp": 36,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-036.md",
+      "sha256": "019c7fbe3650e3690ee21abaa891559490ed3d60afab5d6541b58d19036eaa00",
+      "matches": true
+    },
+    {
+      "cp": 37,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-037.md",
+      "sha256": "919cc92fba7cb588fa3af23b041f3d46a6e76d209bb43e37b454e10c97828b93",
+      "matches": true
+    },
+    {
+      "cp": 38,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/cp-038.md",
+      "sha256": "a917b7f7592df91a3628922dcceb9ed52bd7c00bba9eb4db049c4b7f08b84be1",
+      "matches": true
+    },
+    {
+      "cp": 39,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/cp-039.md",
+      "sha256": "03f12d86a4712e517f4ddbced485e3280ab148c930925279b9aae23b9a6c519e",
+      "matches": true
+    },
+    {
+      "cp": 40,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/cp-040.md",
+      "sha256": "f68d1beafe97e32cc2281abdfcd689da382c7407db94c7716f7c57f88851a063",
+      "matches": true
+    },
+    {
+      "cp": 41,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/cp-041.md",
+      "sha256": "b80af5780ee70ff44258e07202dfb6bfbf5d16a4b8eb034bc8ec99a10b8317ed",
+      "matches": true
+    },
+    {
+      "cp": 42,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/cp-042.md",
+      "sha256": "13ec4c7f7ce7a873bb6193cd702871154659f7530db2738a1a40586c2194e29c",
+      "matches": true
+    },
+    {
+      "cp": 43,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-043.md",
+      "sha256": "8ddf9eca4af0f2f1c8fec2f99fd966cffe7dbc322fb0bb0b7a3a3467d7c1874b",
+      "matches": true
+    },
+    {
+      "cp": 44,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-044.md",
+      "sha256": "284cd96dfc19cbdd1e54c88e8e80dda6de621c0284f4584063633dc4fb1de9e5",
+      "matches": true
+    },
+    {
+      "cp": 45,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-045.md",
+      "sha256": "17ca4cd32d89025cb36d618e2eba161480c06026b76abcd3b81f26d195541050",
+      "matches": true
+    },
+    {
+      "cp": 46,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-046.md",
+      "sha256": "2e3123e510dface2d95eaf0ca3164b0341d0d94477b0fe228413b18d575fd2b7",
+      "matches": true
+    },
+    {
+      "cp": 47,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-047.md",
+      "sha256": "b548a0bdf648388b8879c4c7f68f0237fae2411d7f506dd3e0c6b59de3c34c38",
+      "matches": true
+    },
+    {
+      "cp": 48,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-048.md",
+      "sha256": "f46d0530d85e08cae1229aca5919468cc22d66b9e84e2fa1d3822eba428307dd",
+      "matches": true
+    },
+    {
+      "cp": 49,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-049.md",
+      "sha256": "daae7ced51eb95726ba5944e229dc6a82adad0afd2a67d281dacc7e50015302f",
+      "matches": true
+    },
+    {
+      "cp": 50,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-050.md",
+      "sha256": "3cb9087775551f6baeeece8c79ab7c390dcbbfabd81451d81694052c4f2ab8d0",
+      "matches": true
+    },
+    {
+      "cp": 51,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-4/cp-051.md",
+      "sha256": "c908be1c79c59d1ca19ef84b0c106f1a7b416bd494dd20c3cdd54150c82232cd",
+      "matches": true
+    },
+    {
+      "cp": 52,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-5/cp-052.md",
+      "sha256": "b25feef15e261b74c00bb1316d2e1133a85209ad1d3632e1af9d1397136e2a0d",
+      "matches": true
+    },
+    {
+      "cp": 53,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-5/cp-053.md",
+      "sha256": "027a3b332ac8d89d374ee6c8aa8e0bb37d94054eb04ceefe33acf44bd08514fa",
+      "matches": true
+    },
+    {
+      "cp": 54,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-5/cp-054.md",
+      "sha256": "42179da9da0aa9b7d3e9bd03c0d0e2b0681c0f9281acfb0daab95266f0d06836",
+      "matches": true
+    },
+    {
+      "cp": 55,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-5/cp-055.md",
+      "sha256": "6f941c9cfd873a778f675dc10c15fdbe9c331d295c2e4703c0de9280790d8266",
+      "matches": true
+    },
+    {
+      "cp": 56,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-056.md",
+      "sha256": "df52a541e46fd5033d8688ed669df3656d0a0e23b799b4671c6b1c9ca5351ad7",
+      "matches": true
+    },
+    {
+      "cp": 57,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-057.md",
+      "sha256": "8c254f4382a9e992808a548329fbdf62a54fe213800486691e2b167dd58885df",
+      "matches": true
+    },
+    {
+      "cp": 58,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-058.md",
+      "sha256": "8ec32d440ddd36c302eedd3cb9675fe084c6a3ba3801a505235cc8afead29038",
+      "matches": true
+    },
+    {
+      "cp": 59,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-059.md",
+      "sha256": "54df1f96a60e2b0bac869b407e538ce9963b355b04a0812a22ba050bd445d75e",
+      "matches": true
+    },
+    {
+      "cp": 60,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-060.md",
+      "sha256": "8a38d0d83e58dac8d4966bbf160e4c870baca56d2e1ac0defdd047e07070a322",
+      "matches": true
+    },
+    {
+      "cp": 61,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-061.md",
+      "sha256": "935ef0a0ce65bcb1dabcae1170e47cf67fe0ab804cd65fcc0ce04218d15c40b8",
+      "matches": true
+    },
+    {
+      "cp": 62,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-062.md",
+      "sha256": "f12181c0d7eb94721258868ee3aaa8677152707b4b2153bf3476bf6f6746a0fd",
+      "matches": true
+    },
+    {
+      "cp": 63,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-063.md",
+      "sha256": "11932dc4e6bf4d5c1e321b0843739e7e454d18b2d110df5c069280ff846d9bc6",
+      "matches": true
+    },
+    {
+      "cp": 64,
+      "path": "docs/research/rule-learning-20261028/grade/run-E/seg-6/cp-064.md",
+      "sha256": "00c077331f0edd25eaf9ae0d90d35d8991714c26bd6c051618aebff8fcbfa055",
+      "matches": true
+    }
+  ]
+}

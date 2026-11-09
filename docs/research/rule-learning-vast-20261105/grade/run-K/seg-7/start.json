@@ -1,0 +1,50 @@
+{
+ "M1": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "N: ACTION1 = move 5 up, ACTION2 = down, ACTION3 = left, ACTION4 = right"
+ },
+ "M2": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "T: if the box is directly behind the cursor along D, the box follows."
+ },
+ "M3": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "T: You can't push a box off the grid!"
+ },
+ "M4": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: So: 2→1 ✗ but 1→2 also ✗."
+ },
+ "M5": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: 6→7: allowed ((1,2)→(1,1))"
+ },
+ "M6": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "T: The cursor walks to an adjacent cell if |h(dest)−h(cur)|≤1 (the box's cell has the base's height)."
+ },
+ "M7": {
+  "belief": "correct",
+  "source": "both",
+  "notebook": "correct",
+  "note": "T: the box's new cell becomes the box (3), whatever was there (including the target 0!) is converted."
+ },
+ "M8": {
+  "belief": "partial",
+  "source": "both",
+  "notebook": "partial",
+  "note": "T: The 3 is the box (orange). Push the box onto the 0!"
+ }
+}

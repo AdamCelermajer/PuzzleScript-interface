@@ -1,0 +1,163 @@
+[
+  {
+    "cp": 9,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong",
+        "note": "T: Accept: the wave is a permanent wall to the player."
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "wrong"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  }
+]

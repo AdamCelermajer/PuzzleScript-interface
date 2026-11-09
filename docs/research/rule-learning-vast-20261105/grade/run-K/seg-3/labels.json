@@ -1,0 +1,227 @@
+[
+  {
+    "cp": 20,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M8": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct"
+      },
+      "M8": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M8": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M8": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    }
+  },
+  {
+    "cp": 24,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "M8": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      }
+    }
+  }
+]

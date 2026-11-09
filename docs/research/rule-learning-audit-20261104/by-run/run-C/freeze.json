@@ -1,0 +1,16 @@
+{
+  "run": "run-C",
+  "frozen_at_utc": "2026-11-04T18:09:58.171377+00:00",
+  "checkpoints": 33,
+  "rule_slots": 264,
+  "unreviewed": 0,
+  "original_labels_or_curves_read_before_freeze": false,
+  "files": {
+    "labels.json": "c1fc3816d281f55ef54df8c726dc6edb3bb68de00eeea138f49f366803d93cff",
+    "independent-labels.json": "e396b74572c3e08c03c4bf17f4f5be4414b00f7792075eb326699616c016ed38",
+    "reading-manifest.json": "cd03252609ba4b8ebb7cc02d157464e1aa3834bc957aa32e3965f21f882f4809",
+    "pre-freeze-review.json": "e7f8dde7901feaa2f4a1b55c0556c7d7157d4366b91ff77d06c5ac6c175b8fc7",
+    "methodology.md": "d1988147f71b7fa131b7377afb9ecfcef5abbb6e2275c2f50d3de3effe8ab31e",
+    "current-belief-handoff.md": "f21d1fe504a37f2a0df089a581a95926a88c91367e2ab1c0ab2f3c9c0bee9e2b"
+  }
+}

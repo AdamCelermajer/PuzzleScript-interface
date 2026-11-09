@@ -1,0 +1,62 @@
+{
+  "run": "run-C",
+  "checkpoints": 33,
+  "rules": 8,
+  "slots": 264,
+  "compared_fields": 792,
+  "unreviewed": 0,
+  "unresolved_validation_entries": 0,
+  "raw_published_differences": 0,
+  "different_slots": 86,
+  "field_disagreements": 169,
+  "by_field": {
+    "belief": 48,
+    "notebook": 80,
+    "source": 41
+  },
+  "by_rule": {
+    "M3": 64,
+    "M2": 62,
+    "M7": 2,
+    "M4": 21,
+    "M6": 20
+  },
+  "by_classification_fields": {
+    "ambiguity": 14,
+    "rubric_issue": 124,
+    "clear_error": 31
+  },
+  "by_classification_slots": {
+    "clear_error": 16,
+    "ambiguity": 8,
+    "rubric_issue": 62
+  },
+  "unresolved_interpretive_slots": 70,
+  "independent_belief_counts": {
+    "partial": 120,
+    "correct": 138,
+    "absent": 6
+  },
+  "independent_notebook_counts": {
+    "absent": 21,
+    "partial": 146,
+    "correct": 97
+  },
+  "raw_belief_counts": {
+    "partial": 76,
+    "correct": 182,
+    "absent": 6
+  },
+  "published_curve_key": "20261021T162323-vast-fp8-baseline-v4-6767db38/run-0001",
+  "inputs_sha256": {
+    "docs/research/rule-learning-20261028/grade/run-C/seg-0/labels.json": "551ba9cd703a0b354453d6d7495c98a280aeb873e9833aeeab8faac8670dc7ed",
+    "docs/research/rule-learning-20261028/grade/run-C/seg-1/labels.json": "a37b3cf758c7b5055796354ae4d2861485c66bbc911f8a3c5d4f50f8a04589fa",
+    "docs/research/rule-learning-20261028/grade/run-C/seg-2/labels.json": "84460be6a13fe130846bfb3301b11e45410eaa2964ba73f7dd6f8553af66cf2b",
+    "docs/research/rule-learning-20261028/grade/run-C/seg-3/labels.json": "d9e16589fc0e73929b6b5d8a916c7b421eb8f06d492d5f356db4ec2fbf7270ec",
+    "docs/research/rule-learning-20261028/curves-combined.json": "141017eec5a3c7f85647648891572cf443f1e703163b0386ad9630d5055dae29"
+  },
+  "freeze_hashes_verified": true,
+  "scoring": "correct=1, partial=0.5, wrong/absent=0; divide by 8. Original published scores rounded to 1 decimal; independent values exact.",
+  "published_html_sha256": "8fcf240bd918f6d455f54b3d51b7a6f3d93be591b26e9f0ee8585e6b19a33406",
+  "published_html_all_33_points_match": true
+}

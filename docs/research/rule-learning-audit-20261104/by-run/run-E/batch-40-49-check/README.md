@@ -1,0 +1,1 @@
+Independent cp40-49 validation projection only. Checkpoint and rules files are byte copies of authorized inputs. Labels come solely from independent-labels.json. The first projected checkpoint repeats exact carried evidence as notes to meet the checker requirement for a folder without a starting-label file. No original labels or handoffs are loaded.

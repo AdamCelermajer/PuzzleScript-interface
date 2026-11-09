@@ -1,0 +1,15 @@
+{
+  "status": "incomplete",
+  "grader": "gpt-6-astra",
+  "reasoning_effort": "high",
+  "identity_key_read": false,
+  "prior_raw_labels_read": false,
+  "prior_spot_check_exposed_by_required_readme": true,
+  "checkpoints_total": 208,
+  "labels_total": 1554,
+  "checkpoints_graded": 3,
+  "labels_graded": 22,
+  "reason": "Full sequential reading and grading not completed in this execution; no evidence access failure was established.",
+  "checkpoints_remaining": 205,
+  "labels_remaining": 1532
+}

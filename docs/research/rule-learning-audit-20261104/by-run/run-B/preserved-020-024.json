@@ -1,0 +1,16 @@
+{
+  "batch-005-009.md": "beeaf0ac282c6efde3f416f36fbfe614575ecd702ada5285e7ba36ec8bf37f48",
+  "batch-010-014.md": "e21bae851ca5c2289237c3b25ff13b8c5a103b985aa3d62c5ae3f471915895b0",
+  "batch-015-019.md": "27febdef0685ac5038eb8699edde5323e61e985182f8c6a777ceaf9ef1838812",
+  "prior-000-009.json": "dfee82bee7dd207bddf17cdd34625d99c035a2cc1ea0ab1f9b010ed6fcab1807",
+  "prior-000-014.json": "6ca5bfd841880fa152559b0ac5f0141c04fa7d82c91d6bbd0723542a81585dda",
+  "prior-000-019.json": "16cbc09f64918e4c3ea34e30610a688095ab63faff447ebd10c111ec53df7a39",
+  "save-015-019.py": "0942f565379eb3c0e63d00eace718efdc89ed6d1609c66e33e499f8ca4ff8a35",
+  "validate-010-014.py": "641d0ad4dade423a7584a525023e095b618cc9826a14d50e3120aaedb8cee902",
+  "validate-015-019.py": "9fb34598bce47cf4922736c38f788494c3460d0fbbcf57989ed22eae56b0a370",
+  "validate.ps1": "f24913260ed5f676e3f744091590d0df8cc9e7043e31b06222c19f1a260da818",
+  "validation-015-019.json": "78d8bddd358fc6398c85186a71ef05cbeb42143242384f6a43d8e52cf6858fc0",
+  "validation-through-009.json": "c6fb3ff6a32cabb250454808d6b2d26dcb2aec879c827dce53c73b6e856874f1",
+  "validation-through-014.json": "00e05e360fbebeccec7d1b450fcda49d7fc7a02faed2797be450de9fd75fc983",
+  "validation.json": "00e05e360fbebeccec7d1b450fcda49d7fc7a02faed2797be450de9fd75fc983"
+}

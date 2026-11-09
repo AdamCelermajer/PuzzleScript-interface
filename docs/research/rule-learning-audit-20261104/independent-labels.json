@@ -1,0 +1,211 @@
+[
+  {
+    "run": "run-B",
+    "cp": 0,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Hypothesis: 4 = 4 directions, 1 = other verb (interact/jump/toggle).",
+        "evidence": [
+          {
+            "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-000.md",
+            "quote": "Hypothesis: 4 = 4 directions, 1 = other verb (interact/jump/toggle).",
+            "start": 1391,
+            "end": 1459,
+            "line": 37
+          },
+          {
+            "path": "docs/research/rule-learning-20261028/grade/run-B/seg-0/cp-000.md",
+            "quote": "Probably: move up/down/left/right, and one other action (interact/jump?).",
+            "start": 4503,
+            "end": 4576,
+            "line": 90
+          }
+        ],
+        "rationale": "Single leading control hypothesis states four directions; exact action mapping is not required by I1. Thinking also says move up/down/left/right. Borderline belief threshold: uncertainty is mapping, not a competing directional-control hypothesis."
+      },
+      "I2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "I3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "I4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "I5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "I6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "I7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      }
+    }
+  },
+  {
+    "run": "run-D",
+    "cp": 0,
+    "labels": {
+      "K1": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "K3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "K4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "K6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      }
+    }
+  },
+  {
+    "run": "run-E",
+    "cp": 0,
+    "labels": {
+      "M1": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "M2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "M3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "M4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "M5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "M6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "M7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      },
+      "M8": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "No adopted rule belief in the fully read checkpoint.",
+        "evidence": [],
+        "rationale": "Full checkpoint read; no adopted belief about this rule. Object descriptions and unresolved possibilities are not rule beliefs."
+      }
+    }
+  }
+]

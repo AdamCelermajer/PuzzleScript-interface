@@ -1,0 +1,1154 @@
+{
+  "game": "ps_knightoban-v1",
+  "driver": "controller",
+  "blind_id": "A",
+  "levelups": [],
+  "totals": {
+    "minutes": 108.11,
+    "gen_tokens": 318429,
+    "proc_tokens": 56595109,
+    "tool_calls": 499,
+    "actions": 451,
+    "levels": 0
+  },
+  "checkpoints": [
+    {
+      "cp": 0,
+      "why": [
+        "thinking"
+      ],
+      "actions": 9,
+      "levels": 0,
+      "minutes": 7.74,
+      "gen_tokens": 29072,
+      "tool_calls": 19,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 110718,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "wrong",
+        "K7": "partial"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "none",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {
+        "K1": "T: ACTION1 = up, ACTION2 = down, ACTION4 = right. (ACTION3 = left is probably.) ACTION5 = wait (no change).",
+        "K2": "T: no belief about walls or pushable normal crates; only 'probably' no Sokoban push.",
+        "K3": "T: when the player moves onto the ring's cell, the ring teleports. Where to? (4,6) ... below the ball",
+        "K4": "T: So the ring is a solid obstacle - the player can't step onto the ring's cell.",
+        "K5": "T: dashed circle read as transient 'motion trail'/animation, no choosing belief.",
+        "K6": "T: ACTION5 = wait (no change). ... the animation completes: the dashed circle vanishes, and the ring settles",
+        "K7": "T: I think the goal is to drop the ball into the hoop."
+      },
+      "corrected": {},
+      "score": 28.6,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 1,
+      "why": [
+        "thinking"
+      ],
+      "actions": 13,
+      "levels": 0,
+      "minutes": 15.87,
+      "gen_tokens": 64346,
+      "tool_calls": 28,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 110220,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "wrong",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "none",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {
+        "K7": "T: So the win condition isn't just reaching a cell. It must involve an action (ACTION5)."
+      },
+      "corrected": {},
+      "score": 21.4,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 2,
+      "why": [
+        "thinking"
+      ],
+      "actions": 23,
+      "levels": 0,
+      "minutes": 24.72,
+      "gen_tokens": 98105,
+      "tool_calls": 43,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 113830,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "partial"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "none",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {
+        "K6": "T: ACTION5 = wait (advance the turn, let transient animations resolve).",
+        "K7": "T: Since the ball is fixed, the ring needs to move onto the ball."
+      },
+      "corrected": {},
+      "score": 35.7,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 3,
+      "why": [
+        "moves"
+      ],
+      "actions": 25,
+      "levels": 0,
+      "minutes": 25.45,
+      "gen_tokens": 112893,
+      "tool_calls": 46,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 4888,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "partial"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "none",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 35.7,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 4,
+      "why": [
+        "thinking"
+      ],
+      "actions": 49,
+      "levels": 0,
+      "minutes": 36.5,
+      "gen_tokens": 151548,
+      "tool_calls": 73,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 100258,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "none",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {
+        "K7": "T: So the ring can't land on the ball. The goal isn't \"ring on top of the ball.\""
+      },
+      "corrected": {},
+      "score": 28.6,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 5,
+      "why": [
+        "moves"
+      ],
+      "actions": 50,
+      "levels": 0,
+      "minutes": 36.53,
+      "gen_tokens": 152939,
+      "tool_calls": 74,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 0,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "none",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 28.6,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 6,
+      "why": [
+        "thinking"
+      ],
+      "actions": 67,
+      "levels": 0,
+      "minutes": 51.26,
+      "gen_tokens": 185243,
+      "tool_calls": 100,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 115655,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "thinking",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {
+        "K5": "T: dashed = counterclockwise knight destination... the dashed shows the counterclockwise option."
+      },
+      "corrected": {},
+      "score": 35.7,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 7,
+      "why": [
+        "moves"
+      ],
+      "actions": 75,
+      "levels": 0,
+      "minutes": 52.23,
+      "gen_tokens": 204747,
+      "tool_calls": 109,
+      "notebook_version": null,
+      "notebook_changed": false,
+      "thinking_chars": 918,
+      "belief": {
+        "K1": "partial",
+        "K2": "absent",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "thinking",
+        "K2": "none",
+        "K3": "thinking",
+        "K4": "thinking",
+        "K5": "thinking",
+        "K6": "thinking",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "absent",
+        "K2": "absent",
+        "K3": "absent",
+        "K4": "absent",
+        "K5": "absent",
+        "K6": "absent",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 35.7,
+      "notebook_score": 0.0
+    },
+    {
+      "cp": 8,
+      "why": [
+        "moves",
+        "notebook"
+      ],
+      "actions": 100,
+      "levels": 0,
+      "minutes": 61.92,
+      "gen_tokens": 231075,
+      "tool_calls": 135,
+      "notebook_version": 0,
+      "notebook_changed": true,
+      "thinking_chars": 65451,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {
+        "K2": "N: ACTION1=up... (player moves 1 cell; blocked by ring or border)."
+      },
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 9,
+      "why": [
+        "moves"
+      ],
+      "actions": 125,
+      "levels": 0,
+      "minutes": 64.82,
+      "gen_tokens": 237615,
+      "tool_calls": 161,
+      "notebook_version": 0,
+      "notebook_changed": false,
+      "thinking_chars": 5720,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 10,
+      "why": [
+        "moves"
+      ],
+      "actions": 150,
+      "levels": 0,
+      "minutes": 67.65,
+      "gen_tokens": 242468,
+      "tool_calls": 186,
+      "notebook_version": 0,
+      "notebook_changed": false,
+      "thinking_chars": 4588,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 11,
+      "why": [
+        "moves"
+      ],
+      "actions": 175,
+      "levels": 0,
+      "minutes": 70.62,
+      "gen_tokens": 247077,
+      "tool_calls": 211,
+      "notebook_version": 0,
+      "notebook_changed": false,
+      "thinking_chars": 3951,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 12,
+      "why": [
+        "moves",
+        "notebook"
+      ],
+      "actions": 200,
+      "levels": 0,
+      "minutes": 74.83,
+      "gen_tokens": 252026,
+      "tool_calls": 236,
+      "notebook_version": 1,
+      "notebook_changed": true,
+      "thinking_chars": 4686,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 13,
+      "why": [
+        "moves"
+      ],
+      "actions": 225,
+      "levels": 0,
+      "minutes": 79.22,
+      "gen_tokens": 262678,
+      "tool_calls": 263,
+      "notebook_version": 1,
+      "notebook_changed": false,
+      "thinking_chars": 14512,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 14,
+      "why": [
+        "moves"
+      ],
+      "actions": 250,
+      "levels": 0,
+      "minutes": 85.45,
+      "gen_tokens": 274406,
+      "tool_calls": 295,
+      "notebook_version": 1,
+      "notebook_changed": false,
+      "thinking_chars": 16629,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 15,
+      "why": [
+        "moves"
+      ],
+      "actions": 275,
+      "levels": 0,
+      "minutes": 87.18,
+      "gen_tokens": 278232,
+      "tool_calls": 320,
+      "notebook_version": 1,
+      "notebook_changed": false,
+      "thinking_chars": 1221,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "both"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 16,
+      "why": [
+        "moves",
+        "notebook"
+      ],
+      "actions": 300,
+      "levels": 0,
+      "minutes": 90.92,
+      "gen_tokens": 284259,
+      "tool_calls": 345,
+      "notebook_version": 2,
+      "notebook_changed": true,
+      "thinking_chars": 4944,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 17,
+      "why": [
+        "moves"
+      ],
+      "actions": 325,
+      "levels": 0,
+      "minutes": 93.97,
+      "gen_tokens": 289478,
+      "tool_calls": 371,
+      "notebook_version": 2,
+      "notebook_changed": false,
+      "thinking_chars": 1499,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 18,
+      "why": [
+        "moves"
+      ],
+      "actions": 350,
+      "levels": 0,
+      "minutes": 96.75,
+      "gen_tokens": 296260,
+      "tool_calls": 396,
+      "notebook_version": 2,
+      "notebook_changed": false,
+      "thinking_chars": 5990,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 19,
+      "why": [
+        "moves"
+      ],
+      "actions": 375,
+      "levels": 0,
+      "minutes": 98.75,
+      "gen_tokens": 300760,
+      "tool_calls": 421,
+      "notebook_version": 2,
+      "notebook_changed": false,
+      "thinking_chars": 2016,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 20,
+      "why": [
+        "moves",
+        "notebook"
+      ],
+      "actions": 400,
+      "levels": 0,
+      "minutes": 101.27,
+      "gen_tokens": 305969,
+      "tool_calls": 446,
+      "notebook_version": 3,
+      "notebook_changed": true,
+      "thinking_chars": 3242,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 21,
+      "why": [
+        "moves"
+      ],
+      "actions": 425,
+      "levels": 0,
+      "minutes": 105.37,
+      "gen_tokens": 313207,
+      "tool_calls": 472,
+      "notebook_version": 3,
+      "notebook_changed": false,
+      "thinking_chars": 4684,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 22,
+      "why": [
+        "moves"
+      ],
+      "actions": 450,
+      "levels": 0,
+      "minutes": 107.8,
+      "gen_tokens": 317133,
+      "tool_calls": 497,
+      "notebook_version": 3,
+      "notebook_changed": false,
+      "thinking_chars": 1360,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    },
+    {
+      "cp": 23,
+      "why": [
+        "run end"
+      ],
+      "actions": 451,
+      "levels": 0,
+      "minutes": 108.13,
+      "gen_tokens": 318429,
+      "tool_calls": 499,
+      "notebook_version": 3,
+      "notebook_changed": false,
+      "thinking_chars": 180,
+      "belief": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "partial",
+        "K6": "partial",
+        "K7": "wrong"
+      },
+      "source": {
+        "K1": "both",
+        "K2": "notebook",
+        "K3": "both",
+        "K4": "both",
+        "K5": "thinking",
+        "K6": "both",
+        "K7": "thinking"
+      },
+      "notebook": {
+        "K1": "partial",
+        "K2": "partial",
+        "K3": "partial",
+        "K4": "partial",
+        "K5": "absent",
+        "K6": "partial",
+        "K7": "absent"
+      },
+      "notes": {},
+      "corrected": {},
+      "score": 42.9,
+      "notebook_score": 35.7
+    }
+  ],
+  "old_notebook_curve": [
+    {
+      "actions": 100,
+      "tool_calls": 134,
+      "gen_tokens": 230923,
+      "score": 42.9
+    },
+    {
+      "actions": 200,
+      "tool_calls": 235,
+      "gen_tokens": 251864,
+      "score": 42.9
+    },
+    {
+      "actions": 300,
+      "tool_calls": 344,
+      "gen_tokens": 284093,
+      "score": 35.7
+    },
+    {
+      "actions": 400,
+      "tool_calls": 445,
+      "gen_tokens": 305802,
+      "score": 42.9
+    }
+  ],
+  "old_final": {
+    "K1": "partial",
+    "K2": "partial",
+    "K3": "partial",
+    "K4": "partial",
+    "K5": "partial",
+    "K6": "partial",
+    "K7": "absent"
+  }
+}

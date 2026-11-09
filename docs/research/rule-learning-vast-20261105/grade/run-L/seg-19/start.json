@@ -1,0 +1,44 @@
+{
+  "I1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: ACTION MAP (final): A1=up A2=down A3=left A4=right (standard)."
+  },
+  "I2": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: Sliding ice puzzle: move in a direction, slide until hitting wall/border, stop before it."
+  },
+  "I3": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: res=push_crate(nr,nc,d,crates,blue_pass)"
+  },
+  "I4": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "N: if (nr,nc) in crates: break"
+  },
+  "I5": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "N: at 24 solid (blocked col5 slide at (6,5))."
+  },
+  "I6": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "T: Player continues: (3,5), (3,4), (3,3), (3,2)=7 wall. Player stops at (3,3)."
+  },
+  "I7": {
+    "belief": "wrong",
+    "source": "thinking",
+    "notebook": "correct",
+    "note": "T: So the player can't stop on the goal. So the win must be a pass-through or a transformation-timing."
+  }
+}

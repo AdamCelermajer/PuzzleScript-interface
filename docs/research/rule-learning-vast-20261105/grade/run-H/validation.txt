@@ -1,0 +1,17 @@
+Run H final validation
+
+seg-0: ok: 7 checkpoints x 7 rules
+seg-1: ok: 5 checkpoints x 7 rules
+seg-2: ok: 8 checkpoints x 7 rules
+seg-3: ok: 5 checkpoints x 7 rules
+seg-4: ok: 2 checkpoints x 7 rules
+seg-5: ok: 4 checkpoints x 7 rules
+seg-6: ok: 17 checkpoints x 7 rules
+
+uv run python docs/research/rule-learning-vast-20261105/grade/check_run.py run-H
+run-H: 7 segments, 25 of 25 quotes found word for word, 0 problems
+
+Additional artifact consistency: 48 checkpoints, 336 labels, seven 5-12-line handoffs.
+Scores and first-correct checkpoint moves recomputed from final labels.
+See audit.md for every correct/wrong transition and every belief/notebook hold longer than100 moves.
+

@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "checkpoints": 25,
+  "rules": 7,
+  "slots": 175,
+  "unreviewed_slots": 0,
+  "quote_references_validated": 409,
+  "checkpoint_hashes_validated": 25,
+  "repository_checker": "ok: 25 checkpoints x 7 rules",
+  "combined_counts": {
+    "absent": 16,
+    "correct": 95,
+    "partial": 64
+  },
+  "notebook_counts": {
+    "absent": 64,
+    "correct": 77,
+    "partial": 34
+  },
+  "source_counts": {
+    "none": 16,
+    "both": 95,
+    "thinking": 64
+  },
+  "caveat": "Quote validation verifies literal support locations, not the semantic judgment; full reading is documented in the progress log."
+}

@@ -1,0 +1,126 @@
+[
+  {
+    "cp": 46,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So the player stops at (3,10) [in front of the crate (3,9)]."
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: The player ends at (3,9) [where the crate was]."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: Let me reconsider the goal (9,5). The player needs to end on (9,5)."
+      }
+    }
+  },
+  {
+    "cp": 47,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: the player CONTINUES sliding (because the path is now clear)."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  },
+  {
+    "cp": 48,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I2": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "I5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      }
+    }
+  }
+]

@@ -1,0 +1,452 @@
+[
+  {
+    "rule": "M1",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 5,
+        "quote": "noaction"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "M2",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 83,
+        "quote": "Player, Crate"
+      },
+      {
+        "line": 89,
+        "quote": "[ >  Player Nonblack | Crate Nonblack ] -> [  > Player Nonblack | > Crate Nonblack ]     "
+      },
+      {
+        "line": 90,
+        "quote": "[ >  Player Black | Crate Black ] -> [  > Player Black | > Crate Black ]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "M3",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 83,
+        "quote": "Player, Crate"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "M4",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 91,
+        "quote": "[ > Player White | Black ] -> CANCEL"
+      },
+      {
+        "line": 92,
+        "quote": "[ > Player Black | White ] -> CANCEL"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "M5",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 70,
+        "quote": "Nonblack = White or Grey"
+      },
+      {
+        "line": 91,
+        "quote": "[ > Player White | Black ] -> CANCEL"
+      },
+      {
+        "line": 92,
+        "quote": "[ > Player Black | White ] -> CANCEL"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "M6",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 70,
+        "quote": "Nonblack = White or Grey"
+      },
+      {
+        "line": 89,
+        "quote": "[ >  Player Nonblack | Crate Nonblack ] -> [  > Player Nonblack | > Crate Nonblack ]     "
+      },
+      {
+        "line": 90,
+        "quote": "[ >  Player Black | Crate Black ] -> [  > Player Black | > Crate Black ]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "M7",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 89,
+        "quote": "[ >  Player Nonblack | Crate Nonblack ] -> [  > Player Nonblack | > Crate Nonblack ]     "
+      },
+      {
+        "line": 90,
+        "quote": "[ >  Player Black | Crate Black ] -> [  > Player Black | > Crate Black ]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "M8",
+    "path": "puzzlescript_interface/games/ps_modality-v1/script.txt",
+    "source_sha256": "c816aa64d39ea496864a9b31825fb5e11867f8fe6d067f621885e1dd85167fa5",
+    "evidence": [
+      {
+        "line": 98,
+        "quote": "All Crate on Target"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "I1",
+    "path": "puzzlescript_interface/games/ps_icecrates-v1/script.txt",
+    "source_sha256": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3",
+    "evidence": [
+      {
+        "line": 356,
+        "quote": "[ LEFT  PlayerStill ] -> [ PlayerL ]"
+      },
+      {
+        "line": 364,
+        "quote": "[ RIGHT  PlayerStill ] -> [ PlayerR ]"
+      },
+      {
+        "line": 372,
+        "quote": "[ UP  PlayerStill ] -> [ PlayerU ]"
+      },
+      {
+        "line": 380,
+        "quote": "[ DOWN  PlayerStill ] -> [ PlayerD ]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "I2",
+    "path": "puzzlescript_interface/games/ps_icecrates-v1/script.txt",
+    "source_sha256": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3",
+    "evidence": [
+      {
+        "line": 291,
+        "quote": "Obstacle = Wall or StillCrate or Water"
+      },
+      {
+        "line": 356,
+        "quote": "[ LEFT  PlayerStill ] -> [ PlayerL ]"
+      },
+      {
+        "line": 361,
+        "quote": "LEFT [ PlayerL | Obstacle ] -> [ PlayerStill | Obstacle ]"
+      },
+      {
+        "line": 362,
+        "quote": "[ PlayerL ] -> [ LEFT PlayerL ] again"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "I3",
+    "path": "puzzlescript_interface/games/ps_icecrates-v1/script.txt",
+    "source_sha256": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3",
+    "evidence": [
+      {
+        "line": 357,
+        "quote": "LEFT [ PlayerL | Crate ] -> [ PlayerL | LEFT Crate ] again"
+      },
+      {
+        "line": 360,
+        "quote": "LEFT [ > Crate | Obstacle ] -> [StillCrate | Obstacle]"
+      },
+      {
+        "line": 361,
+        "quote": "LEFT [ PlayerL | Obstacle ] -> [ PlayerStill | Obstacle ]"
+      },
+      {
+        "line": 362,
+        "quote": "[ PlayerL ] -> [ LEFT PlayerL ] again"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "I4",
+    "path": "puzzlescript_interface/games/ps_icecrates-v1/script.txt",
+    "source_sha256": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3",
+    "evidence": [
+      {
+        "line": 358,
+        "quote": "LEFT [ > Crate | Crate ] -> [ > Crate | > Crate ] again"
+      },
+      {
+        "line": 366,
+        "quote": "RIGHT [ > Crate | Crate ] -> [ > Crate | > Crate ] again"
+      },
+      {
+        "line": 374,
+        "quote": "UP [ > Crate | Crate ] -> [ > Crate | > Crate ] again"
+      },
+      {
+        "line": 382,
+        "quote": "DOWN [ > Crate | Crate ] -> [ > Crate | > Crate ] again"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "I5",
+    "path": "puzzlescript_interface/games/ps_icecrates-v1/script.txt",
+    "source_sha256": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3",
+    "evidence": [
+      {
+        "line": 291,
+        "quote": "Obstacle = Wall or StillCrate or Water"
+      },
+      {
+        "line": 361,
+        "quote": "LEFT [ PlayerL | Obstacle ] -> [ PlayerStill | Obstacle ]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "I6",
+    "path": "puzzlescript_interface/games/ps_icecrates-v1/script.txt",
+    "source_sha256": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3",
+    "evidence": [
+      {
+        "line": 359,
+        "quote": "LEFT [ > Crate | Water ] -> [ | FilledWater]"
+      },
+      {
+        "line": 367,
+        "quote": "RIGHT [ > Crate | Water ] -> [ | FilledWater]"
+      },
+      {
+        "line": 375,
+        "quote": "UP [ > Crate | Water ] -> [ | FilledWater]"
+      },
+      {
+        "line": 383,
+        "quote": "DOWN [ > Crate | Water ] -> [ | FilledWater]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "I7",
+    "path": "puzzlescript_interface/games/ps_icecrates-v1/script.txt",
+    "source_sha256": "849a41851432e788c930c94e89087a3f4175159dce861a9fe4e0c5ba8f146aa3",
+    "evidence": [
+      {
+        "line": 395,
+        "quote": "Some PlayerStill on Goal  "
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "K1",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "source_sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 136,
+        "quote": "[action player][selected_crate][player indicator_selecting] -> [action player][Crate][player] sfx1"
+      },
+      {
+        "line": 141,
+        "quote": "up [up player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 142,
+        "quote": "down [down player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 143,
+        "quote": "left [left player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 144,
+        "quote": "right [right player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "K2",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "source_sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 117,
+        "quote": "Player, Wall, Crate, possible_crate, selected_crate, normalcrate"
+      },
+      {
+        "line": 125,
+        "quote": "[> player no indicator | normalcrate] -> [> player no indicator | > normalcrate]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "K3",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "source_sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 127,
+        "quote": "[> player no indicator| Crate | | ] -> [ | player indicator_placing | | > knight_marker]"
+      },
+      {
+        "line": 129,
+        "quote": "[^ knight_marker | no object] -> [^ knight_marker | possible_crate]"
+      },
+      {
+        "line": 130,
+        "quote": "[v knight_marker | no object] -> [v knight_marker | possible_crate]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "K4",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "source_sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 96,
+        "quote": "object = Crate or wall or player or normalcrate"
+      },
+      {
+        "line": 129,
+        "quote": "[^ knight_marker | no object] -> [^ knight_marker | possible_crate]"
+      },
+      {
+        "line": 130,
+        "quote": "[v knight_marker | no object] -> [v knight_marker | possible_crate]"
+      },
+      {
+        "line": 133,
+        "quote": "[indicator_placing] -> cancel"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "K5",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "source_sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 139,
+        "quote": "[possible_crate][player no indicator_selecting] -> [selected_crate][player indicator_selecting] sfx0"
+      },
+      {
+        "line": 141,
+        "quote": "up [up player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 142,
+        "quote": "down [down player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 143,
+        "quote": "left [left player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 144,
+        "quote": "right [right player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 146,
+        "quote": "[orthogonal player indicator_selecting] -> [player indicator_selecting]"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "K6",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "source_sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 135,
+        "quote": "[action player][possible_crate][player indicator_selecting] -> [action player][][player indicator_selecting]"
+      },
+      {
+        "line": 136,
+        "quote": "[action player][selected_crate][player indicator_selecting] -> [action player][Crate][player] sfx1"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  },
+  {
+    "rule": "K7",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "source_sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 97,
+        "quote": "crates = Crate or normalcrate"
+      },
+      {
+        "line": 154,
+        "quote": "All Target on crates"
+      }
+    ],
+    "status": "static_source_support",
+    "limitation": "Collision and input semantics inferred from PuzzleScript; no runtime or historical-source revision validation performed."
+  }
+]

@@ -1,0 +1,514 @@
+[
+  {
+    "run": "run-F",
+    "cp": 0,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+    "bytes": 117143,
+    "sha256": "47dd5aad6101b08224bc01e88e50b250d7f2b44e66ac4e3524fa8dd25525ed55",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 1,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-001.md",
+    "bytes": 1688,
+    "sha256": "bd319e52204dc77a686b130aea976ea208f699094b4e540c5cb2adeba52d2490",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 2,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+    "bytes": 16735,
+    "sha256": "95bcec2fa0e65455a17c331b81fd393506a511335a68f69e8fb3c9c608a2338f",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 3,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+    "bytes": 14825,
+    "sha256": "9229e8a0a5c79e5921456b113d096c9a35827bc1e614c568b65842ec7ba9b91b",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 4,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-004.md",
+    "bytes": 854,
+    "sha256": "b271a2eb07a1364a4de6ed7ac10a109590010b1f1cd91c646c615f2148e0b212",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 5,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-005.md",
+    "bytes": 66602,
+    "sha256": "dbfa43d4564d18bc5e9fe5d0371240644101c6ed9bd8d98942b91dde3151508f",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 6,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+    "bytes": 18770,
+    "sha256": "8f49513f262dea5501f81264f3caa14eb08c9eeef453f1627d7840c06466281e",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 7,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+    "bytes": 120182,
+    "sha256": "4d54c794b131ff8323e47d53669b4dd531eaca67a4f82a2deb47e980ac574307",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 8,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+    "bytes": 114056,
+    "sha256": "b3ddcca08647ba5184792b2c299683f48970bf9f38020fbe835794be232c7392",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 9,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-009.md",
+    "bytes": 16987,
+    "sha256": "22e6df0452a66648bb5df6a59d14eead57d35b79c0904fd88f106a583fbf4f92",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 10,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-010.md",
+    "bytes": 61138,
+    "sha256": "f0bae3337bc06865a439ae8d27dd99eead4cf6415e4beeac0bd582bddae16635",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 11,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-011.md",
+    "bytes": 68324,
+    "sha256": "a81c7609fbe80ef1c34383a38d65971c20172fce06012bba9b501ded4f359ef7",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 12,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+    "bytes": 14008,
+    "sha256": "7aad6ef8ae3a966b8feb42bcf43bd045c08c6fd0e4d7785fadd194c32da77381",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 13,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-013.md",
+    "bytes": 6957,
+    "sha256": "7a01dc6779d0ea4912007b946e980df2f09c3647e1f3c9be142cdaf0cdbc173b",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 14,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-014.md",
+    "bytes": 43970,
+    "sha256": "d422ba0637c57b03c92e94f62806a93557fada05061c4a5f0ae0db3ebbf88c1c",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 15,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+    "bytes": 10485,
+    "sha256": "02217823ef44876ad75a876a233a4c0f4f53ac0bd21113e5f89f0c250f8a1651",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 16,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+    "bytes": 6331,
+    "sha256": "1c66b26de7c459c72a341c180972da5a86a18d20c720c9058b4eed9d995a81ac",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 17,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-017.md",
+    "bytes": 3004,
+    "sha256": "78308cba31d645acfa4c4ae8633f15d6b14cc94e22e7a451ae0a22b69b2269b1",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 18,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+    "bytes": 7881,
+    "sha256": "ebbc3e32c93520276af6a4f574008b20b546acf08892e61e26f6ab0e7d6cad93",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 19,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+    "bytes": 6372,
+    "sha256": "d2994a32ff547f430330723398dc7ce5909ba6f08b89f53f22719560603f5b8d",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 20,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-020.md",
+    "bytes": 4034,
+    "sha256": "21aeac7a0fd6cf7d37f657505ffb485d50485cecc42af8cff80e051aaecf9f96",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 21,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+    "bytes": 6949,
+    "sha256": "b070d6fb7e0cd92c4e5dcece1d751c4c422d1935ff0c84d3fb9da63dce936b84",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 22,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+    "bytes": 7216,
+    "sha256": "d5070dc469e40091e4090dc3cd136f5600b69288553d9217ac803e9283c88ca1",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 23,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+    "bytes": 6385,
+    "sha256": "138877db02207172e4cc32e3cc065106a5140089543de26d938f371d3ca4bd32",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 24,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+    "bytes": 6779,
+    "sha256": "09f2b46c2e181e23ac30b5b6a7aaa360b012094ee4841a2924904f39ae27a40b",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 25,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+    "bytes": 10695,
+    "sha256": "6719b7cb3a42269908f187ed025faabc03bfcbbdcc098e4206948f15c74141f0",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 26,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+    "bytes": 6385,
+    "sha256": "b4a6be40f66e412b93ca637bd260343faf213f1718296a3db763d416efe8efe5",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 27,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-027.md",
+    "bytes": 1205,
+    "sha256": "fa7b2fcd9ee17108c23744df78ae0d7ac30619c589b78e493f84b13577f3e566",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 28,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+    "bytes": 16100,
+    "sha256": "112a0552131f5ddb16f58b6e2363df066051b1d6edcaa774b8d2e818edaeb633",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 29,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+    "bytes": 6649,
+    "sha256": "b5f06775ba52da2c7c96b8962b263aa8d9369444b3881f302624320bdc2f9621",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 30,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-030.md",
+    "bytes": 2245,
+    "sha256": "3f12516377571ced9f85162fcb808b705099cf98c4f1e2d36bbec7631805da71",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  },
+  {
+    "run": "run-F",
+    "cp": 31,
+    "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-031.md",
+    "bytes": 4085,
+    "sha256": "ef22f303fa7dcd7498a93109f66e014316941c04f3aae2aa8a50aac9f478e17d",
+    "rules": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7"
+    ]
+  }
+]

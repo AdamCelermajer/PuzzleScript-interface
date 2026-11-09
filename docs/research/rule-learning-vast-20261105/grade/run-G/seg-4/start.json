@@ -1,0 +1,44 @@
+{
+  "I1": {
+    "belief": "correct",
+    "source": "both",
+    "notebook": "correct",
+    "note": "T: ACTION1/2/3/4 = slide up/down/left/right across 6 tiles, stopping just before a non-6 tile."
+  },
+  "I2": {
+    "belief": "partial",
+    "source": "both",
+    "notebook": "partial",
+    "note": "T: E pass-through: Up = free, Down = −1 cell (permanent)"
+  },
+  "I3": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: crate (8,8); player (8,5)!!! A new stop (8,5)!!!"
+  },
+  "I4": {
+    "belief": "wrong",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: Can't push a crate onto a crate → no movement!! Blocked."
+  },
+  "I5": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: The tile at (3,4) blocks sliding."
+  },
+  "I6": {
+    "belief": "correct",
+    "source": "thinking",
+    "notebook": "absent",
+    "note": "T: pushing a crate into E consumes the crate and makes E passable"
+  },
+  "I7": {
+    "belief": "partial",
+    "source": "thinking",
+    "notebook": "correct",
+    "note": "T: L2: win = grass stop."
+  }
+}

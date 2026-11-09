@@ -1,0 +1,2517 @@
+[
+  {
+    "cp": 0,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+    "evidence": {
+      "K1": {
+        "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+        "line": 1533,
+        "rationale": "Directional controls adopted; ACTION5 still incorrectly regarded as wait."
+      },
+      "K2": {
+        "quote": "The border is column 0 and column 8.",
+        "line": 763,
+        "channel": "T",
+        "rationale": "After full reading, this identifies geometry only. It does not adopt player-wall blocking or orange-crate pushing. No such belief in cp0.",
+        "absence_basis": "Full reading of all available text through this checkpoint; no adopted rule content. Boundary geometry alone is insufficient."
+      },
+      "K3": {
+        "quote": "So: when the player moves onto the ring's cell, the ring teleports.",
+        "line": 612,
+        "rationale": "Correct displacement and player entry, but destination attributed to ball rather than push geometry."
+      },
+      "K4": {
+        "quote": "So the ring's behavior depends on the ball's presence.",
+        "line": 1223,
+        "rationale": "Recognizes refused entry, attributes it to absent ball, not blocked landing cells."
+      },
+      "K5": {
+        "quote": "was a temporary \"motion trail\"/animation of the ring teleporting from (3,4) to (4,6)!",
+        "line": 291,
+        "channel": "T",
+        "rationale": "Adopted animation explanation contradicts a stable selection mode; no movement-key selection belief."
+      },
+      "K6": {
+        "quote": "ACTION5 = wait (no change).",
+        "line": 1534,
+        "channel": "T",
+        "rationale": "Later explicit known-for-sure summary at line1534 overrides earlier observed settlement. Same no-op criterion applied consistently to cp0 and cp1."
+      },
+      "K7": {
+        "quote": "Let me move the player above the ball and push the ball down into the hoop.",
+        "line": 566,
+        "channel": "T",
+        "rationale": "Adopted reverse-object win plan; later carrying/drop interpretation retains same wrong win direction."
+      }
+    },
+    "full_read": true,
+    "sha256": "0cc6026ff44efef156fc32d7203e14ec1dbfb9bd91e1ab980c6b83bfaa47a8d7"
+  },
+  {
+    "cp": 1,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-001.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 0,
+        "rationale": "No replacement of this belief; prior evidence in checkpoint 0."
+      },
+      "K2": {
+        "persisted_from_cp": 0,
+        "rationale": "Full cp1 reading has no player-wall blocking or ordinary orange-crate belief; absence remains.",
+        "absence_basis": "Full reading of all available text through this checkpoint; no adopted rule content. Boundary geometry alone is insufficient."
+      },
+      "K3": {
+        "persisted_from_cp": 0,
+        "rationale": "No replacement of this belief; prior evidence in checkpoint 0."
+      },
+      "K4": {
+        "quote": "So the ring blocks because it has nowhere to teleport.",
+        "line": 1609,
+        "rationale": "Correct refusal effect, but target falsely assumed fixed below ball."
+      },
+      "K5": {
+        "persisted_from_cp": 0,
+        "rationale": "No replacement of this belief; prior evidence in checkpoint 0."
+      },
+      "K6": {
+        "quote": "At T5, ACTION5 was a no-op.",
+        "line": 1152,
+        "rationale": "Explicitly replaces recognized settling effect with no-op, missing confirmation function."
+      },
+      "K7": {
+        "quote": "So the win condition isn't just reaching a cell. It must involve an action (ACTION5).",
+        "line": 1877,
+        "rationale": "Replaces ball-carrying goal with required special-action goal, still contradicting target coverage."
+      }
+    },
+    "full_read": true,
+    "sha256": "1fab7f43223638d517bfeeea3056a2a2ed38034d2039eef4ec4c403b8ac2659b"
+  },
+  {
+    "cp": 2,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 1,
+        "rationale": "Prior belief retained unless replaced; alternatives alone do not establish a new rule."
+      },
+      "K2": {
+        "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+        "line": 1962,
+        "channel": "T",
+        "rationale": "First explicit adopted impassability of border for player; orange-crate push rule absent."
+      },
+      "K3": {
+        "persisted_from_cp": 1,
+        "rationale": "Prior belief retained unless replaced; alternatives alone do not establish a new rule."
+      },
+      "K4": {
+        "persisted_from_cp": 1,
+        "rationale": "Prior belief retained unless replaced; alternatives alone do not establish a new rule."
+      },
+      "K5": {
+        "persisted_from_cp": 1,
+        "rationale": "Prior belief retained unless replaced; alternatives alone do not establish a new rule."
+      },
+      "K6": {
+        "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+        "line": 1374,
+        "rationale": "Restores correct observable settling effect but attributes it to animation advancing, not choice confirmation."
+      },
+      "K7": {
+        "persisted_from_cp": 1,
+        "rationale": "Prior belief retained unless replaced; alternatives alone do not establish a new rule."
+      }
+    },
+    "full_read": true,
+    "sha256": "d2ef435915f24f0293125b9fa47d3e7dfccc5085b68ec5c4c11e43f25d2eddb9"
+  },
+  {
+    "cp": 3,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 2,
+        "rationale": "No new replacement; prior evidence persists."
+      },
+      "K2": {
+        "persisted_from_cp": 2,
+        "rationale": "No new replacement; prior evidence persists."
+      },
+      "K3": {
+        "quote": "So the ring moves in an \"L\" shape: 2 in one direction, 1 in the perpendicular direction.",
+        "line": 37,
+        "rationale": "Adopts L motion but only clockwise side, not both landing alternatives."
+      },
+      "K4": {
+        "persisted_from_cp": 2,
+        "rationale": "No new replacement; prior evidence persists."
+      },
+      "K5": {
+        "persisted_from_cp": 2,
+        "rationale": "No new replacement; prior evidence persists."
+      },
+      "K6": {
+        "persisted_from_cp": 2,
+        "rationale": "No new replacement; prior evidence persists."
+      },
+      "K7": {
+        "quote": "Enter it in the correct direction to make it land on top of the ball (3,6).",
+        "line": 74,
+        "rationale": "Adopted plan puts red ring on fixed target; partial because all targets and either crate kind not established."
+      }
+    },
+    "full_read": true,
+    "sha256": "db73dffed45c0c60afd3099be215ecab7e5972c43cee948d8a170ffa01ab542e"
+  },
+  {
+    "cp": 4,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-004.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 3,
+        "rationale": "Prior belief persists; clockwise-only jump and animation account retained."
+      },
+      "K2": {
+        "persisted_from_cp": 3,
+        "rationale": "Prior belief persists; clockwise-only jump and animation account retained."
+      },
+      "K3": {
+        "persisted_from_cp": 3,
+        "rationale": "Prior belief persists; clockwise-only jump and animation account retained."
+      },
+      "K4": {
+        "persisted_from_cp": 3,
+        "rationale": "Prior belief persists; clockwise-only jump and animation account retained."
+      },
+      "K5": {
+        "persisted_from_cp": 3,
+        "rationale": "Prior belief persists; clockwise-only jump and animation account retained."
+      },
+      "K6": {
+        "persisted_from_cp": 3,
+        "rationale": "Prior belief persists; clockwise-only jump and animation account retained."
+      },
+      "K7": {
+        "quote": "So my goal hypothesis is wrong. The goal isn't \"ring on top of the ball.\"",
+        "line": 444,
+        "rationale": "Explicitly rejects target coverage and adopts unmarked destination candidates instead."
+      }
+    },
+    "full_read": true,
+    "sha256": "0f9d2c687698d822d5f6700c748eb312c76c23398520f4e0255efadee2d847b6"
+  },
+  {
+    "cp": 5,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-005.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 4,
+        "rationale": "Full checkpoint contains no notebook and no thinking; all prior beliefs persist."
+      },
+      "K2": {
+        "persisted_from_cp": 4,
+        "rationale": "Full checkpoint contains no notebook and no thinking; all prior beliefs persist."
+      },
+      "K3": {
+        "persisted_from_cp": 4,
+        "rationale": "Full checkpoint contains no notebook and no thinking; all prior beliefs persist."
+      },
+      "K4": {
+        "persisted_from_cp": 4,
+        "rationale": "Full checkpoint contains no notebook and no thinking; all prior beliefs persist."
+      },
+      "K5": {
+        "persisted_from_cp": 4,
+        "rationale": "Full checkpoint contains no notebook and no thinking; all prior beliefs persist."
+      },
+      "K6": {
+        "persisted_from_cp": 4,
+        "rationale": "Full checkpoint contains no notebook and no thinking; all prior beliefs persist."
+      },
+      "K7": {
+        "persisted_from_cp": 4,
+        "rationale": "Full checkpoint contains no notebook and no thinking; all prior beliefs persist."
+      }
+    },
+    "full_read": true,
+    "sha256": "b7f12fd1d9442703472ca935f37cd946973448e3bb2c5ee04ace0f35752c831f"
+  },
+  {
+    "cp": 6,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 5,
+        "rationale": "Prior evidence persists."
+      },
+      "K2": {
+        "persisted_from_cp": 5,
+        "rationale": "Prior evidence persists."
+      },
+      "K3": {
+        "persisted_from_cp": 5,
+        "rationale": "Prior evidence persists."
+      },
+      "K4": {
+        "quote": "The ring blocks the player when the teleport destination is out of range.",
+        "line": 351,
+        "rationale": "Now explains refusal by off-board landing, still clockwise-only and no occupied-cell rule."
+      },
+      "K5": {
+        "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+        "line": 1145,
+        "rationale": "Identifies alternate geometry but immediately calls it just a ghost; does not believe selection is possible."
+      },
+      "K6": {
+        "persisted_from_cp": 5,
+        "rationale": "Prior evidence persists."
+      },
+      "K7": {
+        "quote": "I'm fairly confident: goal = player on the ball (3,6), ring at (4,6) below, press ACTION5.",
+        "line": 1536,
+        "rationale": "New adopted wrong win model: ACTION5 drop with player on dark tile and ring below."
+      }
+    },
+    "full_read": true,
+    "sha256": "1bc8807168e3f379eb8ce77cbf90e263d45a5b093edbd553c72abca1aff7fc4b"
+  },
+  {
+    "cp": 7,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-007.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 6,
+        "rationale": "Full window executes prior route without changing beliefs."
+      },
+      "K2": {
+        "persisted_from_cp": 6,
+        "rationale": "Full window executes prior route without changing beliefs."
+      },
+      "K3": {
+        "persisted_from_cp": 6,
+        "rationale": "Full window executes prior route without changing beliefs."
+      },
+      "K4": {
+        "persisted_from_cp": 6,
+        "rationale": "Full window executes prior route without changing beliefs."
+      },
+      "K5": {
+        "persisted_from_cp": 6,
+        "rationale": "Full window executes prior route without changing beliefs."
+      },
+      "K6": {
+        "persisted_from_cp": 6,
+        "rationale": "Full window executes prior route without changing beliefs."
+      },
+      "K7": {
+        "persisted_from_cp": 6,
+        "rationale": "Full window executes prior route without changing beliefs."
+      }
+    },
+    "full_read": true,
+    "sha256": "ada2b42ce055586210b411d7c49a662788cc21cd497fe66c1b493982fdc6de4d"
+  },
+  {
+    "cp": 8,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+    "evidence": {
+      "K1": {
+        "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "line": 14,
+        "channel": "N",
+        "rationale": "Directional mappings; ACTION5 wait/tick, not confirmation.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "quote": "player moves 1 cell; blocked by ring or border",
+        "line": 14,
+        "channel": "N",
+        "rationale": "Walls known; no ordinary orange-crate push rule.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "player moves 1 cell; blocked by ring or border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "quote": "ring teleports by a CLOCKWISE KNIGHT: +2 in E",
+        "line": 21,
+        "channel": "N",
+        "rationale": "Knight geometry and entry known; only clockwise option believed.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "ring teleports by a CLOCKWISE KNIGHT: +2 in E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "quote": "If the destination is off-board, the move is BLOCKED (no entry).",
+        "line": 21,
+        "channel": "N",
+        "rationale": "Correct refusal effect for border; missing both-option and occupied-cell conditions.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "If the destination is off-board, the move is BLOCKED (no entry).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "quote": "Transient on teleport: 1 turn showing red frame (id 6) at destination + dashed circle (id 5)",
+        "line": 22,
+        "channel": "N",
+        "rationale": "Wrong animation interpretation; assumes resolution by any action, no movement selection.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 22,
+          "quote": "Transient on teleport: 1 turn showing red frame (id 6) at destination + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "quote": "ACTION5 = wait/tick: resolves the ring's 1-turn transient",
+        "line": 15,
+        "channel": "N",
+        "rationale": "Correct observable settlement, wrong wait/tick account and any-action assumption.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves the ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "quote": "H1 (active): win = specific (player cell, ring cell) state not yet entered.",
+        "line": 41,
+        "channel": "N",
+        "rationale": "Adopts state sweep as leading hypothesis, explicitly excludes ring on ball; rejects previous drop attempt.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 41,
+          "quote": "H1 (active): win = specific (player cell, ring cell) state not yet entered.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "713f87d0a8a5626446366737f130f63b2426b1ed91632b045395666d27a170c2"
+  },
+  {
+    "cp": 9,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-009.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 8,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 8,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "player moves 1 cell; blocked by ring or border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 8,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "ring teleports by a CLOCKWISE KNIGHT: +2 in E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 8,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "If the destination is off-board, the move is BLOCKED (no entry).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 8,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 22,
+          "quote": "Transient on teleport: 1 turn showing red frame (id 6) at destination + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 8,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves the ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 8,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 41,
+          "quote": "H1 (active): win = specific (player cell, ring cell) state not yet entered.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "3236337dff85b3d4c2f9fff5cf00eb168ed47599b646ec982867903407ac6cf0"
+  },
+  {
+    "cp": 10,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-010.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 9,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 9,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "player moves 1 cell; blocked by ring or border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 9,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "ring teleports by a CLOCKWISE KNIGHT: +2 in E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 9,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "If the destination is off-board, the move is BLOCKED (no entry).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 9,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 22,
+          "quote": "Transient on teleport: 1 turn showing red frame (id 6) at destination + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 9,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves the ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 9,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 41,
+          "quote": "H1 (active): win = specific (player cell, ring cell) state not yet entered.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "8d3d2070553668dae1bc563316520d243435678d155af4a7084120b50552b0f3"
+  },
+  {
+    "cp": 11,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-011.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 10,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 10,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 14,
+          "quote": "player moves 1 cell; blocked by ring or border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 10,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "ring teleports by a CLOCKWISE KNIGHT: +2 in E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 10,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 21,
+          "quote": "If the destination is off-board, the move is BLOCKED (no entry).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 10,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 22,
+          "quote": "Transient on teleport: 1 turn showing red frame (id 6) at destination + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 10,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves the ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 10,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 41,
+          "quote": "H1 (active): win = specific (player cell, ring cell) state not yet entered.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "4b2c52270011591d68b6c6dc091c4a3abbbf307136727f1d7d8faf987da82392"
+  },
+  {
+    "cp": 12,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+    "evidence": {
+      "K1": {
+        "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "line": 14,
+        "channel": "N",
+        "rationale": "Directions known, ACTION5 still wait.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "quote": "1-cell move; blocked by ring/border",
+        "line": 14,
+        "channel": "N",
+        "rationale": "Walls, no ordinary crates.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "1-cell move; blocked by ring/border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "quote": "Player ends on ring's old cell.",
+        "line": 21,
+        "channel": "N",
+        "rationale": "Knight displacement remains clockwise-only in preceding line.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 21,
+          "quote": "Player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "quote": "If destination off-board => move BLOCKED.",
+        "line": 22,
+        "channel": "N",
+        "rationale": "Off-board refusal, no general occupancy/both-option rule.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 22,
+          "quote": "If destination off-board => move BLOCKED.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "quote": "1-turn transient: red frame (id 6) at dest + dashed circle (id 5)",
+        "line": 23,
+        "channel": "N",
+        "rationale": "Animation model retained, no selection.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 23,
+          "quote": "1-turn transient: red frame (id 6) at dest + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "quote": "ACTION5 = wait/tick: resolves ring's 1-turn transient",
+        "line": 15,
+        "channel": "N",
+        "rationale": "Settlement effect, wrong wait account.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "quote": "full 245-state sweep (7 ring cells x 35 player cells)",
+        "line": 51,
+        "channel": "N",
+        "rationale": "State-win hypothesis still acted on; ring NEVER reaches target assertion retained.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 51,
+          "quote": "full 245-state sweep (7 ring cells x 35 player cells)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "45122bda9549d4d82ec1b9b96574736a3bbdc79be8d5ff0b9ab95d56b8074ec0"
+  },
+  {
+    "cp": 13,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-013.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 12,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 12,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "1-cell move; blocked by ring/border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 12,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 21,
+          "quote": "Player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 12,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 22,
+          "quote": "If destination off-board => move BLOCKED.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 12,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 23,
+          "quote": "1-turn transient: red frame (id 6) at dest + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 12,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "quote": "Next is a systematic full sweep.",
+        "line": 103,
+        "channel": "T",
+        "rationale": "Active player/ring state hypothesis persists despite failed neighborhood search. Other ideas remain questions, not adopted rules.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 51,
+          "quote": "full 245-state sweep (7 ring cells x 35 player cells)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "c74d851eccceee84a753235db71b1423780d17380f68c7fc16cc16211cbd3b23"
+  },
+  {
+    "cp": 14,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-014.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 13,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 13,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "1-cell move; blocked by ring/border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 13,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 21,
+          "quote": "Player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 13,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 22,
+          "quote": "If destination off-board => move BLOCKED.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 13,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 23,
+          "quote": "1-turn transient: red frame (id 6) at dest + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 13,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 13,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 51,
+          "quote": "full 245-state sweep (7 ring cells x 35 player cells)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "c4ad523d2506ec69dcf41659734f30eb0b7583acff5cddb5d7e03f8cee3f1833"
+  },
+  {
+    "cp": 15,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-015.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 14,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 14,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 14,
+          "quote": "1-cell move; blocked by ring/border",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 14,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 21,
+          "quote": "Player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 14,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 22,
+          "quote": "If destination off-board => move BLOCKED.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 14,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 23,
+          "quote": "1-turn transient: red frame (id 6) at dest + dashed circle (id 5)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 14,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 15,
+          "quote": "ACTION5 = wait/tick: resolves ring's 1-turn transient",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 14,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 12,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-012.md",
+          "line": 51,
+          "quote": "full 245-state sweep (7 ring cells x 35 player cells)",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "b48450211f201e760fc475fdd47bbd50cd1ab914cba68b4cfb94120fe444ed67"
+  },
+  {
+    "cp": 16,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+    "evidence": {
+      "K1": {
+        "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+        "line": 22,
+        "channel": "N",
+        "rationale": "Movement correct; confirmation missing.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 22,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "quote": "0 = brick border (impassable, 1 cell thick).",
+        "line": 12,
+        "channel": "N",
+        "rationale": "Wall component only; no orange-crate beliefs.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable, 1 cell thick).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "quote": "ring teleports +2 in E, +1 90deg clockwise from E; player ends on ring's old cell.",
+        "line": 26,
+        "channel": "N",
+        "rationale": "One of two knight destinations only.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 26,
+          "quote": "ring teleports +2 in E, +1 90deg clockwise from E; player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "quote": "Off-board destination => move blocked (player stays).",
+        "line": 28,
+        "channel": "N",
+        "rationale": "Refusal at boundary known, missing alternative and occupancy qualifications.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 28,
+          "quote": "Off-board destination => move blocked (player stays).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "quote": "resolved by next move or ACTION5",
+        "line": 29,
+        "channel": "N",
+        "rationale": "Still false transient-auto-resolution account, no selection.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "quote": "resolved by next move or ACTION5",
+        "line": 29,
+        "channel": "N",
+        "rationale": "Settlement with ACTION5 known, but assumes directional actions also resolve.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "quote": "H1: win = a specific (player, ring) state",
+        "line": 54,
+        "channel": "N",
+        "rationale": "Although called unknown/unconfirmed, full sweep is still adopted plan; ring can NEVER reach ball asserts false exclusion.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 54,
+          "quote": "H1: win = a specific (player, ring) state",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "a9e7367046f6526f31b05ede0f541e254082477cb8600cab24dc87bcd84e49bd"
+  },
+  {
+    "cp": 17,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-017.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 16,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 22,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 16,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable, 1 cell thick).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 16,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 26,
+          "quote": "ring teleports +2 in E, +1 90deg clockwise from E; player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 16,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 28,
+          "quote": "Off-board destination => move blocked (player stays).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 16,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 16,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 16,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 54,
+          "quote": "H1: win = a specific (player, ring) state",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "9a1fdeb20e614a6ef5f57e44a4c0be2361632336112e1d7b60f5dfd5464dc137"
+  },
+  {
+    "cp": 18,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-018.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 17,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 22,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 17,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable, 1 cell thick).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 17,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 26,
+          "quote": "ring teleports +2 in E, +1 90deg clockwise from E; player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 17,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 28,
+          "quote": "Off-board destination => move blocked (player stays).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 17,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 17,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 17,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 54,
+          "quote": "H1: win = a specific (player, ring) state",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "03849a385aded46716918d10e32dc2a6c830c344c684b8f7f06699311f12fed7"
+  },
+  {
+    "cp": 19,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-019.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 18,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 22,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 18,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable, 1 cell thick).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 18,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 26,
+          "quote": "ring teleports +2 in E, +1 90deg clockwise from E; player ends on ring's old cell.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 18,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 28,
+          "quote": "Off-board destination => move blocked (player stays).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 18,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 18,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 29,
+          "quote": "resolved by next move or ACTION5",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 18,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 16,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-016.md",
+          "line": 54,
+          "quote": "H1: win = a specific (player, ring) state",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "959314c34738b7fbdd3ac9bf9435333871039923dc15c1018c1a8389984e28ab"
+  },
+  {
+    "cp": 20,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+    "evidence": {
+      "K1": {
+        "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+        "line": 20,
+        "channel": "N",
+        "rationale": "Directional controls; ACTION5 confirmation absent.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 20,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "quote": "0 = brick border (impassable).",
+        "line": 12,
+        "channel": "N",
+        "rationale": "Wall component known, normal crates never described.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "quote": "ring moves +2 in E, +1 90deg clockwise from E",
+        "line": 24,
+        "channel": "N",
+        "rationale": "One-side knight geometry; player old cell also stated.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 24,
+          "quote": "ring moves +2 in E, +1 90deg clockwise from E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "quote": "Off-board dest => move blocked.",
+        "line": 26,
+        "channel": "N",
+        "rationale": "Correct refusal effect, incomplete conditions.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 26,
+          "quote": "Off-board dest => move blocked.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "quote": "5 = dashed circle (1-turn transient). 6 = red frame (1-turn transient at teleport dest).",
+        "line": 16,
+        "channel": "N",
+        "rationale": "Transient animation model contradicts selection.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 16,
+          "quote": "5 = dashed circle (1-turn transient). 6 = red frame (1-turn transient at teleport dest).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "quote": "resolves next tick.",
+        "line": 28,
+        "channel": "N",
+        "rationale": "ACTION5 settlement known via tick model; choice confirmation not learned.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 28,
+          "quote": "resolves next tick.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "quote": "Ring can NEVER reach ball (3,6).",
+        "line": 30,
+        "channel": "N",
+        "rationale": "Explicit false exclusion of ring-on-target plus H1 state sweep still adopted.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 30,
+          "quote": "Ring can NEVER reach ball (3,6).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "f877c8801d008f09335f25811e3c7645d793b2cd5adb5df686eca55da8932a82"
+  },
+  {
+    "cp": 21,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-3/cp-021.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 20,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 20,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 20,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 20,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 24,
+          "quote": "ring moves +2 in E, +1 90deg clockwise from E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 20,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 26,
+          "quote": "Off-board dest => move blocked.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 20,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 16,
+          "quote": "5 = dashed circle (1-turn transient). 6 = red frame (1-turn transient at teleport dest).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 20,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 28,
+          "quote": "resolves next tick.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 20,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 30,
+          "quote": "Ring can NEVER reach ball (3,6).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "7e083ae0fe1a043f290fa727fc146eb5bb4a4b8b87123490eb30997c6994b9fd"
+  },
+  {
+    "cp": 22,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-3/cp-022.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 21,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 20,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 21,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 21,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 24,
+          "quote": "ring moves +2 in E, +1 90deg clockwise from E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 21,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 26,
+          "quote": "Off-board dest => move blocked.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 21,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 16,
+          "quote": "5 = dashed circle (1-turn transient). 6 = red frame (1-turn transient at teleport dest).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 21,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 28,
+          "quote": "resolves next tick.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 21,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 30,
+          "quote": "Ring can NEVER reach ball (3,6).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "650f68b40c40bbf509a5d657f53b24ec8136bb37366a8695f5953112eed77dcd"
+  },
+  {
+    "cp": 23,
+    "path": "docs/research/rule-learning-20261028/grade/run-A/seg-3/cp-023.md",
+    "evidence": {
+      "K1": {
+        "persisted_from_cp": 22,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 20,
+          "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION5=wait/tick",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 0,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-0/cp-000.md",
+          "line": 1533,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION4 = right.",
+          "channel": "T"
+        }
+      },
+      "K2": {
+        "persisted_from_cp": 22,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 12,
+          "quote": "0 = brick border (impassable).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1962,
+          "quote": "the player needs to be at (2,8) [border] to move left into (2,7). Not possible.",
+          "channel": "T"
+        }
+      },
+      "K3": {
+        "persisted_from_cp": 22,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 24,
+          "quote": "ring moves +2 in E, +1 90deg clockwise from E",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-003.md",
+          "line": 44,
+          "quote": "So the ring moves 2 in the entry direction, plus 1 in the direction",
+          "channel": "T"
+        }
+      },
+      "K4": {
+        "persisted_from_cp": 22,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 26,
+          "quote": "Off-board dest => move blocked.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 351,
+          "quote": "The ring blocks the player when the teleport destination is out of range.",
+          "channel": "T"
+        }
+      },
+      "K5": {
+        "persisted_from_cp": 22,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 16,
+          "quote": "5 = dashed circle (1-turn transient). 6 = red frame (1-turn transient at teleport dest).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 6,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-006.md",
+          "line": 1145,
+          "quote": "The ring always goes clockwise, and the dashed shows the counterclockwise option.",
+          "channel": "T"
+        }
+      },
+      "K6": {
+        "persisted_from_cp": 22,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 28,
+          "quote": "resolves next tick.",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-1/cp-002.md",
+          "line": 1374,
+          "quote": "So ACTION5 = wait (advance the turn, let transient animations resolve).",
+          "channel": "T"
+        }
+      },
+      "K7": {
+        "persisted_from_cp": 22,
+        "rationale": "Prior beliefs persist after full reading; no adopted replacement.",
+        "notebook_support": {
+          "cp": 20,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-020.md",
+          "line": 30,
+          "quote": "Ring can NEVER reach ball (3,6).",
+          "channel": "N"
+        },
+        "thinking_support": {
+          "cp": 8,
+          "path": "docs/research/rule-learning-20261028/grade/run-A/seg-2/cp-008.md",
+          "line": 534,
+          "quote": "OK, so the ring can never reach (3,6).",
+          "channel": "T"
+        }
+      }
+    },
+    "full_read": true,
+    "sha256": "6c69f802b081be16cfb82d2ea143c3f8151abafec3ca668885f9db05d684a836"
+  }
+]

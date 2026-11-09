@@ -1,0 +1,21 @@
+{
+  "frozen_labels_unchanged": true,
+  "scope": "Interpretation only; no replacement grade set",
+  "cautions": [
+    {
+      "rule": "M3",
+      "issue": "Frozen source thinking can conceal persistence from an older notebook (cp5 line15). The rubric has no separate carried-notebook source. Use explicit origin metadata; do not claim all M3 support was thinking.",
+      "alternative": "both or explicit historical-notebook source"
+    },
+    {
+      "rule": "M5",
+      "issue": "Frozen partial credits coordinate-specific checker passage. General bridge rule never adopted; absent remains defensible. Published README suggests absent but published JSON still says wrong.",
+      "alternative": "absent under general-rule threshold"
+    },
+    {
+      "rule": "M1",
+      "issue": "Later not available wording may operationally establish no useful action button even though frozen audit demanded more explicit closure.",
+      "alternative": "correct for later checkpoints under behavioral essential-content interpretation"
+    }
+  ]
+}

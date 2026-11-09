@@ -1,0 +1,4910 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: The standard mapping is 2=down, 4=right.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ]
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Ice = slide until hitting a wall/hazard/edge.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water."
+      },
+      "I4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water."
+      },
+      "I5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water."
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water."
+      },
+      "I7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: So: the plant is the goal, you slide on ice, and the dark cells block.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "So: the plant is the goal, you slide on ice, and the dark cells block.",
+            "line": 1376
+          }
+        ]
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+    "full_read": true,
+    "notebook_checkpoint": null
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: The standard mapping is 2=down, 4=right.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 0
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: Ice = slide until hitting a wall/hazard/edge.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 0,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 0
+      },
+      "I4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 0
+      },
+      "I5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 0
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 0
+      },
+      "I7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "note": "T: So: the plant is the goal, you slide on ice, and the dark cells block.",
+        "evidence": [
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "So: the plant is the goal, you slide on ice, and the dark cells block.",
+            "line": 1376
+          }
+        ],
+        "persisted_from_cp": 0
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-001.md",
+    "full_read": true,
+    "notebook_checkpoint": null
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 2,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 1
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 2,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 1,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 1
+      },
+      "I4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 1
+      },
+      "I5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 1
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 1
+      },
+      "I7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Plant cell = goal; contact ends level",
+        "evidence": [
+          {
+            "cp": 2,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+            "section": "notebook",
+            "quote": "Plant cell = goal; contact ends level",
+            "line": 9
+          }
+        ],
+        "persisted_from_cp": 1
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-002.md",
+    "full_read": true,
+    "notebook_checkpoint": 2
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 2
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 2,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 2
+      },
+      "I4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 2
+      },
+      "I5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 2
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 2
+      },
+      "I7": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: level completes when a slide ENDS ON the plant cell",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "level completes when a slide ENDS ON the plant cell",
+            "line": 56
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ]
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 3
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 3,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 3
+      },
+      "I4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 3
+      },
+      "I5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 3
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 3
+      },
+      "I7": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: level completes when a slide ENDS ON the plant cell",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "level completes when a slide ENDS ON the plant cell",
+            "line": 56
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "persisted_from_cp": 3
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-004.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 4
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 4,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: So the orange must be pushable (B).",
+        "evidence": [
+          {
+            "cp": 5,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-005.md",
+            "section": "thinking",
+            "quote": "So the orange must be pushable (B).",
+            "line": 358
+          }
+        ],
+        "rationale": "Pushability adopted by solvability reasoning, but slide versus single-cell mechanics left unresolved. Later ACTION7 backstep theory does not explicitly retract pushability; substantial correct push component persists."
+      },
+      "I4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 4
+      },
+      "I5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 4
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 4
+      },
+      "I7": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: level completes when a slide ENDS ON the plant cell",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "level completes when a slide ENDS ON the plant cell",
+            "line": 56
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "persisted_from_cp": 4
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-005.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 5
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 5,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the player slid all the way to (5,4) (right behind the crate).",
+        "evidence": [
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "rationale": "Explicit slide-push confirmation at move32, multi-cell confirmation at move36."
+      },
+      "I4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 5
+      },
+      "I5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 5
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 5
+      },
+      "I7": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: level completes when a slide ENDS ON the plant cell",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "level completes when a slide ENDS ON the plant cell",
+            "line": 56
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "persisted_from_cp": 5
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 6
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 6,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the player slid all the way to (5,4) (right behind the crate).",
+        "evidence": [
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "rationale": "Explicit slide-push confirmation at move32, multi-cell confirmation at move36.",
+        "persisted_from_cp": 6
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: in sokoban you can't push two crates",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ]
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the blue object at (3,4) is a blocker (stops the slide).",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "",
+        "evidence": [],
+        "absence_rationale": "All notebook and thinking text through this checkpoint read; no adopted belief about this interaction. Earlier boxes/pits are treated as fixed dark geometry, not identified wooden pushable crates or blue water.",
+        "persisted_from_cp": 6
+      },
+      "I7": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: level completes when a slide ENDS ON the plant cell",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "level completes when a slide ENDS ON the plant cell",
+            "line": 56
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "persisted_from_cp": 6
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 7
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 7,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the player slid all the way to (5,4) (right behind the crate).",
+        "evidence": [
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "rationale": "Explicit slide-push confirmation at move32, multi-cell confirmation at move36.",
+        "persisted_from_cp": 7
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: in sokoban you can't push two crates",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 7
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the blue object at (3,4) is a blocker (stops the slide).",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial.",
+        "persisted_from_cp": 7
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: a crate that enters it while passable is absorbed",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: the only remaining hypothesis = the blue/crates are the goal (feeding).",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "rationale": "Correct stop-on-plant retained for prior levels; replaces L4 objective with feeding crates. Partial across covered cases."
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 8
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 8,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the player slid all the way to (5,4) (right behind the crate).",
+        "evidence": [
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "rationale": "Explicit slide-push confirmation at move32, multi-cell confirmation at move36.",
+        "persisted_from_cp": 8
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: in sokoban you can't push two crates",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 8
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the blue object at (3,4) is a blocker (stops the slide).",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial.",
+        "persisted_from_cp": 8
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: a crate that enters it while passable is absorbed",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence.",
+        "persisted_from_cp": 8
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: the only remaining hypothesis = the blue/crates are the goal (feeding).",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "the only remaining hypothesis = the blue/crates are the goal (feeding).",
+            "line": 739
+          }
+        ],
+        "rationale": "Correct stop-on-plant retained for prior levels; replaces L4 objective with feeding crates. Partial across covered cases.",
+        "persisted_from_cp": 8
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-009.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 9
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 9,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the player slid all the way to (5,4) (right behind the crate).",
+        "evidence": [
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "rationale": "Explicit slide-push confirmation at move32, multi-cell confirmation at move36.",
+        "persisted_from_cp": 9
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: in sokoban you can't push two crates",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 9
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the blue object at (3,4) is a blocker (stops the slide).",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial.",
+        "persisted_from_cp": 9
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: a crate that enters it while passable is absorbed",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence.",
+        "persisted_from_cp": 9
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: So the true state of L4: unwinnable (from the current state).",
+        "evidence": [
+          {
+            "cp": 10,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-010.md",
+            "section": "thinking",
+            "quote": "So the true state of L4: unwinnable (from the current state).",
+            "line": 468
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "level completes when a slide ENDS ON the plant cell",
+            "line": 56
+          }
+        ],
+        "rationale": "Re-adopts plant goal as true L4 state after explicitly identifying feeding as speculation; preserved stop-on-goal rule remains."
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-010.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+            "line": 13
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 10
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: One action = one full slide (no mid-slide stops).",
+        "evidence": [
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "notebook",
+            "quote": "One action = one full slide (no mid-slide stops).",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 10,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the player slid all the way to (5,4) (right behind the crate).",
+        "evidence": [
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "rationale": "Explicit slide-push confirmation at move32, multi-cell confirmation at move36.",
+        "persisted_from_cp": 10
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: in sokoban you can't push two crates",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 10
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the blue object at (3,4) is a blocker (stops the slide).",
+        "evidence": [
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial.",
+        "persisted_from_cp": 10
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: a crate that enters it while passable is absorbed",
+        "evidence": [
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence.",
+        "persisted_from_cp": 10
+      },
+      "I7": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "correct",
+        "note": "T: \"Feed 2\" is achievable. Let's go with that.",
+        "evidence": [
+          {
+            "cp": 11,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-011.md",
+            "section": "thinking",
+            "quote": "\"Feed 2\" is achievable. Let's go with that.",
+            "line": 206
+          }
+        ],
+        "rationale": "Adopts feeding objective again; later considers plant probable and feeding low-probability, but retains feeding as operational win route. Ambiguous confidence, partial applicability."
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-011.md",
+    "full_read": true,
+    "notebook_checkpoint": 3
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 11
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 11,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 11
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 11
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 11,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 11,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric."
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+    "full_read": true,
+    "notebook_checkpoint": 12
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 12
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 12,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 12
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 12
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 12,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 12,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 12
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-013.md",
+    "full_read": true,
+    "notebook_checkpoint": 12
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 13
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 13,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 13
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 13
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 13,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 13,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 12,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-012.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 13
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-014.md",
+    "full_read": true,
+    "notebook_checkpoint": 12
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 14
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 14,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 14
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 14
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 14,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 14,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 15,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 14
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-015.md",
+    "full_read": true,
+    "notebook_checkpoint": 15
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 15
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 15,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 15
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 15
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 15,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 15,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 15
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+    "full_read": true,
+    "notebook_checkpoint": 16
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 16
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 16,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 16
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 16
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 16,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 16,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 16,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-016.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 16
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-017.md",
+    "full_read": true,
+    "notebook_checkpoint": 16
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 17
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 17,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 17
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 17
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 17,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 17,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 18,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 17
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-018.md",
+    "full_read": true,
+    "notebook_checkpoint": 18
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 18
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 18,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 18
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 18
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 18,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 18,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 18
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+    "full_read": true,
+    "notebook_checkpoint": 19
+  },
+  {
+    "cp": 20,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 19
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 19,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 19
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 19
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 19,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 19,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 19,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-019.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 19
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-020.md",
+    "full_read": true,
+    "notebook_checkpoint": 19
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 20
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 20,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 20
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 20
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 20,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 20,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 21,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 20
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-021.md",
+    "full_read": true,
+    "notebook_checkpoint": 21
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 21
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 21,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 21
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 21
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 21,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 21,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 22,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 21
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-022.md",
+    "full_read": true,
+    "notebook_checkpoint": 22
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 22
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 22,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 22
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 22
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 22,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 22,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 23,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 22
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-023.md",
+    "full_read": true,
+    "notebook_checkpoint": 23
+  },
+  {
+    "cp": 24,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 23
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 23,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 23
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 23
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 23,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 23,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 24,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 23
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-024.md",
+    "full_read": true,
+    "notebook_checkpoint": 24
+  },
+  {
+    "cp": 25,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 24
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 24,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 24
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 24
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 24,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 24,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 25,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 24
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-025.md",
+    "full_read": true,
+    "notebook_checkpoint": 25
+  },
+  {
+    "cp": 26,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 25
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 25,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 25
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 25
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 25,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 25,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 25
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+    "full_read": true,
+    "notebook_checkpoint": 26
+  },
+  {
+    "cp": 27,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 26
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 26,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 26
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 26
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 26,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 26,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 26,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-026.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 26
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-2/cp-027.md",
+    "full_read": true,
+    "notebook_checkpoint": 26
+  },
+  {
+    "cp": 28,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 27
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 27,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 27
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 27
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 27,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 27,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 28,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 27
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-028.md",
+    "full_read": true,
+    "notebook_checkpoint": 28
+  },
+  {
+    "cp": 29,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 28
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 28,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 28
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 28
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 28,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 28,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 28
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+    "full_read": true,
+    "notebook_checkpoint": 29
+  },
+  {
+    "cp": 30,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 29
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 29,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 29
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 29
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 29,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 29,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 29
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-030.md",
+    "full_read": true,
+    "notebook_checkpoint": 29
+  },
+  {
+    "cp": 31,
+    "labels": {
+      "I1": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "note": "N: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right",
+            "line": 11
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "The standard mapping is 2=down, 4=right.",
+            "line": 1380
+          }
+        ],
+        "persisted_from_cp": 30
+      },
+      "I2": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "note": "N: Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Slide until stopped by: level wall, dark rimmed cell/notch/hole",
+            "line": 19
+          },
+          {
+            "cp": 0,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-000.md",
+            "section": "thinking",
+            "quote": "Ice = slide until hitting a wall/hazard/edge.",
+            "line": 1277
+          }
+        ],
+        "persisted_from_cp": 30,
+        "rationale": "Full sliding and wall stops learned; water stopping absent initially and later restricted by an incorrect gate-phase account. Complete obstacle applicability is missing."
+      },
+      "I3": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: crate slides until blocker, player stops behind.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "crate slides until blocker, player stops behind.",
+            "line": 21
+          },
+          {
+            "cp": 6,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-006.md",
+            "section": "thinking",
+            "quote": "the player slid all the way to (5,4) (right behind the crate).",
+            "line": 196
+          }
+        ],
+        "persisted_from_cp": 30
+      },
+      "I4": {
+        "belief": "wrong",
+        "source": "both",
+        "notebook": "wrong",
+        "note": "N: Crate-vs-crate contact = no movement.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Crate-vs-crate contact = no movement.",
+            "line": 21
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "in sokoban you can't push two crates",
+            "line": 420
+          }
+        ],
+        "persisted_from_cp": 30
+      },
+      "I5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "BLOCKS in 22, 25 (player slides stopped). PASSABLE in 24, 27.",
+            "line": 24
+          },
+          {
+            "cp": 7,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-007.md",
+            "section": "thinking",
+            "quote": "the blue object at (3,4) is a blocker (stops the slide).",
+            "line": 173
+          }
+        ],
+        "persisted_from_cp": 30,
+        "rationale": "Recognizes blue object stops player in front; falsely allows passage in pre-fill water phases. Right effect, wrong applicability, hence partial."
+      },
+      "I6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: A crate sliding into the gate while passable is ABSORBED",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "A crate sliding into the gate while passable is ABSORBED",
+            "line": 25
+          },
+          {
+            "cp": 8,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-1/cp-008.md",
+            "section": "thinking",
+            "quote": "a crate that enters it while passable is absorbed",
+            "line": 753
+          }
+        ],
+        "persisted_from_cp": 30,
+        "rationale": "Recognizes crate disappearance and subsequent player crossing; incorrectly requires pre-existing passable gate phase rather than water filling. Partial observable consequence."
+      },
+      "I7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Plant is passable; win only if slide ENDS on plant.",
+        "evidence": [
+          {
+            "cp": 29,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-029.md",
+            "section": "notebook",
+            "quote": "Plant is passable; win only if slide ENDS on plant.",
+            "line": 20
+          },
+          {
+            "cp": 3,
+            "path": "docs/research/rule-learning-20261028/grade/run-F/seg-0/cp-003.md",
+            "section": "thinking",
+            "quote": "So the goal: \"stop\" on the plant's cell.",
+            "line": 94
+          }
+        ],
+        "rationale": "Notebook states generic stop-on-plant rule as fact. Alternative L4 goals are explicitly UNCONFIRMED; hypothetical alternatives do not override that belief under the rubric.",
+        "persisted_from_cp": 30
+      }
+    },
+    "checkpoint_path": "docs/research/rule-learning-20261028/grade/run-F/seg-3/cp-031.md",
+    "full_read": true,
+    "notebook_checkpoint": 29
+  }
+]

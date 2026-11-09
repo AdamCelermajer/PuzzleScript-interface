@@ -1,0 +1,165 @@
+[
+  {
+    "rule": "K1",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 136,
+        "quote": "[action player][selected_crate][player indicator_selecting] -> [action player][Crate][player] sfx1"
+      },
+      {
+        "line": 141,
+        "quote": "up [up player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 142,
+        "quote": "down [down player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 143,
+        "quote": "left [left player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 144,
+        "quote": "right [right player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      }
+    ],
+    "status": "independently reviewed static source; no gameplay",
+    "limitation": "Current local source, not a runtime test or independent historical-version provenance audit."
+  },
+  {
+    "rule": "K2",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 117,
+        "quote": "Player, Wall, Crate, possible_crate, selected_crate, normalcrate"
+      },
+      {
+        "line": 125,
+        "quote": "[> player no indicator | normalcrate] -> [> player no indicator | > normalcrate]"
+      }
+    ],
+    "status": "independently reviewed static source; no gameplay",
+    "limitation": "Current local source, not a runtime test or independent historical-version provenance audit."
+  },
+  {
+    "rule": "K3",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 127,
+        "quote": "[> player no indicator| Crate | | ] -> [ | player indicator_placing | | > knight_marker]"
+      },
+      {
+        "line": 129,
+        "quote": "[^ knight_marker | no object] -> [^ knight_marker | possible_crate]"
+      },
+      {
+        "line": 130,
+        "quote": "[v knight_marker | no object] -> [v knight_marker | possible_crate]"
+      }
+    ],
+    "status": "independently reviewed static source; no gameplay",
+    "limitation": "Current local source, not a runtime test or independent historical-version provenance audit."
+  },
+  {
+    "rule": "K4",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 96,
+        "quote": "object = Crate or wall or player or normalcrate"
+      },
+      {
+        "line": 129,
+        "quote": "[^ knight_marker | no object] -> [^ knight_marker | possible_crate]"
+      },
+      {
+        "line": 130,
+        "quote": "[v knight_marker | no object] -> [v knight_marker | possible_crate]"
+      },
+      {
+        "line": 132,
+        "quote": "[possible_crate][player indicator_placing] -> [possible_crate][player]"
+      },
+      {
+        "line": 133,
+        "quote": "[indicator_placing] -> cancel"
+      }
+    ],
+    "status": "independently reviewed static source; no gameplay",
+    "limitation": "Current local source, not a runtime test or independent historical-version provenance audit."
+  },
+  {
+    "rule": "K5",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 139,
+        "quote": "[possible_crate][player no indicator_selecting] -> [selected_crate][player indicator_selecting] sfx0"
+      },
+      {
+        "line": 141,
+        "quote": "up [up player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 142,
+        "quote": "down [down player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 143,
+        "quote": "left [left player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 144,
+        "quote": "right [right player][selected_crate | ... | possible_crate] -> [player][possible_crate | ... | selected_crate] sfx2"
+      },
+      {
+        "line": 146,
+        "quote": "[orthogonal player indicator_selecting] -> [player indicator_selecting]"
+      }
+    ],
+    "status": "independently reviewed static source; no gameplay",
+    "limitation": "Current local source, not a runtime test or independent historical-version provenance audit."
+  },
+  {
+    "rule": "K6",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 135,
+        "quote": "[action player][possible_crate][player indicator_selecting] -> [action player][][player indicator_selecting]"
+      },
+      {
+        "line": 136,
+        "quote": "[action player][selected_crate][player indicator_selecting] -> [action player][Crate][player] sfx1"
+      }
+    ],
+    "status": "independently reviewed static source; no gameplay",
+    "limitation": "Current local source, not a runtime test or independent historical-version provenance audit."
+  },
+  {
+    "rule": "K7",
+    "path": "puzzlescript_interface/games/ps_knightoban-v1/script.txt",
+    "sha256": "1101bb369572ca55e0971d82072a7a33edca58e3524088fc201c41b6fa6e1ede",
+    "evidence": [
+      {
+        "line": 97,
+        "quote": "crates = Crate or normalcrate"
+      },
+      {
+        "line": 154,
+        "quote": "All Target on crates"
+      }
+    ],
+    "status": "independently reviewed static source; no gameplay",
+    "limitation": "Current local source, not a runtime test or independent historical-version provenance audit."
+  }
+]

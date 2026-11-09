@@ -1,0 +1,1751 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: ACTION4 = right confirmed."
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the player tries to enter (1,0) but O is there"
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: BLUE is there. Fail."
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: So the boundary is completely two-way: the player can only cross via the checkerboard door (1,2)."
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Door: (1,2) is the sole passage between the black area and the white room."
+      },
+      "M6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M8": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M8": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: ACTION1=UP, ACTION2=DOWN, ACTION3=LEFT, ACTION4=RIGHT (1 cell per action)"
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Pushing: walk into box; box moves 1 cell if destination free; else both blocked (observed)."
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: black<->white region crossings BLOCKED for player in both directions"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: checkerboard door cell (freely passable all directions)."
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: So the push itself fails:"
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: Good, so the plan (Option D') is valid:"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Sokoban: push boxes (orange frames) onto goal markers (blue frames) to complete each level."
+      }
+    }
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: Rule confirmed: boxes can cross the black/white boundary."
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "N: L1 observed blocks:"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Door (4,0) connects"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Box CAN cross black/white color boundary"
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: Win = box on goal => auto-advance."
+      }
+    }
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: So the boundary rule holds even on this edge."
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Push box (4,2)up from (5,2): BLOCKED"
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "notebook",
+        "notebook": "partial",
+        "note": "N: So region rule must be wrong/limited."
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: individual HIDDEN WALLS (not global rule)."
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "N: freely passable in all directions"
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So the player can't cross E1 even while pushing."
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 20,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: keep PUSHER on same-color floors, let BOX cross boundaries."
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: The box is now on the door (4,2), and the player is at (4,1)W."
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 24,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: Boundary walls block both walking and pushing (L3 evidence: E1, E2 blocked pushes)."
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 25,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 26,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Assume all B-W edges walled except door"
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: P4 (push box U (3,5)->(2,5)) FAILED: pusher would cross wall (4,5)-(3,5)."
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 27,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 28,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: Player cannot cross specific white<->black boundary EDGES: hidden per-level WALLS."
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 29,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 30,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 31,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: the box ignores walls) AND the destination is empty."
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": "T: The box can cross any boundary; what matters is the pusher's position and the pusher's path."
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  },
+  {
+    "cp": 32,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M3": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M5": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": ""
+      },
+      "M7": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      },
+      "M8": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct",
+        "note": ""
+      }
+    }
+  }
+]

@@ -1,0 +1,3920 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "M1": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      },
+      "M2": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      },
+      "M3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      },
+      "M4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      },
+      "M5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      },
+      "M6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      },
+      "M8": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none",
+        "note": "No adopted belief after complete reading; notebook explicitly lists everything as uncertain."
+      }
+    },
+    "rationale": "No adopted game-mechanics belief. Controls/objective remain explicitly unknown; alternatives are exploratory hypotheses.",
+    "full_read": true
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "M1": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M2": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M4": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M5": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      }
+    },
+    "rationale": "No adopted game-mechanics belief. Controls/objective remain explicitly unknown; alternatives are exploratory hypotheses.",
+    "full_read": true
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-002.md",
+          "line": 70,
+          "quote": "So: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION7=undo the immediately preceding move.",
+          "kind": "T"
+        },
+        "note": "T: So: ACTION1=up, ACTION2=down, ACTION3=left, ACTION4=right, ACTION7=undo the immediately preceding move."
+      },
+      "M2": {
+        "belief": "wrong",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-002.md",
+          "line": 149,
+          "quote": "tile 3 (orange hollow square) blocks movement!",
+          "kind": "T"
+        },
+        "note": "T: tile 3 (orange hollow square) blocks movement!"
+      },
+      "M3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-002.md",
+          "line": 289,
+          "quote": "right from (0,1) failed.",
+          "kind": "T"
+        },
+        "note": "T: right from (0,1) failed."
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 2,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-002.md",
+          "line": 289,
+          "quote": "from (1,1): right works, from (1,2): left also works.",
+          "kind": "T"
+        },
+        "note": "T: from (1,1): right works, from (1,2): left also works."
+      },
+      "M6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      }
+    },
+    "rationale": "M1 four directions established but action-button irrelevance not established. M2 orange impassable conclusion persists through speculative questions. M4 recognizes a refused white-to-dark step but attributes no correct colour condition. M5 observed some grey/white passage only; no general bridge rule.",
+    "full_read": true
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        },
+        "note": "N: ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right"
+      },
+      "M2": {
+        "belief": "wrong",
+        "notebook": "wrong",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 21,
+          "quote": "BLOCKS movement (character can't enter; adjacent move fails)",
+          "kind": "N"
+        },
+        "note": "N: BLOCKS movement (character can't enter; adjacent move fails)"
+      },
+      "M3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        },
+        "note": "N: (2,2)-(2,3): WALL (tested both sides)"
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 225,
+          "quote": "(1,2)-(1,3): open",
+          "kind": "T"
+        },
+        "note": "T: (1,2)-(1,3): open"
+      },
+      "M6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      }
+    },
+    "rationale": "Colour boundaries understood as hidden walls: partial M4. Some grey passages established: partial M5. No general bridge rule. Orange considered impassable. Goal alternatives unadopted.",
+    "full_read": true
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "wrong",
+        "notebook": "wrong",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 21,
+          "quote": "BLOCKS movement (character can't enter; adjacent move fails)",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 225,
+          "quote": "(1,2)-(1,3): open",
+          "kind": "T"
+        }
+      },
+      "M6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      }
+    },
+    "rationale": "Full checkpoint read; only a navigation plan and proposed ACTION7 test. All beliefs persist from cited prior checkpoints; notebook unchanged.",
+    "full_read": true
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        },
+        "note": "N: pushing = character moves into it, box moves 1 cell same direction"
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        },
+        "note": "N: blocked if box would go off-grid or into wall/box"
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        },
+        "note": "N: (1,1)-(1,2),(1,2)-(1,3)"
+      },
+      "M6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 179,
+          "quote": "Sokoban goal: push the box(es) onto the target(s).",
+          "kind": "T"
+        },
+        "note": "T: Sokoban goal: push the box(es) onto the target(s)."
+      }
+    },
+    "rationale": "Push/no-pull understood through adopted dead-end analysis. Notebook similarly calls row-2 box unrecoverable. M3 explicitly includes off-grid and other boxes. M8 adopts box-target objective operationally, but target identity remains alternatives blue/checker: partial. M1 still imagines context-locked other actions. M5 notebook lists paths through grey but no general rule.",
+    "full_read": true
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 179,
+          "quote": "Sokoban goal: push the box(es) onto the target(s).",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: dead-end/no-pull inference reinforced; reset and planned push onto blue. No result yet, no label change.",
+    "full_read": true
+  },
+  {
+    "cp": 7,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        },
+        "note": "T: Pushing the box down from (0,2) failed!"
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        },
+        "note": "T: Level 1 complete! Pushing the box onto the blue tile was the goal."
+      }
+    },
+    "rationale": "Blue target and transition confirmed; all-box objective carried from cp5. Refused cross-colour push recognized but explained by hidden wall, partial M6. Does not yet adopt unrestricted box colour movement.",
+    "full_read": true
+  },
+  {
+    "cp": 8,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "absent",
+        "notebook": "absent",
+        "source": "none"
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: further blocked edges and navigation corrections; hidden-wall belief persists. No mechanic revision.",
+    "full_read": true
+  },
+  {
+    "cp": 9,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 9,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-009.md",
+          "line": 76,
+          "quote": "The box is currently at (1,0) (displayed as 3 = box on white)",
+          "kind": "T"
+        },
+        "note": "T: The box is currently at (1,0) (displayed as 3 = box on white)"
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read. Box moved dark to white is accepted observation, partial M7 (no general any-colour rule). White-dark wall hypothesis remains some, not all boundaries, partial M4. Grey passage reinforced but general bridge rule not stated.",
+    "full_read": true
+  },
+  {
+    "cp": 10,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 9,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-009.md",
+          "line": 76,
+          "quote": "The box is currently at (1,0) (displayed as 3 = box on white)",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: route mapping, more blocked colour edges, no replacement of mechanic beliefs. Notebook unchanged.",
+    "full_read": true
+  },
+  {
+    "cp": 11,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 9,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-009.md",
+          "line": 76,
+          "quote": "The box is currently at (1,0) (displayed as 3 = box on white)",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: level2 completion reinforces M8; still treats colour boundaries as unknown edges. No label change.",
+    "full_read": true
+  },
+  {
+    "cp": 12,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 9,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-009.md",
+          "line": 76,
+          "quote": "The box is currently at (1,0) (displayed as 3 = box on white)",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: failed push into blue attributed to possible hidden wall; correct player-floor cause explicitly dismissed, retaining partial M6. M7 earlier successful cross-colour box movement not replaced: alternatives remain questions.",
+    "full_read": true
+  },
+  {
+    "cp": 13,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 9,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-009.md",
+          "line": 76,
+          "quote": "The box is currently at (1,0) (displayed as 3 = box on white)",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: additional dark-to-white push observed, and reverse push fails. Still hidden-wall/path explanations, no generalized colour rule. Grey transit observed in both directions but only specific map knowledge. Grades persist.",
+    "full_read": true
+  },
+  {
+    "cp": 14,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 14,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-014.md",
+          "line": 21,
+          "quote": "the box can't cross the dark tile",
+          "kind": "T"
+        },
+        "note": "T: the box can't cross the dark tile"
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read. Incorrect restriction on dark-to-blue box movement now adopted, while white-to-dark and dark-to-white pushes are recognized. Substantial correct cross-colour cases preserve partial M7 rather than wrong. M6 remains partial wrong-cause push refusal.",
+    "full_read": true
+  },
+  {
+    "cp": 15,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 15,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-015.md",
+          "line": 27,
+          "quote": "OK, walls block both.",
+          "kind": "T"
+        },
+        "note": "T: OK, walls block both."
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: explicitly concludes walls block both character and box, contradicting unrestricted box movement but retaining substantial observed cross-colour cases. Partial M7; all other labels persist.",
+    "full_read": true
+  },
+  {
+    "cp": 16,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 104,
+          "quote": "Pushing the box down from (0,2) failed!",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 15,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-015.md",
+          "line": 27,
+          "quote": "OK, walls block both.",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: more cross-colour box pushes; questions whether walls affect boxes identically, but does not yet adopt replacement general rule. Persistence applies. Notebook unchanged.",
+    "full_read": true
+  },
+  {
+    "cp": 17,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        },
+        "note": "T: So the box can't be pushed from (2,1) to (1,1)."
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 15,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-015.md",
+          "line": 27,
+          "quote": "OK, walls block both.",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: adopts false white-white box-edge wall on failed black-player/white-box push. Still substantial correct knowledge of refused pushes, wrong condition: partial M6. M4 remains partial hidden-edge model, not colour rule. No notebook update.",
+    "full_read": true
+  },
+  {
+    "cp": 18,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 15,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-015.md",
+          "line": 27,
+          "quote": "OK, walls block both.",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read. Misidentifies white tile as dark and infers a dark-dark wall; still partial M4 with substantial correct blocked-boundary observations. No new adopted general mechanics.",
+    "full_read": true
+  },
+  {
+    "cp": 19,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 15,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-015.md",
+          "line": 27,
+          "quote": "OK, walls block both.",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read. Dark-checker transit reinforced. Route corrections only; no belief revision.",
+    "full_read": true
+  },
+  {
+    "cp": 20,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 15,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-015.md",
+          "line": 27,
+          "quote": "OK, walls block both.",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read. Further push refusal called a dark-dark wall, partial M6. Restriction on dark-blue box movement questioned but retained as per-edge walls, not replaced with general unrestricted movement. Partial M7 persists.",
+    "full_read": true
+  },
+  {
+    "cp": 21,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        },
+        "note": "T: My assumption that \"dark"
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read. Explicitly retracts always-blocked dark-blue box edge but replaces it with per-edge walls, still partial M7. Grey crate landing and pushing grey-to-white accepted. General colour invariance not yet stated. M8 target variant recognized operationally.",
+    "full_read": true
+  },
+  {
+    "cp": 22,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: route planning and hidden-wall exploration; no general mechanics replacement; unchanged notebook.",
+    "full_read": true
+  },
+  {
+    "cp": 23,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: only positions and next route test; no belief revision.",
+    "full_read": true
+  },
+  {
+    "cp": 24,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: further colour-boundary blocks, still per-edge wall model and mistaken historical dark-dark wall examples. No mechanic revision.",
+    "full_read": true
+  },
+  {
+    "cp": 25,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: continued path exploration and repeated wall conclusions, no general mechanic change.",
+    "full_read": true
+  },
+  {
+    "cp": 26,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: map-specific blocked edges and alternate routes only; grades persist.",
+    "full_read": true
+  },
+  {
+    "cp": 27,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: still maze and per-edge walls, proposes box paths from known character paths. No new general mechanic belief.",
+    "full_read": true
+  },
+  {
+    "cp": 28,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: route correction and next planned test only; all beliefs persist.",
+    "full_read": true
+  },
+  {
+    "cp": 29,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 32,
+          "quote": "(2,2)-(2,3): WALL (tested both sides)",
+          "kind": "N"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read: target-to-white walking refusal and corridor exploration still interpreted as map walls. No general mechanics revision. Segment0 fully read. Next checkpoint30; original grades and curves remain unopened.",
+    "full_read": true
+  },
+  {
+    "cp": 30,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        },
+        "note": "T: Still blocked. The wall is real and persistent."
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read (entire 81,440 characters). Extensive sealed-cluster and blob routing retains per-edge hidden walls. Directed/state-dependent walls and different goals remain alternatives, not adopted replacements. Endpoint push-direction coordinate errors do not replace the repeatedly stated one-cell opposite-side push rule. All labels persist; notebook unchanged from cp5.",
+    "full_read": true
+  },
+  {
+    "cp": 31,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 17,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-017.md",
+          "line": 137,
+          "quote": "So the box can't be pushed from (2,1) to (1,1).",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read. Corrects cp30 direction confusion and sealed-cluster conclusion after pushing right twice. White-to-dark crate movement reinforced, but walls still applied per edge; no general colour rule. All eight labels persist.",
+    "full_read": true
+  },
+  {
+    "cp": 32,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 32,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-032.md",
+          "line": 144,
+          "quote": "So the box's edge (4,5)-(5,5) is a wall.",
+          "kind": "T"
+        },
+        "note": "T: So the box's edge (4,5)-(5,5) is a wall."
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "absent",
+        "source": "thinking",
+        "evidence": {
+          "cp": 21,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-021.md",
+          "line": 10,
+          "quote": "My assumption that \"dark",
+          "kind": "T"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 7,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-007.md",
+          "line": 10,
+          "quote": "Level 1 complete! Pushing the box onto the blue tile was the goal.",
+          "kind": "T"
+        }
+      }
+    },
+    "rationale": "Full read (154,581 characters). Refused white-player/dark-crate pushes are again attributed to destination-edge walls; M6 partial. Incorrect target-entry and box-wall restrictions coexist with established cross-colour pushes: M7 partial persists. Proposed notebook draft appears inside thinking only; actual notebook unchanged. No combined label changes.",
+    "full_read": true
+  },
+  {
+    "cp": 33,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 15,
+          "quote": "HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible.",
+          "kind": "N"
+        },
+        "note": "N: HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible."
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 14,
+          "quote": "Box: 3 = on white, 8 = on dark, 10 = on checker.",
+          "kind": "N"
+        },
+        "note": "N: Box: 3 = on white, 8 = on dark, 10 = on checker."
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 9,
+          "quote": "Win a level: push the box onto the target tile (0 or 9). Next level starts automatically.",
+          "kind": "N"
+        },
+        "note": "N: Win a level: push the box onto the target tile (0 or 9). Next level starts automatically."
+      }
+    },
+    "rationale": "Full read. New notebook upgrades notebook-only M8 to correct and records partial M6/M7, but no general colour condition. M3 notebook retains boundary deadlocks only, omitting crate-crate collision: partial notebook, correct combined via persistence. M2 push trajectories and corner death retain no-pull meaning. Combined labels unchanged.",
+    "full_read": true
+  },
+  {
+    "cp": 34,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 15,
+          "quote": "HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible.",
+          "kind": "N"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 14,
+          "quote": "Box: 3 = on white, 8 = on dark, 10 = on checker.",
+          "kind": "N"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 9,
+          "quote": "Win a level: push the box onto the target tile (0 or 9). Next level starts automatically.",
+          "kind": "N"
+        }
+      }
+    },
+    "rationale": "Full read. Corrects route through crate as unintended pushes; retains per-edge walls and plans dark-player/white-crate push without colour condition. No general rule revision; labels persist.",
+    "full_read": true
+  },
+  {
+    "cp": 35,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 35,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-035.md",
+          "line": 87,
+          "quote": "the edge (3,6)-(3,7) is a wall",
+          "kind": "T"
+        },
+        "note": "T: the edge (3,6)-(3,7) is a wall"
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 14,
+          "quote": "Box: 3 = on white, 8 = on dark, 10 = on checker.",
+          "kind": "N"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 9,
+          "quote": "Win a level: push the box onto the target tile (0 or 9). Next level starts automatically.",
+          "kind": "N"
+        }
+      }
+    },
+    "rationale": "Full read, new notebook and all thinking (40,682 characters). Black-player/white-crate refusal correctly observed but attributed to hidden wall, retaining partial M6. New notebook reinforces false box-wall constraints, yet substantial cross-colour crate knowledge persists: partial M7. No combined or notebook label changes.",
+    "full_read": true
+  },
+  {
+    "cp": 36,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 35,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-035.md",
+          "line": 87,
+          "quote": "the edge (3,6)-(3,7) is a wall",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 14,
+          "quote": "Box: 3 = on white, 8 = on dark, 10 = on checker.",
+          "kind": "N"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 9,
+          "quote": "Win a level: push the box onto the target tile (0 or 9). Next level starts automatically.",
+          "kind": "N"
+        }
+      }
+    },
+    "rationale": "Full read. Reset and route-testing plan only; no new mechanics conclusion. Unchanged notebook and all combined beliefs persist.",
+    "full_read": true
+  },
+  {
+    "cp": 37,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 30,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-030.md",
+          "line": 268,
+          "quote": "Still blocked. The wall is real and persistent.",
+          "kind": "T"
+        }
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 37,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-037.md",
+          "line": 905,
+          "quote": "the box edge (5,4)-(6,4) is walled.",
+          "kind": "T"
+        },
+        "note": "T: the box edge (5,4)-(6,4) is walled."
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 14,
+          "quote": "Box: 3 = on white, 8 = on dark, 10 = on checker.",
+          "kind": "N"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 9,
+          "quote": "Win a level: push the box onto the target tile (0 or 9). Next level starts automatically.",
+          "kind": "N"
+        }
+      }
+    },
+    "rationale": "Full unchanged notebook and all thinking read. The optimistic wall-based search finds no solution, prompting retests of possibly false wall observations, not adoption of colour rules. Questions about pulling, extra actions, multi-cell movement or directed edges remain exploratory; repeated coordinate/push-direction errors are corrected locally. General one-cell push/no-pull beliefs and all other combined labels persist. Notebook grades remain those of cp35; inherited evidence is retained where no new belief is adopted.",
+    "full_read": true
+  },
+  {
+    "cp": 38,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 38,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/cp-038.md",
+          "line": 16,
+          "quote": "HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible. Edge-based, not tile-based.",
+          "kind": "N"
+        },
+        "note": "N: HIDDEN WALLS between some adjacent cells: block char moves AND box pushes; invisible. Edge-based, not tile-based."
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 37,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-037.md",
+          "line": 905,
+          "quote": "the box edge (5,4)-(6,4) is walled.",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 14,
+          "quote": "Box: 3 = on white, 8 = on dark, 10 = on checker.",
+          "kind": "N"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 9,
+          "quote": "Win a level: push the box onto the target tile (0 or 9). Next level starts automatically.",
+          "kind": "N"
+        }
+      }
+    },
+    "rationale": "Full new notebook and all thinking read. A transient 2=wall-tile interpretation is explicitly rejected after rereading the notebook; both floor colours remain walkable, with invisible edge walls asserted. The new adopted false-wall thesis revises confidence in recorded edges, not the hidden-wall mechanics: blocked pushes still test the box destination edge. Map-specific checker routes and box-on-white/dark/checker IDs support only partial M5/M7, with no colour bridge or destination-independence principle. Controls omit ACTION5/6 but do not assert no action button; no-pull is supported by explicit opposite-side positioning and dead-box analysis. Collision knowledge omitted from notebook persists in thinking. Combined labels remain unchanged.",
+    "full_read": true
+  },
+  {
+    "cp": 39,
+    "labels": {
+      "M1": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 3,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-003.md",
+          "line": 27,
+          "quote": "ACTION1 = up, ACTION2 = down, ACTION3 = left, ACTION4 = right",
+          "kind": "N"
+        }
+      },
+      "M2": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "pushing = character moves into it, box moves 1 cell same direction",
+          "kind": "N"
+        }
+      },
+      "M3": {
+        "belief": "correct",
+        "notebook": "partial",
+        "source": "thinking",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 15,
+          "quote": "blocked if box would go off-grid or into wall/box",
+          "kind": "N"
+        }
+      },
+      "M4": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 39,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-3/cp-039.md",
+          "line": 59,
+          "quote": "All 9 column-1 / row-8 candidates are real walls.",
+          "kind": "T"
+        },
+        "note": "T: All 9 column-1 / row-8 candidates are real walls."
+      },
+      "M5": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 5,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-0/cp-005.md",
+          "line": 35,
+          "quote": "(1,1)-(1,2),(1,2)-(1,3)",
+          "kind": "N"
+        }
+      },
+      "M6": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 37,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-2/cp-037.md",
+          "line": 905,
+          "quote": "the box edge (5,4)-(6,4) is walled.",
+          "kind": "T"
+        }
+      },
+      "M7": {
+        "belief": "partial",
+        "notebook": "partial",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 14,
+          "quote": "Box: 3 = on white, 8 = on dark, 10 = on checker.",
+          "kind": "N"
+        }
+      },
+      "M8": {
+        "belief": "correct",
+        "notebook": "correct",
+        "source": "both",
+        "evidence": {
+          "cp": 33,
+          "path": "docs/research/rule-learning-20261028/grade/run-E/seg-1/cp-033.md",
+          "line": 9,
+          "quote": "Win a level: push the box onto the target tile (0 or 9). Next level starts automatically.",
+          "kind": "N"
+        }
+      }
+    },
+    "rationale": "Full unchanged cp38 notebook and all new thinking read. Repeated white/dark crossing refusals reconfirm the adopted wall map; the agent continues searching for a false recorded wall rather than inferring colour transitions. White-floor pushing onto checker is observed again, without a general crate-destination rule. No change to combined labels or notebook-only grades; earlier positive knowledge persists, with source/evidence retained unless refreshed here.",
+    "full_read": true
+  }
+]

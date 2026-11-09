@@ -1,0 +1,297 @@
+[
+  {
+    "cp": 0,
+    "labels": {
+      "K1": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Hypothesis: ACTION1\u20134 = move in 4 directions (up/down/left/right), ACTION5 = jump, ACTION7 = collect/interact?"
+      },
+      "K2": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Hypothesis: ACTION1\u20134 = move in 4 directions (up/down/left/right), ACTION5 = jump, ACTION7 = collect/interact?"
+      },
+      "K3": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Hypothesis: ACTION1\u20134 = move in 4 directions (up/down/left/right), ACTION5 = jump, ACTION7 = collect/interact?"
+      },
+      "K4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Hypothesis: ACTION1\u20134 = move in 4 directions (up/down/left/right), ACTION5 = jump, ACTION7 = collect/interact?"
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Hypothesis: ACTION1\u20134 = move in 4 directions (up/down/left/right), ACTION5 = jump, ACTION7 = collect/interact?"
+      },
+      "K6": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Hypothesis: ACTION1\u20134 = move in 4 directions (up/down/left/right), ACTION5 = jump, ACTION7 = collect/interact?"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent",
+        "note": "T: Hypothesis: ACTION1\u20134 = move in 4 directions (up/down/left/right), ACTION5 = jump, ACTION7 = collect/interact?"
+      }
+    }
+  },
+  {
+    "cp": 1,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "T: So ACTION4 = move right. Confirmed."
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: Therefore, the player can move onto 1-tiles but cannot move onto 0-tiles."
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: goal vanished, player took spot; 5 spawned (2,6), 6 spawned (4,6)"
+      },
+      "K4": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial",
+        "note": "N: 5 & 6 vanished; goal 3 spawned at (4,6)"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 2,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: the rightward move to (4,6), where goal 3 is, was blocked!"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent",
+        "note": "T: 5 and 6 swapped positions!"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 3,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "thinking",
+        "notebook": "absent"
+      },
+      "K6": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 4,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "notebook",
+        "notebook": "correct",
+        "note": "N: ACTION5 = clear enemies (5/6) -> goal 3 spawns at (4,6) [position of 6 at that moment]"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 5,
+    "labels": {
+      "K1": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  },
+  {
+    "cp": 6,
+    "labels": {
+      "K1": {
+        "belief": "correct",
+        "source": "thinking",
+        "notebook": "partial",
+        "note": "T: Force a swap so 6 goes to (2,6)"
+      },
+      "K2": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K3": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K4": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K5": {
+        "belief": "partial",
+        "source": "both",
+        "notebook": "partial"
+      },
+      "K6": {
+        "belief": "correct",
+        "source": "both",
+        "notebook": "correct"
+      },
+      "K7": {
+        "belief": "absent",
+        "source": "none",
+        "notebook": "absent"
+      }
+    }
+  }
+]

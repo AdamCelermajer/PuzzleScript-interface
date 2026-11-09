@@ -1,0 +1,299 @@
+[
+  {
+    "cp": 0,
+    "actions": 22,
+    "published_belief": 43.8,
+    "independent_belief": 50.0,
+    "published_notebook": 0.0,
+    "independent_notebook": 0.0,
+    "published_belief_unrounded": 43.75
+  },
+  {
+    "cp": 1,
+    "actions": 25,
+    "published_belief": 43.8,
+    "independent_belief": 50.0,
+    "published_notebook": 0.0,
+    "independent_notebook": 0.0,
+    "published_belief_unrounded": 43.75
+  },
+  {
+    "cp": 2,
+    "actions": 25,
+    "published_belief": 87.5,
+    "independent_belief": 81.25,
+    "published_notebook": 75.0,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 87.5
+  },
+  {
+    "cp": 3,
+    "actions": 39,
+    "published_belief": 87.5,
+    "independent_belief": 81.25,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 87.5
+  },
+  {
+    "cp": 4,
+    "actions": 50,
+    "published_belief": 87.5,
+    "independent_belief": 81.25,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 87.5
+  },
+  {
+    "cp": 5,
+    "actions": 60,
+    "published_belief": 87.5,
+    "independent_belief": 81.25,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 87.5
+  },
+  {
+    "cp": 6,
+    "actions": 60,
+    "published_belief": 87.5,
+    "independent_belief": 81.25,
+    "published_notebook": 75.0,
+    "independent_notebook": 62.5,
+    "published_belief_unrounded": 87.5
+  },
+  {
+    "cp": 7,
+    "actions": 71,
+    "published_belief": 93.8,
+    "independent_belief": 81.25,
+    "published_notebook": 87.5,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 8,
+    "actions": 75,
+    "published_belief": 93.8,
+    "independent_belief": 81.25,
+    "published_notebook": 87.5,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 9,
+    "actions": 75,
+    "published_belief": 93.8,
+    "independent_belief": 81.25,
+    "published_notebook": 87.5,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 10,
+    "actions": 75,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 11,
+    "actions": 78,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 12,
+    "actions": 86,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 13,
+    "actions": 100,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 14,
+    "actions": 100,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 15,
+    "actions": 106,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 16,
+    "actions": 109,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 17,
+    "actions": 112,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 18,
+    "actions": 125,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 19,
+    "actions": 150,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 20,
+    "actions": 155,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 21,
+    "actions": 155,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 22,
+    "actions": 155,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 23,
+    "actions": 159,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 24,
+    "actions": 174,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 25,
+    "actions": 175,
+    "published_belief": 81.2,
+    "independent_belief": 75.0,
+    "published_notebook": 81.2,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 81.25
+  },
+  {
+    "cp": 26,
+    "actions": 198,
+    "published_belief": 93.8,
+    "independent_belief": 75.0,
+    "published_notebook": 93.8,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 27,
+    "actions": 200,
+    "published_belief": 93.8,
+    "independent_belief": 75.0,
+    "published_notebook": 93.8,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 28,
+    "actions": 200,
+    "published_belief": 93.8,
+    "independent_belief": 75.0,
+    "published_notebook": 93.8,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 29,
+    "actions": 221,
+    "published_belief": 93.8,
+    "independent_belief": 75.0,
+    "published_notebook": 93.8,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 30,
+    "actions": 225,
+    "published_belief": 93.8,
+    "independent_belief": 75.0,
+    "published_notebook": 93.8,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 93.75
+  },
+  {
+    "cp": 31,
+    "actions": 226,
+    "published_belief": 87.5,
+    "independent_belief": 75.0,
+    "published_notebook": 93.8,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 87.5
+  },
+  {
+    "cp": 32,
+    "actions": 226,
+    "published_belief": 87.5,
+    "independent_belief": 75.0,
+    "published_notebook": 93.8,
+    "independent_notebook": 68.75,
+    "published_belief_unrounded": 87.5
+  }
+]

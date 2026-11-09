@@ -1,0 +1,11 @@
+# Independent decisions before original-grade access
+All 24 checkpoint files were read in full, in order, including repeated thinking, notebook text, empty checkpoint 5, and historical environment-error discussion in checkpoint 14. No current external blocker exists.
+Checkpoint-by-checkpoint labels/evidence/progress were saved during review. Before freezing, consistency review tightened three initial evidentiary choices:
+- K2 cp0-1: absent, because boundary geometry alone is not an adopted player-blocking rule. Cp2 explicitly excludes a player position on the border, earning partial. No orange-crate push belief appears anywhere in this run.
+- K6 cp0: wrong, because the later known-for-sure summary says ACTION5 is wait with no change. This uses the same chronological replacement criterion as cp1. Cp2 restores partial through explicit tick/resolution belief. Treating the no-change summary as merely player-position shorthand is a genuine alternative reading, documented for comparison rather than concealed.
+- K5/K7 cp0: strengthened notes from isolated observation/question to explicit animation conclusion and adopted ball-into-hoop plan. Grades unchanged.
+K7 cp3 is partial: adopted ring-on-dark-target goal is substantial correct content, but no all-target/either-crate generalization. Cp4 explicitly rejects this goal; later active state sweeps and assertions that the ring can NEVER reach the target sustain wrong, despite UNKNOWN headings. A mere generic state-search hypothesis would not alone prove a wrong rule; the explicit exclusion supplies the contradiction.
+K1 remains partial: correct directional controls, no ACTION5 confirmation understanding.
+K3 remains partial: entry/displacement initially, then clockwise-only knight geometry. K4 remains partial: refusal observed with wrong cause, later border-only one-destination account. K5 remains wrong: animation instead of choosing. K6 partial after cp2: correct settlement effect, missing selected-choice account.
+From cp8 each current notebook alone supports the same labels as thinking (source both). Before cp8 notebook is absent. No correct combined rule appears. Compound-rule partial/full thresholds are identified as rubric interpretation risks, not hidden certainty.
+Original labels, segment start/handoff, identity key and published curves remain unopened at this decision record.

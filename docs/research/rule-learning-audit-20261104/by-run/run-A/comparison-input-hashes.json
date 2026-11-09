@@ -1,0 +1,13 @@
+{
+  "access_phase": "after independent freeze",
+  "recorded_at_utc": "2026-11-04T18:14:48.164498+00:00",
+  "files": {
+    "docs/research/rule-learning-20261028/grade/run-A/seg-0/labels.json": "82e3384ec8ce93562c96c73ce88f7226122245b101189a45c5d0b17bf67fd5c4",
+    "docs/research/rule-learning-20261028/grade/run-A/seg-1/labels.json": "5b28b70df939b5f0317528070084918cb5bde048f28e068ef678e0a778ee2171",
+    "docs/research/rule-learning-20261028/grade/run-A/seg-2/labels.json": "5ede3075bbf0e1932052a00cd7a2591437a881ef2ac57908f44efb15aae14072",
+    "docs/research/rule-learning-20261028/grade/run-A/seg-3/labels.json": "4027efee5582bfc0fd5df19274bcaa79b5fe8f308da224f17a2b6c457dfa1750",
+    "docs/research/rule-learning-20261028/curves-combined.json": "141017eec5a3c7f85647648891572cf443f1e703163b0386ad9630d5055dae29",
+    "docs/research/rule-learning-20261028/grade/key.json": "3a85909352d76c934b30745177da96bcfc5767ec88e2c656a34a6771bf53af53",
+    "docs/research/rule-learning-20261028/combine.py": "7e9553a421c4a630822de630b25eaf6657f8ce9977416d642b219c2c8c4e5f06"
+  }
+}
