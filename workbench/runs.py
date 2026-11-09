@@ -266,7 +266,7 @@ def find_owner(run_id: str, root: Path) -> tuple[Path, dict, dict, bool] | None:
     return None
 
 
-def plan_resume(run_id: str, output: Path, root: Path = ROOT) -> tuple[dict, Path]:
+def plan_resume(run_id: str, output: Path, root: Path = ROOT, carry_moves: bool = False) -> tuple[dict, Path]:
     """Prepare one restarted run in `output`; returns its manifest row and the source
     marker path. Frameworks that resume (AVO) copy the saved run and pass `--resume`;
     frameworks that continue (baseline) replay the parent with `--continue-from`."""
@@ -287,7 +287,8 @@ def plan_resume(run_id: str, output: Path, root: Path = ROOT) -> tuple[dict, Pat
     if framework is None:
         raise Conflict(f"The {spec['framework']} framework no longer exists")
     options = framework.check_options({k: v for k, v in spec["options"].items()
-                                       if k in {o.name for o in framework.options}})
+                                       if k in {o.name for o in framework.options}}
+                                      | ({"carry_moves": True} if carry_moves else {}))
     common = dict(framework=framework, options=options, harness=spec["harness"], model=spec["model"],
                   effort=spec["effort"] or "medium", game_id=spec["game_id"],
                   backend_url=spec["backend_url"] or default_backend_url(), output=output,
@@ -334,7 +335,7 @@ def plan_resume(run_id: str, output: Path, root: Path = ROOT) -> tuple[dict, Pat
 
 
 def resume_runs(run_ids: list[str], root: Path = ROOT, recovery_of: str | None = None,
-                skip_unavailable: bool = False) -> dict:
+                skip_unavailable: bool = False, carry_moves: bool = False) -> dict:
     """One recovery batch for the given runs. With `skip_unavailable`, runs that
     are complete, solved or already resumed are left out instead of failing."""
     directory = new_job_directory(root, "resume")
@@ -345,7 +346,7 @@ def resume_runs(run_ids: list[str], root: Path = ROOT, recovery_of: str | None =
         for run_id in run_ids:
             output = directory / f"run-{len(rows) + 1:04d}"
             try:
-                row, marker = plan_resume(run_id, output, root)
+                row, marker = plan_resume(run_id, output, root, carry_moves)
             except ValueError as exc:
                 if not skip_unavailable:
                     raise

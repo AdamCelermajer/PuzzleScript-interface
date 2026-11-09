@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, q } from '../api/client'
 import { useCatalog } from '../api/hooks'
@@ -6,7 +6,7 @@ import type { CatalogJob, ResumeResult } from '../api/types'
 import { GameThumb, HarnessChip, LevelPips, RunId, StatusDot } from '../components/identity'
 import { ProgressText } from '../components/status'
 import { Button, Collapsible, ErrorBox, Loading, Notice } from '../components/ui'
-import { dateTime, gameName, relativeTime } from '../lib/format'
+import { dateTime, duration, gameName, relativeTime } from '../lib/format'
 import { campaignScore, gameHref, levelScoreText, levelText, normalizeRun, optionsText, runHref, type RunView } from '../lib/runs'
 import { BaselineDetail } from './BaselineDetail'
 import { Calls } from './Calls'
@@ -89,6 +89,7 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
         {run.framework === 'avo' && <Fact label="Score" value={campaignScore(raw.options)} />}
         {run.worldModel && <Fact label="World model" value={run.worldModel} />}
         <Fact label="Progress" value={<ProgressText run={run} />} />
+        <Usage runId={run.id} live={run.process.tone === 'running'} />
         <Fact label="Wall budget" value={raw.max_wall_seconds === 0 ? 'unlimited' : raw.max_wall_seconds ? `${(raw.max_wall_seconds / 3600).toFixed(1)}h` : '—'} />
         {raw.options && <Fact label="Options" value={optionsText(raw.options) || '—'} />}
         <Fact label="Launched" value={dateTime(run.started)} />
@@ -101,6 +102,28 @@ function RunHeader({ run, job }: { run: RunView; job?: CatalogJob }) {
       </div>
     </div>
   )
+}
+
+/** workbench/record_routes.py /record/usage: summed over every recorded model call of the run. */
+interface UsageTotals { calls: number; input: number; output: number; reasoning: number; cached: number
+  model_seconds: number; cost_usd: number; priced_calls: number; started: string | null; ended: string | null }
+
+function Usage({ runId, live }: { runId: string; live?: boolean }) {
+  const usage = useQuery({
+    queryKey: ['usage', runId],
+    queryFn: ({ signal }) => api.get<UsageTotals>(`/record/usage${q({ run: runId })}`, signal),
+    refetchInterval: live ? 10000 : false,
+  })
+  const u = usage.data
+  if (!u || !u.calls) return null
+  const ran = u.started ? ((u.ended ? Date.parse(u.ended) : Date.now()) - Date.parse(u.started)) / 1000 : null
+  const k = (n: number) => n >= 1e6 ? `${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(1)}k` : String(n)
+  return <>
+    <Fact label="Tokens" value={<span title={`${u.input.toLocaleString()} in (${u.cached.toLocaleString()} cached) · ${u.output.toLocaleString()} out (${u.reasoning.toLocaleString()} thinking)`}>
+      {k(u.input)} in · {k(u.output)} out · {u.calls} calls</span>} />
+    <Fact label="Time" value={`${ran !== null ? `${duration(ran)} ran${u.ended ? '' : ' so far'}` : '—'} · ${duration(u.model_seconds)} waiting on the model`} />
+    <Fact label="Price" value={u.priced_calls ? `$${u.cost_usd.toFixed(u.cost_usd < 1 ? 3 : 2)}${u.priced_calls < u.calls ? ` (${u.priced_calls} of ${u.calls} calls priced)` : ''}` : 'not reported (subscription)'} />
+  </>
 }
 
 function Fact({ label, value }: { label: string; value: React.ReactNode }) {

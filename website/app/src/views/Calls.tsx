@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { api, q } from '../api/client'
+import { Conversation } from './PromptBuild'
 import { Button, Card, Collapsible, Empty, ErrorBox, KeyValues, Loading, Pill, Pre, Select } from '../components/ui'
 
 /** One row of /record/calls. */
@@ -77,6 +78,7 @@ export function Calls({ runId, live }: { runId: string; live?: boolean }) {
     refetchInterval: live ? 5000 : false,
   })
   const [folder, setFolder] = useState('')
+  const [raw, setRaw] = useState(false)
   if (folders.isLoading) return <Loading label="Finding recorded calls…" />
   if (folders.error) return <ErrorBox error={folders.error} />
   const list = folders.data?.folders ?? []
@@ -84,15 +86,17 @@ export function Calls({ runId, live }: { runId: string; live?: boolean }) {
   const shown = list.some((f) => f.folder === folder) ? folder : list[0].folder
   return (
     <div className="flex flex-col gap-3">
-      {list.length > 1 && (
-        <div className="flex flex-wrap items-center gap-1.5 text-[12px] text-muted">
+      <div className="flex flex-wrap items-center gap-1.5 text-[12px] text-muted">
+        {list.length > 1 && <>
           Session:
           <Select value={shown} onChange={(e) => setFolder(e.target.value)} className="h-6 text-[12px]">
             {list.map((f) => <option key={f.folder} value={f.folder}>{f.folder.replace(/\/?calls$/, '') || 'player'} ({f.calls} calls)</option>)}
           </Select>
-        </div>
-      )}
-      <CallList key={shown} runId={runId} folder={shown} live={live} />
+        </>}
+        <Button size="sm" variant={raw ? 'primary' : 'default'} onClick={() => setRaw(!raw)}>{raw ? 'one call at a time (settings, usage, raw JSON)' : 'one call at a time'}</Button>
+      </div>
+      {raw ? <CallList key={shown} runId={runId} folder={shown} live={live} />
+        : <Conversation key={shown} runId={runId} folder={shown} live={live} full />}
     </div>
   )
 }

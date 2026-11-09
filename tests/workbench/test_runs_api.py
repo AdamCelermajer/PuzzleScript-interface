@@ -114,7 +114,8 @@ def test_frameworks_endpoint_lists_the_registry(tmp_path):
     with client(tmp_path) as api:
         listing = {f["id"]: f for f in api.get("/api/workbench/frameworks").json()["frameworks"]}
     assert set(listing) == {"baseline", "avo", "harness2"}
-    assert {o["name"] for o in listing["baseline"]["options"]} == {"max_steps", "driver", "memento", "start", "stop_after_levels", "start_level", "one_level"}
+    assert {o["name"] for o in listing["baseline"]["options"]} == {"max_steps", "driver", "memento", "restore_context", "carry_moves", "turn_timeout",
+                                                                   "temperature", "hide_budget", "start", "stop_after_levels", "start_level", "one_level"}
     assert listing["avo"]["optimizer"] is True and listing["baseline"]["optimizer"] is False
 
 
@@ -707,3 +708,33 @@ def test_harness2_record_lists_coach_sessions_and_edits(tmp_path):
         "finished": True, "file_changes": 1, "events": 3, "length_cap": False}
     assert record["harness_edits"] == {"dom1": {"systemprompt.md": "Push the orange block onto the blue target."}, "inv1": {}}
     assert timeline["agent_events"]["total"] == 3 and missing.status_code == 404
+
+
+def test_agent_files_list_every_file_with_its_versions_and_diffs(tmp_path):
+    put(tmp_path, "output/new/run_spec.json", spec(mode="baseline-plus", harness="opencode", model="m", game_id="g"))
+    rows = [{"at": 3, "label": "after 3 moves", "t": "x", "path": "notes.md", "status": "added", "size": 3, "file": "00003/notes.md"},
+            {"at": 5, "label": "after 5 moves", "t": "y", "path": "notes.md", "status": "changed", "size": 7, "file": "00005/notes.md"}]
+    put(tmp_path, "output/new/agent_files/index.jsonl", "".join(json.dumps(r) + "\n" for r in rows))
+    put(tmp_path, "output/new/agent_files/00003/notes.md", "up\n")
+    put(tmp_path, "output/new/agent_files/00005/notes.md", "up\ndown\n")
+    with client(tmp_path) as api:
+        listed = api.get("/api/workbench/record/agent_files", params={"run": "output/new"}).json()
+        second = api.get("/api/workbench/record/agent_files/version", params={"run": "output/new", "file": "notes.md", "at": 5}).json()
+        missing = api.get("/api/workbench/record/agent_files/version", params={"run": "output/new", "file": "notes.md", "at": 4})
+    assert listed["recorded"] and [(f["path"], [v["at"] for v in f["versions"]]) for f in listed["files"]] == [("notes.md", [3, 5])]
+    assert second["text"].replace("\r\n", "\n") == "up\ndown\n" and second["previous_label"] == "after 3 moves" and "+down" in second["diff"]
+    assert missing.status_code == 404
+
+
+def test_usage_sums_tokens_time_and_price_over_every_recorded_call(tmp_path):
+    put(tmp_path, "output/new/run_spec.json", spec(mode="baseline-plus", harness="opencode", model="m", game_id="g"))
+    put(tmp_path, "output/new/launcher.json", {"started_at": "2026-11-03T10:00:00Z"})
+    for number, cost in ((1, 0.01), (2, 0.02)):
+        put(tmp_path, f"output/new/calls/{number:04d}.json", {"call": number, "method": "POST", "seconds": 2.5, "response": {
+            "usage": {"prompt_tokens": 1000, "completion_tokens": 50, "cost": cost,
+                      "completion_tokens_details": {"reasoning_tokens": 40}, "prompt_tokens_details": {"cached_tokens": 500}}}})
+    with client(tmp_path) as api:
+        totals = api.get("/api/workbench/record/usage", params={"run": "output/new"}).json()
+    assert {k: totals[k] for k in ("calls", "input", "output", "reasoning", "cached", "model_seconds", "priced_calls")} == {
+        "calls": 2, "input": 2000, "output": 100, "reasoning": 80, "cached": 1000, "model_seconds": 5.0, "priced_calls": 2}
+    assert round(totals["cost_usd"], 4) == 0.03 and totals["started"] == "2026-11-03T10:00:00Z" and totals["ended"] is None

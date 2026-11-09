@@ -124,6 +124,7 @@ class ExperimentRequest(BaseModel):
 
 class RunResumeRequest(BaseModel):
     run_id: str = Field(min_length=1, max_length=400)
+    carry_moves: bool = False
 
 
 class ResumeRequest(BaseModel):
@@ -414,7 +415,7 @@ def create_router(root: Path = ROOT) -> APIRouter:
     def resume_harness_run(request: RunResumeRequest):
         with resume_run_lock:
             try:
-                resumed = harness_runs.resume_runs([request.run_id], root)
+                resumed = harness_runs.resume_runs([request.run_id], root, carry_moves=request.carry_moves)
             except (ValueError, OSError, KeyError) as exc:
                 raise run_error(exc) from exc
         cache.clear()

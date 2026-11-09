@@ -90,11 +90,13 @@ export function PromptBuildView() {
   )
 }
 
-function Conversation({ runId, folder }: { runId: string; folder: string }) {
-  const [everything, setEverything] = useState(false)
+/** One recorded session, one row per model call; also the run page's Model calls tab (live, every call shown). */
+export function Conversation({ runId, folder, live, full }: { runId: string; folder: string; live?: boolean; full?: boolean }) {
+  const [everything, setEverything] = useState(full ?? false)
   const data = useQuery({
     queryKey: ['prompt-build', runId, folder],
     queryFn: ({ signal }) => api.get<Transcript>(`/prompt-builds/one${q({ run: runId, folder })}`, signal),
+    refetchInterval: live ? 5000 : false,
   })
   if (data.isLoading) return <Loading />
   if (data.error) return <ErrorBox error={data.error} />

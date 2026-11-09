@@ -11,12 +11,13 @@ import { Timeline } from '../components/Timeline'
 import { Button, Card, Empty, ErrorBox, KeyValues, Loading, Pre, Select, Tabs } from '../components/ui'
 import { fromAgentEvent, fromLegacyTranscript, pinKey, pinText, withPrompts, type TimelineItem } from '../lib/events'
 import { FileViewer } from '../components/FileViewer'
+import { AgentFiles, useAgentFiles } from './AgentFiles'
 import { Calls } from './Calls'
 
 const fileUrl = (run: string, file: string) => `/api/workbench/record/file${q({ run, file })}`
 const frameFile = (index: number) => `frames/${String(index).padStart(3, '0')}.png`
 
-type Tab = 'events' | 'calls' | 'pinned' | 'notes' | 'result' | 'files'
+type Tab = 'events' | 'calls' | 'pinned' | 'agent-files' | 'notes' | 'result' | 'files'
 
 /** Baseline runs: replay of recorded transitions, agent events, notes, artifacts. */
 export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId: string; live?: boolean; notes?: boolean }) {
@@ -31,6 +32,9 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
   // The replay's action index; null = follow the latest transition. The Notes tab follows it too.
   const [step, setStep] = useState<number | null>(null)
   const pins = usePins(runId)
+  const agentFiles = useAgentFiles(runId, live)
+  // Runs since 3 Nov 2026 record every file the player writes; older runs keep their notes/ only.
+  const recorded = agentFiles.data?.recorded ?? false
 
   if (record.isLoading) return <Loading label="Reading run record…" />
   if (record.error) return <ErrorBox error={record.error} retry={() => record.refetch()} />
@@ -45,16 +49,19 @@ export function BaselineDetail({ runId, live, notes: withNotes = true }: { runId
           onChange={setTab}
           tabs={[
             { id: 'events', label: 'Agent timeline' },
+            { id: 'agent-files', label: `Agent files (${agentFiles.data?.files.length ?? 0})`, hidden: !recorded },
+            { id: 'notes', label: `Notes${notes.length ? ` (${notes.length})` : ''}`, hidden: recorded || (!withNotes && !notes.length) },
             { id: 'calls', label: 'Model calls (exact)', hidden: !data.has_calls },
             { id: 'pinned', label: `Pinned${pins.data?.length ? ` (${pins.data.length})` : ''}` },
-            { id: 'notes', label: `Notes${notes.length ? ` (${notes.length})` : ''}`, hidden: !withNotes && !notes.length },
             { id: 'result', label: 'Result & spec' },
-            { id: 'files', label: `Files (${data.files.length})` },
+            // Our records of the run (the player never sees them); its own files are under Agent files.
+            { id: 'files', label: `Logs (${data.files.length})` },
           ]}
         />
         {tab === 'events' && <Events runId={runId} record={data} onMore={() => setEventsLimit(5000)} />}
         {tab === 'calls' && <Calls runId={runId} live={live} />}
         {tab === 'pinned' && (pins.error ? <ErrorBox error={pins.error} /> : <PinList pins={pins.data ?? []} />)}
+        {tab === 'agent-files' && <AgentFiles runId={runId} live={live} />}
         {tab === 'notes' && <Notes runId={runId} files={notes} live={live} step={step} />}
         {tab === 'result' && (
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">

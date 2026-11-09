@@ -5,6 +5,7 @@ from __future__ import annotations
 import bisect
 import json
 import re
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Query, Response
@@ -265,6 +266,97 @@ def add_routes(router: APIRouter, root: Path) -> None:
                 diffs[name] = "\n".join(difflib.unified_diff(old.splitlines(), new.splitlines(), before,
                                                              f"turn-{turn}/{name}", lineterm="", n=3))
         return {"turn": turn, "previous": previous, "files": files, "diffs": diffs}
+
+    def agent_file_rows(path: Path) -> list[dict]:
+        rows = []
+        try:
+            lines = (path / "agent_files" / "index.jsonl").read_text(encoding="utf-8").splitlines()
+        except OSError:
+            return rows
+        for line in lines:
+            try:
+                row = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(row, dict) and isinstance(row.get("path"), str):
+                rows.append(row)
+        return rows
+
+    @router.get("/record/agent_files")
+    def agent_files(run: str = Query(...)):
+        """Every file the player created or changed in its folder (frameworks/baseline/agent_files.py), each
+        with its versions in order."""
+        try:
+            path = run_path(run, root)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        files: dict[str, list] = {}
+        for row in agent_file_rows(path):
+            files.setdefault(row["path"], []).append({key: row.get(key) for key in ("at", "label", "t", "status", "size")})
+        return {"recorded": (path / "agent_files" / "index.jsonl").is_file(),
+                "files": [{"path": name, "versions": versions} for name, versions in files.items()]}
+
+    @router.get("/record/agent_files/version")
+    def agent_file_version(run: str = Query(...), file: str = Query(...), at: int = Query(..., ge=0, le=10_000_000)):
+        """One version of one file, the version before it and the unified diff between them."""
+        import difflib
+        try:
+            path = run_path(run, root)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        versions = [row for row in agent_file_rows(path) if row["path"] == file and row.get("at") is not None]
+        current = next((row for row in versions if row["at"] == at), None)
+        if current is None:
+            raise HTTPException(404, "No such version")
+        previous = next((row for row in reversed(versions) if row["at"] < at), None)
+
+        def text(row: dict | None) -> str | None:
+            if not row or not row.get("file"):
+                return None
+            target = path / "agent_files" / row["file"]
+            if not target.resolve().is_relative_to((path / "agent_files").resolve()) or not target.is_file():
+                return None
+            return target.read_bytes()[:400_000].decode("utf-8", errors="replace")
+
+        new, old = text(current), text(previous)
+        diff = "\n".join(difflib.unified_diff((old or "").splitlines(), (new or "").splitlines(),
+                                              previous["label"] if previous else "(none)", current["label"],
+                                              lineterm="", n=3))
+        return {"label": current.get("label"), "status": current.get("status"), "size": current.get("size"),
+                "text": new, "previous_label": previous.get("label") if previous else None, "diff": diff}
+
+    @router.get("/record/usage")
+    def usage(run: str = Query(...)):
+        """Tokens, model time and price over every recorded model call of the run, and how long it ran."""
+        from workbench.prompt_build import call_folders
+        try:
+            path = run_path(run, root)
+        except ValueError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        total = {"calls": 0, "input": 0, "output": 0, "reasoning": 0, "cached": 0, "model_seconds": 0.0,
+                 "cost_usd": 0.0, "priced_calls": 0}
+        for folder in call_folders(path):
+            for item in folder.glob("[0-9][0-9][0-9][0-9].json"):
+                record = read_json(item)
+                if record.get("method") != "POST":
+                    continue
+                total["calls"] += 1
+                total["model_seconds"] += float(record.get("seconds") or 0)
+                used = (record.get("response") or {}).get("usage") or {}
+                number = lambda *keys: next((v for v in (used.get(k) for k in keys) if isinstance(v, (int, float))), 0)
+                total["input"] += number("prompt_tokens", "input_tokens")
+                total["output"] += number("completion_tokens", "output_tokens")
+                total["reasoning"] += (used.get("completion_tokens_details") or {}).get("reasoning_tokens") or 0
+                total["cached"] += ((used.get("prompt_tokens_details") or {}).get("cached_tokens")
+                                    or used.get("cache_read_input_tokens") or 0)
+                if isinstance(used.get("cost"), (int, float)):
+                    total["cost_usd"] += used["cost"]
+                    total["priced_calls"] += 1
+        launcher, result = read_json(path / "launcher.json"), path / "result.json"
+        started = launcher.get("started_at") or (read_run_spec(path) or {}).get("created_at")
+        ended = (datetime.fromtimestamp(result.stat().st_mtime, timezone.utc).isoformat()
+                 if result.is_file() else None)
+        return {**total, "started": started, "ended": ended}
 
     @router.get("/record/file")
     def record_file(run: str = Query(...), file: str = Query(...)):
