@@ -36,7 +36,8 @@ from game.arcade_env import ArcadeEnv
 from game.types import FrameData, GameAction, GameState
 from game.grid import last_grid
 from frameworks import levels, world_model
-from frameworks.baseline import prompt as baseline_prompt
+from frameworks.baseline import agent_files, prompt as baseline_prompt
+from frameworks.baseline.continuation import carry_over, load_moves, restore_folder, restore_game
 from harnesses.registry import HARNESS_IDS, create_session
 
 RPC_DIR = ".game"
@@ -73,12 +74,12 @@ print(reply["text"])
 sys.exit(0 if reply["ok"] else 1)
 '''
 
-CONTINUE_PROMPT = ("The game is not finished: levels {levels}/{total}, {left} of {budget} actions left. "
+CONTINUE_PROMPT = ("The game is not finished: levels {levels}/{total}{left}. "
                    "Keep playing.")
-FAILED_PROMPT = ("The last reply failed; continue playing the game: levels {levels}/{total}, "
-                 "{left} of {budget} actions left. Keep playing.")
+FAILED_PROMPT = ("The last reply failed; continue playing the game: levels {levels}/{total}{left}. "
+                 "Keep playing.")
 RESTART_PROMPT = ("This is a new session: the previous conversation could not continue. Your folder is as you left "
-                  "it. The game is still running: levels {levels}/{total}, {left} of {budget} actions left. "
+                  "it. The game is still running: levels {levels}/{total}{left}. "
                   "Keep playing.\n\n{observation}")
 
 
@@ -86,8 +87,9 @@ class GameServer:
     """Answers game.py requests: one game session, one action budget, the full record."""
 
     def __init__(self, env, workspace: Path, output_dir: Path, max_steps: int, max_wall_seconds: float = 0,
-                 stop_after_levels: int = 0) -> None:
+                 stop_after_levels: int = 0, hide_budget: bool = False, parent: Path | None = None) -> None:
         self.env, self.workspace, self.output = env, workspace, output_dir
+        self.shown_budget = None if hide_budget else max_steps
         self.max_steps, self.deadline = max_steps, (time.monotonic() + max_wall_seconds) if max_wall_seconds else None
         self.stop_after_levels = stop_after_levels
         self.actions: list[str] = []
@@ -96,6 +98,9 @@ class GameServer:
         self.frames = output_dir / "frames"
         self.frames.mkdir(parents=True, exist_ok=True)
         self.snapshots = world_model.Snapshots(workspace / world_model.NAME, output_dir)
+        # Every file the player writes, version by version: looked at before each move and at the end.
+        self.files = agent_files.FileHistory(workspace, output_dir)
+        self.files.capture(0, "at the start")
         # Outside the agent's folder: only the model plays, through the do tool.
         self.home = Path(tempfile.mkdtemp(prefix="game-"))
         self.script = self.home / "game.py"
@@ -103,6 +108,11 @@ class GameServer:
         self.rpc.mkdir(parents=True, exist_ok=True)
         self.script.write_text(GAME_CLI, encoding="utf-8")
         self.frame: FrameData = env.reset()
+        if parent is not None:  # the same game: the parent's moves count and stay on record
+            history = load_moves(parent)
+            self.frame = restore_game(env, self.frame, history)
+            self.actions = [item["action"] for item in history]
+            carry_over(parent, output_dir, history)
         self._save_picture()
         self._stop = threading.Event()
         self._thread = threading.Thread(target=self._serve, daemon=True)
@@ -138,9 +148,10 @@ class GameServer:
     def _status(self) -> str:
         f = self.frame
         if self.level_target_reached:  # the frame is the next level, which stays unseen
-            return (f"state=OVER levels={f.levels_completed}/{f.win_levels} actions_used={len(self.actions)}/"
-                    f"{self.max_steps}\nThe game is over: the level target is reached.")
-        return baseline_prompt.observation(f, len(self.actions), self.max_steps)
+            budget = f"/{self.shown_budget}" if self.shown_budget is not None else ""
+            return (f"state=OVER levels={f.levels_completed}/{f.win_levels} actions_used={len(self.actions)}{budget}"
+                    "\nThe game is over: the level target is reached.")
+        return baseline_prompt.observation(f, len(self.actions), self.shown_budget)
 
     def _png(self) -> bytes | None:
         data_url = str(getattr(self.frame.rendered_frame, "data_url", "") or "")
@@ -168,6 +179,7 @@ class GameServer:
 
     # -- commands ---------------------------------------------------------------------
     def handle(self, command: str, action: str) -> tuple[bool, str]:
+        self.files.capture(len(self.actions), f"after {len(self.actions)} moves")
         if self.finished or self.closed:
             return False, f"The game session is over ({self.reason}). No more actions."
         try:
@@ -207,7 +219,7 @@ class GameServer:
             return True, (f"{name}: LEVEL COMPLETED ({self.frame.levels_completed}/{self.frame.win_levels}). "
                           "Level target reached; the game is over.")
         last = baseline_prompt.last_action(name, before.levels_completed, self.frame)
-        return True, baseline_prompt.observation(self.frame, len(self.actions), self.max_steps, last)
+        return True, baseline_prompt.observation(self.frame, len(self.actions), self.shown_budget, last)
 
     # -- request loop -----------------------------------------------------------------
     def start(self) -> "GameServer":
@@ -253,17 +265,24 @@ def _turn(session, instruction: str, timeout: float | None):
 
 def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provider: str, max_steps: int,
          max_wall_seconds: float, harness_dir: Path | None, notes: bool = False, max_turns: int = 40,
-         stop_after_levels: int = 0, start_level: int = 1) -> dict:
+         stop_after_levels: int = 0, start_level: int = 1, hide_budget: bool = False,
+         temperature: float | None = None, parent: Path | None = None) -> dict:
     """``env`` already opens at ``start_level``; ``stop_after_levels`` counts from it."""
     output_dir.mkdir(parents=True, exist_ok=True)
     workspace = Path(tempfile.mkdtemp(prefix="agent-player-"))
     if harness_dir is not None:
         shutil.copytree(harness_dir, workspace, dirs_exist_ok=True)
+    if parent is not None:
+        restore_folder(parent, workspace)
     server = GameServer(env, workspace, output_dir, max_steps, max_wall_seconds,
-                        levels.stop_target(start_level, stop_after_levels)).start()
+                        levels.stop_target(start_level, stop_after_levels), hide_budget, parent).start()
 
     def open_session(turn_number: int = 0):
         new = create_session(harness)
+        if temperature is not None:
+            if not hasattr(new, "temperature"):
+                raise ValueError(f"{harness} cannot set a temperature")
+            new.temperature = temperature
         new.game_tools = baseline_prompt.game_tools("agent", new, str(server.script))
         new.start(workspace, baseline_prompt.system_prompt("agent", bool(new.game_tools), str(server.script)), model,
                   effort, "player", output_dir, provider=provider)
@@ -272,15 +291,16 @@ def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provid
 
     def status() -> dict:
         f = server.frame
-        return {"levels": f.levels_completed, "total": f.win_levels, "left": max_steps - len(server.actions),
-                "budget": max_steps}
+        left = "" if hide_budget else f", {max_steps - len(server.actions)} of {max_steps} actions left"
+        return {"levels": f.levels_completed, "total": f.win_levels, "left": left}
 
     session = None
     turns, idle, error, failed_in_a_row = 0, 0, "", 0
     failed_turns: list[dict] = []
     try:
         session = open_session()
-        instruction = baseline_prompt.first_message(max_steps, start_level, server.frame)
+        instruction = (RESTART_PROMPT.format(**status(), observation=server._status()) if server.actions
+                       else baseline_prompt.first_message(server.shown_budget, start_level, server.frame))
         while not server.finished and turns < max_turns and idle < IDLE_TURNS:
             used = len(server.actions)
             remaining = None if server.deadline is None else max(1.0, server.deadline - time.monotonic())
@@ -322,6 +342,7 @@ def play(env, output_dir: Path, *, harness: str, model: str, effort: str, provid
             if (workspace / name).is_file():
                 shutil.copyfile(workspace / name, output_dir / name)
         server.snapshots.final()
+        server.files.capture(len(server.actions) + 1, f"at the end ({len(server.actions)} moves)")
         shutil.copytree(workspace, output_dir / "workspace", dirs_exist_ok=True)
         shutil.rmtree(workspace, ignore_errors=True)
         shutil.rmtree(server.home, ignore_errors=True)
@@ -358,6 +379,11 @@ def main(argv: list[str] | None = None) -> None:
                              "the next level stays unseen.")
     parser.add_argument("--notes", action="store_true",
                         help="Recorded only: since 2 Nov 2026 the shared baseline prompt always offers the folder for notes.")
+    parser.add_argument("--temperature", type=float, default=None, help="Sampling temperature; default: the harness's own.")
+    parser.add_argument("--hide-budget", action="store_true",
+                        help="Do not tell the player how many actions it has; the limit still applies.")
+    parser.add_argument("--continue-from", type=Path, default=None,
+                        help="A run that stopped early: the same board, files and move count, in a new conversation.")
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.start_level < 1:
@@ -370,14 +396,16 @@ def main(argv: list[str] | None = None) -> None:
         "provider": args.provider, "model": args.model, "reasoning_effort": args.effort, "game_id": args.game_id,
         "backend_url": args.backend_url, "max_steps": args.max_steps, "max_wall_seconds": args.max_wall_seconds,
         "start": args.start or None, "stop_after_levels": args.stop_after_levels or None,
-        "start_level": args.start_level,
+        "start_level": args.start_level, "hide_budget": args.hide_budget, "temperature": args.temperature,
+        "continuation_from": str(args.continue_from.resolve()) if args.continue_from else None,
     }, indent=2), encoding="utf-8")
     try:  # a level beyond the game's last one, or a game service without start levels
         env = ArcadeEnv(game_id=args.game_id, backend_url=args.backend_url, start_level=args.start_level)
         result = play(env, output, harness=args.harness, model=args.model, effort=args.effort,
                       provider=args.provider, max_steps=args.max_steps, max_wall_seconds=args.max_wall_seconds,
                       harness_dir=args.harness_dir, notes=args.notes, stop_after_levels=args.stop_after_levels,
-                      start_level=args.start_level)
+                      start_level=args.start_level, hide_budget=args.hide_budget, temperature=args.temperature,
+                      parent=args.continue_from)
     except (ValueError, RuntimeError) as exc:
         raise SystemExit(f"error: {exc}") from exc
     print(f"levels_completed={result['levels_completed']} actions={result['action_count']} reason={result['reason']}")

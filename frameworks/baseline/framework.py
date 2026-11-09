@@ -9,7 +9,8 @@ without it was removed on 21 Oct 2026 (older runs record ``notes: false``).
 level. ``start_level`` opens the game at that level and ``stop_after_levels`` counts from it;
 ``one_level`` is the one-level task (stop after 1), scored per level in result.json
 (frameworks/levels.py). ``memento`` (controller only) opens a fresh session every turn with the same
-system prompt and folder, and tells the agent that only its folder (notes/) carries over. With the agent driver, ``start`` names a repository folder whose files are in the agent's
+system prompt and folder, and tells the agent that only its folder (notes/) carries over. ``hide_budget``
+keeps the number of actions from the player (the limit still applies). With the agent driver, ``start`` names a repository folder whose files are in the agent's
 folder from the start (copied into the run as ``start/``).
 """
 from __future__ import annotations
@@ -25,23 +26,34 @@ START = "start"  # the run directory's copy of the start folder; the agent's fol
 
 def entry(spec: dict, resume: bool, results: Path, parent: Path) -> list[str]:
     options = spec["options"]
+    hide = ["--hide-budget"] if options.get("hide_budget") else []
+    if options.get("temperature"):
+        hide += ["--temperature", options["temperature"]]
     if options.get("driver") == "agent":
-        if spec.get("continued_from"):
-            raise ValueError("Runs where the agent drives cannot be continued; start a new run")
+        if spec.get("continued_from") and not options.get("carry_moves"):
+            raise ValueError("Runs where the agent drives continue only with carry_moves; start a new run")
         argv = ["frameworks.baseline.agentic", "--harness", spec["harness"], "--model", spec["model"],
                 "--effort", spec["effort"], "--game-id", spec["game_id"], "--backend-url", spec["backend_url"],
                 "--max-steps", str(options["max_steps"]), "--max-wall-seconds", str(spec["max_wall_seconds"]),
                 "--output-dir", str(results), "--provider", spec["provider"]]
         if options.get("start"):
             argv += ["--harness-dir", str(results / START), "--start", options["start"]]
-        return argv + level_argv(options)
+        if spec.get("continued_from"):
+            argv += ["--continue-from", str(parent)]
+        return argv + level_argv(options) + hide
     argv = ["frameworks.baseline.run", "--notes", "--harness", spec["harness"], "--model", spec["model"],
             "--effort", spec["effort"], "--game-id", spec["game_id"], "--backend-url", spec["backend_url"],
             "--max-steps", str(options["max_steps"]), "--max-wall-seconds", str(spec["max_wall_seconds"]),
             "--output-dir", str(results), "--provider", spec["provider"]]
-    argv += level_argv(options)
+    argv += level_argv(options) + hide
     if options.get("memento"):
         argv.append("--memento")
+    if options.get("restore_context"):
+        argv.append("--restore-context")
+    if options.get("carry_moves"):
+        argv.append("--carry-moves")
+    if options.get("turn_timeout", 1800) != 1800:
+        argv += ["--turn-timeout", str(options["turn_timeout"])]
     if spec.get("continued_from"):
         argv += ["--continue-from", str(parent)]
     return argv
@@ -59,8 +71,17 @@ def level_argv(options: dict) -> list[str]:
 
 
 def check(options: dict) -> None:
+    if options["temperature"]:
+        try:
+            float(options["temperature"])
+        except ValueError:
+            raise ValueError(f"--temperature must be a number, not {options['temperature']!r}") from None
     if options["one_level"] and options["stop_after_levels"]:
         raise ValueError("--one-level already ends the game after one level; leave --stop-after-levels at 0")
+    if options["carry_moves"] and options["restore_context"]:
+        raise ValueError("--carry-moves and --restore-context are two ways of continuing; choose one")
+    if options["restore_context"] and options["driver"] != "controller":
+        raise ValueError("--restore-context applies only to --driver controller")
     if options["memento"] and options["driver"] != "controller":
         raise ValueError("--memento applies only to --driver controller (one action per call)")
     if options["driver"] != "agent" and options["start"]:
@@ -79,6 +100,8 @@ def prepare(spec: dict, output: Path) -> None:
 
 
 def check_restart(spec: dict, parent: Path) -> None:
+    if spec["options"].get("hide_budget"):  # a continuation tells the player its additional action budget
+        raise ValueError("Runs that hide the budget cannot be continued; start a new run")
     if not (parent / "run_config.json").is_file():
         raise ValueError(f"{parent} is not a finished baseline run (no run_config.json)")
 
@@ -90,6 +113,12 @@ def variant(options: dict) -> str:
         label = "Baseline" if options.get("notes", True) else "Baseline · no notes (old)"
         if options.get("memento"):
             label += " · memento"
+    if options.get("hide_budget"):
+        label += " · budget hidden"
+    if options.get("restore_context") or options.get("carry_moves"):
+        label += " · resumed"
+    if options.get("temperature"):
+        label += f" · temperature {options['temperature']}"
     if options.get("start"):
         label += f" · start={Path(options['start']).name}"
     start = options.get("start_level", 1)
@@ -115,6 +144,15 @@ BASELINE = Framework(
                "through `python game.py` in its own folder", choices=("controller", "agent")),
         Option("memento", "bool", False, "controller driver: a fresh session every turn with the same system "
                "prompt and folder; the agent is told it forgets everything but its folder (notes/)"),
+        Option("restore_context", "bool", False, "with a continued run: carry on the parent's recorded "
+               "conversation, its files and its action count, instead of a new session told the history"),
+        Option("carry_moves", "bool", False, "with a continued run: the same board, files and move count (the "
+               "budget stays the parent's), in a new conversation; for a run that stopped early"),
+        Option("turn_timeout", "int", 1800, "controller driver: seconds one turn may take before the run fails",
+               minimum=60, maximum=86_400),
+        Option("temperature", "str", "", "sampling temperature (empty: the harness's own)"),
+        Option("hide_budget", "bool", False, "do not tell the player how many actions it has; the limit still "
+               "applies"),
         Option("start", "str", "", "agent driver: a repository folder (e.g. studies/thursday/start/rules) whose "
                "files are in the agent's folder from the start"),
         Option("stop_after_levels", "int", 0, "end the game once this many levels are completed, counted from the "

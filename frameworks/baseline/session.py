@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any
 
 from frameworks import world_model
-from frameworks.baseline import prompt as baseline_prompt
+from frameworks.baseline import agent_files, prompt as baseline_prompt
 
 GAME_ACTIONS = {"ACTION1", "ACTION2", "ACTION3", "ACTION4", "ACTION5", "ACTION7", "RESET", "FINISH"}
 FRAME_NAME = "frame.png"
@@ -143,6 +143,8 @@ class GameSessionConfig:
     provider: str = ""  # pinned OpenRouter upstream slug (opencode/bare); empty = OpenRouter routing
     turn_timeout: float | None = 1800.0
     memento: bool = False  # a fresh session every turn; only the working folder carries over
+    restored: dict | None = None  # continuation.last_context: carry on that recorded conversation
+    temperature: float | None = None  # None keeps the harness's own
 
     def __post_init__(self) -> None:
         if self.memento and not self.workspace_enabled:
@@ -174,6 +176,8 @@ class CliGameSession:
         self.act_home = Path(tempfile.mkdtemp(prefix="act-")) if config.workspace_enabled else None
         self.act_script = self.act_home / ACT_SCRIPT if self.act_home else None
         self.action_hint = ACTION_HINT.format(script=self.act_script) if config.workspace_enabled else ""
+        # Every file the player writes, version by version: looked at after each turn and at the end.
+        self.files = agent_files.FileHistory(self.working_directory, self.artifact_directory)
 
     def __enter__(self) -> "CliGameSession":
         from harnesses.registry import create_session
@@ -182,7 +186,12 @@ class CliGameSession:
             (self.working_directory / NOTES_DIR).mkdir(exist_ok=True)
         initial_notes = sorted(path.relative_to(self.working_directory).as_posix()
                                for path in self.working_directory.rglob("*") if path.is_file())
+        self.files.capture(0, "at the start")
         self.session = create_session(self.config.harness)
+        if self.config.temperature is not None:
+            if not hasattr(self.session, "temperature"):
+                raise ValueError(f"{self.config.harness} cannot set a temperature")
+            self.session.temperature = self.config.temperature
         tools = (baseline_prompt.game_tools("controller", self.session, str(self.act_script))
                  if self.config.workspace_enabled else [])
         self.session.game_tools = tools
@@ -195,6 +204,11 @@ class CliGameSession:
             (self.act_home / ACT_DIR).mkdir(exist_ok=True)
         self.session.start(self.working_directory, instructions, self.config.model, self.config.effort,
                            "player", self.artifact_directory, provider=self.config.provider)
+        if self.config.restored:
+            restored = self.config.restored
+            if not hasattr(self.session, "restore_context"):
+                raise ValueError(f"{self.config.harness} cannot restore a recorded conversation")
+            self.session.restore_context(restored["messages"], restored["images"], restored["usage"])
         if self.config.workspace_enabled:
             self.session.stop_check = lambda: self._act_path("submission.json").is_file()
         (self.artifact_directory / "isolation_manifest.json").write_text(json.dumps({
@@ -214,6 +228,7 @@ class CliGameSession:
 
     def __exit__(self, exc_type, exc, traceback) -> None:
         if self.session is not None:
+            self.files.capture(self.session.turn_number + 1, f"at the end ({self.session.turn_number} turns)")
             self.session.close()
         self.session = None
         if self.act_home is not None:
@@ -249,6 +264,7 @@ class CliGameSession:
         raise RuntimeError(f"{self.config.harness} turn failed: {result.error if result else 'no result'}")
 
     def _after_turn(self) -> None:
+        self.files.capture(self.session.turn_number, f"after turn {self.session.turn_number}")
         if (self.mirror_directory is not None and self.config.workspace_enabled
                 and (self.working_directory / NOTES_DIR).is_dir()):
             target = self.mirror_directory / NOTES_DIR

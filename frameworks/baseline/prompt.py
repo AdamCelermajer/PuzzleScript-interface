@@ -67,11 +67,13 @@ def available(frame) -> list[str]:
     return names + ["RESET"]
 
 
-def observation(frame, actions_used: int, max_steps: int, last: str = "") -> str:
+def observation(frame, actions_used: int, max_steps: int | None, last: str = "") -> str:
+    """``max_steps`` None keeps the budget from the player: only the count of actions used is shown."""
     grid = last_grid(frame.frame)
+    used = f"{actions_used}/{max_steps}" if max_steps is not None else str(actions_used)
     lines = [f"Last action: {last}"] if last else []
     lines += [f"state={getattr(frame.state, 'value', frame.state)} levels={frame.levels_completed}/{frame.win_levels} "
-              f"actions_used={actions_used}/{max_steps}",
+              f"actions_used={used}",
               f"available_actions={', '.join(available(frame))}"]
     encoding = ENCODINGS.get((getattr(frame, "projection", None) or {}).get("mode"))
     if encoding:
@@ -88,6 +90,7 @@ def last_action(name: str, levels_before: int, frame) -> str:
     return name
 
 
-def first_message(max_steps: int, start_level: int, frame) -> str:
-    return (f"Play the game now. You have {max_steps} actions.{levels.start_note(start_level, frame.win_levels)}"
+def first_message(max_steps: int | None, start_level: int, frame) -> str:
+    budget = f" You have {max_steps} actions." if max_steps is not None else ""
+    return (f"Play the game now.{budget}{levels.start_note(start_level, frame.win_levels)}"
             f"\n\n{observation(frame, 0, max_steps)}")

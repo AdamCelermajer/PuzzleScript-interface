@@ -110,7 +110,8 @@ def test_run_spec_records_framework_and_options():
     spec = launch.run_spec(options(), BASELINE)
     assert spec["schema"] == "run-spec-v2" and spec["framework"] == "baseline"
     assert spec["options"] == {"max_steps": 3, "driver": "controller", "memento": False, "start": "",
-                               "stop_after_levels": 0, "start_level": 1, "one_level": False} and spec["max_wall_seconds"] == 0
+                               "stop_after_levels": 0, "start_level": 1, "one_level": False,
+                               "restore_context": False, "carry_moves": False, "turn_timeout": 1800, "temperature": "", "hide_budget": False} and spec["max_wall_seconds"] == 0
     assert spec["optimizer_model"] is None and spec["continued_from"] is None
     campaign = launch.run_spec(options(framework="avo", harness="opencode", model="openrouter/qwen/qwen3.8-27b",
                                        max_evaluations=2, research_moves=30, max_steps=None, notes=None), AVO)
@@ -229,7 +230,8 @@ def test_dry_run_prints_command_without_writing(tmp_path, capsys, monkeypatch):
     assert code == 0 and not (tmp_path / "run").exists()
     assert printed["run_spec"]["backend_url"] == "http://host.docker.internal:8000"
     assert printed["run_spec"]["options"] == {"max_steps": 2, "driver": "controller", "memento": False, "start": "",
-                                              "stop_after_levels": 0, "start_level": 1, "one_level": False}
+                                              "stop_after_levels": 0, "start_level": 1, "one_level": False, "restore_context": False, "carry_moves": False,
+                                              "turn_timeout": 1800, "temperature": "", "hide_budget": False}
     assert printed["command"][-3:] == ["harnesses.entry", "--spec", "/results/run_spec.json"]
     assert "--env" in printed["command"] and "OPENROUTER_API_KEY" in printed["command"]
 
@@ -544,7 +546,7 @@ def test_baseline_driver_agent_runs_the_agent_player():
                           Path("/results"), Path("/parent"))[0] == "frameworks.baseline.run"
     assert BASELINE.variant_label(spec["options"]) == "Baseline · agent"
     assert BASELINE.variant_label({"driver": "agent", "notes": True}) == "Baseline · agent · notes"  # older runs
-    with pytest.raises(ValueError, match="cannot be continued"):
+    with pytest.raises(ValueError, match="continue only with carry_moves"):
         BASELINE.entry({**spec, "continued_from": "/runs/parent"}, False, Path("/results"), Path("/parent"))
 
 

@@ -64,6 +64,9 @@ class TurnBasedRunner:
     stop_after_levels: int = 0  # end once this many levels are done, before the next one is shown
     start_level: int = 1  # the level env opens at; stop_after_levels counts from it
     memento: bool = False  # every turn is a fresh session, so the first message must not promise "this same session"
+    hide_budget: bool = False  # the player is not told max_steps; the limit still applies
+    restored_call: int | None = None  # the recorded request this run carries on; its moves count in the budget
+    carry_moves: bool = False  # the parent's moves count in the budget and stay on record, in a new conversation
 
     def __post_init__(self) -> None:
         self.output_dir = Path(self.output_dir)
@@ -83,19 +86,36 @@ class TurnBasedRunner:
         frame = self.env.reset()
         prior_history = []
         if self.continuation_from:
-            from frameworks.baseline.continuation import load_parent, restore_game
-            _, prior_history = load_parent(self.continuation_from)
+            from frameworks.baseline.continuation import carry_over, load_moves, load_parent, restore_game
+            prior_history = load_moves(self.continuation_from) if self.carry_moves else load_parent(self.continuation_from)[1]
             frame = restore_game(self.env, frame, prior_history)
             (self.output_dir / "restoration.json").write_text(json.dumps({
                 "parent": str(Path(self.continuation_from).resolve()),
                 "restoration_replay_actions": len(prior_history),
                 "all_transitions_verified": True, "same_codex_conversation": False,
-                "additional_action_budget": self.max_steps,
+                "additional_action_budget": self.max_steps - (len(prior_history) if self.restored_call is not None or self.carry_moves else 0),
+                "restored_from_call": self.restored_call,
             }, indent=2), encoding="utf-8")
         solved = self._is_solved(frame)
         decisions = 0
         feedback = ""  # why the last reply moved nothing; empty after a played action
         last = ""  # what the last played action did (the observation's "Last action" line)
+        new_conversation = self.carry_moves and bool(prior_history)
+        if new_conversation:
+            self.actions = [GameAction[item["action"]] for item in prior_history]
+            decisions = prior_history[-1]["decision"]
+            last = baseline_prompt.last_action(prior_history[-1]["action"], prior_history[-1]["before"]["levels_completed"], frame)
+            carry_over(self.continuation_from, self.output_dir, prior_history)
+        if self.carry_moves:
+            prior_history = []
+        if self.restored_call is not None:
+            # The same game and the same conversation: the moves stay counted and on record, and the
+            # next message is the observation that was showing when the parent stopped.
+            self.actions = [GameAction[item["action"]] for item in prior_history]
+            decisions = prior_history[-1]["decision"]
+            last = baseline_prompt.last_action(prior_history[-1]["action"], prior_history[-1]["before"]["levels_completed"], frame)
+            self.transitions_path.write_text("".join(json.dumps(item) + "\n" for item in prior_history), encoding="utf-8")
+            prior_history = []
         stopped = False
         wall_deadline = time.monotonic() + self.max_wall_seconds if self.max_wall_seconds else None
         wall_exhausted = False
@@ -117,7 +137,12 @@ class TurnBasedRunner:
                 wall_exhausted = True
                 break
             image_path = self._save_frame_image(frame, decisions)
-            prompt = self._turn_prompt(frame, feedback, last, initial=(decisions == 0))
+            prompt = self._turn_prompt(frame, feedback, last, initial=(decisions == 0 and self.restored_call is None))
+            if new_conversation:
+                from frameworks.baseline.agentic import RESTART_PROMPT
+                left = "" if self.hide_budget else f", {self.max_steps - len(self.actions)} of {self.max_steps} actions left"
+                prompt = RESTART_PROMPT.format(levels=frame.levels_completed, total=frame.win_levels, left=left, observation=prompt)
+                new_conversation = False
             if prior_history and decisions == 0:
                 from frameworks.baseline.continuation import history_prompt
                 prompt = history_prompt(prior_history) + prompt
@@ -312,9 +337,10 @@ class TurnBasedRunner:
     def _turn_prompt(self, frame: FrameData, feedback: str, last: str, *, initial: bool) -> str:
         """The turn message: the observation (frameworks/baseline/prompt.py), after why the last reply
         moved nothing when it did not; the first one opens the game."""
+        shown = None if self.hide_budget else self.max_steps
         if initial:
-            return baseline_prompt.first_message(self.max_steps, self.start_level, frame)
-        observation = baseline_prompt.observation(frame, len(self.actions), self.max_steps, last)
+            return baseline_prompt.first_message(shown, self.start_level, frame)
+        observation = baseline_prompt.observation(frame, len(self.actions), shown, last)
         return f"{feedback}\n\n{observation}" if feedback else observation
 
     def _save_world_model(self, reason: str, frame: FrameData) -> Path | None:

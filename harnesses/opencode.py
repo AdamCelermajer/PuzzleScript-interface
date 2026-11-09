@@ -14,6 +14,8 @@ import functools
 import json
 import os
 import shutil
+import subprocess
+from uuid import uuid4
 import urllib.request
 from pathlib import Path
 from typing import Any, Sequence
@@ -89,7 +91,7 @@ def image_input(provider: str, native_model: str) -> bool | None:
 
 def opencode_config(provider: str, native_model: str, instructions: Path, pin_provider: str = "",
                     images: bool = True, served: dict[str, Any] | None = None, effort: str = "",
-                    base_url: str = "", lean: bool = False) -> dict[str, Any]:
+                    base_url: str = "", lean: bool = False, temperature: float | None = None) -> dict[str, Any]:
     model: dict[str, Any] = {}
     options: dict[str, Any] = {}
     if images:
@@ -133,7 +135,8 @@ def opencode_config(provider: str, native_model: str, instructions: Path, pin_pr
     if qwen:
         # An agent's own temperature/top_p override OpenCode's per-model defaults; `run` uses build,
         # the task tool general/explore.
-        sampling = {"temperature": QWEN_SAMPLING["temperature"], "top_p": QWEN_SAMPLING["top_p"]}
+        sampling = {"temperature": QWEN_SAMPLING["temperature"] if temperature is None else temperature,
+                    "top_p": QWEN_SAMPLING["top_p"]}
         config["agent"].update({name: dict(sampling) for name in ("build", "plan", "general", "explore")})
     if lean:
         # The prompt file becomes the build agent's own prompt, which replaces OpenCode's (about 9k
@@ -168,6 +171,7 @@ class OpenCodeSession(CliSession):
     harness_id = "opencode"
     native_tools = True
     lean = False
+    temperature: float | None = None  # set by the caller before start(); None keeps QWEN_SAMPLING
 
     def prepare(self) -> None:
         self.binary = shutil.which("opencode") or "opencode"
@@ -186,10 +190,11 @@ class OpenCodeSession(CliSession):
                                **(served or {})}
         config.write_text(json.dumps(opencode_config(self.provider, self.native_model, instructions, self.pin_provider,
                                                      images=listed is not False, served=served, effort=self.effort,
-                                                     base_url=base_url, lean=self.lean),
+                                                     base_url=base_url, lean=self.lean, temperature=self.temperature),
                                      indent=2), encoding="utf-8")
         if "qwen" in self.native_model.lower() and self.provider != "vast":
-            self.manifest_extra["sampling"] = "temperature 1.0, top_p 0.95, top_k 20 (Qwen thinking mode, set by us)"
+            shown = QWEN_SAMPLING["temperature"] if self.temperature is None else self.temperature
+            self.manifest_extra["sampling"] = f"temperature {shown}, top_p 0.95, top_k 20 (Qwen thinking mode, set by us)"
             if self.provider == "openrouter":
                 self.manifest_extra["effort_sent"] = VARIANT[self.effort]
         self.env["OPENCODE_CONFIG"] = str(config)
@@ -229,6 +234,20 @@ class OpenCodeSession(CliSession):
         for image in images:
             command += ["-f", str(image)]
         return command
+
+    def restore_context(self, messages: list[dict], images: Path, last_usage: dict | None = None) -> None:
+        """Carry on a recorded conversation: import it as this session's own, so the next turn sends
+        exactly those messages and OpenCode's compaction still sees all of them."""
+        from harnesses.opencode_restore import session_export
+        self.session_id = "ses_restored" + uuid4().hex[:18]
+        export = self.private / "restored_session.json"
+        export.write_text(json.dumps(session_export(messages, session_id=self.session_id, directory=str(self.workspace),
+                                                    provider=self.provider, model=self.native_model, images=images,
+                                                    last_usage=last_usage)), encoding="utf-8")
+        done = subprocess.run([self.binary, "import", str(export)], cwd=self.workspace, env=self.env, text=True,
+                              capture_output=True, timeout=120)
+        if done.returncode != 0 or self.session_id not in done.stdout + done.stderr:
+            raise HarnessError(f"opencode import failed: {(done.stdout + done.stderr)[-500:]}")
 
     def step_finished(self, event: dict[str, Any]) -> bool:
         # OpenCode has saved the whole step, tool results included.

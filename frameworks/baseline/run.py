@@ -58,6 +58,15 @@ def main() -> None:
                         help="Give the agent a notes/ folder to keep its working memory in (the Baseline framework always sets it).")
     parser.add_argument("--memento", action="store_true",
                         help="A fresh session every turn (same system prompt and folder); the agent is told that only its folder carries over. Needs --notes.")
+    parser.add_argument("--restore-context", action="store_true",
+                        help="With --continue-from: carry on the parent's recorded conversation, its files and its action count.")
+    parser.add_argument("--carry-moves", action="store_true",
+                        help="With --continue-from: the same board, files and move count, in a new conversation; max-steps stays the whole game's.")
+    parser.add_argument("--turn-timeout", type=int, default=1800,
+                        help="Seconds one turn may take before the run fails.")
+    parser.add_argument("--temperature", type=float, default=None, help="Sampling temperature; default: the harness's own.")
+    parser.add_argument("--hide-budget", action="store_true",
+                        help="Do not tell the player how many actions it has; the limit still applies.")
     parser.add_argument("--stop-after-levels", type=int, default=0,
                         help="End the game once this many levels are completed, counted from the start level, without showing the next one (0 = play on).")
     parser.add_argument("--start-level", type=int, default=1,
@@ -74,18 +83,29 @@ def main() -> None:
         if args.output_dir
         else DEFAULT_OUTPUT_ROOT / _run_id()
     )
+    if args.restore_context and not args.continue_from:
+        parser.error("--restore-context needs --continue-from")
+    if args.carry_moves and not args.continue_from:
+        parser.error("--carry-moves needs --continue-from")
     if args.continue_from:
-        from frameworks.baseline.continuation import load_parent
-        load_parent(args.continue_from)
+        from frameworks.baseline.continuation import load_moves, load_parent
+        (load_moves if args.carry_moves else load_parent)(args.continue_from)
         parent_config = json.loads((Path(args.continue_from) / "run_config.json").read_text(encoding="utf-8"))
         if any(parent_config[key] != value for key, value in {
             "model": args.model, "reasoning_effort": args.effort, "game_id": args.game_id,
         }.items()) or parent_config.get("start_level", 1) != args.start_level or recorded_notes(parent_config) != args.notes or bool(parent_config.get("memento")) != args.memento or LEGACY_HARNESS.get(parent_config.get("harness", "codex"), parent_config.get("harness", "codex")) != args.harness or parent_config.get("provider", "") != args.provider:
             raise ValueError("Continuation must preserve the parent model, effort, notes, memento, harness, game and start level")
-        if output_dir.resolve() == Path(args.continue_from).resolve() or output_dir.exists():
+        if output_dir.resolve() == Path(args.continue_from).resolve() or (output_dir / "run_config.json").exists():
             raise ValueError("Continuation requires a fresh separate output directory")
     env = ArcadeEnv(game_id=args.game_id, backend_url=args.backend_url, start_level=args.start_level)
+    restored = None
+    if args.restore_context:
+        from frameworks.baseline.continuation import last_context
+        restored = last_context(args.continue_from)
     config = GameSessionConfig(
+        restored=restored,
+        turn_timeout=args.turn_timeout,
+        temperature=args.temperature,
         model=args.model,
         effort=args.effort,
         workspace_enabled=args.notes,
@@ -99,6 +119,10 @@ def main() -> None:
             {
                 "notes": args.notes,
                 "memento": args.memento,
+                "hide_budget": args.hide_budget,
+                "temperature": args.temperature,
+                "restored_from_call": restored["call"] if restored else None,
+                "turn_timeout": args.turn_timeout,
                 # Older readers group runs by condition.
                 "condition": "baseline-plus" if args.notes else "baseline",
                 "harness": args.harness,
@@ -124,8 +148,15 @@ def main() -> None:
         try:
             # The agent works outside the results tree; baseline-plus notes are
             # mirrored to output_dir/workspace after every turn.
-            session_workspace = Path(tempfile.mkdtemp(prefix="play-"))
-            if args.continue_from:
+            # A restored conversation names its folder in commands and notes, so it gets the same path back.
+            session_workspace = Path(restored["directory"]) if restored else Path(tempfile.mkdtemp(prefix="play-"))
+            if restored:
+                from frameworks.baseline.continuation import restore_files
+                restore_files(args.continue_from, session_workspace)
+            elif args.carry_moves:
+                from frameworks.baseline.continuation import restore_folder
+                restore_folder(args.continue_from, session_workspace)
+            elif args.continue_from:
                 from frameworks.baseline.continuation import seed_notes
                 seed_notes(args.continue_from, session_workspace)
             with CliGameSession(
@@ -149,6 +180,9 @@ def main() -> None:
                     stop_after_levels=args.stop_after_levels,
                     start_level=args.start_level,
                     memento=args.memento,
+                    hide_budget=args.hide_budget,
+                    restored_call=restored["call"] if restored else None,
+                    carry_moves=args.carry_moves,
                 )
                 result_holder["result"] = runner.run()
         except BaseException as exc:
