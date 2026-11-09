@@ -167,3 +167,16 @@ tw_games/
 
 # LaTeX build output of the proposal
 docs/proposal/build/
+
+# Generated status, logs and secrets (never commit)
+/archive/website/experiments/avo-three-live-status.json
+*.log
+.env.*
+!.env.example
+/output/vast/
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+.mypy_cache/
+.ruff_cache/
